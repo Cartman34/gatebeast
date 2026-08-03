@@ -1,0 +1,40 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — exactement l'angle des cartes
+de jeu de rôle vues de dessus, le même que celui des planches du monde. On regarde le sujet d'en haut et
+un peu de face. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — une créature, SEUL SUJET DE L'IMAGE, destiné à être détouré et posé comme sprite sur une carte vue de dessus.
+ÉCHELLE ANNONCÉE : 1 case au sol.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus :
+aucun décor, aucun sol, aucune herbe, aucun accessoire, aucun autre être vivant, aucun cadre, aucune
+bordure, aucun texte.
+
+LE FOND EST UNI ET UNIQUE : toute la surface qui n'est pas le sujet est remplie d'un MAGENTA PUR, c'est-à-dire un rose-violet électrique parfaitement saturé (rouge au maximum, vert absent, bleu au maximum), parfaitement
+plat et identique partout — une seule et même couleur, sans dégradé, sans texture, sans vignettage, sans
+motif, sans damier. AUCUNE OMBRE PORTÉE sur ce fond : le sujet ne projette pas d'ombre, il n'y a pas de
+sol sous lui. L'ombrage reste sur le corps du sujet lui-même.
+
+CADRAGE : le sujet est CENTRÉ et il REMPLIT LE CADRE — sa plus grande dimension occupe environ QUATRE
+CINQUIÈMES de la hauteur de l'image, et il reste une marge de fond tout autour. Rien du sujet n'est
+coupé par un bord.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
+aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+SP-001-1 : A small round quadruped the size of a fox cub. Warm amber fur (#D98A33) over back and head, cream belly and muzzle (#F5E6CC), four short legs with cream paws, two large rounded ears amber outside and cream inside, big dark friendly eyes, short thick tail with a cream tip. Sa rune, un seul trait continu et scintillant, in the middle of the forehead : an ARCH, turquoise. La rune LUIT DOUCEMENT sans éclairer : elle ne projette aucune lumière, ne rayonne pas, ne fait pas de halo, et elle ÉPOUSE la courbure du corps au lieu d'être plaquée à plat.

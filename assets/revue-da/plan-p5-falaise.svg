@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 606" font-family="sans-serif">
+<rect width="768" height="606" fill="#f6f2e8"/>
+<rect x="0" y="480" width="720" height="48" fill="#9a938c" fill-opacity="0.75" stroke="#00000040"/>
+<text x="360.0" y="508.0" text-anchor="middle" font-size="11" fill="#1d1a24">falaise (a-pic) sur tout le bord bas</text>
+<rect x="672" y="288" width="48" height="168" fill="#9a938c" fill-opacity="0.75" stroke="#00000040"/>
+<text x="696.0" y="376.0" text-anchor="middle" font-size="11" fill="#1d1a24">falaise (bord droit, sous la moitie)</text>
+<rect x="0" y="528" width="768" height="48" fill="#7fd4d4" fill-opacity="0.75" stroke="#00000040"/>
+<text x="384.0" y="556.0" text-anchor="middle" font-size="11" fill="#1d1a24">mer en contrebas</text>
+<rect x="720" y="288" width="48" height="240" fill="#7fd4d4" fill-opacity="0.75" stroke="#00000040"/>
+<text x="744.0" y="412.0" text-anchor="middle" font-size="11" fill="#1d1a24">mer</text>
+<rect x="96" y="528" width="72" height="48" fill="#9a938c" fill-opacity="0.75" stroke="#00000040"/>
+<text x="132.0" y="556.0" text-anchor="middle" font-size="11" fill="#1d1a24">rochers au pied</text>
+<rect x="408" y="528" width="72" height="48" fill="#9a938c" fill-opacity="0.75" stroke="#00000040"/>
+<text x="444.0" y="556.0" text-anchor="middle" font-size="11" fill="#1d1a24">rochers au pied</text>
+<rect x="0" y="264" width="432" height="24" fill="#d8b56e" fill-opacity="0.75" stroke="#00000040"/>
+<text x="216.0" y="280.0" text-anchor="middle" font-size="11" fill="#1d1a24">chemin</text>
+<rect x="408" y="0" width="24" height="288" fill="#d8b56e" fill-opacity="0.75" stroke="#00000040"/>
+<text x="420.0" y="148.0" text-anchor="middle" font-size="11" fill="#1d1a24">chemin</text>
+<rect x="408" y="264" width="24" height="216" fill="#d8b56e" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="408" y="456" width="264" height="24" fill="#d8b56e" fill-opacity="0.75" stroke="#00000040"/>
+<text x="540.0" y="472.0" text-anchor="middle" font-size="11" fill="#1d1a24">chemin du bord de falaise</text>
+<rect x="672" y="456" width="48" height="24" fill="#d8b56e" fill-opacity="0.75" stroke="#00000040"/>
+<text x="696.0" y="472.0" text-anchor="middle" font-size="11" fill="#1d1a24">escalier taille (chemin -> passerelle)</text>
+<rect x="720" y="456" width="48" height="24" fill="#c9885a" fill-opacity="0.75" stroke="#00000040"/>
+<text x="744.0" y="472.0" text-anchor="middle" font-size="11" fill="#1d1a24">passerelle au-dessus de la mer</text>
+<rect x="576" y="144" width="24" height="336" fill="#d8b56e" fill-opacity="0.75" stroke="#00000040"/>
+<text x="588.0" y="316.0" text-anchor="middle" font-size="11" fill="#1d1a24">acces phare</text>
+<rect x="120" y="264" width="24" height="48" fill="#d8b56e" fill-opacity="0.75" stroke="#00000040"/>
+<text x="132.0" y="292.0" text-anchor="middle" font-size="11" fill="#1d1a24">acces cabanon</text>
+<rect x="552" y="72" width="96" height="96" fill="#c9885a" fill-opacity="0.75" stroke="#00000040"/>
+<text x="600.0" y="124.0" text-anchor="middle" font-size="11" fill="#1d1a24">phare elance (porte en bas, 25)</text>
+<rect x="48" y="288" width="192" height="192" fill="#c9885a" fill-opacity="0.75" stroke="#00000040"/>
+<text x="144.0" y="388.0" text-anchor="middle" font-size="11" fill="#1d1a24">cabanon (porte en haut, 6)</text>
+<rect x="264" y="360" width="96" height="48" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<text x="312.0" y="388.0" text-anchor="middle" font-size="11" fill="#1d1a24">filets a secher</text>
+<circle cx="108.0" cy="84.0" r="36.0" fill="#7ab648" fill-opacity="0.3" stroke="#7ab648" stroke-dasharray="4 3"/>
+<rect x="96" y="72" width="24" height="24" fill="#7ab648" fill-opacity="0.75" stroke="#00000040"/>
+<text x="108.0" y="88.0" text-anchor="middle" font-size="11" fill="#1d1a24">arbre couche</text>
+<circle cx="300.0" cy="132.0" r="36.0" fill="#7ab648" fill-opacity="0.3" stroke="#7ab648" stroke-dasharray="4 3"/>
+<rect x="288" y="120" width="24" height="24" fill="#7ab648" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="216" y="48" width="72" height="72" fill="#7ab648" fill-opacity="0.75" stroke="#00000040"/>
+<text x="252.0" y="88.0" text-anchor="middle" font-size="11" fill="#1d1a24">ajoncs</text>
+<rect x="456" y="360" width="72" height="72" fill="#7ab648" fill-opacity="0.75" stroke="#00000040"/>
+<text x="492.0" y="400.0" text-anchor="middle" font-size="11" fill="#1d1a24">ajoncs</text>
+<rect x="168" y="168" width="72" height="72" fill="#7ab648" fill-opacity="0.75" stroke="#00000040"/>
+<text x="204.0" y="208.0" text-anchor="middle" font-size="11" fill="#1d1a24">bruyere</text>
+<rect x="24" y="168" width="48" height="48" fill="#9a938c" fill-opacity="0.75" stroke="#00000040"/>
+<text x="48.0" y="196.0" text-anchor="middle" font-size="11" fill="#1d1a24">rochers</text>
+<rect x="312" y="192" width="48" height="48" fill="#9a938c" fill-opacity="0.75" stroke="#00000040"/>
+<text x="336.0" y="220.0" text-anchor="middle" font-size="11" fill="#1d1a24">rochers</text>
+<rect x="168" y="240" width="24" height="24" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<text x="180.0" y="256.0" text-anchor="middle" font-size="11" fill="#1d1a24">casiers</text>
+<line x1="0" y1="0" x2="0" y2="576" stroke="#00000018"/>
+<line x1="24" y1="0" x2="24" y2="576" stroke="#00000018"/>
+<line x1="48" y1="0" x2="48" y2="576" stroke="#00000018"/>
+<line x1="72" y1="0" x2="72" y2="576" stroke="#00000018"/>
+<line x1="96" y1="0" x2="96" y2="576" stroke="#00000018"/>
+<line x1="120" y1="0" x2="120" y2="576" stroke="#00000018"/>
+<line x1="144" y1="0" x2="144" y2="576" stroke="#00000018"/>
+<line x1="168" y1="0" x2="168" y2="576" stroke="#00000018"/>
+<line x1="192" y1="0" x2="192" y2="576" stroke="#00000018"/>
+<line x1="216" y1="0" x2="216" y2="576" stroke="#00000018"/>
+<line x1="240" y1="0" x2="240" y2="576" stroke="#00000018"/>
+<line x1="264" y1="0" x2="264" y2="576" stroke="#00000018"/>
+<line x1="288" y1="0" x2="288" y2="576" stroke="#00000018"/>
+<line x1="312" y1="0" x2="312" y2="576" stroke="#00000018"/>
+<line x1="336" y1="0" x2="336" y2="576" stroke="#00000018"/>
+<line x1="360" y1="0" x2="360" y2="576" stroke="#00000018"/>
+<line x1="384" y1="0" x2="384" y2="576" stroke="#00000018"/>
+<line x1="408" y1="0" x2="408" y2="576" stroke="#00000018"/>
+<line x1="432" y1="0" x2="432" y2="576" stroke="#00000018"/>
+<line x1="456" y1="0" x2="456" y2="576" stroke="#00000018"/>
+<line x1="480" y1="0" x2="480" y2="576" stroke="#00000018"/>
+<line x1="504" y1="0" x2="504" y2="576" stroke="#00000018"/>
+<line x1="528" y1="0" x2="528" y2="576" stroke="#00000018"/>
+<line x1="552" y1="0" x2="552" y2="576" stroke="#00000018"/>
+<line x1="576" y1="0" x2="576" y2="576" stroke="#00000018"/>
+<line x1="600" y1="0" x2="600" y2="576" stroke="#00000018"/>
+<line x1="624" y1="0" x2="624" y2="576" stroke="#00000018"/>
+<line x1="648" y1="0" x2="648" y2="576" stroke="#00000018"/>
+<line x1="672" y1="0" x2="672" y2="576" stroke="#00000018"/>
+<line x1="696" y1="0" x2="696" y2="576" stroke="#00000018"/>
+<line x1="720" y1="0" x2="720" y2="576" stroke="#00000018"/>
+<line x1="744" y1="0" x2="744" y2="576" stroke="#00000018"/>
+<line x1="768" y1="0" x2="768" y2="576" stroke="#00000018"/>
+<line x1="0" y1="0" x2="768" y2="0" stroke="#00000018"/>
+<line x1="0" y1="24" x2="768" y2="24" stroke="#00000018"/>
+<line x1="0" y1="48" x2="768" y2="48" stroke="#00000018"/>
+<line x1="0" y1="72" x2="768" y2="72" stroke="#00000018"/>
+<line x1="0" y1="96" x2="768" y2="96" stroke="#00000018"/>
+<line x1="0" y1="120" x2="768" y2="120" stroke="#00000018"/>
+<line x1="0" y1="144" x2="768" y2="144" stroke="#00000018"/>
+<line x1="0" y1="168" x2="768" y2="168" stroke="#00000018"/>
+<line x1="0" y1="192" x2="768" y2="192" stroke="#00000018"/>
+<line x1="0" y1="216" x2="768" y2="216" stroke="#00000018"/>
+<line x1="0" y1="240" x2="768" y2="240" stroke="#00000018"/>
+<line x1="0" y1="264" x2="768" y2="264" stroke="#00000018"/>
+<line x1="0" y1="288" x2="768" y2="288" stroke="#00000018"/>
+<line x1="0" y1="312" x2="768" y2="312" stroke="#00000018"/>
+<line x1="0" y1="336" x2="768" y2="336" stroke="#00000018"/>
+<line x1="0" y1="360" x2="768" y2="360" stroke="#00000018"/>
+<line x1="0" y1="384" x2="768" y2="384" stroke="#00000018"/>
+<line x1="0" y1="408" x2="768" y2="408" stroke="#00000018"/>
+<line x1="0" y1="432" x2="768" y2="432" stroke="#00000018"/>
+<line x1="0" y1="456" x2="768" y2="456" stroke="#00000018"/>
+<line x1="0" y1="480" x2="768" y2="480" stroke="#00000018"/>
+<line x1="0" y1="504" x2="768" y2="504" stroke="#00000018"/>
+<line x1="0" y1="528" x2="768" y2="528" stroke="#00000018"/>
+<line x1="0" y1="552" x2="768" y2="552" stroke="#00000018"/>
+<line x1="0" y1="576" x2="768" y2="576" stroke="#00000018"/>
+<circle cx="612.0" cy="252.0" r="7" fill="#e04848" stroke="#fff" stroke-width="2"/>
+<text x="612.0" y="242.0" text-anchor="middle" font-size="10" fill="#1d1a24">gardienne du phare</text>
+<circle cx="300.0" cy="348.0" r="7" fill="#e04848" stroke="#fff" stroke-width="2"/>
+<text x="300.0" y="338.0" text-anchor="middle" font-size="10" fill="#1d1a24">pecheuse</text>
+<circle cx="444.0" cy="300.0" r="7" fill="#e04848" stroke="#fff" stroke-width="2"/>
+<circle cx="636.0" cy="468.0" r="7" fill="#e04848" stroke="#fff" stroke-width="2"/>
+<text x="636.0" y="458.0" text-anchor="middle" font-size="10" fill="#1d1a24">pecheur</text>
+<circle cx="348.0" cy="276.0" r="7" fill="#e04848" stroke="#fff" stroke-width="2"/>
+<text x="348.0" y="266.0" text-anchor="middle" font-size="10" fill="#1d1a24">enfant</text>
+<circle cx="156.0" cy="132.0" r="7" fill="#8a4fd0" stroke="#fff" stroke-width="2"/>
+<circle cx="492.0" cy="492.0" r="7" fill="#8a4fd0" stroke="#fff" stroke-width="2"/>
+<circle cx="708.0" cy="468.0" r="7" fill="#8a4fd0" stroke="#fff" stroke-width="2"/>
+<circle cx="372.0" cy="420.0" r="7" fill="#8a4fd0" stroke="#fff" stroke-width="2"/>
+<circle cx="204.0" cy="84.0" r="7" fill="#8a4fd0" stroke="#fff" stroke-width="2"/>
+<rect x="72" y="216" width="48" height="48" rx="12.0" fill="#f0a000" fill-opacity="0.85" stroke="#fff" stroke-width="2"/>
+<text x="96.0" y="230.0" text-anchor="middle" font-size="10" fill="#1d1a24">majestueuse</text>
+<rect x="4" y="584" width="12" height="12" fill="#c9885a"/>
+<text x="20" y="594" font-size="11" fill="#1d1a24">bâtiment</text>
+<rect x="88" y="584" width="12" height="12" fill="#d8b56e"/>
+<text x="104" y="594" font-size="11" fill="#1d1a24">voie</text>
+<rect x="144" y="584" width="12" height="12" fill="#7fd4d4"/>
+<text x="160" y="594" font-size="11" fill="#1d1a24">eau</text>
+<rect x="193" y="584" width="12" height="12" fill="#7ab648"/>
+<text x="209" y="594" font-size="11" fill="#1d1a24">végétation</text>
+<rect x="291" y="584" width="12" height="12" fill="#cadb8e"/>
+<text x="307" y="594" font-size="11" fill="#1d1a24">culture</text>
+<rect x="368" y="584" width="12" height="12" fill="#9a938c"/>
+<text x="384" y="594" font-size="11" fill="#1d1a24">roche</text>
+<rect x="431" y="584" width="12" height="12" fill="#a89ec4"/>
+<text x="447" y="594" font-size="11" fill="#1d1a24">objet</text>
+<circle cx="500" cy="590" r="6" fill="#e04848" stroke="#fff" stroke-width="2"/>
+<text x="510" y="594" font-size="11" fill="#1d1a24">humain</text>
+<circle cx="570" cy="590" r="6" fill="#8a4fd0" stroke="#fff" stroke-width="2"/>
+<text x="580" y="594" font-size="11" fill="#1d1a24">créature</text>
+<circle cx="654" cy="590" r="6" fill="#f0a000" stroke="#fff" stroke-width="2"/>
+<text x="664" y="594" font-size="11" fill="#1d1a24">majestueuse</text>
+</svg>

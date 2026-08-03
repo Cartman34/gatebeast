@@ -1,0 +1,36 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — exactement l'angle des cartes
+de jeu de rôle vues de dessus, le même que celui des planches du monde. On regarde le sujet d'en haut et
+un peu de face. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — une tuile de sol, destinée à être répétée en damier pour couvrir le sol d'une carte vue de dessus.
+ÉCHELLE ANNONCÉE : 1 case.
+
+UNE SEULE MATIÈRE, EN PLEIN CADRE. L'image montre uniquement la surface décrite ci-dessous, vue d'en
+haut, remplissant TOUTE l'image d'un bord à l'autre. Il n'y a pas de fond : la matière EST l'image.
+Aucun objet posé dessus, aucun être vivant, aucune bordure, aucun cadre, aucun texte, aucune ombre
+portée d'un élément extérieur.
+
+La matière est RÉGULIÈRE SUR TOUTE LA SURFACE : sa densité, sa teinte et son grain sont les mêmes au
+centre et sur les bords, sans zone plus claire ni plus sombre, sans motif dominant qui attirerait l'œil
+à un endroit. Elle doit pouvoir se répéter côte à côte sans qu'on repère la jointure.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
+aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+SOL-001 : Une PRAIRIE RASE d'herbe verte vive et fraîche, tondue court, telle qu'on la voit du dessus : un tapis dense de brins courts, d'un vert franc et lumineux légèrement plus clair par endroits, sans fleur, sans caillou, sans touffe haute, sans terre nue. La texture est fine et régulière, le relief presque nul.
