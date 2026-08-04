@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plate P5 cliff, fifth pass — v4 landed the owner's Q3 geometry, the slender lighthouse, Brittany and
+"""Plate P5 cliff, fifth pass — v4 landed the operator's Q3 geometry, the slender lighthouse, Brittany and
 the richer population, and all of that is carried unchanged. Fixed here, from the v4 report: the CARVED
 STAIR was simply not drawn — a small work with no declared footprint gets lost, so it now has its own
 emprise, its own step count and its own paragraph; the plateau was far too empty (43.8% of load), so the

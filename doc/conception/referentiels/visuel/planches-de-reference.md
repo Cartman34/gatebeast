@@ -1,6 +1,6 @@
 # Planches de référence
 
-Ces planches ne sont pas le monde du jeu : elles **figent la direction artistique** sur beaucoup de contenu, pour qu'elle soit reproductible ensuite. La direction est **validée par le propriétaire (2026-08-03)** sur les six planches en l'état — imperfections assumées, améliorées individuellement plus tard, hors du chemin du POC.
+Ces planches ne sont pas le monde du jeu : elles **figent la direction artistique** sur beaucoup de contenu, pour qu'elle soit reproductible ensuite. La direction est **validée par l'opérateur (2026-08-03)** sur les six planches en l'état — imperfections assumées, améliorées individuellement plus tard, hors du chemin du POC.
 
 **Intention :** une seule scène ne suffit pas à fixer un style. Six planches de biomes différents, sans aucun élément commun, montrent comment la direction se comporte sur des matières, des architectures et des lumières variées.
 
@@ -27,7 +27,7 @@ Six planches, chacune de 1536 × 1152 pixels et 32 × 24 cases, disposées en de
 
 **Une créature majestueuse par planche.** Chaque planche montre **une** créature rare, remarquable par son allure plus que par sa taille. Au repos, **deux cases au sol** suffisent ; certaines espèces montent plus haut, et une envergure déployée — ailes, membranes, panache — peut occuper davantage sans que l'emprise au sol change. Elle porte sa rune comme les autres. C'est le pendant des créatures rares du genre : elle donne à chaque lieu une raison d'être exploré. Écarté : une créature géante systématique (elle écrase la scène et banalise la rareté).
 
-**Toutes les planches sont également et fortement lumineuses** — décision du propriétaire : la luminosité ne varie pas d'un biome à l'autre et ne baisse jamais d'une version à l'autre. Cible chiffrée, vérifiée à la mesure après chaque génération : **luminance entre 115 et 130, part sombre au plus 10 %**. La lumière se prescrit positivement : soleil franc, ombres courtes et pâles, toits et façades éclairés — jamais par le seul interdit du sombre.
+**Toutes les planches sont également et fortement lumineuses** — décision de l'opérateur : la luminosité ne varie pas d'un biome à l'autre et ne baisse jamais d'une version à l'autre. Cible chiffrée, vérifiée à la mesure après chaque génération : **luminance entre 115 et 130, part sombre au plus 10 %**. La lumière se prescrit positivement : soleil franc, ombres courtes et pâles, toits et façades éclairés — jamais par le seul interdit du sombre.
 
 **Pas plus d'une case sur sept sombre, l'eau comprise.** La contrainte porte sur la planche entière et compte l'eau comme le reste : c'est l'eau, en couvrant de grandes surfaces, qui a fait basculer la mesure. Une planche qui dépasse ce seuil est fautive quelle que soit sa composition.
 

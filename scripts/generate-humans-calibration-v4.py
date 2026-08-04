@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Human scale calibration, fourth attempt — owner's request: 3 men, 3 women, 2 children, each shown
+"""Human scale calibration, fourth attempt — operator's request: 3 men, 3 women, 2 children, each shown
 STANDING on the top row and, directly below, the SAME person SITTING. French prompt, sizes in tiles and
 image ratios only — never pixels for elements (frame size stays, the backend needs it)."""
 import subprocess

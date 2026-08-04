@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -40 760 780">
+  <!-- Geometry of the fence assembly. Every shape below is the joint validated on its own, large,
+       and replicated — nothing is redrawn from memory.
+
+       HOW IT WAS OBTAINED, because that is what saved it: the joint was studied ALONE and enlarged
+       until it was right (local/geometrie-essai.svg), against the produced image. Judged on the whole
+       assembly, defects of two units are invisible and get validated wrong.
+
+       THE FOUR RULES THE JOINT ESTABLISHES
+       - A rail is ONE CLOSED OUTLINE. The side entering a post carries no straight edge: the half
+         section closes the shape. A rectangle with a cap laid on it shows its own edge underneath.
+       - A rail NEVER shows a whole section — half the cut face is on the far side of the log. Only a
+         post shows a whole ellipse: its cut top, which nothing covers.
+       - Seen almost edge-on, the section of an east-west log is BARELY ARCHED: 2.5 across for 8 high.
+       - A north-south run shows ONE shaft, not two. Both rails share the same vertical and overlap
+         almost entirely, so the lower one is hidden; drawing it only doubles the outline.
+
+       MEASURES, in a post's own frame, one cell = 100:
+         post   32 across, 58 tall, cut top 16 x 10
+         east-west rail  70 long, 16 thick, upper at 45 above the ground line, lower at 19
+         north-south rail  16 wide, dome 8 x 5 at 33 above the ground line, running 63 past it
+
+       Depth, row by row from north to south: the posts, then the north-south rails leaving
+       southwards, then the east-west rails, which pass in front of everything in their row.
+
+       Geometry only: no texture, no colour, no light. -->
+
+  <rect x="-30" y="-40" width="760" height="780" fill="#f6f2e8"/>
+
+  <defs>
+    <g id="post">
+      <path d="M -16 -58 L -16 0 A 16 10 0 0 0 16 0 L 16 -58 Z"/>
+      <ellipse cx="0" cy="-58" rx="16" ry="10"/>
+    </g>
+    <path id="ns" d="M -8 63 L -8 -33 A 8 5 0 0 1 8 -33 L 8 63"/>
+    <path id="ewu" d="M 15 -45 L 85 -45 A 2.5 8 0 0 1 85 -29 L 15 -29 A 2.5 8 0 0 1 15 -45 Z"/>
+    <path id="ewl" d="M 15 -19 L 85 -19 A 2.5 8 0 0 1 85 -3 L 15 -3 A 2.5 8 0 0 1 15 -19 Z"/>
+  </defs>
+
+  <g fill="#ffffff" stroke="#20222a" stroke-width="2.4">
+
+    <!-- ROW 1 — the northern antenna -->
+    <use href="#post" x="450" y="50"/>
+    <use href="#ns" x="450" y="50"/>
+
+    <!-- ROW 2 — the northern side -->
+    <use href="#post" x="150" y="150"/><use href="#post" x="250" y="150"/>
+    <use href="#post" x="350" y="150"/><use href="#post" x="450" y="150"/>
+    <use href="#post" x="550" y="150"/>
+    <use href="#ns" x="150" y="150"/><use href="#ns" x="350" y="150"/>
+    <use href="#ns" x="550" y="150"/>
+    <use href="#ewu" x="150" y="150"/><use href="#ewl" x="150" y="150"/>
+    <use href="#ewu" x="250" y="150"/><use href="#ewl" x="250" y="150"/>
+    <use href="#ewu" x="350" y="150"/><use href="#ewl" x="350" y="150"/>
+    <use href="#ewu" x="450" y="150"/><use href="#ewl" x="450" y="150"/>
+
+    <!-- ROW 3 — the western antenna joins the side -->
+    <use href="#post" x="50" y="250"/><use href="#post" x="150" y="250"/>
+    <use href="#post" x="350" y="250"/><use href="#post" x="550" y="250"/>
+    <use href="#ns" x="150" y="250"/><use href="#ns" x="350" y="250"/>
+    <use href="#ns" x="550" y="250"/>
+    <use href="#ewu" x="50" y="250"/><use href="#ewl" x="50" y="250"/>
+
+    <!-- ROW 4 — the central run -->
+    <use href="#post" x="150" y="350"/><use href="#post" x="250" y="350"/>
+    <use href="#post" x="350" y="350"/><use href="#post" x="450" y="350"/>
+    <use href="#post" x="550" y="350"/>
+    <use href="#ns" x="150" y="350"/><use href="#ns" x="350" y="350"/>
+    <use href="#ns" x="550" y="350"/>
+    <use href="#ewu" x="150" y="350"/><use href="#ewl" x="150" y="350"/>
+    <use href="#ewu" x="250" y="350"/><use href="#ewl" x="250" y="350"/>
+    <use href="#ewu" x="350" y="350"/><use href="#ewl" x="350" y="350"/>
+    <use href="#ewu" x="450" y="350"/><use href="#ewl" x="450" y="350"/>
+
+    <!-- ROW 5 — the eastern antenna leaves the side -->
+    <use href="#post" x="150" y="450"/><use href="#post" x="350" y="450"/>
+    <use href="#post" x="550" y="450"/><use href="#post" x="650" y="450"/>
+    <use href="#ns" x="150" y="450"/><use href="#ns" x="350" y="450"/>
+    <use href="#ns" x="550" y="450"/>
+    <use href="#ewu" x="550" y="450"/><use href="#ewl" x="550" y="450"/>
+
+    <!-- ROW 6 — the southern side closes the square -->
+    <use href="#post" x="150" y="550"/><use href="#post" x="250" y="550"/>
+    <use href="#post" x="350" y="550"/><use href="#post" x="450" y="550"/>
+    <use href="#post" x="550" y="550"/>
+    <use href="#ns" x="250" y="550"/>
+    <use href="#ewu" x="150" y="550"/><use href="#ewl" x="150" y="550"/>
+    <use href="#ewu" x="250" y="550"/><use href="#ewl" x="250" y="550"/>
+    <use href="#ewu" x="350" y="550"/><use href="#ewl" x="350" y="550"/>
+    <use href="#ewu" x="450" y="550"/><use href="#ewl" x="450" y="550"/>
+
+    <!-- ROW 7 — the southern antenna, in front of everything -->
+    <use href="#post" x="250" y="650"/>
+
+  </g>
+</svg>

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Render each plate composition as a simple SVG plan.
 
-Deliberately simplistic, per the owner: layout of the elements and their bounds, nothing more.
+Deliberately simplistic, per the operator: layout of the elements and their bounds, nothing more.
 A 32x24 grid, one coloured rectangle per footprint with its label, one dot per inhabitant.
 Plans are written next to the plates as plan-<plate>.svg and shown in the review page BEFORE any
 generation is sent — a composition mistake caught on the plan saves a full generation.
@@ -45,7 +45,7 @@ PLATES = {
             ("building", 26, 4, 31, 10, "moulin"),
             ("building", 15, 19, 23, 24, "chaumiere (porte en haut, 17)"),
             ("vegetation", 24, 17, 31, 23, "verger"),
-            # Crops enlarged and doubled (owner, v7): a wider kitchen garden plus a second vegetable
+            # Crops enlarged and doubled (operator, v7): a wider kitchen garden plus a second vegetable
             # field; the wheat moves clear of the mill access on column 28.
             ("field", 1, 12, 7, 15, "potager"),
             ("field", 2, 19, 7, 22, "legumes"),
@@ -76,12 +76,12 @@ PLATES = {
             ("road", 22, 7, 22, 7, ""), ("road", 19, 12, 23, 12, "acces maison du potier"),
             # The camera looks steeply down: a building to the SOUTH raises its height over what sits
             # north of it. The house therefore goes north, the LOW workshop south — neither masks the
-            # other (owner, 2026-08-03).
+            # other (operator, 2026-08-03).
             ("road", 19, 20, 25, 20, "acces atelier"),
             ("road", 4, 17, 4, 17, ""), ("road", 8, 17, 8, 17, ""), ("road", 12, 17, 12, 17, ""),
             ("square", 10, 9, 17, 15, "place"),
             ("water", 13, 11, 14, 12, "fontaine"),
-            # Paving belts (owner's rule): every non-adjoining building is surrounded by a one-tile
+            # Paving belts (operator's rule): every non-adjoining building is surrounded by a one-tile
             # paved band, always joined to the street network. Each rect is the footprint PLUS its
             # belt, drawn before the building so only the belt shows.
             ("road", 1, 1, 10, 9, ""), ("road", 2, 9, 7, 13, ""),
@@ -146,7 +146,7 @@ PLATES = {
     },
     "p5-falaise": {
         "elements": [
-            # Geometry decided by the owner (Q3): the cliff runs the WHOLE bottom edge and climbs the
+            # Geometry decided by the operator (Q3): the cliff runs the WHOLE bottom edge and climbs the
             # right edge only below row 12; the sea lies beyond it, lower; the right joint is a wooden
             # walkway over the sea, reached by the stair carved down from the clifftop path.
             ("rock", 1, 21, 30, 22, "falaise (a-pic) sur tout le bord bas"),

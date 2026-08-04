@@ -15,7 +15,7 @@ ASSETS = Path(__file__).resolve().parent.parent / "assets" / "revue-da"
 TILES_X, TILES_Y = 32, 24
 BUSY_TILE = 22.0  # mean edge energy above which a tile reads as visually busy
 
-# Light target set by the owner (2026-08-03) for EVERY plate: they must be equally and strongly bright.
+# Light target set by the operator (2026-08-03) for EVERY plate: they must be equally and strongly bright.
 LUMINANCE_MIN, LUMINANCE_MAX = 115.0, 130.0
 DARK_MAX = 10.0
 
@@ -59,7 +59,7 @@ def measure(path: Path) -> dict:
 
 
 def light_verdict(mesure: dict) -> str:
-    """The owner's light target, stated plainly: LUMIÈRE OK, or what is out of band and by how much."""
+    """The operator's light target, stated plainly: LUMIÈRE OK, or what is out of band and by how much."""
     ecarts = []
     if mesure["luminance"] < LUMINANCE_MIN:
         ecarts.append(f"luminance {LUMINANCE_MIN - mesure['luminance']:.1f} sous la bande")

@@ -3,7 +3,7 @@
 Single source for the style anchor, the scale/rules block, and the WITNESS SHEETS: every creature and
 every human that appears in a prompt is quoted from its sheet WORD FOR WORD — the generator never
 invents an inhabitant. Sheets live in the design (referentiels/contenu/creatures-temoins.md and
-personnages-temoins.md); the texts below are their verbatim copies. When a sheet changes there, it
+referentiels/visuel/inventaire/personnages.md); the texts below are their verbatim copies. When a sheet changes there, it
 changes here in the same gesture.
 """
 import subprocess
@@ -28,7 +28,7 @@ ANCHOR = (
     "realistic, never flatter. Take ONLY the style from it; the composition below applies."
 )
 
-# The old English SCALE block is gone (owner, 2026-08-03): the French base below is the single
+# The old English SCALE block is gone (operator, 2026-08-03): the French base below is the single
 # standard for every plate. It carried a pixel size for the runes, which the standard forbids.
 
 # Witness sheets — creatures. Verbatim from referentiels/contenu/creatures-temoins.md.
@@ -105,7 +105,7 @@ INDIVIDUALS = {
     "SP-017-1": ("SP-017", "a MEANDER, luminous jade green"),
 }
 
-# Witness sheets — humans. Verbatim from referentiels/contenu/personnages-temoins.md.
+# Witness sheets — humans. Verbatim from referentiels/visuel/inventaire/personnages.md.
 HUMANS = {
     "HU-001": "A farmer in his forties, deep brown skin, short tight-cropped black hair, broad build, a "
               "plain earth-brown work tunic with rolled sleeves, sturdy boots. Open, weathered face.",
@@ -134,7 +134,7 @@ HUMANS = {
 }
 
 
-# French preamble — the calibrated standard adopted by the owner (2026-08-03): prompt in French, style
+# French preamble — the calibrated standard adopted by the operator (2026-08-03): prompt in French, style
 # fully defined in text, every size in tiles and image ratios, NEVER pixels for elements, humans small.
 # The art direction itself, in one paragraph — the single source shared by the plates and by the POC
 # assets. The direction is validated and frozen: this text is what makes an asset match a plate.
@@ -216,7 +216,7 @@ la même forme.
 """
 
 
-# Closing block, appended AFTER every composition (owner, 2026-08-03): on a dense plate the long text
+# Closing block, appended AFTER every composition (operator, 2026-08-03): on a dense plate the long text
 # dilutes the scale rule stated at the top, so it is repeated last, just before "nothing else".
 RAPPEL_FINAL_FR = """
 RAPPEL FINAL, À VÉRIFIER AVANT DE RENDRE L'IMAGE — C'EST LE PREMIER CRITÈRE DE RECETTE :
@@ -237,7 +237,7 @@ RAPPEL FINAL, À VÉRIFIER AVANT DE RENDRE L'IMAGE — C'EST LE PREMIER CRITÈRE
 def preambule_fr(habillage: str = "UNE CASE SUR CINQ") -> str:
     """The French base, with the free-dressing ceiling set for this biome.
 
-    The owner's Q1A decision: the ceiling is per biome, not global — an open plateau or a countryside
+    The operator's Q1A decision: the ceiling is per biome, not global — an open plateau or a countryside
     reads empty at one tile in five. The default reproduces PREAMBULE_FR unchanged.
     """
     original = "au plus UNE CASE SUR CINQ d'habillage libre"
@@ -261,7 +261,7 @@ def human(code: str) -> str:
 def shoot(key: str, prompt: str) -> int:
     """Save the prompt next to the image and launch the generation — never twice for one key.
 
-    The owner's absolute rule: one shot per plate version. An existing target image means the shot was
+    The operator's absolute rule: one shot per plate version. An existing target image means the shot was
     already made; this refuses rather than overwriting it.
     """
     # The prompt is saved first, so the pre-flight check can read the exact text before any shot.

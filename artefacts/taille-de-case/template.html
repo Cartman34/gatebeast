@@ -1,0 +1,110 @@
+<title>GateBeast — quelle taille pour une case ?</title>
+<style>
+  :root{
+    --ground:#f3f1ec; --card:#fcfbf8; --ink:#191d1a; --soft:#5d635c; --faint:#8d938a;
+    --line:#dcd9d0; --accent:#5a7d4e; --accent-ink:#f3f1ec;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--ground:#151815; --card:#1e221e; --ink:#eef0eb; --soft:#a6ada3; --faint:#7b827a;
+      --line:#2e332d; --accent:#8fbb7c; --accent-ink:#151815;}
+  }
+  :root[data-theme="light"]{--ground:#f3f1ec; --card:#fcfbf8; --ink:#191d1a; --soft:#5d635c;
+    --faint:#8d938a; --line:#dcd9d0; --accent:#5a7d4e; --accent-ink:#f3f1ec;}
+  :root[data-theme="dark"]{--ground:#151815; --card:#1e221e; --ink:#eef0eb; --soft:#a6ada3;
+    --faint:#7b827a; --line:#2e332d; --accent:#8fbb7c; --accent-ink:#151815;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans);
+    padding:2.25rem 1.25rem 4rem;}
+  .sheet{max-width:1180px;margin:0 auto;}
+  h1{font:600 2rem/1.15 var(--serif);margin:0 0 .5rem;text-wrap:balance;}
+  .lede{color:var(--soft);max-width:66ch;margin:0 0 .35rem;}
+  .slice{color:var(--faint);font:.85rem/1.5 var(--mono);margin:0 0 1.5rem;}
+  .modes{display:flex;gap:.4rem;margin-bottom:1.75rem;flex-wrap:wrap;}
+  .modes button{font:500 .85rem/1 var(--sans);padding:.55rem .9rem;border:1px solid var(--line);
+    background:var(--card);color:var(--soft);border-radius:2rem;cursor:pointer;}
+  .modes button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);
+    border-color:var(--accent);font-weight:650;}
+  .modes button:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  .panels{display:flex;flex-wrap:wrap;gap:1.5rem;align-items:flex-start;}
+  .panels.equal{flex-direction:column;}
+  figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:.5rem;
+    padding:.85rem;}
+  .panels.equal figure{width:100%;}
+  figcaption{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;align-items:baseline;
+    margin-bottom:.6rem;}
+  .size{font:650 1.05rem/1 var(--serif);}
+  .fact{font:.78rem/1.4 var(--mono);color:var(--faint);font-variant-numeric:tabular-nums;}
+  img{display:block;image-rendering:auto;max-width:100%;height:auto;
+    background:repeating-conic-gradient(#0000 0 25%, #00000010 0 50%) 0 0/16px 16px;}
+  .panels.equal img{width:100%;}
+  .panels.equal img.pixelated{image-rendering:pixelated;}
+  .note{margin-top:2rem;color:var(--soft);font-size:.92rem;max-width:66ch;}
+  .note b{color:var(--ink);}
+</style>
+
+<div class="sheet">
+  <h1 id="title"></h1>
+  <p class="lede" id="lede"></p>
+  <p class="slice" id="slice"></p>
+  <div class="modes" role="group" aria-label="Mode de comparaison">
+    <button type="button" data-mode="native">Taille réelle — combien de monde tient à l'écran</button>
+    <button type="button" data-mode="equal">Même largeur — combien de détail chaque taille garde</button>
+  </div>
+  <div class="panels" id="panels"></div>
+  <p class="note" id="note"></p>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function(){
+  var D = JSON.parse(document.getElementById('data').textContent);
+  function el(t, c, x){ var n = document.createElement(t); if(c){ n.className = c; }
+    if(x != null){ n.textContent = x; } return n; }
+
+  document.getElementById('title').textContent = D.title;
+  document.getElementById('lede').textContent = D.lede;
+  document.getElementById('slice').textContent = 'Portion montrée : ' + D.slice
+    + ' — herbe, barrière, chêne et herbes hautes sont les images réelles ; la silhouette tient lieu'
+    + " d'humain, faute de sprite validée.";
+  document.getElementById('note').textContent = "Au mode « même largeur », les images sont agrandies"
+    + " sans lissage : ce que vous voyez est le détail réellement présent, pas une interpolation qui"
+    + " en inventerait.";
+
+  var panels = document.getElementById('panels');
+  D.panels.forEach(function(p){
+    var fig = el('figure');
+    var cap = el('figcaption');
+    cap.appendChild(el('span', 'size', 'case ' + p.tile + ' px'));
+    cap.appendChild(el('span', 'fact', 'humain debout ' + p.human + ' px'));
+    cap.appendChild(el('span', 'fact', 'carte 64 × 48 : ' + p.map + ' px'));
+    cap.appendChild(el('span', 'fact', 'visible sur 1920 × 1080 : ' + p.onScreen + ' cases'));
+    fig.appendChild(cap);
+    var img = document.createElement('img');
+    img.src = p.image;
+    img.alt = 'Scène de ' + D.slice + ' à ' + p.tile + ' pixels par case';
+    img.width = p.width;
+    img.height = p.height;
+    fig.appendChild(img);
+    panels.appendChild(fig);
+  });
+
+  var buttons = document.querySelectorAll('.modes button');
+  function setMode(mode){
+    panels.classList.toggle('equal', mode === 'equal');
+    panels.querySelectorAll('img').forEach(function(img){
+      img.classList.toggle('pixelated', mode === 'equal');
+    });
+    buttons.forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.mode === mode); });
+    try{ localStorage.setItem('gatebeast-tile-mode', mode); }catch(e){}
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){ setMode(b.dataset.mode); });
+  });
+  var saved = null;
+  try{ saved = localStorage.getItem('gatebeast-tile-mode'); }catch(e){}
+  setMode(saved === 'equal' ? 'equal' : 'native');
+})();
+</script>

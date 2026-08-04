@@ -1,0 +1,47 @@
+{
+  "format": "gatebeast-composition-plan",
+  "version": 1,
+  "title": "OB-010 — plan de composition de l'image d'usage",
+  "grid": {
+    "columns": 7,
+    "rows": 7
+  },
+  "default_cell": "transparent",
+  "notes": [
+    "Clôture OB-010. Carré fermé, une case entre chaque angle et chaque intersection ; croix centrale ; quatre antennes d'une case vers l'extérieur, une par côté, partant d'une case entre un angle et une intersection.",
+    "Un point : cette case porte un sujet. Une branche : elle rejoint la case de ce côté-là. Deux cases voisines sans branche entre elles ne se rejoignent pas."
+  ],
+  "cells": [
+    {"column": 2, "row": 2, "subject": "OB-010", "joins": ["e", "s"]},
+    {"column": 3, "row": 2, "subject": "OB-010", "joins": ["e", "w"]},
+    {"column": 4, "row": 2, "subject": "OB-010", "joins": ["e", "s", "w"]},
+    {"column": 5, "row": 2, "subject": "OB-010", "joins": ["n", "e", "w"]},
+    {"column": 6, "row": 2, "subject": "OB-010", "joins": ["s", "w"]},
+
+    {"column": 5, "row": 1, "subject": "OB-010", "joins": ["s"]},
+
+    {"column": 1, "row": 3, "subject": "OB-010", "joins": ["e"]},
+    {"column": 2, "row": 3, "subject": "OB-010", "joins": ["n", "s", "w"]},
+    {"column": 4, "row": 3, "subject": "OB-010", "joins": ["n", "s"]},
+    {"column": 6, "row": 3, "subject": "OB-010", "joins": ["n", "s"]},
+
+    {"column": 2, "row": 4, "subject": "OB-010", "joins": ["n", "e", "s"]},
+    {"column": 3, "row": 4, "subject": "OB-010", "joins": ["e", "w"]},
+    {"column": 4, "row": 4, "subject": "OB-010", "joins": ["n", "e", "s", "w"]},
+    {"column": 5, "row": 4, "subject": "OB-010", "joins": ["e", "w"]},
+    {"column": 6, "row": 4, "subject": "OB-010", "joins": ["n", "s", "w"]},
+
+    {"column": 2, "row": 5, "subject": "OB-010", "joins": ["n", "s"]},
+    {"column": 4, "row": 5, "subject": "OB-010", "joins": ["n", "s"]},
+    {"column": 6, "row": 5, "subject": "OB-010", "joins": ["n", "e", "s"]},
+    {"column": 7, "row": 5, "subject": "OB-010", "joins": ["w"]},
+
+    {"column": 2, "row": 6, "subject": "OB-010", "joins": ["n", "e"]},
+    {"column": 3, "row": 6, "subject": "OB-010", "joins": ["e", "s", "w"]},
+    {"column": 4, "row": 6, "subject": "OB-010", "joins": ["n", "e", "w"]},
+    {"column": 5, "row": 6, "subject": "OB-010", "joins": ["e", "w"]},
+    {"column": 6, "row": 6, "subject": "OB-010", "joins": ["n", "w"]},
+
+    {"column": 3, "row": 7, "subject": "OB-010", "joins": ["n"]}
+  ]
+}

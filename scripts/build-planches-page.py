@@ -88,7 +88,7 @@ def consigne(key: str) -> str:
 
 def plan(key: str) -> str:
     """The composition plan: what was asked, to compare with what was produced. SVG when it exists
-    (layout of elements and their bounds, per the owner), ASCII kept as fallback."""
+    (layout of elements and their bounds, per the operator), ASCII kept as fallback."""
     racine = re.sub(r"-v\d+$", "", key)
     svg = ASSETS / f"plan-{racine}.svg"
     if svg.is_file():
@@ -150,7 +150,7 @@ def section(key: str, name: str, note: str) -> str:
     pending = not path.is_file()
     plan_svg = ASSETS / f"plan-{re.sub(r'-v[0-9]+$', '', key)}.svg"
     # No image yet but a plan exists: the plan takes the image's place, and the review controls stay
-    # active — the owner gives feedback on the plan before any generation.
+    # active — the operator gives feedback on the plan before any generation.
     plan_as_visual = pending and plan_svg.is_file()
     disabled = " disabled" if pending and not plan_as_visual else ""
     if not pending:
@@ -493,7 +493,7 @@ PAGE = f"""<title>GateBeast — Planches de référence</title>
     etat.textContent = 'Copie refusée par le navigateur : le texte est sélectionné, Ctrl+C.';
   }});
 
-  // Plates are published one by one: reloading is how the owner sees a newly published one from his
+  // Plates are published one by one: reloading is how the operator sees a newly published one from his
   // phone. Answers are in localStorage, so a reload keeps them.
   document.getElementById('recharger').addEventListener('click', () => {{
     location.reload();

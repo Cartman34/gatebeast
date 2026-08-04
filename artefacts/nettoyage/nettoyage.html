@@ -1,0 +1,271 @@
+<title>GateBeast — tour de nettoyage</title>
+<style>
+  :root{
+    --ground:#f2f3f0; --card:#fbfbfa; --sunk:#e8eae5;
+    --ink:#16191a; --ink-soft:#5a625f; --ink-faint:#8b938f;
+    --line:#d6dad3; --accent:#2f6d63; --accent-soft:#dfeae7;
+    --keep:#3f6b4c; --drop:#9c4326;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#141716; --card:#1c201e; --sunk:#232825;
+      --ink:#eef1ee; --ink-soft:#a3ada8; --ink-faint:#79837e;
+      --line:#2d3330; --accent:#6fb9ab; --accent-soft:#20302c;
+      --keep:#7fc094; --drop:#e08a68;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#f2f3f0; --card:#fbfbfa; --sunk:#e8eae5;
+    --ink:#16191a; --ink-soft:#5a625f; --ink-faint:#8b938f;
+    --line:#d6dad3; --accent:#2f6d63; --accent-soft:#dfeae7;
+    --keep:#3f6b4c; --drop:#9c4326;
+  }
+  :root[data-theme="dark"]{
+    --ground:#141716; --card:#1c201e; --sunk:#232825;
+    --ink:#eef1ee; --ink-soft:#a3ada8; --ink-faint:#79837e;
+    --line:#2d3330; --accent:#6fb9ab; --accent-soft:#20302c;
+    --keep:#7fc094; --drop:#e08a68;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ground);color:var(--ink);
+    font:16px/1.6 var(--sans);padding:2rem 1.25rem 15rem;}
+  .sheet{max-width:940px;margin:0 auto;}
+  header.head{border-bottom:2px solid var(--ink);padding-bottom:1rem;margin-bottom:1.75rem;}
+  .eyebrow{font:600 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);}
+  h1{font:600 2.1rem/1.1 var(--serif);margin:.5rem 0 .4rem;text-wrap:balance;letter-spacing:-.01em;}
+  .lede{color:var(--ink-soft);max-width:62ch;margin:0;}
+  .tally{display:flex;gap:1.75rem;margin-top:1.1rem;font-variant-numeric:tabular-nums;}
+  .tally div{font:400 .8rem/1.3 var(--sans);color:var(--ink-faint);}
+  .tally b{display:block;font:600 1.5rem/1 var(--serif);color:var(--ink);}
+  section{margin:2.25rem 0;}
+  .cat{display:flex;flex-wrap:wrap;align-items:baseline;gap:.75rem;
+    border-bottom:1px solid var(--line);padding-bottom:.5rem;margin-bottom:.25rem;}
+  .cat h2{font:600 1.15rem/1.3 var(--serif);margin:0;flex:1 1 14rem;}
+  .cat .code{font:600 .7rem/1 var(--mono);letter-spacing:.1em;color:var(--accent);}
+  .bulk{display:flex;gap:.4rem;}
+  .bulk button{font:500 .75rem/1 var(--sans);padding:.4rem .7rem;border:1px solid var(--line);
+    background:var(--card);color:var(--ink-soft);border-radius:.3rem;cursor:pointer;}
+  .bulk button:hover{border-color:var(--accent);color:var(--accent);}
+  .bulk button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .item{display:grid;grid-template-columns:1fr auto;gap:.5rem 1.25rem;align-items:start;
+    padding:.85rem 0;border-bottom:1px solid var(--line);}
+  .item:last-child{border-bottom:0;}
+  .what{min-width:0;}
+  .ref{font:500 .78rem/1.4 var(--mono);color:var(--ink-faint);word-break:break-all;}
+  .ref b{color:var(--accent);font-weight:600;}
+  .say{margin:.15rem 0 0;}
+  .why{margin:.2rem 0 0;color:var(--ink-soft);font-size:.88rem;}
+  .pick{display:flex;gap:.3rem;}
+  .pick label{font:500 .8rem/1 var(--sans);padding:.45rem .75rem;border:1px solid var(--line);
+    border-radius:2rem;cursor:pointer;user-select:none;white-space:nowrap;background:var(--card);}
+  .pick input{position:absolute;opacity:0;width:0;height:0;}
+  .pick label:has(input:checked){border-color:currentColor;font-weight:650;}
+  .pick label.keep:has(input:checked){color:var(--keep);background:var(--accent-soft);}
+  .pick label.drop:has(input:checked){color:var(--drop);background:var(--accent-soft);}
+  .pick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px;}
+  .note{grid-column:1 / -1;}
+  .note textarea{width:100%;min-height:2.2rem;resize:vertical;padding:.4rem .55rem;
+    font:.85rem/1.5 var(--sans);background:var(--sunk);color:var(--ink);
+    border:1px solid var(--line);border-radius:.3rem;}
+  .note textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  footer.bar{position:fixed;inset:auto 0 0 0;background:var(--card);
+    border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.10);padding:.75rem 1.25rem;}
+  .bar-in{max-width:940px;margin:0 auto;display:flex;gap:1rem;align-items:flex-start;}
+  #recap{flex:1;min-height:6rem;font:.76rem/1.5 var(--mono);padding:.5rem .6rem;
+    background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:.3rem;
+    resize:vertical;}
+  .bar-side{display:flex;flex-direction:column;gap:.4rem;min-width:11rem;}
+  #copy{font:600 .85rem/1 var(--sans);padding:.6rem .9rem;border:0;border-radius:.3rem;
+    background:var(--accent);color:var(--ground);cursor:pointer;}
+  #copy:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  #state{font-size:.78rem;color:var(--ink-faint);}
+  @media (max-width:640px){
+    .item{grid-template-columns:1fr;}
+    .bar-in{flex-direction:column;}
+    .bar-side{flex-direction:row;align-items:center;width:100%;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+
+<div class="sheet">
+  <header class="head">
+    <div class="eyebrow" id="screen-code"></div>
+    <h1 id="title"></h1>
+    <p class="lede" id="lede"></p>
+    <div class="tally">
+      <div><b id="n-total">0</b>éléments relevés</div>
+      <div><b id="n-drop">0</b>à nettoyer</div>
+      <div><b id="n-keep">0</b>à garder</div>
+      <div><b id="n-open">0</b>sans réponse</div>
+    </div>
+  </header>
+  <div id="body"></div>
+</div>
+
+<footer class="bar"><div class="bar-in">
+  <textarea id="recap" readonly aria-label="Récapitulatif"></textarea>
+  <div class="bar-side">
+    <button id="copy" type="button">Copier le récapitulatif</button>
+    <span id="state"></span>
+  </div>
+</div></footer>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function(){
+  var D = JSON.parse(document.getElementById('data').textContent);
+  var STORE = 'gatebeast-nettoyage-v1';
+
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if(cls){ n.className = cls; }
+    if(text != null){ n.textContent = text; }
+    return n;
+  }
+
+  document.getElementById('screen-code').textContent = D.screen;
+  document.getElementById('title').textContent = D.title;
+  document.getElementById('lede').textContent = D.lede;
+
+  var body = document.getElementById('body');
+  var all = [];
+
+  D.categories.forEach(function(cat){
+    var sec = el('section');
+    var head = el('div', 'cat');
+    var h = el('h2', null, cat.name);
+    var code = el('span', 'code', cat.code);
+    var bulk = el('div', 'bulk');
+    [['Tout nettoyer', 'drop'], ['Tout garder', 'keep']].forEach(function(pair){
+      var b = el('button', null, pair[0]);
+      b.type = 'button';
+      b.addEventListener('click', function(){
+        cat.items.forEach(function(item){
+          var input = document.querySelector('input[name="' + CSS.escape(item.code) +
+            '"][value="' + pair[1] + '"]');
+          if(input){ input.checked = true; }
+        });
+        refresh(); save();
+      });
+      bulk.appendChild(b);
+    });
+    head.appendChild(code); head.appendChild(h); head.appendChild(bulk);
+    sec.appendChild(head);
+
+    cat.items.forEach(function(item){
+      all.push(item);
+      var row = el('div', 'item');
+      var what = el('div', 'what');
+      var ref = el('div', 'ref');
+      ref.appendChild(el('b', null, item.code + '  '));
+      ref.appendChild(document.createTextNode(item.ref));
+      what.appendChild(ref);
+      what.appendChild(el('p', 'say', item.say));
+      if(item.why){ what.appendChild(el('p', 'why', item.why)); }
+      row.appendChild(what);
+
+      var pick = el('div', 'pick');
+      [['Nettoyer', 'drop'], ['Garder', 'keep']].forEach(function(pair){
+        var lab = el('label', pair[1]);
+        var input = document.createElement('input');
+        input.type = 'radio';
+        input.name = item.code;
+        input.value = pair[1];
+        lab.appendChild(input);
+        lab.appendChild(el('span', null, pair[0]));
+        pick.appendChild(lab);
+      });
+      row.appendChild(pick);
+
+      var note = el('div', 'note');
+      var zone = document.createElement('textarea');
+      zone.placeholder = D.placeholder;
+      zone.setAttribute('data-note', item.code);
+      note.appendChild(zone);
+      row.appendChild(note);
+
+      sec.appendChild(row);
+    });
+    body.appendChild(sec);
+  });
+
+  var recap = document.getElementById('recap');
+  var state = document.getElementById('state');
+
+  function chosen(code){
+    var input = document.querySelector('input[name="' + CSS.escape(code) + '"]:checked');
+    return input ? input.value : '';
+  }
+  function noteOf(code){
+    var zone = document.querySelector('textarea[data-note="' + CSS.escape(code) + '"]');
+    return zone ? zone.value.trim() : '';
+  }
+
+  function refresh(){
+    var lines = [D.title, D.stamp, ''];
+    var drop = 0, keep = 0;
+    D.categories.forEach(function(cat){
+      var block = [];
+      cat.items.forEach(function(item){
+        var verdict = chosen(item.code);
+        var note = noteOf(item.code);
+        if(verdict === 'drop'){ drop += 1; }
+        if(verdict === 'keep'){ keep += 1; }
+        if(!verdict && !note){ return; }
+        block.push('  ' + item.code + ' ' + (verdict === 'drop' ? 'NETTOYER'
+          : verdict === 'keep' ? 'garder' : '(commentaire seul)') + ' — ' + item.ref);
+        if(note){ block.push('    ' + note); }
+      });
+      if(block.length){ lines.push(cat.code + ' ' + cat.name); lines.push.apply(lines, block); }
+    });
+    recap.value = lines.join('\n');
+    document.getElementById('n-total').textContent = all.length;
+    document.getElementById('n-drop').textContent = drop;
+    document.getElementById('n-keep').textContent = keep;
+    document.getElementById('n-open').textContent = all.length - drop - keep;
+    state.textContent = (drop + keep) + ' / ' + all.length + ' tranchés.';
+  }
+
+  function save(){
+    var out = {};
+    all.forEach(function(item){ out[item.code] = {v: chosen(item.code), n: noteOf(item.code)}; });
+    try{ localStorage.setItem(STORE, JSON.stringify(out)); }catch(e){}
+  }
+
+  function restore(){
+    var raw = null;
+    try{ raw = JSON.parse(localStorage.getItem(STORE) || 'null'); }catch(e){ return; }
+    if(!raw){ return; }
+    all.forEach(function(item){
+      var kept = raw[item.code];
+      if(!kept){ return; }
+      if(kept.v){
+        var input = document.querySelector('input[name="' + CSS.escape(item.code) +
+          '"][value="' + kept.v + '"]');
+        if(input){ input.checked = true; }
+      }
+      var zone = document.querySelector('textarea[data-note="' + CSS.escape(item.code) + '"]');
+      if(zone && kept.n){ zone.value = kept.n; }
+    });
+  }
+
+  document.addEventListener('change', function(){ refresh(); save(); });
+  document.addEventListener('input', function(){ refresh(); save(); });
+
+  document.getElementById('copy').addEventListener('click', function(){
+    recap.removeAttribute('readonly');
+    recap.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+    recap.setAttribute('readonly', 'readonly');
+    state.textContent = ok ? D.copied : D.copyRefused;
+  });
+
+  restore();
+  refresh();
+})();
+</script>

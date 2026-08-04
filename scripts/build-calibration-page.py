@@ -66,7 +66,7 @@ def section(key: str, title: str, note: str, rows: list) -> str:
     </section>"""
 
 
-# Most recent attempt first: the owner reads the latest state at the top.
+# Most recent attempt first: the operator reads the latest state at the top.
 SECTIONS = "\n".join(section(*attempt) for attempt in reversed(ATTEMPTS))
 
 PAGE = f"""<title>GateBeast — Calibration de l'échelle humaine</title>

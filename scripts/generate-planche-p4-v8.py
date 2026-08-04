@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Plate P4 marsh, eighth pass — v7 was retained by the owner, so its composition is carried unchanged.
+"""Plate P4 marsh, eighth pass — v7 was retained by the operator, so its composition is carried unchanged.
 Three fixes only: the light standard now in the shared base plus the water and foliage prescribed in
 their bright values (v7 measured 99.9 of luminance, under the 115-130 band); the second hut's outside
-stair lands ON THE WALKWAY, never in the water (the owner's remark); and a size reminder next to EVERY
+stair lands ON THE WALKWAY, never in the water (the operator's remark); and a size reminder next to EVERY
 human (the audit found one of three)."""
 import sys
 from pathlib import Path

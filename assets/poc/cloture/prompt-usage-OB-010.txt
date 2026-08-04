@@ -1,0 +1,67 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — exactement l'angle des cartes
+de jeu de rôle vues de dessus, le même que celui des planches du monde. On regarde le sujet d'en haut et
+un peu de face. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+EXEMPLE D'USAGE — une seule image montrant barrière en rondins POSÉE EN PLACE, toutes ses pièces assemblées, pour
+qu'on puisse les comparer entre elles. Ce n'est pas une sprite : c'est la référence d'ensemble.
+
+LA COMPOSITION, à respecter exactement — une grille de 7 × 7 cases, un dièse marquant une
+case occupée par le sujet et un point une case vide :
+
+....#..
+.#####.
+##.#.#.
+.#####.
+.#.#.##
+.#####.
+..#....
+
+DÉFINITION ATTENDUE : 1344 × 1344 pixels, soit exactement 7 × 7 cases carrées.
+Chaque case fait la même taille, où qu'elle soit dans l'image. N'écris aucune dimension dans l'image.
+
+AUCUNE CONVERGENCE DE PERSPECTIVE : la grille du sol est vue sous le même angle partout, les cases ne
+rétrécissent pas vers le haut. Deux cases de même contenu sont superposables au décalage près — c'est
+ce qui permet d'y découper des pièces réutilisables.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS — entre des rondins, sous une lisse, entre
+des feuilles, dans une fenêtre : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune
+ombre portée, aucun sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CE SUJET EST UNE PIÈCE D'ASSEMBLAGE, PAS UN OBJET ISOLÉ. Des cases voisines porteront la même pièce, et
+l'ensemble doit former une ligne continue, sans décrochement ni interruption.
+
+Le tracé PASSE PAR LE CENTRE de la case et REJOINT LES BORDS indiqués par la variante demandée. Ses
+éléments porteurs — lisses, rondins, rails, revêtement — ATTEIGNENT EXACTEMENT ces bords : ils y sont
+coupés net, à la MÊME HAUTEUR et à la MÊME ÉPAISSEUR de chaque côté, de sorte qu'en posant deux images
+identiques côte à côte, les éléments se prolongent l'un dans l'autre sans marche ni trou.
+
+Les bords que le tracé ne rejoint PAS restent libres : rien ne les touche.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
+aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+CE QUE SA FICHE PRÉCISE, et qui s'applique à chaque case de l'image :
+log-fence-01, type clôture, 1 × 1, infranchissable. Trois garnitures de poteaux, toutes avec les deux lisses qui traversent la case d'un bord à l'autre : posts-2 deux poteaux plantés au tiers et aux deux tiers de la case, de sorte que le vide à gauche, le vide du milieu et le vide à droite soient égaux ; posts-1 un seul poteau au centre ; posts-0 aucun poteau, les lisses seules. Elles existent pour qu'une portée ne double pas ses poteaux à chaque jointure : on alterne les garnitures pour espacer les poteaux régulièrement. Les lisses sont à la même hauteur et à la même épaisseur dans les trois, sinon elles ne se prolongent pas. Formes : les lignes ns et ew, les quatre angles ne, es, sw, nw, et le portillon dans ses deux sens
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+OB-010 : A waist-high fence of split logs, two horizontal rails pegged between stout round posts, the bark still on the wood and silvered by weather, moss at the foot of every post and the grass grown long against it.

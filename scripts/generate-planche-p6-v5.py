@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plate P6 beach, fifth pass — v4's faults, in the owner's order: humans STILL not on the calibrated
+"""Plate P6 beach, fifth pass — v4's faults, in the operator's order: humans STILL not on the calibrated
 scale (so the scale is hammered at the head, next to every human, and again at the very tail), too
 empty (38.9% of load — free dressing raised to one tile in three and the coastal planting widened),
 luminance far too high (147.7 — bright but never overexposed, deep golden sand, no burnt white), and

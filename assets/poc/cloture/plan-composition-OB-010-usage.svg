@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 476" font-family="sans-serif">
+<rect width="720" height="476" fill="#f6f2e8"/>
+<text x="4" y="17" font-size="14" font-weight="600" fill="#1d1a24">OB-010 — plan de composition de l'image d'usage</text>
+<g transform="translate(0,26)">
+<rect x="40" y="40" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="80" y="40" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="120" y="40" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="160" y="40" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="200" y="40" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="160" y="0" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="0" y="80" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="40" y="80" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="120" y="80" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="200" y="80" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="40" y="120" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="80" y="120" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="120" y="120" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="160" y="120" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="200" y="120" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="40" y="160" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="120" y="160" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="200" y="160" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="240" y="160" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="40" y="200" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="80" y="200" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="120" y="200" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="160" y="200" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="200" y="200" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<rect x="80" y="240" width="40" height="40" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
+<line x1="20.0" y1="100.0" x2="40.0" y2="100.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="20.0" cy="100.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="60.0" y1="60.0" x2="80.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="60.0" y1="60.0" x2="60.0" y2="80.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="60.0" cy="60.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="60.0" y1="100.0" x2="60.0" y2="80.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="60.0" y1="100.0" x2="60.0" y2="120.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="60.0" y1="100.0" x2="40.0" y2="100.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="60.0" cy="100.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="60.0" y1="140.0" x2="80.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="60.0" y1="140.0" x2="60.0" y2="120.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="60.0" y1="140.0" x2="60.0" y2="160.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="60.0" cy="140.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="60.0" y1="180.0" x2="60.0" y2="160.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="60.0" y1="180.0" x2="60.0" y2="200.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="60.0" cy="180.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="60.0" y1="220.0" x2="80.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="60.0" y1="220.0" x2="60.0" y2="200.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="60.0" cy="220.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="100.0" y1="60.0" x2="120.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="100.0" y1="60.0" x2="80.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="100.0" cy="60.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="100.0" y1="140.0" x2="120.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="100.0" y1="140.0" x2="80.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="100.0" cy="140.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="100.0" y1="220.0" x2="120.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="100.0" y1="220.0" x2="100.0" y2="240.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="100.0" y1="220.0" x2="80.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="100.0" cy="220.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="100.0" y1="260.0" x2="100.0" y2="240.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="100.0" cy="260.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="140.0" y1="60.0" x2="160.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="60.0" x2="140.0" y2="80.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="60.0" x2="120.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="140.0" cy="60.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="140.0" y1="100.0" x2="140.0" y2="80.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="100.0" x2="140.0" y2="120.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="140.0" cy="100.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="140.0" y1="140.0" x2="160.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="140.0" x2="140.0" y2="120.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="140.0" x2="140.0" y2="160.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="140.0" x2="120.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="140.0" cy="140.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="140.0" y1="180.0" x2="140.0" y2="160.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="180.0" x2="140.0" y2="200.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="140.0" cy="180.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="140.0" y1="220.0" x2="160.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="220.0" x2="140.0" y2="200.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="140.0" y1="220.0" x2="120.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="140.0" cy="220.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="180.0" y1="20.0" x2="180.0" y2="40.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="180.0" cy="20.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="180.0" y1="60.0" x2="200.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="180.0" y1="60.0" x2="180.0" y2="40.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="180.0" y1="60.0" x2="160.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="180.0" cy="60.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="180.0" y1="140.0" x2="200.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="180.0" y1="140.0" x2="160.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="180.0" cy="140.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="180.0" y1="220.0" x2="200.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="180.0" y1="220.0" x2="160.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="180.0" cy="220.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="220.0" y1="60.0" x2="220.0" y2="80.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="220.0" y1="60.0" x2="200.0" y2="60.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="220.0" cy="60.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="220.0" y1="100.0" x2="220.0" y2="80.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="220.0" y1="100.0" x2="220.0" y2="120.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="220.0" cy="100.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="220.0" y1="140.0" x2="220.0" y2="120.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="220.0" y1="140.0" x2="220.0" y2="160.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="220.0" y1="140.0" x2="200.0" y2="140.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="220.0" cy="140.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="220.0" y1="180.0" x2="240.0" y2="180.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="220.0" y1="180.0" x2="220.0" y2="160.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="220.0" y1="180.0" x2="220.0" y2="200.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="220.0" cy="180.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="220.0" y1="220.0" x2="220.0" y2="200.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<line x1="220.0" y1="220.0" x2="200.0" y2="220.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="220.0" cy="220.0" r="2.2399999999999998" fill="#000000"/>
+<line x1="260.0" y1="180.0" x2="240.0" y2="180.0" stroke="#000000" stroke-width="1.6" stroke-linecap="butt"/>
+<circle cx="260.0" cy="180.0" r="2.2399999999999998" fill="#000000"/>
+<rect x="1.5" y="81.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="7.5" y="90.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">G</text>
+<rect x="41.5" y="41.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="47.5" y="50.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">B</text>
+<rect x="41.5" y="81.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="47.5" y="90.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">H</text>
+<rect x="41.5" y="121.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="47.5" y="130.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">J</text>
+<rect x="41.5" y="161.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="47.5" y="170.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">I</text>
+<rect x="41.5" y="201.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="47.5" y="210.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">M</text>
+<rect x="81.5" y="41.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="87.5" y="50.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">C</text>
+<rect x="81.5" y="121.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="87.5" y="130.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">C</text>
+<rect x="81.5" y="201.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="87.5" y="210.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">D</text>
+<rect x="81.5" y="241.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="87.5" y="250.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">O</text>
+<rect x="121.5" y="41.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="127.5" y="50.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">D</text>
+<rect x="121.5" y="81.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="127.5" y="90.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">I</text>
+<rect x="121.5" y="121.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="127.5" y="130.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">K</text>
+<rect x="121.5" y="161.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="127.5" y="170.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">I</text>
+<rect x="121.5" y="201.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="127.5" y="210.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">E</text>
+<rect x="161.5" y="1.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="167.5" y="10.899999999999999" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">A</text>
+<rect x="161.5" y="41.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="167.5" y="50.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">E</text>
+<rect x="161.5" y="121.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="167.5" y="130.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">C</text>
+<rect x="161.5" y="201.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="167.5" y="210.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">C</text>
+<rect x="201.5" y="41.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="207.5" y="50.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">F</text>
+<rect x="201.5" y="81.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="207.5" y="90.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">I</text>
+<rect x="201.5" y="121.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="207.5" y="130.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">H</text>
+<rect x="201.5" y="161.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="207.5" y="170.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">J</text>
+<rect x="201.5" y="201.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="207.5" y="210.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">N</text>
+<rect x="241.5" y="161.5" width="12.0" height="12.0" rx="2.4" fill="#f6f2e8" fill-opacity="0.88"/>
+<text x="247.5" y="170.9" text-anchor="middle" font-size="8.8" font-weight="700" fill="#000000">L</text>
+<line x1="0" y1="0" x2="0" y2="280" stroke="#00000018"/>
+<line x1="40" y1="0" x2="40" y2="280" stroke="#00000018"/>
+<line x1="80" y1="0" x2="80" y2="280" stroke="#00000018"/>
+<line x1="120" y1="0" x2="120" y2="280" stroke="#00000018"/>
+<line x1="160" y1="0" x2="160" y2="280" stroke="#00000018"/>
+<line x1="200" y1="0" x2="200" y2="280" stroke="#00000018"/>
+<line x1="240" y1="0" x2="240" y2="280" stroke="#00000018"/>
+<line x1="280" y1="0" x2="280" y2="280" stroke="#00000018"/>
+<line x1="0" y1="0" x2="280" y2="0" stroke="#00000018"/>
+<line x1="0" y1="40" x2="280" y2="40" stroke="#00000018"/>
+<line x1="0" y1="80" x2="280" y2="80" stroke="#00000018"/>
+<line x1="0" y1="120" x2="280" y2="120" stroke="#00000018"/>
+<line x1="0" y1="160" x2="280" y2="160" stroke="#00000018"/>
+<line x1="0" y1="200" x2="280" y2="200" stroke="#00000018"/>
+<line x1="0" y1="240" x2="280" y2="240" stroke="#00000018"/>
+<line x1="0" y1="280" x2="280" y2="280" stroke="#00000018"/>
+<rect x="4" y="288" width="12" height="12" fill="#a89ec4"/>
+<text x="20" y="298" font-size="11" fill="#1d1a24">OB-010</text>
+<text x="4" y="314" font-size="11" fill="#5c5468">Clôture OB-010. Carré fermé, une case entre chaque angle et chaque intersection ; croix centrale ; quatre antennes d'une</text>
+<text x="4" y="328" font-size="11" fill="#5c5468">case vers l'extérieur, une par côté, partant d'une case entre un angle et une intersection.</text>
+<text x="4" y="342" font-size="11" fill="#5c5468">Un point : cette case porte un sujet. Une branche : elle rejoint la case de ce côté-là. Deux cases voisines sans branche</text>
+<text x="4" y="356" font-size="11" fill="#5c5468">entre elles ne se rejoignent pas.</text>
+<text x="4" y="370" font-size="11" fill="#5c5468">Pièces distinctes — deux cases portant la même lettre sont la même sprite :</text>
+<text x="4" y="384" font-size="11" fill="#5c5468">   A OB-010 shape-s · B OB-010 shape-es · C OB-010 shape-ew · D OB-010 shape-esw · E OB-010 shape-new</text>
+<text x="4" y="398" font-size="11" fill="#5c5468">   F OB-010 shape-sw · G OB-010 shape-e · H OB-010 shape-nsw · I OB-010 shape-ns · J OB-010 shape-nes</text>
+<text x="4" y="412" font-size="11" fill="#5c5468">   K OB-010 shape-nesw · L OB-010 shape-w · M OB-010 shape-ne · N OB-010 shape-nw · O OB-010 shape-n</text>
+<text x="4" y="426" font-size="11" fill="#5c5468">Cellule par défaut : transparent.</text>
+<text x="4" y="440" font-size="11" fill="#5c5468">25 cases déclarées, 15 formes distinctes sur 15. Absentes : aucune.</text>
+</g></svg>

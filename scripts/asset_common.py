@@ -122,8 +122,9 @@ ELEMENTS = {
 }
 
 # The player character. DRAFT, written here to unblock the capability probe the lead asked for; it is
-# NOT yet a design sheet. It must be transcribed into personnages-temoins.md before any production
-# series, exactly as every other inhabitant.
+# NOT a design sheet, and it will not become one: there is no "player character" subject. There are
+# only humans, at referentiels/visuel/inventaire/personnages.md, and the player character could be
+# any of them (operator, 2026-08-04). This draft stays here as the probe text it was.
 JOUEUR = ("HU-000", "2 cases debout",
           "Le personnage-joueur : un humain d'aventure classique, jeune adulte, silhouette "
           "d'explorateur immédiatement lisible et sans excentricité. Peau brune moyenne, cheveux noirs "

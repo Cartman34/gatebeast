@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Pre-flight check of the CURRENT standard, run before every shot. A FAULT means no generation.
 
-The owner's rule (2026-08-03): the standard applies to every plate without exception, and it is checked
+The operator's rule (2026-08-03): the standard applies to every plate without exception, and it is checked
 mechanically, not by memory. This reads the prompt files actually saved next to the images — the exact
 text that was or will be sent — and verifies, per prompt:
 

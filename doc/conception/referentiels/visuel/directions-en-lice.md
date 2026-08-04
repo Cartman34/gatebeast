@@ -1,8 +1,8 @@
 # Directions artistiques en lice
 
-**Statut : esquisse.** Aucune de ces directions n'est retenue. Elles sont en cours d'arbitrage par revue visuelle et n'engagent rien tant que le propriétaire n'a pas tranché. Une fois le choix fait, la direction retenue remonte en décision dans [le nœud visuel](index.md) et ce document disparaît.
+**Statut : esquisse.** Aucune de ces directions n'est retenue. Elles sont en cours d'arbitrage par revue visuelle et n'engagent rien tant que l'opérateur n'a pas tranché. Une fois le choix fait, la direction retenue remonte en décision dans [le nœud visuel](index.md) et ce document disparaît.
 
-**Intention :** figer la description de chaque direction. Une description qui dérive d'un tour à l'autre produit des images qui ne se comparent plus — c'est arrivé, et cela a coûté plusieurs tours. Ces textes ne se modifient que sur décision explicite du propriétaire, jamais par reformulation de l'agent.
+**Intention :** figer la description de chaque direction. Une description qui dérive d'un tour à l'autre produit des images qui ne se comparent plus — c'est arrivé, et cela a coûté plusieurs tours. Ces textes ne se modifient que sur décision explicite de l'opérateur, jamais par reformulation de l'agent.
 
 Les textes sont en anglais : ils sont repris **mot pour mot** dans les consignes de production.
 

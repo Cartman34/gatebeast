@@ -4,10 +4,10 @@ Voir les [règles de l'inventaire](README.md). Emprises en cases pour les végé
 
 ## Campagne et parc — BI-001
 
-- **TR-060 chêne de parc** — `oak-01`, type végétation, 2 × 2. *A broad solitary oak with a thick furrowed trunk and a wide rounded crown of deep green lobed leaves, its lowest branches reaching out almost level, a ring of exposed roots at its foot and moss creeping up one side of the trunk.*
-- **TR-063 petit arbre de parc** — `small-tree-01`, type végétation, 1 × 1. *A young compact tree no wider than a single tile, one slim straight trunk with smooth pale bark, a small dense rounded crown of fresh green leaves, and a ring of short grass at its foot; no spreading surface roots, no low branches reaching sideways.*
-- **TR-061 bosquet dense** — `thicket-01`, type végétation, 1 × 1, infranchissable. *A tight impassable clump of several slender trees grown into one another, their crowns merged into a single dark green mass, trunks barely visible in the shade beneath, bramble and low scrub filling every gap between them.*
-- **TR-062 herbe haute** — `tall-grass-01`, type végétation, 1 × 1, franchissable, posée sur l'herbe rase. *A knee-high tuft of long meadow grass, its blades arching outward in every direction, pale seed heads nodding at their tips, a few blades bent and bleached where they have dried.*
+- **TR-060 grand chêne** — `oak-01`, type arbre, 2 × 2, infranchissable. *A broad solitary oak with a thick furrowed trunk and a wide rounded crown of deep green lobed leaves, its lowest branches reaching out almost level, a ring of exposed roots at its foot and moss creeping up one side of the trunk.*
+- **TR-063 pommier** — `apple-tree-01`, type arbre, 1 × 1, infranchissable. *A young apple tree, its short sturdy trunk rising straight from the turf before dividing low into a handful of upward-reaching branches; the bark grey-brown and finely fissured, the crown compact and rounded, dense with mid-green oval leaves, and a tuft of short grass gathered close around the foot.*
+- **TR-061 bosquet de sapins** — `fir-thicket-01`, type bosquet d'arbres, 2 × 2, infranchissable. *A close stand of young firs grown into one another, their narrow spires overlapping into a single deep green mass, the lowest branches sweeping down to a floor of needle litter and low scrub, the slim trunks glimpsed in the shade between them.*
+- **TR-062 herbe haute** — `tall-grass-01`, type herbe, 1 × 1, franchissable, posée sur l'herbe rase. *A knee-high tuft of long meadow grass, its blades arching outward in every direction, pale seed heads nodding at their tips, a few blades bent and bleached where they have dried.*
 
 ## Arbres
 

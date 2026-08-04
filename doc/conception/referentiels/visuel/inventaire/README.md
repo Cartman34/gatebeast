@@ -1,6 +1,6 @@
 # Inventaire des éléments
 
-**Statut : esquisse.** L'inventaire se construit ; rien n'y est validé tant que le propriétaire n'a pas vu l'élément rendu.
+**Statut : esquisse.** L'inventaire se construit ; rien n'y est validé tant que l'opérateur n'a pas vu l'élément rendu.
 
 **Intention :** pouvoir **désigner** et **reproduire** n'importe quel élément du monde. Sans inventaire, chaque image réinvente ses arbres, ses maisons et ses passants, et rien n'est réutilisable. Avec lui, une image se compose en citant des codes.
 
@@ -21,11 +21,12 @@
 ## Ce que porte chaque entrée
 
 - **Code** `XX-nnn` — il fait foi, et ne change jamais.
-- **Libellé** — le nom du sujet en mots humains, court et clair : « herbe verte avec rosée », « barrière en rondins ». Il ne sert **jamais** à la génération : il sert à reconnaître le sujet d'un coup d'œil, dans l'inventaire comme dans une conversation.
+- **Libellé** — le nom du sujet en mots humains, court et clair : « herbe verte avec rosée », « barrière en rondins ». Il ne sert **jamais** à la génération : il sert à reconnaître le sujet d'un coup d'œil, dans l'inventaire comme dans une conversation. **Il ne nomme jamais un lieu** — « chêne de parc » est proscrit, le même chêne servira ailleurs. Mentionner un **biome** reste possible, sans être attendu : cela ne se justifie que si le sujet est vraiment propre à ce biome.
+- **L'essence, l'espèce ou la matière est nommée** dès qu'elle existe : on écrit « pommier », « bosquet de sapins », jamais « petit arbre » ni « bosquet dense ». Un sujet qu'on ne sait pas nommer n'est pas encore décrit.
 - **Nom de profil** — l'identifiant construit, en anglais américain, minuscules, de la forme `sorte-nn` : `oak-01`, `log-fence-01`. C'est lui que portent les dossiers et les adresses d'images.
 - **Type** — la sorte de chose dont il s'agit, qui décide de son lot de variantes et de son calque ([sujets et variantes](../assets/sujets-et-variantes.md)).
-- **Description en anglais** — reprise **mot pour mot** dans les consignes de production. C'est elle qui garantit la reproductibilité, et elle seule décrit ce qui se dessine.
-- **Emprise** en cases, pour tout ce qui occupe le sol.
+- **Description en anglais** — reprise **mot pour mot** dans les consignes de production. C'est elle qui garantit la reproductibilité, et elle seule décrit ce qui se dessine. **Une espèce qui naît ou qui change reçoit une description entièrement réécrite** : on peut s'inspirer de ce qui a déjà été produit, jamais reprendre le texte d'une autre fiche — un texte hérité traîne ses défauts, ses tournures négatives et ses traits qui ne valaient que pour l'ancien sujet.
+- **Emprise** en cases, **toujours écrite, sans exception ni valeur par défaut**. C'est un élément descriptif nécessaire au même titre que la description : sans elle, on ne sait ni quelle place le sujet prend au sol, ni quelle définition demander au générateur, et chaque outil devine à sa façon. Une emprise qu'on ne lit que chez les sujets qui s'écartent de l'ordinaire est une règle implicite portée par ses exceptions — donc une règle qui se perd. **Un arbre de taille normale occupe une case** ; au-delà, c'est un grand arbre, et son libellé le dit.
 - **Où il apparaît** — les biomes ou planches concernés.
 
 ## Élément, instance et situation

@@ -1,6 +1,6 @@
 # Créatures témoins de la revue
 
-**Statut : esquisse.** Ces créatures servent à juger la direction artistique, pas à peupler le jeu. Aucune n'entre au bestiaire tant que le propriétaire ne l'a pas décidé. Ce document disparaîtra ou sera repris quand le bestiaire s'ouvrira.
+**Statut : esquisse.** Ces créatures servent à juger la direction artistique, pas à peupler le jeu. Aucune n'entre au bestiaire tant que l'opérateur ne l'a pas décidé. Ce document disparaîtra ou sera repris quand le bestiaire s'ouvrira.
 
 **Intention :** décrire chaque créature une fois pour toutes, rune comprise, pour que les images d'un tour à l'autre montrent **les mêmes bêtes**. Sans fiche, chaque génération réinvente les animaux et les règles de rune ne sont jamais tenues.
 
@@ -8,9 +8,11 @@ Rappel des règles de rune ([visuel](../visuel/index.md), [contenu](index.md)) :
 
 Les descriptions sont en anglais : elles sont reprises **mot pour mot** dans les consignes de production.
 
-**Identifiants.** Chaque espèce porte un code stable `SP-nnn`, chaque individu un code `SP-nnn-i`. Ces codes ne changent jamais, même si l'espèce est renommée, redessinée ou retirée : c'est à eux que se réfèrent les consignes, les fichiers et le code. Les **noms propres** — ceux que verra le joueur — relèvent du bestiaire et du choix du propriétaire ; ils n'existent pas encore.
+**Identifiants.** Chaque espèce porte un code stable `SP-nnn`, chaque individu un code `SP-nnn-i`. Ces codes ne changent jamais, même si l'espèce est renommée, redessinée ou retirée : c'est à eux que se réfèrent les consignes, les fichiers et le code. Les **noms propres** — ceux que verra le joueur — relèvent du bestiaire et du choix de l'opérateur ; ils n'existent pas encore.
 
 ## SP-001 — le renardeau ambré
+
+**Emprise : 1 case.**
 
 > A small round quadruped the size of a fox cub. Warm amber fur (#D98A33) over back and head, cream belly and muzzle (#F5E6CC), four short legs with cream paws, two large rounded ears amber outside and cream inside, big dark friendly eyes, short thick tail with a cream tip.
 

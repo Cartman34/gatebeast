@@ -22,16 +22,27 @@ therefore overflows upwards, which is wanted — the footprint describes the gro
 Scaling on a declared height would shrink a tall building's base until it stopped covering its tiles.
 """
 
-# One tile is one metre in the world. On screen it is this many pixels — inherited from the six
-# reference plates (1536 x 1152 pixels for 32 x 24 tiles), so it agrees with the validated art
-# direction. This is the only value in pixels the project owns.
-PIXELS_PER_TILE = 48
+# TWO VALUES, NEVER CONFUSED. One tile is one metre in the world; how many pixels that is on screen
+# is a SETTING, while how fine the image file is, is FIXED. Mixing them is what made the tile size
+# look irreversible when it is not.
 
-# Assets are delivered at twice the display fineness, so they stay sharp on high-density screens. This
-# does not enlarge the tile: the world's scale is unchanged, only the image quality rises. The factor
-# can rise to three later without regenerating anything, since the masters are kept — which is exactly
-# why it starts at the lighter value.
+# What a tile measures on screen by default. The game varies it — zooming changes THIS value and
+# nothing else, never the files. Adjusting it costs nothing and reworks no image.
+DISPLAY_PIXELS_PER_TILE = 24
+
+# The largest a tile will ever be shown, zoom included. Delivery fineness is sized on this and not on
+# the default: an asset delivered for the default would go soft the first time anyone zoomed in, and
+# it would be too late. Below it the engine scales down, which is always clean.
+MAX_ZOOM_PIXELS_PER_TILE = 48
+
+# Delivery is twice the strongest zoom, so assets stay sharp on high-density screens too. Raising this
+# later regenerates nothing: the masters are kept and a re-export suffices — which is exactly why the
+# masters are kept.
 DELIVERY_SUPERSAMPLE = 2
+
+# Kept as the display value under its old name so callers that mean "on screen" keep working. Anything
+# that means "how fine the file is" must go through delivery_size or master_definition instead.
+PIXELS_PER_TILE = DISPLAY_PIXELS_PER_TILE
 
 # A master is rendered at twice the delivered definition, but never beyond this on its longest side.
 # 1536 is the long side of the six reference plates, so it is a definition the generator has already
@@ -72,12 +83,38 @@ def tile_box(columns=1, rows=1):
     return {"width": tiles_to_pixels(columns), "height": tiles_to_pixels(rows)}
 
 
-def delivery_size(columns, rows):
-    """The pixel box an asset of that footprint is delivered at — finer than the display."""
-    box = tile_box(columns, rows)
+def delivery_fineness():
+    """Pixels per tile at delivery — the strongest zoom, doubled for high-density screens."""
+    return MAX_ZOOM_PIXELS_PER_TILE * DELIVERY_SUPERSAMPLE
 
-    return {"width": box["width"] * DELIVERY_SUPERSAMPLE,
-            "height": box["height"] * DELIVERY_SUPERSAMPLE}
+
+def delivery_size(columns, rows):
+    """The pixel box a GROUND MATERIAL is delivered at: an exact box on both axes, because a tile has
+    to fill its footprint edge to edge — there is no proportion of its own to follow.
+
+    Sized on the STRONGEST ZOOM, never on the default display size: the file must still be sharp when
+    the player zooms all the way in. Changing the default display size therefore changes nothing here,
+    and no asset is ever re-exported because someone adjusted the on-screen tile.
+    """
+    fineness = delivery_fineness()
+
+    return {"width": columns * fineness, "height": rows * fineness}
+
+
+def delivery_width(columns):
+    """The delivered width of a SPRITE: exactly the width of its footprint, at delivery fineness."""
+    return columns * delivery_fineness()
+
+
+def delivery_box(columns, image_width, image_height):
+    """The delivery box of a sprite: footprint width at delivery fineness, height following the
+    image's own proportions — sprite_box's rule, asked at the strongest zoom instead of the default
+    display. A sprite is never delivered at a fixed height: fixing it would squash a tall subject's
+    base off its own tiles, the same reason sprite_box never fixes it for display.
+    """
+    width = delivery_width(columns)
+
+    return {"width": width, "height": round(width * image_height / image_width)}
 
 
 def master_definition(columns, rows):

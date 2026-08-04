@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Plate P2 town, seventh pass — resumed from the atelier's v6 (which repaired the grid and the human
 scale). Carried in: the global light standard (115-130, dark <=10%, positive prescriptions, now part of
-the shared base), the owner's new PAVING RULE — every non-adjoining building is SURROUNDED by a paved
+the shared base), the operator's new PAVING RULE — every non-adjoining building is SURROUNDED by a paved
 band and ALWAYS connected to the street network — plus the v6 residual faults: SP-011 horn hardened
 against the horse drift, SP-005 against the rabbit, SP-001 against the real fox cub, the square and the
 terraced pair at their FULL footprint, grass surfaces listed positively."""

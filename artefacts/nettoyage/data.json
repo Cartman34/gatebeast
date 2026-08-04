@@ -1,0 +1,146 @@
+{
+  "screen": "NET — tour de nettoyage",
+  "title": "Ce qu'il y a à nettoyer",
+  "stamp": "relevé du 2026-08-04, avant toute suppression",
+  "lede": "Rien n'a été supprimé ni modifié. Chaque ligne attend un verdict ; un bouton par catégorie tranche tout d'un coup. Le récapitulatif se copie et se colle en conversation.",
+  "placeholder": "Dire pourquoi, ou ce qu'il faut en faire.",
+  "copied": "Récapitulatif copié — collez-le en conversation.",
+  "copyRefused": "Copie refusée par le navigateur : le texte est sélectionné, Ctrl+C.",
+  "categories": [
+    {
+      "code": "NET-A",
+      "name": "Scripts de la journée devenus caducs",
+      "items": [
+        {"code": "A1", "ref": "scripts/build-fence-sketch.py",
+         "say": "L'esquisse d'ensemble des quinze formes, abandonnée dès le tour suivant.",
+         "why": "Jamais enregistrée. Son idée survit dans le plan de composition."},
+        {"code": "A2", "ref": "scripts/build-fence-ns-sketch.py",
+         "say": "L'esquisse de la pièce nord-sud, jugée mauvaise : coupe fausse et rendu peu réaliste.",
+         "why": "Le sujet reviendra, mais pas ce fichier."},
+        {"code": "A3", "ref": "scripts/build-fence-usage-plan.py",
+         "say": "Le faux « plan d'usage » en perspective, qui n'était pas un plan de composition.",
+         "why": "Remplacé par build-composition-plan.py."},
+        {"code": "A4", "ref": "scripts/world_view.py",
+         "say": "La projection de caméra et la règle de coupe, écrites pour les deux esquisses ci-dessus.",
+         "why": "Plus aucun appelant. La règle de coupe qu'il portait n'est écrite nulle part ailleurs."}
+      ]
+    },
+    {
+      "code": "NET-B",
+      "name": "Deux constructeurs pour la même page",
+      "items": [
+        {"code": "B1", "ref": "local/build-review-page.py",
+         "say": "L'ancien constructeur de la page de suivi des sprites, dans le répertoire de travail.",
+         "why": "Non versionné : c'est ce qui a permis d'écraser l'artefact sans filet."},
+        {"code": "B2", "ref": "scripts/build-sprites-page.py",
+         "say": "Le nouveau constructeur, qui vérifie chaque fichier sur le disque et montre les images en taille réelle.",
+         "why": "Jamais enregistré. Il en faut un seul, et dans scripts/."}
+      ]
+    },
+    {
+      "code": "NET-C",
+      "name": "Le catalogue gelé et ce qui en dépend",
+      "items": [
+        {"code": "C1", "ref": "assets/catalogue.json",
+         "say": "Gelé par décision : construit autour de l'image, il ne sait porter ni types, ni contraintes, ni connexions.",
+         "why": "Six de ses déclarations n'ont aucun fichier en face."},
+        {"code": "C2", "ref": "scripts/asset_catalog.py",
+         "say": "Le module unique d'écriture et de lecture du catalogue.",
+         "why": "À refaire pour le référentiel des sujets, ou à retirer avec lui."},
+        {"code": "C3", "ref": "scripts/record-asset.py",
+         "say": "L'inscription d'une image au catalogue.",
+         "why": "Même sort que le module ci-dessus."},
+        {"code": "C4", "ref": "scripts/build-sprites-page.py — lecture du catalogue",
+         "say": "La page de suivi lit le catalogue pour connaître les profils et les variantes attendues.",
+         "why": "Elle devra lire le référentiel des sujets à la place."}
+      ]
+    },
+    {
+      "code": "NET-D",
+      "name": "Images et codes",
+      "items": [
+        {"code": "D1", "ref": "assets/cutout/cloture/OB-010_shape-ew.png",
+         "say": "La découpe de la clôture est-ouest, celle que tu as validée, n'existe plus sur le disque.",
+         "why": "L'image d'origine est là : la découpe se refait sans rien regénérer."},
+        {"code": "D2", "ref": "assets/cutout/vegetation/TR-060.png, TR-062.png",
+         "say": "Les découpes du grand chêne et de l'herbe haute manquent aussi.",
+         "why": "Mêmes conditions : les images d'origine existent."},
+        {"code": "D3", "ref": "assets/poc/personnage/HU-000.png, sol/SOL-001.png, creature/SP-001-1.png",
+         "say": "Trois images de sonde supprimées du dépôt mais toujours déclarées au catalogue.",
+         "why": "Conservées dans l'archive hors dépôt."},
+        {"code": "D4", "ref": "code SOL-001",
+         "say": "Code provisoire d'une sonde, qui ne suit aucune famille de l'inventaire.",
+         "why": "L'herbe rase porte désormais CH-001."},
+        {"code": "D5", "ref": "code HU-000",
+         "say": "Code du personnage-joueur, alors qu'il n'y a pas de sujet « personnage-joueur ».",
+         "why": "HU-000 n'est déclaré nulle part à l'inventaire."},
+        {"code": "D6", "ref": "assets/poc/cloture/OB-010_shape-ns-v1.png, -avec-portillon.png",
+         "say": "Les deux versions écartées de la clôture nord-sud, conservées avec leurs consignes.",
+         "why": "La règle du projet dit que rien ne se jette."}
+      ]
+    },
+    {
+      "code": "NET-E",
+      "name": "Le répertoire de travail — à trier avant de vider",
+      "items": [
+        {"code": "E1", "ref": "local/ — une trentaine de scripts jetables d'hier",
+         "say": "fix-tool-paths, regenerate-fence-*, preflight-*, probe-*, strip-trials, tile-proof…",
+         "why": "Écrits pour un geste unique, déjà accompli."},
+        {"code": "E2", "ref": "local/check-catalog.py, check-asset-prompt.py, check-prompts.py, check-tool-paths.py",
+         "say": "Quatre contrôles qui, eux, se rejouent : ils vérifient le catalogue, les consignes et les chemins d'outils.",
+         "why": "Ce sont des outils, pas des brouillons : leur place est dans scripts/."},
+        {"code": "E3", "ref": "local/build-thumbnails.py, list-variants.py, tile-preview.py",
+         "say": "Trois utilitaires réutilisables restés dans le répertoire de travail.",
+         "why": "À verser dans scripts/ ou à laisser partir."},
+        {"code": "E4", "ref": "local/ — images d'essai (≈ 10 Mo)",
+         "say": "CH-001-tiled, repeat-CH-001, OB-010-ew-tiled, test-chatgpt-transparence, probe-transparency-fence.",
+         "why": "Des preuves de raccord et de transparence, reproductibles par script."},
+        {"code": "E5", "ref": "local/sprites-page.html, revue-sprites.html",
+         "say": "Les deux pages de suivi construites, dont l'une pèse 7,9 Mo.",
+         "why": "Reconstructibles depuis leur script ; l'artefact publié en est la copie vivante."},
+        {"code": "E6", "ref": "local/user-followup.txt, thumbnails.json, restore-fence-names.sh",
+         "say": "Restes d'échanges et d'états intermédiaires de la session précédente.",
+         "why": "Aucun n'est cité par un outil."},
+        {"code": "E7", "ref": "local/fence-sketch.*, fence-ns-sketch.*, fence-assembly-prompt-draft.md",
+         "say": "Les sorties des esquisses abandonnées et le brouillon de consigne de l'image d'ensemble.",
+         "why": "Le brouillon de consigne est le seul à porter un travail qui resservira."}
+      ]
+    },
+    {
+      "code": "NET-F",
+      "name": "Documentation et code à remettre d'aplomb",
+      "items": [
+        {"code": "F1", "ref": "doc/conception/referentiels/visuel/directions-en-lice.md",
+         "say": "Les directions artistiques mises en concurrence, alors que la direction est validée depuis.",
+         "why": "La conception décrit la cible, pas le chemin qui y a mené."},
+        {"code": "F2", "ref": "fiche CH-001, inventaire des sols",
+         "say": "Écrite en interdits — « no flower, no stone, no bare earth » — contre la règle de prescription positive.",
+         "why": "Elle a produit l'image que tu as validée : la réécrire n'est pas anodin."},
+        {"code": "F3", "ref": "scripts/build-plan-svg.py",
+         "say": "Garde sa propre copie du moteur de plan alors que composition_plan.py existe.",
+         "why": "Deux rendus de plan qui peuvent diverger."},
+        {"code": "F4", "ref": "SUIVI.md",
+         "say": "Titré « où en est le projet (2026-08-03) » et annonce encore une réparation de chemins déjà faite.",
+         "why": "Le suivi ne garde pas d'historique : seul l'état courant compte."},
+        {"code": "F5", "ref": "scripts/asset_common.py — brouillon JOUEUR",
+         "say": "La description française du personnage-joueur, restée dans le code.",
+         "why": "Il n'y a pas de sujet « personnage-joueur » : elle ne deviendra pas une fiche."},
+        {"code": "F6", "ref": "scripts/ — quarante générateurs d'un seul usage",
+         "say": "generate-planche-*, generate-da-round*, generate-humans-calibration* : un fichier par passage, tous conservés.",
+         "why": "C'est la règle en vigueur — un passage ne se rejoue pas. À confirmer ou à revoir."}
+      ]
+    },
+    {
+      "code": "NET-G",
+      "name": "Hors du dépôt",
+      "items": [
+        {"code": "G1", "ref": "artefact ddefc8b7-0f50-45ef-ad51-68c64b5ef1bd",
+         "say": "Le doublon de la page des sprites, créé par erreur.",
+         "why": "Je ne sais pas supprimer un artefact : il faut passer par ta galerie."},
+        {"code": "G2", "ref": "assistant « atelier-planches »",
+         "say": "Arrêté et sans tâche, mais toujours joignable.",
+         "why": "Tu m'as demandé de tout faire moi-même."}
+      ]
+    }
+  ]
+}

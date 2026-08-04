@@ -1,0 +1,218 @@
+{
+  "format": "gatebeast-sujets",
+  "version": 1,
+  "_intention": "Le référentiel des sujets — types, sujets, variantes et représentations — remplace assets/catalogue.json (gelé, non lu, non modifié par ce fichier). Décrit à doc/conception/referentiels/technique/rendu-en-calques.md et doc/conception/referentiels/visuel/assets/sujets-et-variantes.md.",
+
+  "types": {
+    "sol": {
+      "layer": "sol",
+      "passage_default": "open",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "plain"}
+      ]
+    },
+    "chemin": {
+      "layer": "decor-au-sol",
+      "passage_default": "open",
+      "assembles": true,
+      "rotates": true,
+      "_rotates_comment": "Plat : le moteur pivote un dessin pour obtenir les autres bords, un seul dessin par forme suffit (sujets-et-variantes.md, decision 27).",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "ns"},
+        {"orientation": "south", "action": "idle", "shape": "ne"}
+      ]
+    },
+    "cloture": {
+      "layer": "monde",
+      "passage_default": "closed",
+      "_passage_comment": "Le type clôture ferme les quatre côtés par défaut (sujets-et-variantes.md, decision 15).",
+      "assembles": true,
+      "rotates": false,
+      "_rotates_comment": "A du volume : la pivoter mettrait le soleil du mauvais côté, chaque combinaison de bords se dessine séparément (decision 27).",
+      "garnitures": {
+        "values": ["posts-2", "posts-1", "posts-0"],
+        "default": "posts-2",
+        "_comment": "posts-2 deux poteaux, posts-1 un seul au centre, posts-0 aucun, lisses toujours identiques (decision 28). Le défaut n'est pas écrit dans l'adresse ; posts-2 est pris comme défaut parce que c'est la seule garniture produite sans mention de garniture dans son nom de fichier (OB-010_shape-ew.png)."
+      },
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "ns"},
+        {"orientation": "south", "action": "idle", "shape": "ew"},
+        {"orientation": "south", "action": "idle", "shape": "ne"},
+        {"orientation": "south", "action": "idle", "shape": "es"},
+        {"orientation": "south", "action": "idle", "shape": "sw"},
+        {"orientation": "south", "action": "idle", "shape": "nw"}
+      ]
+    },
+    "arbre": {
+      "layer": "monde",
+      "passage_default": "closed",
+      "_passage_comment": "Un arbre est un obstacle par nature : le type ferme tous les côtés de toutes ses cases par défaut, pour qu'un profil futur n'ait pas besoin qu'on pense à le fermer (décision de l'opérateur, 2026-08-04). Les mentions « infranchissable » de l'inventaire (TR-060, TR-063) sont une confirmation, plus la source de cette règle.",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "plain"}
+      ]
+    },
+    "bosquet-arbres": {
+      "layer": "monde",
+      "passage_default": "closed",
+      "_passage_comment": "Même raison que le type arbre : obstacle par nature, fermé au niveau du type. La mention « infranchissable » de l'inventaire (TR-061) est une confirmation.",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "plain"}
+      ]
+    },
+    "herbe": {
+      "layer": "monde",
+      "passage_default": "open",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "plain"}
+      ]
+    },
+    "batiment": {
+      "layer": "monde",
+      "passage_default": "closed",
+      "_passage_comment": "Un bâtiment ferme tous les côtés de toutes ses cases par défaut ; il ne s'ouvre que là où sa propre fiche déclare une entrée — décision de l'opérateur, 2026-08-04, déduite de la fiche sans rien inventer.",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "plain"}
+      ]
+    },
+    "humain": {
+      "layer": "monde",
+      "passage_default": "open",
+      "parts": ["gaze"],
+      "_parts_comment": "Le modèle commence avec le seul regard, sans se fermer à d'autres parties plus tard (decision 32).",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "plain"},
+        {"orientation": "north", "action": "idle", "shape": "plain"},
+        {"orientation": "east", "action": "idle", "shape": "plain"},
+        {"orientation": "west", "action": "idle", "shape": "plain"}
+      ],
+      "_lot_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
+    },
+    "creature": {
+      "layer": "monde",
+      "passage_default": "open",
+      "parts": ["gaze"],
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "plain"},
+        {"orientation": "north", "action": "idle", "shape": "plain"},
+        {"orientation": "east", "action": "idle", "shape": "plain"},
+        {"orientation": "west", "action": "idle", "shape": "plain"}
+      ],
+      "_lot_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
+    }
+  },
+
+  "sujets": {
+    "CH-001": {
+      "profil": "short-grass-01",
+      "type": "sol",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": null,
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "representations": [{"type": "sprite", "path": "cutout/sol/CH-001.png"}]}
+      ]
+    },
+    "CH-019": {
+      "profil": "dirt-path-01",
+      "type": "chemin",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": null,
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "ns", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []}
+      ]
+    },
+    "OB-010": {
+      "profil": "log-fence-01",
+      "type": "cloture",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": null,
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "ew",
+         "representations": [{"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew.png"}]},
+        {"orientation": "south", "action": "idle", "shape": "ns", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "es", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "sw", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "nw", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "ns", "garniture": "posts-1",
+         "_comment": "Hors du lot v0 minimal, mais une variante valide de l'axe garniture : produite et représentée. Deux versions : v2 est une seconde tentative de la même posture, aucune des deux n'est écartée.",
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1.png"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1-v2.png"}
+         ]},
+        {"orientation": "south", "action": "idle", "shape": "ew", "garniture": "posts-1",
+         "_comment": "Hors du lot v0 minimal, vague de trois pièces de garniture.",
+         "representations": [{"type": "sprite",
+                              "path": "cutout/cloture/OB-010_shape-ew_posts-1.png"}]},
+        {"orientation": "south", "action": "idle", "shape": "es", "garniture": "posts-1",
+         "_comment": "Hors du lot v0 minimal, vague de trois pièces de garniture.",
+         "representations": [{"type": "sprite",
+                              "path": "cutout/cloture/OB-010_shape-es_posts-1.png"}]}
+      ]
+    },
+    "TR-060": {
+      "profil": "oak-01",
+      "type": "arbre",
+      "emprise": {"columns": 2, "rows": 2},
+      "hauteur": null,
+      "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-060.png"}]}
+      ]
+    },
+    "TR-061": {
+      "profil": "fir-thicket-01",
+      "type": "bosquet-arbres",
+      "emprise": {"columns": 2, "rows": 2},
+      "hauteur": null,
+      "_passage_comment": "Aucune redéfinition : le type bosquet-arbres ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-061.png"}]}
+      ]
+    },
+    "TR-063": {
+      "profil": "apple-tree-01",
+      "type": "arbre",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": null,
+      "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-063.png"}]}
+      ]
+    },
+    "TR-062": {
+      "profil": "tall-grass-01",
+      "type": "herbe",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": null,
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-062.png"}]}
+      ]
+    },
+    "BT-001": {
+      "profil": "healing-center-01",
+      "type": "batiment",
+      "emprise": {"columns": 16, "rows": 10},
+      "hauteur": null,
+      "passage": {
+        "cells": {"8,9": {"s": true}},
+        "_comment": "« entrée au sud », porche au milieu de la face sud (batiments.md) : la case du milieu de la rangée sud s'ouvre au sud, elle seule — tout le reste garde la fermeture du type. Rangée sud = rows-1 = 9 (le sud augmente la coordonnée de ligne). L'emprise est paire (16 colonnes, indices 0 à 15) : aucune case n'est exactement au centre ; colonne 8 (première case de la moitié est) est prise par convention, à ajuster si un plan de composition de BT-001 fixe une autre case."
+      },
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain", "representations": []}
+      ]
+    }
+  },
+
+  "_hors_referentiel": {
+    "_comment": "Sondes de capacité produites avant que la chaîne n'existe : ni code ni emprise ne leur est fabriqué, elles n'entrent pas au référentiel (rien ne se produit sans fiche). Leurs types existent bien ci-dessus. Elles restent sur le disque et visibles au suivi, hors référentiel, jusqu'à ce qu'un vrai sujet les remplace.",
+    "HU-000": "brouillon 'joueur' d'asset_common.py, absent de personnages.md",
+    "SOL-001": "absent de sols-et-chemins.md",
+    "SP-001-1": "SP-001 est à l'inventaire (creatures-temoins.md) mais sans emprise chiffrée — fiche incomplète, à compléter, pas à combler"
+  }
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build one report per plate: what the numbers say, and what the eye saw.
 
-The owner asked for a single readable score per plate, with the detail one click away. A report has two
+The operator asked for a single readable score per plate, with the detail one click away. A report has two
 halves:
 
 - MECHANICAL — every measurement against its target, each one pass or fail. Computed here, never typed
@@ -38,7 +38,7 @@ from plate_metrics import ASSETS, DARK_MAX, LUMINANCE_MAX, LUMINANCE_MIN, REFERE
 # catching the real fault it was built for.
 #
 # Evidence per biome (value, verdict): p1 79.0 correct / 88.7 correct. p2 72.0 correct / 94.0 correct.
-# p3 68.9 correct / 95.3 correct. p4 50.5 retained by the owner / 95.2 correct — a 45-point spread on
+# p3 68.9 correct / 95.3 correct. p4 50.5 retained by the operator / 95.2 correct — a 45-point spread on
 # one biome, both acceptable, which is the clearest proof the figure is not measuring fullness. p5 43.8
 # TOO EMPTY / 75.8 correct. p6 38.9 and 36.8 both TOO EMPTY, no acceptable sample yet.
 CHARGE = {

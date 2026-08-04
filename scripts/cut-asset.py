@@ -150,8 +150,59 @@ def measure(alpha, source_size):
     }
 
 
+def already_alpha(path):
+    """True when the file already carries its own real transparency.
+
+    The generator used to render an opaque square on a flat magenta field, which this script had to
+    key out. It now renders a real alpha channel directly, so an image in that mode needs no keying at
+    all: it is already the cutout, only oversized. Keying it again on top would find no magenta and
+    silently flatten the transparency it already has (see the fault this replaced), so a modern image
+    is detected here and routed around the whole keying pipeline.
+    """
+    with Image.open(path) as probe:
+        if probe.mode not in ("RGBA", "LA"):
+            return False
+        alpha = numpy.asarray(probe.convert("RGBA"))[:, :, 3]
+
+    return bool((alpha < 255).any())
+
+
+def crop(path):
+    """Trim an image that already has its own alpha to the silhouette. No keying, no de-fringing:
+
+    the transparency is the generator's own and is kept byte for byte, only the empty margin is cut.
+    """
+    source = Image.open(path).convert("RGBA")
+    rgba = numpy.asarray(source)
+    alpha = rgba[:, :, 3].astype(numpy.float32) / 255.0
+
+    opaque = alpha > 0.0
+    if not opaque.any():
+        raise ValueError(f"nothing but transparency in {path}")
+    rows = numpy.flatnonzero(opaque.any(axis=1))
+    columns = numpy.flatnonzero(opaque.any(axis=0))
+    box = (int(columns[0]), int(rows[0]), int(columns[-1]) + 1, int(rows[-1]) + 1)
+    cropped_rgba = rgba[box[1]:box[3], box[0]:box[2]]
+    cropped_alpha = alpha[box[1]:box[3], box[0]:box[2]]
+
+    measures = measure(cropped_alpha, source.size)
+    measures["source_size_px"] = {"width": source.size[0], "height": source.size[1]}
+    measures["crop_box"] = {"left": box[0], "top": box[1], "right": box[2], "bottom": box[3]}
+    measures["mode"] = "crop (alpha already present)"
+
+    return Image.fromarray(cropped_rgba, "RGBA"), measures
+
+
 def cut(path):
-    """Cut one image out. Returns (RGBA sprite, measures). Nothing is written here."""
+    """Cut one image out. Returns (RGBA sprite, measures). Nothing is written here.
+
+    Two paths coexist because the generator changed under this tool. A modern image already carries
+    its own alpha and is only cropped, by crop() above. An old magenta-backed image still needs the
+    keying below.
+    """
+    if already_alpha(path):
+        return crop(path)
+
     source = Image.open(path).convert("RGB")
     rgb = numpy.asarray(source)
     alpha = key_color.alpha_ramp(key_color.distance(rgb))
@@ -181,6 +232,7 @@ def cut(path):
     measures["source_size_px"] = {"width": source.size[0], "height": source.size[1]}
     measures["crop_box"] = {"left": box[0], "top": box[1], "right": box[2], "bottom": box[3]}
     measures["thresholds"] = {"hard": key_color.HARD, "soft": key_color.SOFT}
+    measures["mode"] = "magenta key"
 
     return Image.fromarray(sprite, "RGBA"), measures
 
