@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 
 PROJECT = Path("/home/sowapps/projects")
-TOOL = "conceptions/methode/outils/generate-image.php"
-TARGET = "conceptions/gatebeast/assets/revue-da"
+TOOL = "gatebeast/scripts/generate-image.php"
+TARGET = "gatebeast/assets/revue-da"
 
 CREATURE = (
     "Subject: an original friendly creature for a family video game, a small round quadruped with amber "

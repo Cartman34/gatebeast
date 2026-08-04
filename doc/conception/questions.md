@@ -5,5 +5,4 @@ La conception est close sur ses couches hautes. La direction artistique (*toon v
 Reste ouverte, à la couche des assets :
 
 - **Le nombre d'étapes d'une marche** — [visuel/assets/lots-de-variantes.md](referentiels/visuel/assets/lots-de-variantes.md). Ne bloque rien : la v0 n'anime pas.
-
 À ouvrir plus tard : design system et bestiaire.

@@ -20,8 +20,11 @@
 
 ## Ce que porte chaque entrée
 
-- **Code et nom français** — le nom sert à nous, le code fait foi.
-- **Description en anglais** — reprise **mot pour mot** dans les consignes de production. C'est elle qui garantit la reproductibilité.
+- **Code** `XX-nnn` — il fait foi, et ne change jamais.
+- **Libellé** — le nom du sujet en mots humains, court et clair : « herbe verte avec rosée », « barrière en rondins ». Il ne sert **jamais** à la génération : il sert à reconnaître le sujet d'un coup d'œil, dans l'inventaire comme dans une conversation.
+- **Nom de profil** — l'identifiant construit, en anglais américain, minuscules, de la forme `sorte-nn` : `oak-01`, `log-fence-01`. C'est lui que portent les dossiers et les adresses d'images.
+- **Type** — la sorte de chose dont il s'agit, qui décide de son lot de variantes et de son calque ([sujets et variantes](../assets/sujets-et-variantes.md)).
+- **Description en anglais** — reprise **mot pour mot** dans les consignes de production. C'est elle qui garantit la reproductibilité, et elle seule décrit ce qui se dessine.
 - **Emprise** en cases, pour tout ce qui occupe le sol.
 - **Où il apparaît** — les biomes ou planches concernés.
 

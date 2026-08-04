@@ -71,4 +71,12 @@ def light_verdict(mesure: dict) -> str:
     return "LUMIÈRE OK" if not ecarts else "LUMIÈRE FAUTIVE — " + ", ".join(ecarts)
 
 
-REFERENCE = measure(ASSETS / "da-b4-r15-scene.png")
+def reference_path(name: str = "da-b4-r15-scene.png") -> Path:
+    """Where the reference plate sits. It was moved into Saves/, so both places are looked at."""
+    for candidate in (ASSETS / name, ASSETS / "Saves" / name):
+        if candidate.is_file():
+            return candidate
+    raise FileNotFoundError(f"reference plate not found: {name}")
+
+
+REFERENCE = measure(reference_path())

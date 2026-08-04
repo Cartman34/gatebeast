@@ -1,0 +1,335 @@
+{
+  "format": "gatebeast-asset-catalog",
+  "version": 1,
+  "profiles": [
+    {
+      "code": "CH-001",
+      "name": "short-grass-01",
+      "type": "sol",
+      "layer": "sol",
+      "footprint": {
+        "columns": 1.0,
+        "rows": 1.0
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "assets/cutout/sol/CH-001.png",
+          "source": "assets/poc/sol/CH-001.png",
+          "measures": {
+            "size_px": {
+              "width": 192,
+              "height": 192
+            },
+            "contact_px": {
+              "left": 0,
+              "right": 191,
+              "width": 192
+            },
+            "anchor_px": {
+              "x": 95.5,
+              "y": 192.0
+            },
+            "aspect": 1.0,
+            "transparency": {
+              "fully_transparent": 0.0,
+              "partial": 0.0
+            },
+            "thresholds": {
+              "hard": 60,
+              "soft": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "HU-000",
+      "name": "player-01",
+      "type": "humain",
+      "layer": "monde",
+      "footprint": {
+        "columns": 1.0,
+        "rows": 1.0
+      },
+      "height": 2.0,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "assets/cutout/personnage/HU-000.png",
+          "source": "assets/poc/personnage/HU-000.png",
+          "measures": {
+            "size_px": {
+              "width": 660,
+              "height": 1145
+            },
+            "contact_px": {
+              "left": 409,
+              "right": 512,
+              "width": 104
+            },
+            "anchor_px": {
+              "x": 460.5,
+              "y": 1145.0
+            },
+            "aspect": 0.576,
+            "transparency": {
+              "fully_transparent": 43.03,
+              "partial": 0.36
+            },
+            "thresholds": {
+              "hard": 60,
+              "soft": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "OB-010",
+      "name": "log-fence-01",
+      "type": "cloture-et-mur",
+      "layer": "monde",
+      "footprint": {
+        "columns": 1.0,
+        "rows": 1.0
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_shape-ew_frame-01",
+          "path": "assets/cutout/cloture/OB-010_shape-ew.png",
+          "source": "assets/poc/cloture/OB-010_shape-ew.png",
+          "measures": {
+            "size_px": {
+              "width": 190,
+              "height": 80
+            },
+            "contact_px": {
+              "left": 13,
+              "right": 174,
+              "width": 162
+            },
+            "anchor_px": {
+              "x": 93.5,
+              "y": 80.0
+            },
+            "aspect": 2.375,
+            "transparency": {
+              "fully_transparent": 24.28,
+              "partial": 2.06
+            },
+            "thresholds": {
+              "hard": 60,
+              "soft": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "SOL-001",
+      "name": "meadow-01",
+      "type": "sol",
+      "layer": "sol",
+      "footprint": {
+        "columns": 1.0,
+        "rows": 1.0
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "assets/cutout/sol/SOL-001.png",
+          "source": "assets/poc/sol/SOL-001.png",
+          "measures": {
+            "size_px": {
+              "width": 1254,
+              "height": 1254
+            },
+            "contact_px": {
+              "left": 0,
+              "right": 1253,
+              "width": 1254
+            },
+            "anchor_px": {
+              "x": 626.5,
+              "y": 1254.0
+            },
+            "aspect": 1.0,
+            "transparency": {
+              "fully_transparent": 0.0,
+              "partial": 0.0
+            },
+            "thresholds": {
+              "hard": 60,
+              "soft": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "SP-001-1",
+      "name": "amber-fox-cub-01",
+      "type": "creature",
+      "layer": "monde",
+      "footprint": {
+        "columns": 1.0,
+        "rows": 1.0
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "assets/cutout/creature/SP-001-1.png",
+          "source": "assets/poc/creature/SP-001-1.png",
+          "measures": {
+            "size_px": {
+              "width": 701,
+              "height": 1071
+            },
+            "contact_px": {
+              "left": 85,
+              "right": 619,
+              "width": 535
+            },
+            "anchor_px": {
+              "x": 352.0,
+              "y": 1071.0
+            },
+            "aspect": 0.655,
+            "transparency": {
+              "fully_transparent": 33.68,
+              "partial": 0.34
+            },
+            "thresholds": {
+              "hard": 60,
+              "soft": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "TR-060",
+      "name": "oak-01",
+      "type": "vegetation",
+      "layer": "monde",
+      "footprint": {
+        "columns": 2.0,
+        "rows": 2.0
+      },
+      "height": null,
+      "anchor": {
+        "x": 1.0,
+        "y": 2.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "assets/cutout/vegetation/TR-060.png",
+          "source": "assets/poc/vegetation/TR-060.png",
+          "measures": {
+            "size_px": {
+              "width": 362,
+              "height": 330
+            },
+            "contact_px": {
+              "left": 125,
+              "right": 220,
+              "width": 96
+            },
+            "anchor_px": {
+              "x": 172.5,
+              "y": 330.0
+            },
+            "aspect": 1.097,
+            "transparency": {
+              "fully_transparent": 36.72,
+              "partial": 0.94
+            },
+            "thresholds": {
+              "hard": 60,
+              "soft": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "code": "TR-062",
+      "name": "tall-grass-01",
+      "type": "vegetation",
+      "layer": "monde",
+      "footprint": {
+        "columns": 1.0,
+        "rows": 1.0
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "assets/cutout/vegetation/TR-062.png",
+          "source": "assets/poc/vegetation/TR-062.png",
+          "measures": {
+            "size_px": {
+              "width": 192,
+              "height": 179
+            },
+            "contact_px": {
+              "left": 85,
+              "right": 128,
+              "width": 44
+            },
+            "anchor_px": {
+              "x": 106.5,
+              "y": 179.0
+            },
+            "aspect": 1.073,
+            "transparency": {
+              "fully_transparent": 36.39,
+              "partial": 1.96
+            },
+            "thresholds": {
+              "hard": 60,
+              "soft": 150
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

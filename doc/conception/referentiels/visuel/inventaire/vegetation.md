@@ -2,6 +2,13 @@
 
 Voir les [règles de l'inventaire](README.md). Emprises en cases pour les végétaux qui occupent le sol.
 
+## Campagne et parc — BI-001
+
+- **TR-060 chêne de parc** — `oak-01`, type végétation, 2 × 2. *A broad solitary oak with a thick furrowed trunk and a wide rounded crown of deep green lobed leaves, its lowest branches reaching out almost level, a ring of exposed roots at its foot and moss creeping up one side of the trunk.*
+- **TR-063 petit arbre de parc** — `small-tree-01`, type végétation, 1 × 1. *A young compact tree no wider than a single tile, one slim straight trunk with smooth pale bark, a small dense rounded crown of fresh green leaves, and a ring of short grass at its foot; no spreading surface roots, no low branches reaching sideways.*
+- **TR-061 bosquet dense** — `thicket-01`, type végétation, 1 × 1, infranchissable. *A tight impassable clump of several slender trees grown into one another, their crowns merged into a single dark green mass, trunks barely visible in the shade beneath, bramble and low scrub filling every gap between them.*
+- **TR-062 herbe haute** — `tall-grass-01`, type végétation, 1 × 1, franchissable, posée sur l'herbe rase. *A knee-high tuft of long meadow grass, its blades arching outward in every direction, pale seed heads nodding at their tips, a few blades bent and bleached where they have dried.*
+
 ## Arbres
 
 - **TR-010 pin de montagne** — 2 × 2. *A tall narrow mountain pine, dark blue-green needles in tight tiers, a bare reddish trunk, slightly leaning as if shaped by wind.*

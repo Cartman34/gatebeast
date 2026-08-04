@@ -2,6 +2,10 @@
 
 Voir les [règles de l'inventaire](README.md). Emprises en cases, largeur × profondeur. Tous les bâtiments sont d'aplomb sur les axes de la carte et portent des marques d'usure.
 
+## Campagne et parc — BI-001
+
+- **BT-001 centre de soin** — `healing-center-01`, type bâtiment, 16 × 10, entrée au sud. *A large welcoming healing hall with rounded volumes and a wide sweeping curved roof of warm terracotta tiles, cream plastered walls under exposed timber framing, a deep porch at the middle of its south face with a carved emblem above it and a lantern to one side, tall windows of small panes, climbing greenery at its corners and moss along the foot of its walls.*
+
 ## Contreforts — BI-003
 
 - **BT-020 bergerie** — 8 × 5. *A long low sheepfold of dry stone walls under a shallow slate roof, with a wide plank gate at one end and a fenced pen alongside, moss thick on the north wall.*

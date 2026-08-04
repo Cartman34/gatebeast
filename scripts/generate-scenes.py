@@ -8,8 +8,8 @@ import sys
 from pathlib import Path
 
 PROJECT = Path("/home/sowapps/projects")
-TOOL = "conceptions/methode/outils/generer-image.php"
-TARGET = "conceptions/gatebeast/assets/revue-da"
+TOOL = "gatebeast/scripts/generate-image.php"
+TARGET = "gatebeast/assets/revue-da"
 
 SCENE = (
     "Same scene for every version: a small forest clearing at dusk, warm low light, soft mist near the "

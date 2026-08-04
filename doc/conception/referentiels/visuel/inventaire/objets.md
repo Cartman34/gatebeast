@@ -2,6 +2,12 @@
 
 Voir les [règles de l'inventaire](README.md). Mobilier, outillage et aménagements. Emprise en cases quand elle dépasse une case.
 
+## Clôtures et murs — campagne et parc
+
+Sujets qui s'assemblent bout à bout : leur type déclare ses formes, et chaque forme se dessine dans chacune de ses orientations, parce qu'un volume ne se pivote pas ([lots de variantes](../assets/lots-de-variantes.md)).
+
+- **OB-010 barrière en rondins** — `log-fence-01`, type clôture et mur, 1 × 1, infranchissable. Formes : les lignes `ns` et `ew`, les quatre angles `ne`, `es`, `sw`, `nw`, et le portillon dans ses deux sens. *A waist-high fence of split logs, two horizontal rails pegged between stout round posts, the bark still on the wood and silvered by weather, moss at the foot of every post and the grass grown long against it.* Description propre à la forme `gate` : *the same fence, its middle span replaced by a low swinging gate of the same split logs, hung on iron pins, its top rail level with the rails on either side.*
+
 ## Montagne
 
 - **OB-020 cairn** — *A shoulder-high stack of flat stones marking a path, leaning slightly, lichen on its lower stones.*

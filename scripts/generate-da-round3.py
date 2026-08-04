@@ -12,9 +12,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-PROJECT = Path(__file__).resolve().parents[3]
-TOOL = "conceptions/methode/outils/generate-image.php"
-TARGET = "conceptions/gatebeast/assets/revue-da"
+PROJECT = Path(__file__).resolve().parents[2]
+TOOL = "gatebeast/scripts/generate-image.php"
+TARGET = "gatebeast/assets/revue-da"
 
 # The reference sheet. Every image of every direction reuses this text unchanged.
 SHEET = (

@@ -10,7 +10,7 @@ The plan is the INTENT, not the produced image: comparing the two is exactly how
 from pathlib import Path
 
 WIDTH, HEIGHT = 32, 24
-OUTPUT = Path(__file__).resolve().parent.parent / "referentiels" / "visuel" / "plans-ascii.md"
+OUTPUT = Path(__file__).resolve().parent.parent / "doc" / "conception" / "referentiels" / "visuel" / "plans-ascii.md"
 
 LEGEND = [
     (".", "sol nu du biome (herbe, sable, roche selon la planche)"),

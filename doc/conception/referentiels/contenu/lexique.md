@@ -40,6 +40,7 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 | vue principale | base view | La variante de repos, de face : elle existe toujours et sert de référence visuelle à toutes les autres. |
 | orientation | orientation | Comment le sujet est planté sur sa surface, **dans le repère du monde**, à la rose des vents : `south` (face à nous), `north` (de dos), `west` et `east` (de profil), plus les quatre intermédiaires. |
 | direction | direction | Où pointe une partie du sujet, **dans le repère du sujet une fois orienté** : les mêmes valeurs, plus `up` et `down`. Convention absolue : `north` = droit devant le sujet, `east` sur sa droite, `west` sur sa gauche, `south` derrière lui. |
+| instance | instance | Une **apparition** d'un sujet à un endroit précis d'une scène : le sujet, sa case, sa variante et ce qu'il y fait. Le sujet se décrit une fois, ses instances sont innombrables. |
 | partie qui pointe | pointing part | Ce qui porte une direction : le corps (`body`), le regard (`gaze`), et toute partie déclarée par le type — une main, une queue. Une direction non écrite vaut `north`. |
 | action | action | Ce que fait le sujet : `idle`, `walk`, `run`, `sit`, `sleep`, `jump`… liste ouverte. |
 | repli | fallback | La variante de remplacement quand celle demandée n'existe pas encore. |
@@ -51,6 +52,7 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 | tuile de sol | ground tile | Une image de matière répétable bord à bord. Le mot **tuile** seul est banni : il se confond avec *case / tile*. |
 | détourage | cutout | Le retrait du fond de fabrication, qui transforme l'image produite en image à fond transparent. |
 | fond de fabrication | key color | Le magenta pur sur lequel le générateur pose le sujet, et qui n'existe dans aucune matière du monde. |
+| génération d'image | image generation | L'acte de demander une image au générateur et de la recevoir, distinct de la *chaîne de production* qui l'entoure. **Toujours qualifié** : le jeu générera aussi des cartes, des noms, des plans — « génération » seul ne dit pas ce qu'on génère. Le mot **tir**, hérité du tirage photo, est banni : il suppose un original dont on tire une épreuve, alors qu'ici l'image naît de la description. |
 | chaîne de production | production pipeline | L'enchaînement fiche → consigne → génération → détourage → contrôles → catalogue. |
 | planche-contact | contact sheet | La page de revue qui rassemble un lot produit, avec sa note et le motif de chaque défaut. |
 | reprise | retry | La seconde et dernière tentative accordée à une image jugée fautive. |
