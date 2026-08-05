@@ -51,6 +51,9 @@ function escape(string $text): string
     return htmlspecialchars($text, ENT_QUOTES);
 }
 
+require_once "$root/scripts/Capture.php";
+
+$capture = new Capture();
 $sections = '';
 foreach ($declarations as $file) {
     $drawing = substr($file, 0, -strlen('.json')) . '.svg';
@@ -88,46 +91,73 @@ foreach ($declarations as $file) {
         }
     }
 
-    $notes = '';
-    foreach ($plan['notes'] as $note) {
-        $notes .= '<li>' . escape($note) . "</li>\n";
-    }
-
     $tally = [];
     foreach ($plan['cells'] as $cell) {
         $tally[$cell['subject']] = ($tally[$cell['subject']] ?? 0) + 1;
     }
     ksort($tally);
-    $counts = '';
-    foreach ($tally as $code => $number) {
-        $counts .= '<li><span class="code">' . escape($code) . '</span> <span>' . escape(label($code)) . '</span><span class="number">' . $number . "</span></li>\n";
-    }
-    $counts .= '<li class="rest"><span>' . escape(label($plan['default_cell'])) . '</span><span class="number">partout ailleurs</span></li>';
 
     $key = preg_replace('/[^a-z0-9]+/', '-', strtolower(basename($file, '.json')));
-    $sections .= '<section class="plan" data-plan="' . escape($plan['title']) . '">'
-        . '<h2>' . escape($plan['title']) . '</h2>'
-        . '<div class="barre"><p class="mode">Clique une case du plan pour lui attacher une remarque. Les cases commentées se marquent en rouge.</p>'
-        . '<button type="button" class="taille">Taille réelle</button></div>'
-        . '<div class="zone"><div class="dessin" data-cle="' . $key . '" data-colonnes="' . $columns . '" data-lignes="' . $rows
-        . '" data-cote="' . $side . '" data-haut="' . $topOffset . '" data-defaut="' . escape(label($plan['default_cell']))
-        . '" data-cases="' . escape(json_encode($occupancy, JSON_UNESCAPED_UNICODE)) . '"'
-        . ' data-noms="' . escape(json_encode(LABELS, JSON_UNESCAPED_UNICODE)) . '">' . $svg . '</div>'
-        . '<div class="survol" hidden></div>'
-        . '<div class="saisie" hidden><p class="saisie-ou"></p>'
-        . '<textarea rows="3" placeholder="Ce qui devrait changer ici."></textarea>'
-        . '<div class="saisie-boutons"><button type="button" class="poser">Attacher la remarque</button>'
-        . '<button type="button" class="annuler">Annuler</button></div></div></div>'
-        // CE QUE DIT LE PLAN, SOUS LE DESSIN ET EN HTML. C'était écrit dans l'image, où le texte est figé à la taille du tracé, ne se sélectionne pas et rallonge le dessin.
-        . '<div class="dit"><ul class="notes">' . $notes . '</ul>'
-        . '<ul class="tally">' . $counts . '</ul>'
-        . '<p class="source">' . escape($source) . ' · ' . $columns . ' × ' . $rows . ' cases · '
-        . count($plan['cells']) . ' cases déclarées</p></div>'
-        . '<div class="remarques"><div class="remarques-head"><h3>Les remarques</h3>'
-        . '<button type="button" class="copier">Copier le récapitulatif</button>'
-        . '<button type="button" class="effacer">Tout effacer</button></div>'
-        . '<p class="remarques-vides">Aucune remarque pour l\'instant.</p><ul></ul></div>'
-        . "</section>\n";
+    $declared = count($plan['cells']);
+
+    $capture->start();
+    ?>
+<section class="plan" data-plan="<?= escape($plan['title']) ?>">
+  <h2><?= escape($plan['title']) ?></h2>
+
+  <div class="barre">
+    <p class="mode">Clique une case du plan pour lui attacher une remarque. Les cases commentées se marquent en rouge.</p>
+    <button type="button" class="taille">Taille réelle</button>
+  </div>
+
+  <div class="zone">
+    <div class="dessin" data-cle="<?= $key ?>" data-colonnes="<?= $columns ?>" data-lignes="<?= $rows ?>"
+         data-cote="<?= $side ?>" data-haut="<?= $topOffset ?>" data-defaut="<?= escape(label($plan['default_cell'])) ?>"
+         data-cases="<?= escape(json_encode($occupancy, JSON_UNESCAPED_UNICODE)) ?>"
+         data-noms="<?= escape(json_encode(LABELS, JSON_UNESCAPED_UNICODE)) ?>"><?= $svg ?></div>
+
+    <div class="survol" hidden></div>
+
+    <div class="saisie" hidden>
+      <p class="saisie-ou"></p>
+      <textarea rows="3" placeholder="Ce qui devrait changer ici."></textarea>
+      <div class="saisie-boutons">
+        <button type="button" class="poser">Attacher la remarque</button>
+        <button type="button" class="annuler">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <?php // CE QUE DIT LE PLAN, SOUS LE DESSIN ET EN HTML. C'était écrit dans l'image, où le texte est figé à la taille du tracé et ne se sélectionne pas. ?>
+  <div class="dit">
+    <ul class="notes">
+      <?php foreach ($plan['notes'] as $note) { ?>
+      <li><?= escape($note) ?></li>
+      <?php } ?>
+    </ul>
+
+    <ul class="tally">
+      <?php foreach ($tally as $code => $number) { ?>
+      <li><span class="code"><?= escape($code) ?></span> <span><?= escape(label($code)) ?></span><span class="number"><?= $number ?></span></li>
+      <?php } ?>
+      <li class="rest"><span><?= escape(label($plan['default_cell'])) ?></span><span class="number">partout ailleurs</span></li>
+    </ul>
+
+    <p class="source"><?= escape($source) ?> · <?= $columns ?> × <?= $rows ?> cases · <?= $declared ?> cases déclarées</p>
+  </div>
+
+  <div class="remarques">
+    <div class="remarques-head">
+      <h3>Les remarques</h3>
+      <button type="button" class="copier">Copier le récapitulatif</button>
+      <button type="button" class="effacer">Tout effacer</button>
+    </div>
+    <p class="remarques-vides">Aucune remarque pour l'instant.</p>
+    <ul></ul>
+  </div>
+</section>
+    <?php
+    $sections .= $capture->take();
 }
 
 $page = <<<HTML
