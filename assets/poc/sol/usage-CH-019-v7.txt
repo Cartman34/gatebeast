@@ -1,0 +1,110 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+EXEMPLE D'USAGE — une seule image montrant chemin de terre battue POSÉE EN PLACE, toutes ses pièces assemblées, pour
+qu'on puisse les comparer entre elles. Ce n'est pas une sprite : c'est la référence d'ensemble.
+
+LA COMPOSITION, à respecter exactement — une grille de 7 × 7 cases, numérotées de 1 à
+7 en colonnes de la gauche vers la droite, et de 1 à 7 en rangées du haut vers le bas.
+Les 25 cases ci-dessous portent le sujet ; **toutes les autres sont vides**, et il n'y a
+rien dedans. Ne déplace aucune case, n'en ajoute aucune, n'en retire aucune, ne rends la figure ni
+plus symétrique ni plus régulière qu'elle ne l'est — elle est ainsi volontairement.
+
+— colonne 5, rangée 1 : le tracé y passe et rejoint le bord sud de cette case.
+— colonne 2, rangée 2 : le tracé y passe et rejoint le bord est et sud de cette case.
+— colonne 3, rangée 2 : le tracé y passe et rejoint le bord est et ouest de cette case.
+— colonne 4, rangée 2 : le tracé y passe et rejoint le bord est, sud et ouest de cette case.
+— colonne 5, rangée 2 : le tracé y passe et rejoint le bord nord, est et ouest de cette case.
+— colonne 6, rangée 2 : le tracé y passe et rejoint le bord sud et ouest de cette case.
+— colonne 1, rangée 3 : le tracé y passe et rejoint le bord est de cette case.
+— colonne 2, rangée 3 : le tracé y passe et rejoint le bord nord, sud et ouest de cette case.
+— colonne 4, rangée 3 : le tracé y passe et rejoint le bord nord et sud de cette case.
+— colonne 6, rangée 3 : le tracé y passe et rejoint le bord nord et sud de cette case.
+— colonne 2, rangée 4 : le tracé y passe et rejoint le bord nord, est et sud de cette case.
+— colonne 3, rangée 4 : le tracé y passe et rejoint le bord est et ouest de cette case.
+— colonne 4, rangée 4 : le tracé y passe et rejoint le bord nord, est, sud et ouest de cette case.
+— colonne 5, rangée 4 : le tracé y passe et rejoint le bord est et ouest de cette case.
+— colonne 6, rangée 4 : le tracé y passe et rejoint le bord nord, sud et ouest de cette case.
+— colonne 2, rangée 5 : le tracé y passe et rejoint le bord nord et sud de cette case.
+— colonne 4, rangée 5 : le tracé y passe et rejoint le bord nord et sud de cette case.
+— colonne 6, rangée 5 : le tracé y passe et rejoint le bord nord, est et sud de cette case.
+— colonne 7, rangée 5 : le tracé y passe et rejoint le bord ouest de cette case.
+— colonne 2, rangée 6 : le tracé y passe et rejoint le bord nord et est de cette case.
+— colonne 3, rangée 6 : le tracé y passe et rejoint le bord est, sud et ouest de cette case.
+— colonne 4, rangée 6 : le tracé y passe et rejoint le bord nord, est et ouest de cette case.
+— colonne 5, rangée 6 : le tracé y passe et rejoint le bord est et ouest de cette case.
+— colonne 6, rangée 6 : le tracé y passe et rejoint le bord nord et ouest de cette case.
+— colonne 3, rangée 7 : le tracé y passe et rejoint le bord nord de cette case.
+
+LE PLAN EST AUSSI FOURNI EN FICHIER : ouvre et regarde /home/sowapps/projects/gatebeast/assets/poc/sol/plan-composition-CH-019-usage.svg. C'est
+le même plan, dessiné : un point au centre de chaque case occupée, et un trait de ce point vers chaque
+bord rejoint. Lis-le, il fait foi avec la liste ci-dessus.
+
+LA GRILLE, EN CASES : 7 cases de large sur 7 cases de profondeur. Toutes les cases ont le
+même pas, où qu'elles soient dans l'image, et ce pas ne varie jamais : aucune perspective, aucun point
+de fuite, aucun rétrécissement des rangées du fond. Deux cases de même contenu restent superposables au
+décalage près — c'est ce qui permet d'y découper des pièces réutilisables.
+
+CE QUE TU DESSINES EST UNE VUE DE CAMÉRA, PAS UN PLAN. Le plan ci-dessus est donné **mis à plat**, vu
+de la verticale, comme une carte : il dit OÙ les choses sont, il ne dit pas de quoi elles ont l'air.
+Ton image, elle, est la scène **vue par la caméra du projet** — le sol y est regardé de biais, et cela
+se lit sur la matière elle-même : ses traces, ses nuances et ses irrégularités sont orientées par ce
+regard, et la lumière venant du haut à gauche révèle cette orientation. Ne reproduis donc pas le plan
+comme un dessin technique à recopier : respecte les emplacements qu'il donne, et rends la scène.
+
+Définition du fichier : 1344 pixels de large. C'est une propriété de l'image, elle ne dit rien de la
+forme ni de la taille des cases. N'écris aucune dimension dans l'image.
+
+LE SUJET ÉPOUSE CE PLAN INCLINÉ : ses traces, ses nuances, ses irrégularités et tout ce que sa fiche
+lui donne sont projetés dans cette même orientation, et la lumière venant du haut à gauche révèle cette
+orientation sur la surface elle-même. Il se montre avec le volume que sa fiche lui donne, et sans lui
+en ajouter aucun si elle ne lui en donne pas.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CE SUJET EST UNE PIÈCE D'ASSEMBLAGE, PAS UN OBJET ISOLÉ. Des cases voisines porteront la même pièce, et
+l'ensemble doit former une ligne continue, sans décrochement ni interruption.
+
+Le tracé PASSE PAR LE CENTRE de la case et REJOINT LES BORDS indiqués par la variante demandée. Ce qui
+le constitue — la matière décrite par sa fiche, et elle seule — ATTEINT EXACTEMENT ces bords : il y est
+coupé net, à la MÊME HAUTEUR et à la MÊME ÉPAISSEUR de chaque côté, de sorte qu'en posant deux images
+identiques côte à côte, la matière se prolonge d'une case à l'autre sans marche ni trou.
+
+Les bords que le tracé ne rejoint PAS restent libres : rien ne les touche.
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/revue-da/da-b4-r15-scene.png. Il montre le
+style, la matière, la lumière ET L'ANGLE DE PRISE DE VUE à reprendre. Le sujet demandé est celui
+décrit ci-dessous, pas celui de l'image : la référence donne le traitement, la fiche donne le sujet.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
+aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+CE QUE SA FICHE PRÉCISE, et qui s'applique à chaque case de l'image :
+dirt-path-01, type chemin, 1 × 1, hauteur 0 case
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+CH-019 : Un large chemin de terre battue, sable clair et chaud, ABSOLUMENT PLAT et au ras du sol : c'est une surface, jamais un objet posé dessus — aucune épaisseur, aucune tranche visible, aucun talus, aucun bourrelet, aucune ombre portée sous lui. Toute sa matière tient dans sa couleur : des nuances de sable, les unes plus claires et les autres plus soutenues, de longues traces douces dans le sens de la marche, quelques petits cailloux à peine plus sombres affleurant au niveau de la surface. Ses bords longs sont irréguliers et légèrement rongés, jamais tracés au cordeau. Il rejoint d'autres chemins identiques en un carrefour net.

@@ -34,17 +34,17 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 
 | Français | Anglais | Ce que c'est |
 |---|---|---|
-| sujet | subject | Tout élément du jeu qui a une représentation graphique. Le mot **entité** est banni de ce vocabulaire : côté fonctionnel il désigne aussi des éléments sans image. |
+| sujet | subject | Tout élément du jeu qui a une représentation graphique. |
 | type | type | La sorte de chose qu'est un sujet — arbre, créature, humain, bâtiment, objet, sol, chemin, point de passage. Le type porte les comportements, les évènements et le lot exigé. |
 | profil | profile | L'apparence concrète d'un sujet à l'intérieur de son type : `birch-01`, `oak-01`, `asian-01`. Un profil est une apparence et une seule, et une entrée d'inventaire. |
-| variante | variant | Une posture précise d'un profil, définie par les axes que porte son type — orientation, action, forme, composition, directions de ses parties. C'est ce qu'on demande au jeu ; elle n'est pas une image mais porte des **représentations**, dont la sprite n'est qu'une possibilité parmi d'autres. |
-| image | frame | Un fichier d'une variante, numéroté `frame-01`, `frame-02`… Une posture fixe n'en a qu'un, une marche en a plusieurs. |
-| représentation | representation | Ce par quoi une variante se réalise concrètement — une sprite aujourd'hui, un modèle en trois dimensions ou autre chose demain. Une variante porte des représentations, elle n'est jamais elle-même une image. |
-| lot | variant set | L'ensemble des variantes exigées d'un profil, fixé par son type et complétable à tout moment. |
-| vue principale | base view | La variante de repos, de face : elle existe toujours et sert de référence visuelle à toutes les autres. |
+| variant | variant | Une déclinaison précise d'un sujet, telle que son type la déclare — orientation, action, forme, composition, densité, mouvement, directions de ses parties : tous les aspects sous lesquels un sujet peut se décliner. C'est ce qu'on demande au jeu ; il n'est pas une image mais porte des **représentations**, dont la sprite n'est qu'une possibilité parmi d'autres. |
+| image | frame | Un fichier d'un variant, numéroté `frame-01`, `frame-02`… Une posture fixe n'en a qu'un, une marche en a plusieurs. |
+| représentation | representation | Ce par quoi un variant se réalise concrètement — une sprite aujourd'hui, un modèle en trois dimensions ou autre chose demain. Un variant porte des représentations, il n'est jamais lui-même une image. |
+| lot | variant set | L'ensemble des variants exigés d'un profil, fixé par son type et complétable à tout moment. |
+| vue principale | base view | Le variant de repos, de face : il existe toujours et sert de référence visuelle à tous les autres. |
 | tracé | trace* | Ce qui s'assemble de case en case en reliant des bords de sa case — clôture, chemin, mur, cours d'eau ; sa forme dit lesquels. |
 | forme | shape | Pour un sujet qui se pose bout à bout — clôture, chemin, mur, cours d'eau —, l'ensemble des bords de la case que le tracé rejoint, écrits dans l'ordre `n`, `e`, `s`, `w` : `shape-ns` une ligne, `shape-ne` un angle, `shape-nesw` un croisement. La forme dit où la pièce touche ses voisines, donc elle se vérifie par calcul. |
-| composition d'un sujet | subject composition | De quoi une pièce est faite, **à forme égale** : la clôture `shape-ns` existe avec deux poteaux, avec un seul, ou sans aucun, ses lisses toujours identiques. On alterne les compositions le long d'une portée pour que les poteaux s'espacent au lieu de se doubler à chaque jointure. S'écrit dans l'adresse `posts-2`, `posts-1`, `posts-0`. |
+| composition d'un sujet | subject composition | De quoi une pièce est faite, **à forme égale** : la clôture `shape-ns` existe avec deux poteaux, avec un seul, ou sans aucun, ses lisses toujours identiques. On alterne les compositions le long d'une portée pour que les poteaux s'espacent au lieu de se doubler à chaque jointure. S'écrit dans la ref du variant : `posts-2`, `posts-1`, `posts-0`. |
 | composition d'une scène | scene composition | Quels sujets se placent sur quelles cases d'une grille. Se déclare dans un **plan de composition** avant toute génération. Même mot que ci-dessus, autre échelle : l'un parle d'un plan, l'autre d'une pièce. |
 | plan de composition | composition plan | Le plan à plat, vu de dessus, qui déclare une composition de scène case par case et se contrôle avant qu'aucune image ne soit demandée. |
 | exemple d'usage | usage sample | Une image unique montrant les pièces d'un sujet **assemblées**, produite pour les comparer entre elles et servir de référence de style. Ce n'est pas une sprite et elle ne se découpe pas. |
@@ -53,25 +53,46 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 | texture | texture | Ce qui habille une surface sans en changer la forme : le grain du bois, l'écorce, la mousse, les nuances de couleur. Elle se distingue de la **géométrie**, qui dit où sont les volumes. Un plan ou une esquisse portent la géométrie et jamais la texture ; une image générée porte les deux. |
 | maître | master | L'image telle que le générateur l'a rendue, conservée pour toujours. |
 | livrable | delivered asset | Le maître **exporté** à la définition de livraison. Rien d'autre ne le distingue : il n'est ni rogné ni retouché. |
-| garniture | — | **Terme banni.** Employé une journée pour ce qu'on appelle désormais la *composition d'un sujet* ; il ne disait pas de quoi il parlait. |
+| validateur | validator | Un outil qui vérifie qu'une chose respecte les règles écrites, et le dit — une consigne avant sa génération, le référentiel des sujets, une image produite. Il constate et rend un verdict ; il ne corrige rien et ne juge rien. |
+| sprite | sprite | L'image d'un variant, posée telle quelle sur la carte du jeu à l'endroit qu'elle occupe. C'est une représentation parmi d'autres, la seule employée aujourd'hui. |
+| dimensions d'une image | image dimensions | Ce que l'image mesure. Elles se disent **en cases** au générateur, et **en pixels** pour l'afficher ou pour valider un fichier reçu. |
+| ref | ref | Ce qui désigne une chose sans ambiguïté. Un **sujet** a une ref — `OB-010` ; un **variant** a la sienne — `orientation-south_action-idle_shape-ew_gate-open_frame-01` —, **écrite dans la déclaration que son type en fait**, jamais calculée. Une image se désigne par les deux, séparées d'une barre. Une ref ne porte que ce qui distingue : orientation et action toujours, le reste seulement s'il s'écarte de son défaut, et en forme courte quand elle existe (`ns`). Une fois posée, elle ne change plus. |
 | orientation | orientation | Comment le sujet est planté sur sa surface, **dans le repère du monde**, à la rose des vents : `south` (face à nous), `north` (de dos), `west` et `east` (de profil), plus les quatre intermédiaires. |
 | direction | direction | Où pointe une partie du sujet, **dans le repère du sujet une fois orienté** : les mêmes valeurs, plus `up` et `down`. Convention absolue : `north` = droit devant le sujet, `east` sur sa droite, `west` sur sa gauche, `south` derrière lui. |
-| instance | instance | Une **apparition** d'un sujet à un endroit précis d'une scène : le sujet, sa case, sa variante et ce qu'il y fait. Le sujet se décrit une fois, ses instances sont innombrables. |
+| instance | instance | Une **apparition** d'un sujet à un endroit précis d'une scène : le sujet, sa case, son variant et ce qu'il y fait. Le sujet se décrit une fois, ses instances sont innombrables. |
 | partie qui pointe | pointing part | Ce qui porte une direction : le corps (`body`), le regard (`gaze`), et toute partie déclarée par le type — une main, une queue. Une direction non écrite vaut `north`. |
 | action | action | Ce que fait le sujet : `idle`, `walk`, `run`, `sit`, `sleep`, `jump`… liste ouverte. |
-| repli | fallback | La variante de remplacement quand celle demandée n'existe pas encore. |
+| repli | fallback | Le variant de remplacement quand celui demandé n'existe pas encore. |
 | emprise au sol | footprint | Les cases que le sujet occupe au sol. |
 | point de pose | anchor | Le point par lequel le sujet est posé dans le monde : le milieu du bord bas de son emprise. |
 | calque | layer | L'une des cinq familles d'empilement à l'écran : sol, décor au sol, monde, dessus, interface. |
 | élévation | elevation | Le niveau auquel un sujet se tient : le sol, une passerelle, un étage. |
-| catalogue d'assets | asset catalog | Le fichier qui décrit chaque profil et chaque variante ; source unique de la génération, des plans et du rendu. |
-| tuile de sol | ground tile | Une image de matière répétable bord à bord. Le mot **tuile** seul est banni : il se confond avec *case / tile*. |
+| catalogue d'assets | asset catalog | Le fichier qui décrit chaque profil et chaque variant ; source unique de la génération, des plans et du rendu. |
+| tuile de sol | ground tile | Une image de matière répétable bord à bord. |
 | détourage | cutout | Le retrait du fond de fabrication, qui transforme l'image produite en image à fond transparent. |
 | fond de fabrication | key color | Le magenta pur sur lequel le générateur pose le sujet, et qui n'existe dans aucune matière du monde. |
-| génération d'image | image generation | L'acte de demander une image au générateur et de la recevoir, distinct de la *chaîne de production* qui l'entoure. **Toujours qualifié** : le jeu générera aussi des cartes, des noms, des plans — « génération » seul ne dit pas ce qu'on génère. Le mot **tir**, hérité du tirage photo, est banni : il suppose un original dont on tire une épreuve, alors qu'ici l'image naît de la description. |
+| génération d'image | image generation | L'acte de demander une image au générateur et de la recevoir, distinct de la *chaîne de production* qui l'entoure. **Toujours qualifié** : le jeu générera aussi des cartes, des noms, des plans — « génération » seul ne dit pas ce qu'on génère. |
 | chaîne de production | production pipeline | L'enchaînement fiche → consigne → génération → détourage → contrôles → catalogue. |
 | planche-contact | contact sheet | La page de revue qui rassemble un lot produit, avec sa note et le motif de chaque défaut. |
 | reprise | retry | La seconde et dernière tentative accordée à une image jugée fautive. |
 | mise en défaut | flagged | L'état d'une image qui a échoué deux fois : elle est écartée, signalée, et n'arrête pas le reste du lot. |
 
 Terme en attente : **tracé** — forme anglaise provisoire (`trace`), à confirmer avec quelqu'un dont c'est le métier.
+
+## Termes bannis
+
+Un mot est banni quand il désigne plusieurs choses à la fois, ou quand il porte un sens venu d'ailleurs qui ne vaut pas ici. Un terme banni ne s'emploie **nulle part** — ni dans les documents, ni dans le code, ni dans les échanges.
+
+| Terme banni | À employer à la place | Pourquoi |
+|---|---|---|
+| entité | sujet | Côté fonctionnel, une entité désigne aussi des éléments sans image ; on ne sait plus si l'on parle d'une règle ou d'une image. |
+| garniture | composition d'un sujet | Ne disait pas de quoi il parlait. Employé une journée, jamais compris. |
+| tuile | case, ou tuile de sol | Seul, il se confond avec la *case* de la grille ; il ne s'emploie qu'accompagné, dans *tuile de sol*. |
+| tir | génération d'image | Hérité du tirage photo, il suppose un original dont on tire une épreuve, alors qu'ici l'image naît de la description. |
+| axe, et tout équivalent — dimension, facette | variant | Inventait une notion de plus au-dessus du variant, laissait croire à un mécanisme à part, et a conduit à en construire un second là où le premier suffisait. Un sujet a des variants, un type dit lesquels, il n'y a rien d'autre à nommer. |
+| variante, au féminin | variant, au masculin | En français, c'est **un variant** : le mot couvre tous les aspects sous lesquels un sujet se décline, mouvement et densité compris, et non les seules apparences d'une même chose. |
+| adresse | ref | Évoquait un chemin de fichier, alors qu'une ref désigne une chose du modèle, où qu'elle soit rangée. |
+| contrôleur | validateur, ou script | N'existe pas dans ce projet, qui n'a que des scripts et des validateurs. |
+| fiche | la description d'un sujet, ou son entrée à l'inventaire | Désigne indifféremment la description, l'ensemble des informations d'un sujet, celles d'un variant ou celles d'une sprite : on ne sait jamais laquelle. |
+| tracé | sprite, ou pièce d'un assemblage | La notion n'a jamais existé : c'était un dessin SVG, qui ne passait pas par le générateur d'images. Tout ce qui se dessine est une sprite, et une sprite qui se pose bout à bout avec ses voisines est une pièce d'un assemblage. |
+| toile | les dimensions de l'image | Ne nomme rien du modèle : selon la phrase, il désignait la surface de l'image, ses dimensions ou le fichier lui-même. |

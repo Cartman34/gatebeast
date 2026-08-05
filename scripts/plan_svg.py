@@ -156,7 +156,7 @@ def _folded(notes, canvas, char=5.8):
 
 
 def render(columns, rows, elements=(), inhabitants=(), traces=None, keys=None, title="", notes=(),
-           legend_labels=None, tile=TILE):
+           legend_labels=None, tile=TILE, spreads=None, legend=True):
     """The plan itself. Coordinates are cell coordinates, inclusive, origin (1,1) at the top left.
 
     A plan says very little on purpose: which cells a thing occupies, and — for anything that runs
@@ -168,30 +168,41 @@ def render(columns, rows, elements=(), inhabitants=(), traces=None, keys=None, t
     # code it has never seen. Resolved once here so the same kind is the same colour everywhere.
     tint = palette(dict.fromkeys(kind for kind, *_ in elements))
     width, height = columns * tile, rows * tile
-    top = 26 if title else 0
     # The canvas is sized on the DRAWING, and the text folds to fit it — never the reverse. Letting a
     # long legend stretch the canvas left the plan alone in a corner of a page four times too wide.
     canvas = max(width, 720)
-    notes = _folded(notes, canvas)
-    bottom = 30 + 14 * len(notes)
+    # THE TEXT GROWS WITH THE DRAWING. An SVG is displayed at the width it is given, so its own units shrink: a title set at fourteen units on a canvas three and a half times
+    # the smallest one is read at four pixels, and the legend disappears altogether. Every size written below is therefore a size on the SMALLEST canvas, multiplied by how
+    # much bigger this one is — so a plan of sixty-four cells reads exactly like a plan of seven.
+    zoom = canvas / 720
+    top = round(26 * zoom) if title else 0
+    notes = _folded(notes, canvas, char=5.8 * zoom)
+    bottom = round(((30 if legend else 12) + 14 * len(notes)) * zoom)
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
-        f'viewBox="0 0 {canvas:.0f} {height + top + bottom}" font-family="sans-serif">',
+        f'viewBox="0 0 {canvas:.0f} {height + top + bottom}" font-family="sans-serif" '
+        # La géométrie de la grille, annoncée par le dessin lui-même : une page qui veut retrouver la case sous un clic la lit ici, au lieu de la recalculer et de se tromper
+        # le jour où le dessin change de proportions.
+        f'data-tile="{tile}" data-top="{top}" data-columns="{columns}" data-rows="{rows}">',
         f'<rect width="{canvas:.0f}" height="{height + top + bottom}" fill="#f6f2e8"/>',
     ]
     if title:
-        parts.append(f'<text x="4" y="17" font-size="14" font-weight="600" fill="#1d1a24">'
-                     f'{title}</text>')
+        parts.append(f'<text x="{4 * zoom:.0f}" y="{17 * zoom:.0f}" font-size="{14 * zoom:.0f}" '
+                     f'font-weight="600" fill="#1d1a24">{title}</text>')
     parts.append(f'<g transform="translate(0,{top})">')
 
+    spreads = spreads or {}
     for kind, c1, r1, c2, r2, label in elements:
         x, y = (c1 - 1) * tile, (r1 - 1) * tile
         w, h = (c2 - c1 + 1) * tile, (r2 - r1 + 1) * tile
-        # A single-cell vegetation element is a tree: its crown projects wider than its trunk.
-        if kind == "vegetation" and c1 == c2 and r1 == r2:
-            parts.append(f'<circle cx="{x + tile / 2}" cy="{y + tile / 2}" r="{tile * 1.5}" '
-                         f'fill="{tint[kind]}" fill-opacity="0.3" stroke="{tint[kind]}" '
-                         f'stroke-dasharray="4 3"/>')
+        # THE COUVERT, WHERE IT EXCEEDS THE FOOTPRINT: what the subject's volume overhangs, drawn as a round wash of the subject's own colour, centred on its footprint. Two
+        # trees whose washes overlap are two crowns that will grow into each other on the mounted mock-up — the plan is where that is seen, while it still costs nothing to
+        # move one of them. It is a wash and not an outline: the footprint's own square has to stay readable through it.
+        spread = spreads.get(kind)
+        if spread and (spread[0] > c2 - c1 + 1 or spread[1] > r2 - r1 + 1):
+            parts.append(f'<ellipse cx="{x + w / 2}" cy="{y + h / 2}" rx="{spread[0] * tile / 2}" '
+                         f'ry="{spread[1] * tile / 2}" fill="{tint[kind]}" fill-opacity="0.22" '
+                         f'stroke="{tint[kind]}" stroke-opacity="0.55" stroke-dasharray="4 3"/>')
         parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{tint[kind]}" '
                      f'fill-opacity="0.75" stroke="#00000040"/>')
         if label:
@@ -242,27 +253,31 @@ def render(columns, rows, elements=(), inhabitants=(), traces=None, keys=None, t
 
     # Legend: only the kinds actually used, so a plan never explains what it does not show. Known
     # kinds keep their French label; a subject code stands for itself, it needs no translation.
+    # LA LÉGENDE SE DEMANDE. Sur un plan qu'on lit dans une page où le survol d'une case dit déjà sa nature, elle répète en petit ce qui est disponible en clair, et elle
+    # ajoute une bande de couleurs à déchiffrer sous un dessin qui n'en a pas besoin. Sans rien dire, le plan la garde : les plans existants restent inchangés.
     named = dict((kind, label) for label, kind in LEGEND)
-    x = 4
-    for kind in dict.fromkeys(kind for kind, *_ in elements):
+    x = 4 * zoom
+    for kind in dict.fromkeys(kind for kind, *_ in elements) if legend else ():
         label = named.get(kind, legend_labels.get(kind, kind) if legend_labels else kind)
-        parts.append(f'<rect x="{x}" y="{height + 8}" width="12" height="12" fill="{tint[kind]}"/>')
-        parts.append(f'<text x="{x + 16}" y="{height + 18}" font-size="11" fill="#1d1a24">'
-                     f'{label}</text>')
-        x += 16 + 7 * len(label) + 12
-    for kind in ("human", "creature", "majestic"):
+        parts.append(f'<rect x="{x:.0f}" y="{height + 8 * zoom:.0f}" width="{12 * zoom:.0f}" '
+                     f'height="{12 * zoom:.0f}" fill="{tint[kind]}"/>')
+        parts.append(f'<text x="{x + 16 * zoom:.0f}" y="{height + 18 * zoom:.0f}" '
+                     f'font-size="{11 * zoom:.0f}" fill="#1d1a24">{label}</text>')
+        x += (16 + 7 * len(label) + 12) * zoom
+    for kind in ("human", "creature", "majestic") if legend else ():
         if not any(inhabitant[0] == kind for inhabitant in inhabitants):
             continue
         label = {"human": "humain", "creature": "créature", "majestic": "majestueuse"}[kind]
-        parts.append(f'<circle cx="{x + 6}" cy="{height + 14}" r="6" fill="{DOTS[kind]}" '
-                     f'stroke="#fff" stroke-width="2"/>')
-        parts.append(f'<text x="{x + 16}" y="{height + 18}" font-size="11" fill="#1d1a24">'
-                     f'{label}</text>')
-        x += 16 + 7 * len(label) + 12
+        parts.append(f'<circle cx="{x + 6 * zoom:.0f}" cy="{height + 14 * zoom:.0f}" '
+                     f'r="{6 * zoom:.0f}" fill="{DOTS[kind]}" stroke="#fff" stroke-width="2"/>')
+        parts.append(f'<text x="{x + 16 * zoom:.0f}" y="{height + 18 * zoom:.0f}" '
+                     f'font-size="{11 * zoom:.0f}" fill="#1d1a24">{label}</text>')
+        x += (16 + 7 * len(label) + 12) * zoom
 
     for index, note in enumerate(notes):
-        parts.append(f'<text x="4" y="{height + 34 + 14 * index}" font-size="11" fill="#5c5468">'
-                     f'{note}</text>')
+        parts.append(f'<text x="{4 * zoom:.0f}" '
+                     f'y="{height + ((34 if legend else 16) + 14 * index) * zoom:.0f}" '
+                     f'font-size="{11 * zoom:.0f}" fill="#5c5468">{note}</text>')
 
     parts.append("</g></svg>")
 

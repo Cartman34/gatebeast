@@ -4,7 +4,7 @@
 The inventory below is a design decision handed down by the owner's coordinator and is reproduced as
 given — codes, names and footprints are not invented and not corrected here.
 
-Variant addresses follow the model in sujets-et-variantes.md: orientation and action are always
+Variant refs follow the model in sujets-et-variantes.md: orientation and action are always
 written, a direction only when it leaves its default, then the frame.
 
 FRENCH TEXT NEVER ENTERS THE SCRIPT BY CONCATENATION. Every string the page's behaviour needs — status
@@ -17,6 +17,7 @@ Run from the workspace root: python3 gatebeast/local/build-review-page.py
 """
 import base64
 import html
+import importlib.util
 import io
 import json
 import re
@@ -31,7 +32,17 @@ ASSETS = HERE.parents[1] / "assets"
 # The tile scale is a service, not a number to retype. The page shows what it says.
 sys.path.insert(0, str(SCRIPTS))
 import tile_scale
+# check-sujets.py is hyphenated, so it is loaded by path rather than imported by name — the same
+# mechanism the production tools use for it. It holds how many earlier versions this page shows.
+_spec = importlib.util.spec_from_file_location("check_sujets", SCRIPTS / "check-sujets.py")
+check_sujets = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(check_sujets)
 THUMBNAILS = json.loads((SCRIPTS / "thumbnails.json").read_text(encoding="utf-8"))
+# Entries built by an earlier run of scripts/build-thumbnails.py hold their image at full definition.
+# They are dropped here rather than trusted: every image this page shows is now read from disk and
+# reduced to screen size on the way in (master_entry, shrink_to_screen), which is what keeps the page
+# small enough for the browser to apply its own declarations at all.
+THUMBNAILS = {}
 OUT = HERE / "page.html"
 
 JUDGEMENTS_PATH = ASSETS / "jugements.json"
@@ -115,6 +126,8 @@ LABELS = {
     "copy": "Copier le relevé",
     "copied": "Relevé copié",
     "copyFailed": "Copie refusée par le navigateur — sélectionnez le texte à la main",
+    "fold": "Replier",
+    "unfold": "Déplier",
     "reset": "Tout effacer",
     "resetConfirm": "Effacer toutes vos cases cochées et vos commentaires ?",
     "barSummary": "relevé du propriétaire",
@@ -139,64 +152,47 @@ LABELS = {
 DEFAULT_SHAPE = "plain"
 
 
-def address(orientation="south", action="idle", shape=DEFAULT_SHAPE, axis_values=(), frame=1):
-    """The address of one image, per sujets-et-variantes.md and doc/lexique.md.
-
-    Orientation and action are always written. The shape follows the action, and only when it leaves
-    its default `plain` — the value of every subject that does not assemble end to end, which is very
-    nearly all of them. Every other axis a type declares (composition, portillon, and whichever comes
-    next) follows the shape, each written as its own bare value, no axis name in front of it, exactly
-    what the delivered file names themselves already do — and only when it leaves its own default
-    (doc/lexique.md states this rule for the composition axis; it holds the same way for any axis of
-    the same shape). axis_values is computed once per variant by variant_axis_values(), in a fixed
-    order — no axis is ever named here, so a new one needs no change to this function. Directions
-    would come next, then the frame.
-    """
-    pieces = [f"orientation-{orientation}", f"action-{action}"]
-    if shape != DEFAULT_SHAPE:
-        pieces.append(f"shape-{shape}")
-    pieces.extend(axis_values)
-    pieces.append(f"frame-{frame:02d}")
-
-    return "_".join(pieces)
+# A ref is not composed here, nor anywhere else: it is WRITTEN on the variant in the referentiel and read from there (sujets-et-variantes.md). The function
+# that used to build one from the fields is gone — one notion, one place, and a page that shows exactly what the file says.
 
 
-def type_axis_keys(type_def):
-    """Every extra variant axis a type declares, in a fixed alphabetical order.
+def type_variant_keys(type_def):
+    """Every extra variant field a type declares, in a fixed alphabetical order.
 
-    An axis is any type key ending in "s" whose value carries "values" and "default" — the shape
-    `compositions` and `portillons` already have, and whichever comes next without needing a change
-    here. Alphabetical because nothing in the referentiel orders axes itself, and the address and the
-    caption must agree on the very same order everywhere on the page.
+    A variant field is any type key ending in "s" whose value carries "values" and "default" — the
+    shape `compositions` and `portillons` already have, and whichever comes next without needing a
+    change here. Alphabetical because nothing in the referentiel orders these fields itself, and the
+    ref and the caption must agree on the very same order everywhere on the page.
     """
     return sorted(key for key, value in type_def.items()
                  if key.endswith("s") and isinstance(value, dict)
                  and "values" in value and "default" in value)
 
 
-def leading_axis_keys(type_def):
-    """Axes the type marks as changing what a variant fundamentally IS, not just how it is finished —
-    `defines_kind: true` on the axis' own declaration, read generically like every other axis property
-    (type_axis_keys()): a fixed marker the referentiel states, never a guess from an axis' name or its
-    number of values (composition also has three values, and never changes what the piece is). No
-    current axis carries this marker yet, so nothing leads until the referentiel adds it to one.
+def leading_variant_keys(type_def):
+    """Variant fields the type marks as changing what a variant fundamentally IS, not just how it is
+    finished — `defines_kind: true` on the field's own declaration, read generically like every other
+    variant field property (type_variant_keys()): a fixed marker the referentiel states, never a guess
+    from a field's name or its number of values (composition also has three values, and never changes
+    what the piece is). No current field carries this marker yet, so nothing leads until the
+    referentiel adds it to one.
     """
-    return [key for key in type_axis_keys(type_def) if type_def[key].get("defines_kind")]
+    return [key for key in type_variant_keys(type_def) if type_def[key].get("defines_kind")]
 
 
-def variant_axis_values(type_def, entry):
-    """Every value a variant carries on one of its type's axes that is not that axis' own default —
-    the referentiel's own rule (doc/lexique.md, composition d'un sujet): a default is never written,
-    since writing it on every variant would only make every other one harder to read by comparison.
-    A variant names its value under the axis' own singular field (`compositions` -> `composition`,
-    `portillons` -> `portillon`), read here from what the type actually declares, never assumed from
-    a fixed list — a third axis tomorrow needs no change to this function either.
+def variant_field_values(type_def, entry):
+    """Every value a variant carries on one of its type's variant fields that is not that field's own
+    default — the referentiel's own rule (doc/lexique.md, composition d'un sujet): a default is never
+    written, since writing it on every variant would only make every other one harder to read by
+    comparison. A variant names its value under the field's own singular name (`compositions` ->
+    `composition`, `portillons` -> `portillon`), read here from what the type actually declares, never
+    assumed from a fixed list — a third field tomorrow needs no change to this function either.
     """
     values = []
-    for axis_key in type_axis_keys(type_def):
-        field = axis_key[:-1]
+    for variant_key in type_variant_keys(type_def):
+        field = variant_key[:-1]
         value = entry.get(field)
-        if value and value != type_def[axis_key]["default"]:
+        if value and value != type_def[variant_key]["default"]:
             values.append(value)
 
     return values
@@ -204,7 +200,7 @@ def variant_axis_values(type_def, entry):
 
 # ---- the referentiel of sujets is the single source: no duplicate model lives here anymore ---------
 # This page used to carry its own list of expected types, profiles and variants, kept by hand beside
-# assets/sujets.json. The two drifted apart the day a new axis (compositions) or a new shape arrived and
+# assets/sujets.json. The two drifted apart the day a new variant field (compositions) or a new shape arrived and
 # only one of them learned about it — exactly what left three freshly produced fence pieces sitting in
 # "hors modèle" although they were perfectly legitimate. There is now exactly one model: the referentiel
 # itself, read here and never copied.
@@ -224,6 +220,11 @@ INVENTAIRE_DIR = HERE.parents[1] / "doc" / "conception" / "referentiels" / "visu
 # defect in this page, but one nobody should have to open the page to discover (see the report printed
 # at the end of this script, alongside SKIPPED_IMAGES).
 MISSING_LABELS = []
+
+# Every image whose frozen consigne could not be found beside its master. A named state, not a fault:
+# the earliest images of the project predate the rule that freezes one. Reported to the launcher in
+# this script's own output all the same — an anomaly the page swallows is an anomaly nobody sees.
+MISSING_PROMPTS = []
 
 
 def load_sujet_labels():
@@ -250,15 +251,16 @@ TILE_TYPE = "sol"
 # French section headings. The referentiel itself stays in the technical vocabulary it is written in;
 # only display strings live here, exactly as any other UI label on this page does.
 TYPE_LABELS = {
-    "sol": "Sol", "chemin": "Chemin", "cloture": "Clôture et mur", "arbre": "Arbre",
-    "bosquet-arbres": "Bosquet d'arbres", "herbe": "Herbe", "batiment": "Bâtiment",
-    "humain": "Humain", "creature": "Créature",
+    "sol": "Sol", "chemin": "Chemin", "cours-d-eau": "Cours d'eau", "cloture": "Clôture et mur",
+    "arbre": "Arbre", "bosquet-arbres": "Bosquet d'arbres", "herbe": "Herbe",
+    "batiment": "Bâtiment", "humain": "Humain", "creature": "Créature",
 }
-# Human-readable text for a value the referentiel names, tried by ANY axis (composition, portillon,
-# and whichever comes next) — never keyed to one axis by name, since a raw value like "posts-1" or
-# "ferme" cannot collide between axes. A value with no entry here is shown exactly as the referentiel
-# spells it (variant_caption()) rather than block on a translation this page does not own.
-AXIS_VALUE_LABELS = {
+# Human-readable text for a value the referentiel names, tried by ANY variant field (composition,
+# portillon, and whichever comes next) — never keyed to one field by name, since a raw value like
+# "posts-1" or "ferme" cannot collide between fields. A value with no entry here is shown exactly as
+# the referentiel spells it (variant_caption()) rather than block on a translation this page does not
+# own.
+VARIANT_VALUE_LABELS = {
     "posts-2": "deux poteaux", "posts-1": "un poteau", "posts-0": "sans poteau",
     "gate-none": "sans portillon", "gate-closed": "portillon fermé", "gate-open": "portillon ouvert",
 }
@@ -272,10 +274,10 @@ def type_rule(type_def):
             else "passage fermé par défaut"]
     if type_def.get("assembles"):
         bits.append("s'assemble bout à bout, " + ("pivote" if type_def.get("rotates") else "ne pivote pas"))
-    for axis_key in type_axis_keys(type_def):
-        axis = type_def[axis_key]
-        values = ", ".join(axis["values"])
-        bits.append(f"{axis_key} {values} (défaut {axis['default']})")
+    for variant_key in type_variant_keys(type_def):
+        declaration = type_def[variant_key]
+        values = ", ".join(declaration["values"])
+        bits.append(f"{variant_key} {values} (défaut {declaration['default']})")
     if type_def.get("parts"):
         bits.append("parties qui pointent : " + ", ".join(type_def["parts"]))
 
@@ -314,7 +316,7 @@ def _rest_of(relative_path):
 # decides a stray, CLAIMED only tells a slot which exact file to show.
 CLAIMED = {representation["path"]
           for sujet in SUJETS.values()
-          for entry in sujet["variantes"]
+          for entry in sujet["variants"]
           for representation in entry.get("representations", [])}
 CLAIMED_RESTS = {_rest_of(path) for path in CLAIMED}
 
@@ -340,7 +342,7 @@ HORS_MODELE = [
 ]
 
 # A shape is the set of edges a track reaches. The label spells that out in French rather than naming
-# a drawing: the edges are what the address means, and what a layout is checked against.
+# a drawing: the edges are what the ref means, and what a layout is checked against.
 EDGE_LABELS = {"n": "nord", "e": "est", "s": "sud", "w": "ouest"}
 DRAWING_LABELS = {1: "extrémité", 2: "ligne", 3: "trois branches", 4: "croisement"}
 
@@ -358,7 +360,7 @@ def shape_label(shape):
 
 def shape_edges_label(shape):
     """Just the edges a shape connects, no drawing word in front (`ligne`, `angle`...) — used when a
-    leading axis already names what kind of piece this is (variant_caption()): repeating the drawing
+    leading variant field already names what kind of piece this is (variant_caption()): repeating the drawing
     word in front of it would only restate what the leading label already said. A plain subject
     (DEFAULT_SHAPE) has no edges of its own to name.
     """
@@ -409,8 +411,8 @@ def working_box(footprint, kind, code):
     Width comes from the footprint — the ground the subject occupies — and height only ever follows the
     image's own proportions, never the other way around: scaling to a declared height would shrink a
     tall building until its base stopped covering its tiles. A tall subject overflows upward instead.
-    A ground material is the one exception: it takes its footprint on both axes, because it has to tile
-    edge to edge.
+    A ground material is the one exception: it takes its footprint in both dimensions, because it has
+    to tile edge to edge.
     """
     columns, rows = footprint
     if kind == "tile":
@@ -440,6 +442,16 @@ registry = []
 # popin's own data, built as each slot is rendered and read back only once every slot has run.
 comparisons = {}
 
+# Everything a control opens in the shared popin, keyed by the control's own key: a variant's metadata, an image's frozen consigne. Held as data rather
+# than as markup so nothing of it is ever laid inline in the flow — an inline fold pushes every slot below it out of place and is unreadable next to a
+# sprite (operator, 2026-08-05). Each entry carries its title, its kind, and either rows of facts or one block of verbatim text.
+panels = {}
+
+# Each image's own frozen consigne and its production report, keyed by the display code the viewer is opened with, so the enlarged view shows both beside
+# the picture — what was asked, and how it was obtained.
+prompts = {}
+reports = {}
+
 
 def current_representation(representations):
     """The one representation a variant shows in its main slot — the referentiel's own authority, not
@@ -458,9 +470,11 @@ def current_representation(representations):
 
 
 def previous_representations(representations, current):
-    """Every representation that is not the current one, in the referentiel's own order (most recent
-    first, per the same doc) — capped to the three the comparison popin shows."""
-    return [rep for rep in representations if rep is not current][:3]
+    """The earlier versions this page SHOWS beside the current one, in the referentiel's own order —
+    most recent first. The referentiel keeps every version without limit; three are shown in all, the
+    current one and the two before it (operator, 2026-08-05)."""
+    return [rep for rep in representations
+            if rep is not current][:check_sujets.SHOWN_PREVIOUS_REPRESENTATIONS]
 
 
 def escape(text):
@@ -469,7 +483,7 @@ def escape(text):
 
 def lead_capital(text):
     """Capitalise a standalone label's leading letter, and nothing else — never Title Case the rest
-    of it, and never touch a code or a technical address, which keep the exact case their files
+    of it, and never touch a code or a technical ref, which keep the exact case their files
     carry. Applied only at the point a composed phrase (a variant's caption, a type's rule) becomes
     the whole content of a displayed label; the fragments it is built from stay as they are, since
     most of them are also used mid-sentence elsewhere, where a leading capital would be wrong.
@@ -506,18 +520,18 @@ def actions_markup(identifier, subject, status):
                         aria-expanded="false" aria-label="Commentaire — {escape(subject)}">＋</button>
               </div>
               <div class="slot-more" data-more="{escape(identifier)}" hidden>
-                <input class="note" type="text" data-note="{escape(identifier)}"
-                       placeholder="Commentaire" aria-label="Commentaire — {escape(subject)}" />
+                <textarea class="note" rows="1" data-note="{escape(identifier)}"
+                          placeholder="Commentaire" aria-label="Commentaire — {escape(subject)}"></textarea>
               </div>"""
 
 
-def register(identifier, code, profile_label, type_label, address_text, scope, status):
+def register(identifier, code, profile_label, type_label, ref_text, scope, status):
     registry.append({"id": identifier, "code": code, "profile": profile_label, "type": type_label,
-                     "address": address_text, "scope": scope, "status": status})
+                     "ref": ref_text, "scope": scope, "status": status})
 
 
 def field_varies(variants, getter):
-    """Whether `getter(entry)` takes more than one distinct value across ONE sujet's own variantes —
+    """Whether `getter(entry)` takes more than one distinct value across ONE sujet's own variants —
     the population variant_caption()'s label-brevity rule is judged against: a field that can only
     ever be one thing for this sujet distinguishes none of its variants from another, however many
     values it could take elsewhere in the referentiel or for another sujet of the same type. A sujet
@@ -531,35 +545,36 @@ def variant_caption(type_def, entry, varies):
     """What actually distinguishes this variant, in the order it matters.
 
     A LABEL SAYS WHAT DISTINGUISHES A VARIANT, NOTHING MORE (the operator's own rule): a field that
-    cannot take more than one value across this sujet's own variantes (varies, from field_varies() —
-    asked of the shape, the orientation and every axis alike, never hardcoded per field) is left out
-    of the caption entirely, however meaningful it looks in isolation — "sud" says nothing when every
-    variant of this sujet faces south. The day a sujet actually has more than one orientation (a
-    character, a creature), it reappears in the caption on its own, with no change needed here.
+    cannot take more than one value across this sujet's own variants (varies, from field_varies() —
+    asked of the shape, the orientation and every variant field alike, never hardcoded per field) is
+    left out of the caption entirely, however meaningful it looks in isolation — "sud" says nothing
+    when every variant of this sujet faces south. The day a sujet actually has more than one
+    orientation (a character, a creature), it reappears in the caption on its own, with no change
+    needed here.
 
-    Every axis that DOES vary is always named, default value included (a caption exists to tell two
-    variants apart at a glance, and staying silent on an axis whenever it holds the default would let
-    "deux poteaux" and "un poteau" both read as plain "ligne nord-sud"). Most axes trail after the
-    shape, in the same fixed order the address itself lists them. But an axis the type marks as
-    changing what the piece fundamentally IS (leading_axis_keys(): `defines_kind`) LEADS the caption
-    instead, and only when it actually holds a value other than its own default — a fence stays "ligne
-    nord-sud" until a portillon is what it is, at which point the caption reads "Portillon ouvert,
-    nord-sud", not "Ligne nord-sud · … · portillon ouvert" where the one fact that matters arrives
-    last. The shape's own drawing word (`ligne`, `angle`...) is dropped in that case
+    Every variant field that DOES vary is always named, default value included (a caption exists to
+    tell two variants apart at a glance, and staying silent on a field whenever it holds the default
+    would let "deux poteaux" and "un poteau" both read as plain "ligne nord-sud"). Most fields trail
+    after the shape, in the same fixed order the ref itself lists them. But a field the type marks
+    as changing what the piece fundamentally IS (leading_variant_keys(): `defines_kind`) LEADS the
+    caption instead, and only when it actually holds a value other than its own default — a fence
+    stays "ligne nord-sud" until a portillon is what it is, at which point the caption reads
+    "Portillon ouvert, nord-sud", not "Ligne nord-sud · … · portillon ouvert" where the one fact that
+    matters arrives last. The shape's own drawing word (`ligne`, `angle`...) is dropped in that case
     (shape_edges_label()): the leading label already says what kind of piece this is, so it would only
     repeat itself.
     """
-    leading_keys = leading_axis_keys(type_def)
+    leading_keys = leading_variant_keys(type_def)
     leading_labels = []
     trailing_labels = []
-    for axis_key in type_axis_keys(type_def):
-        field = axis_key[:-1]
+    for variant_key in type_variant_keys(type_def):
+        field = variant_key[:-1]
         if not varies.get(field):
             continue
-        default = type_def[axis_key]["default"]
+        default = type_def[variant_key]["default"]
         value = entry.get(field, default)
-        label = AXIS_VALUE_LABELS.get(value, value)
-        if axis_key in leading_keys and value != default:
+        label = VARIANT_VALUE_LABELS.get(value, value)
+        if variant_key in leading_keys and value != default:
             leading_labels.append(label)
         else:
             trailing_labels.append(label)
@@ -629,14 +644,60 @@ def variant_shot(path, footprint, kind, label):
     return shot_markup(display_code, footprint, kind, label, full_code=full_code)
 
 
-def representation_meta_markup(identifier, path, code, label):
+def representation_meta_markup(identifier, path, code, label, master=None):
     """Everything about one representation that is NOT the picture itself, in the encart's text area:
     whether it stands in for an unexported master, and its judgement — nothing here is ever laid over
     the image (see shot_markup()), so reading it never hides part of the sprite it is about.
     """
     tag = ('<p class="shot-tag">Maître, pas encore exporté</p>' if path.startswith("poc/") else "")
+    # The consigne is frozen beside the MASTER, never beside the deliverable the export writes.
+    remember_prompt(code, master or path)
 
     return tag + judge_body_markup(identifier, code, label)
+
+
+def frozen_prompt(path):
+    """The consigne that produced ONE image, read from the file frozen beside its master.
+
+    Every image keeps its own consigne, written next to it and never rewritten once the image exists
+    (chaine-de-production.md) — so the text belongs to the representation, not to the variant: two
+    versions of the same variant were produced by two different consignes, and showing one for the
+    other would be worse than showing none.
+
+    Returns None when the file is absent, which is a real state and not a fault here: the very first
+    images of the project predate the rule. It is reported to the launcher all the same, in the run's
+    own output, so it can be found (see MISSING_PROMPTS).
+    """
+    master = ASSETS / path
+    frozen = master.with_suffix(".txt")
+    if not frozen.is_file():
+        MISSING_PROMPTS.append(path)
+        return None
+
+    return frozen.read_text(encoding="utf-8")
+
+
+def remember_prompt(code, master_path):
+    """Keep this image's own consigne AND its production report, so the enlarged view can show both beside the picture.
+
+    The three belong together and nowhere else: the picture says what came out, the consigne says what was asked, and the report says how it was obtained —
+    the model, the session to reopen, the timings, the measures. Judging on any one of them alone is what sent this project chasing the wrong cause more
+    than once. All keyed by the image's own display code, the very key the viewer is opened with, so no control has to carry the text around.
+    """
+    if code is None or not master_path:
+        return
+    text = frozen_prompt(master_path)
+    if text is not None:
+        prompts[code] = text
+    # The report is a trace of the run, kept under var/generations/ — assets/ holds assets and nothing else. Sprites and usage samples each have their own
+    # folder there, and a report is looked for in both rather than guessed at from the path.
+    stem = Path(master_path).stem
+    for kind in ("sprites", "subjects"):
+        report = ASSETS.parent / "var" / "generations" / kind / f"{stem}-rapport.md"
+        if report.is_file():
+            break
+    if report.is_file():
+        reports[code] = report.read_text(encoding="utf-8")
 
 
 # The OPERATOR's own word on a representation — "validee", "a-reprendre", "ecartee" — a wholly
@@ -645,9 +706,12 @@ def representation_meta_markup(identifier, path, code, label):
 # "retenue"/"à refaire", the judge's own words), so the two can never be misread as the same fact.
 VERDICT_LABELS = {"validee": "Validée", "a-reprendre": "À reprendre", "ecartee": "Écartée"}
 # The verdict's own CSS colour family — named for what it reads as, not reusing the production
-# STATUS's "validated"/"fault"/"rejected" slots (those track the CHAIN's own state, a different axis
+# STATUS's "validated"/"fault"/"rejected" slots (those track the CHAIN's own state, a different fact
 # entirely: whether an image exists at all, never whether the operator liked it).
 VERDICT_STYLES = {"validee": "validated", "a-reprendre": "rework", "ecartee": "rejected"}
+# The production state a verdict imposes on its variant. Only these three: a verdict the operator has not given leaves the variant in the state the files
+# alone give it. "rework" is the verdict's own colour family, "fault" the production state — the two words differ on purpose and are not interchangeable.
+VERDICT_STATUS = {"validee": "validated", "a-reprendre": "fault", "ecartee": "rejected"}
 
 
 def operator_verdict_markup(representation):
@@ -682,7 +746,48 @@ def rejected_shot_markup(path, footprint, label):
             f'<span>Image&nbsp;écartée</span></div>')
 
 
-def slot_markup(sujet_code, sujet, type_name, type_def, entry, varies):
+def ground_extent(sujet):
+    """What the sujet stands on and blocks — its emprise, in cells."""
+    return (sujet["emprise"]["columns"], sujet["emprise"]["rows"])
+
+
+def drawn_extent(sujet):
+    """What the sujet's volume covers, and therefore what its picture spans — its couvert, which falls back to its emprise when it declares none.
+
+    Two different facts, and confusing them is what squashed the apple tree: the emprise says where it stands, the couvert says how far its canopy reaches.
+    """
+    couvert = sujet.get("couvert")
+
+    return (couvert["columns"], couvert["rows"]) if couvert else ground_extent(sujet)
+
+
+def main_variant(sujet):
+    """The sujet's PRINCIPAL variant — the one every other one cascades from.
+
+    Taken from the referentiel, which marks it with "principale": true, and never guessed here: which
+    piece of an assembling sujet leads is a design decision, not something a display can deduce from a
+    shape's name. A sujet with a single variant has that one for principal, marker or not — there is
+    nothing else it could be.
+    """
+    variants = sujet["variants"]
+    for entry in variants:
+        if entry.get("principale"):
+            return entry
+
+    return variants[0] if len(variants) == 1 else None
+
+
+def ordered_variants(sujet):
+    """The sujet's variants, its principal one first — it is the reference the others are judged
+    against, so it is the one the eye must meet first."""
+    principal = main_variant(sujet)
+    if principal is None:
+        return sujet["variants"]
+
+    return [principal] + [entry for entry in sujet["variants"] if entry is not principal]
+
+
+def slot_markup(sujet_code, sujet, type_name, type_def, entry, varies, principal=False):
     """One variant, captioned by what actually distinguishes it, holding its current representation.
 
     A variant can carry more than one representation when a posture was attempted twice — only the
@@ -695,23 +800,28 @@ def slot_markup(sujet_code, sujet, type_name, type_def, entry, varies):
     fact next to the sprite, never a gate on what the operator may do with it.
     """
     caption = variant_caption(type_def, entry, varies)
-    footprint = (sujet["emprise"]["columns"], sujet["emprise"]["rows"])
+    # The picture is drawn on the COUVERT — what the subject's volume overhangs — because that is the extent the image itself covers; the emprise is what
+    # it stands on, and using it to size the drawing squashed an apple tree whose canopy spreads three cells wide into one (sujets-et-variantes.md).
+    footprint = drawn_extent(sujet)
     kind = "tile" if type_name == TILE_TYPE else "sprite"
-    addr = address(entry.get("orientation", "south"), entry.get("action", "idle"),
-                  entry.get("shape", DEFAULT_SHAPE), variant_axis_values(type_def, entry))
-    identifier = f"{sujet_code}|{addr}"
+    # READ, never recomposed: the ref is the variant's identifier and it is written in the referentiel (sujets-et-variantes.md). This page used to build one
+    # of its own from the fields, which is a second way of naming the same thing — and the day the two disagreed, nothing would have said which was right.
+    ref = entry["ref"]
+    identifier = f"{sujet_code}|{ref}"
     subject = f"{sujet_code} {caption}"
     representations = entry.get("representations", [])
-    # Objectively knowable from the referentiel alone: a representation exists, or it does not. The
-    # owner's own validation or rejection is never derived here — it lives in the operator's own
-    # checkboxes and the recap they copy out, which this status never overrides.
+    # The state of a variant is what the referentiel knows of it: no image yet, an image produced, or an image the OPERATOR has already ruled on. His
+    # verdict outranks the mere fact that a file exists — being asked to judge again what he has already judged is what this rule exists to stop.
     status = "done" if representations else "planned"
-    register(identifier, sujet_code, sujet["profil"], TYPE_LABELS.get(type_name, type_name), addr,
+    if representations:
+        status = VERDICT_STATUS.get(current_representation(representations).get("verdict"), status)
+    register(identifier, sujet_code, sujet["profil"], TYPE_LABELS.get(type_name, type_name), ref,
              "park", status)
 
     # The layout threshold is asked at the very scale the page actually draws at, never at a scale
     # that was true under an earlier rendering choice.
     wide = tile_scale.sprite_width(footprint[0]) > 200
+    meta = variant_meta_markup(identifier, sujet_code, sujet, type_def, entry, subject)
     tools = ""
     verdict_markup = ""
     if representations:
@@ -725,9 +835,11 @@ def slot_markup(sujet_code, sujet, type_name, type_def, entry, varies):
         else:
             vis = variant_shot(current["path"], footprint, kind, subject)
         current_code = thumbnail_key(current["path"])
-        judge = representation_meta_markup(identifier, current["path"], current_code, subject)
+        judge = representation_meta_markup(identifier, current["path"], current_code, subject,
+                                           master=current.get("maitre"))
         verdict_markup = operator_verdict_markup(current)
-        tool_buttons = [enlarge_button_markup(current_code, subject)]
+        tool_buttons = [enlarge_button_markup(current_code, subject), meta]
+        meta = ""  # placed among the tools; never a second time below
         if previous:
             tool_buttons.append(compare_button_markup(identifier, subject))
             # Each previous representation must actually be embedded here, not merely named: the
@@ -755,13 +867,20 @@ def slot_markup(sujet_code, sujet, type_name, type_def, entry, varies):
                f'aria-label="Aucune image produite — {escape(footprint_label(footprint))}"></div>')
         judge = ""
 
-    return f"""          <li class="slot slot--park{' slot--wide' if wide else ''}" data-slot="{escape(identifier)}" data-status="{status}">
+    # The image this slot is showing, carried into the page so the operator's own answers can be tied
+    # to it: an answer is given to an image, and must not outlive the image it was given to.
+    shot = current["path"] if representations else ""
+
+    lead = '<span class="lead-mark">Principale</span>' if principal else ""
+
+    return f"""          <li class="slot slot--park{' slot--wide' if wide else ''}{' slot--lead' if principal else ''}" data-slot="{escape(identifier)}" data-shot="{escape(shot)}" data-status="{status}">
             <div class="slot-vis">{vis}</div>
             <div class="slot-body">
-              <div class="slot-line"><span class="slot-caption">{escape(lead_capital(caption))}</span>{status_markup(status, ' status--pill')}</div>
-              <p class="slot-address">{escape(addr)}</p>
+              <div class="slot-line"><span class="slot-caption">{escape(lead_capital(caption))}</span>{lead}{status_markup(status, ' status--pill')}</div>
+              <p class="slot-ref">{escape(ref)}</p>
 {verdict_markup}
 {tools}
+{meta}
 {judge}
 {actions_markup(identifier, subject, status)}
             </div>
@@ -832,6 +951,7 @@ def master_entry(relative_path):
         data = path.read_bytes()
         with Image.open(path) as probe:
             size = probe.size
+            data, size = shrink_to_screen(probe, data, size)
     except (FileNotFoundError, UnidentifiedImageError) as error:
         SKIPPED_IMAGES[relative_path] = {
             "short": "Image non lisible",
@@ -842,6 +962,31 @@ def master_entry(relative_path):
                     "size": size, "bytes": len(data)}
 
     return key
+
+
+# The longest side an image keeps once embedded in this page. A screen shows the enlarged view at a
+# few hundred pixels; carrying a 1536-pixel master into the file bought nothing and cost megabytes.
+SCREEN_LONG_SIDE = 640
+
+
+def shrink_to_screen(image, data, size):
+    """Give back the bytes to embed for this image, reduced to what a screen can actually show.
+
+    A page that embeds every master at full definition reached thirteen megabytes, and past a certain
+    point the browser stopped applying the declarations altogether: every image declared after that
+    point came back "is not defined" and painted nothing, while the ones before it kept working. That
+    is the defect this exists to remove — the file on disk is untouched and stays the reference; only
+    what travels inside the page is reduced.
+    """
+    if max(size) <= SCREEN_LONG_SIDE:
+        return data, size
+    scale = SCREEN_LONG_SIDE / max(size)
+    reduced = image.convert("RGBA").resize(
+        (max(1, round(size[0] * scale)), max(1, round(size[1] * scale))), Image.LANCZOS)
+    buffer = io.BytesIO()
+    reduced.save(buffer, format="PNG", optimize=True)
+
+    return buffer.getvalue(), reduced.size
 
 
 def image_bytes(code):
@@ -1069,6 +1214,98 @@ def compare_button_markup(identifier, subject):
             f'aria-label="Comparer les versions — {escape(subject)}">Comparer les versions</button>')
 
 
+def usage_sample_button(sujet_code):
+    """The control that opens this sujet's usage sample full size, when it has one.
+
+    A usage sample is not a sprite and never appears among the variants: it is the one image showing
+    the sujet's pieces assembled, and it is what the pieces are judged against. It therefore belongs to
+    the SUJET's own header, next to its specs, not to any single variant.
+
+    Found on disk rather than in the referentiel, which does not record usage samples: the file is
+    named usage-<CODE>.png beside the masters, later versions taking a -vN suffix. The latest version
+    is the one offered — an earlier sample has been superseded, exactly like a sprite's own versions.
+    """
+    samples = list((ASSETS / "poc").glob(f"*/usage-{sujet_code}*.png"))
+    if not samples:
+        return ""
+    # Ordered by VERSION NUMBER, never by name. Sorting these names alphabetically puts the very first sample last — "usage-CH-019.png" outranks
+    # "usage-CH-019-v4.png" because a dot sorts after a hyphen — so the page offered the oldest image of the sujet while claiming to show the latest.
+    latest = max(samples, key=lambda path: int(path.stem.rsplit("-v", 1)[1]) if "-v" in path.stem else 1)
+    relative = str(latest.resolve().relative_to(ASSETS))
+    code = resolve_image(relative)
+    if code is None:
+        return ""
+    words = f"Exemple d'usage — {escape(sujet_code)}"
+    # The sample's own consigne travels with it, shown beside the picture once it is opened full size — it is the one image every piece is judged against,
+    # so what was ASKED of it matters exactly as much as what came back.
+    remember_prompt(code, relative)
+
+    return (f'          <div class="encart-tools"><button type="button" class="judge-toggle enlarge usage-sample" '
+            f'data-img="{escape(code)}" aria-label="{words}" title="{words}">'
+            f'{EYE_ICON} Exemple d\'usage</button></div>')
+
+
+# The metadata control, drawn rather than typed: the circled-i character renders as a thin, badly aligned glyph that reads as a stray letter next to the
+# eye. An inline SVG is the same shape at any size, keeps its stroke weight, and takes the button's own colour through currentColor.
+INFO_ICON = ('<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">'
+             '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>'
+             '<path d="M12 11v5.5" fill="none" stroke="currentColor" stroke-width="2" '
+             'stroke-linecap="round"/>'
+             '<circle cx="12" cy="7.5" r="1.15" fill="currentColor"/></svg>')
+
+
+def variant_meta_markup(identifier, sujet_code, sujet, type_def, entry, label):
+    """Every fact the referentiel holds about ONE variant, opened from its own icon, right beside itself.
+
+    A sujet-level list ("Formes : shape-n, shape-ns, ...") tells the operator which values EXIST but never which one the variant under his eyes carries —
+    he has to match a caption against a list, for every variant, every time. The facts belong to the variant, so they are shown on the variant.
+
+    Everything comes from the referentiel and from the representation itself: the variant fields and their values, the sujet's own footprint and height, its layer,
+    the file paths and the measures the export took. Nothing is composed for display and nothing is guessed — a field the referentiel does not carry is
+    simply absent from the panel.
+    """
+    rows = [("Sujet", sujet_code), ("Profil", sujet.get("profil", "")),
+            ("Calque", type_def.get("layer", "")),
+            ("Orientation", ORIENTATION_LABELS.get(entry.get("orientation", "south"),
+                                                   entry.get("orientation", "south"))),
+            ("Action", entry.get("action", "idle")),
+            ("Forme", f"shape-{entry.get('shape', DEFAULT_SHAPE)}"),
+            ("Emprise au sol", footprint_label(ground_extent(sujet))),
+            ("Couvert", footprint_label(drawn_extent(sujet))
+                        + ("" if sujet.get("couvert") else " — le sujet ne déborde pas de son emprise"))]
+    if sujet.get("hauteur") is not None:
+        height = sujet["hauteur"]
+        rows.append(("Hauteur de l'image", f"{height} case{'s' if height != 1 else ''}"))
+    for variant_key in type_variant_keys(type_def):
+        field = variant_key[:-1]
+        value = entry.get(field)
+        # A silence is a fact of its own and is shown as one: it is never resolved to the field's default here, which would state something the referentiel
+        # does not say (lots-de-variantes.md, on an entry that writes each field it requires and never inherits one).
+        rows.append((lead_capital(variant_key), value if value else "non précisé"))
+    if entry.get("principale"):
+        rows.append(("Rôle", "variante principale du sujet"))
+
+    for index, representation in enumerate(entry.get("representations", [])):
+        rank = "courante" if representation.get("statut") == "courante" else f"antérieure {index}"
+        rows.append((f"Image ({rank})", representation.get("path", "")))
+        if representation.get("maitre"):
+            rows.append((f"Maître ({rank})", representation["maitre"]))
+        measures = representation.get("mesures") or {}
+        anchor = measures.get("anchor_px")
+        if anchor:
+            rows.append((f"Point de pose ({rank})", f"x {anchor['x']}, y {anchor['y']}"))
+
+    key = f"{identifier}|meta"
+    panels[key] = {"title": f"Métadonnées — {label}", "kind": "facts",
+                   "rows": [[name, str(value)] for name, value in rows if value != ""]}
+    words = f"Métadonnées — {escape(label)}"
+
+    # Worded, not icon-only. The drawn glyph came back as an empty box twice running on the operator's screen, and a control nobody can read is a control
+    # nobody uses: the word carries the meaning, the icon only accompanies it — exactly like the eye button beside it, which has always been legible.
+    return (f'<button type="button" class="judge-toggle panel-open" data-panel="{escape(key)}" '
+            f'aria-label="{words}" title="{words}">{INFO_ICON} Détail</button>')
+
+
 def sujet_markup(sujet_code, type_name, type_def):
     """One sujet's card: its own specs, drawn from the referentiel alone, and every variant it declares.
 
@@ -1076,44 +1313,49 @@ def sujet_markup(sujet_code, type_name, type_def):
     one (sujets-et-variantes.md: "tu ne recopies aucun libellé"), so none is invented on its behalf.
     """
     sujet = SUJETS[sujet_code]
-    variants = sujet["variantes"]
+    variants = sujet["variants"]
     produced = sum(1 for entry in variants if entry.get("representations"))
     footprint = (sujet["emprise"]["columns"], sujet["emprise"]["rows"])
 
     # What actually distinguishes one variant of THIS sujet from another — asked once here, of the
-    # shape, the orientation and every axis alike, and handed to every slot below (variant_caption()):
-    # a field that cannot take more than one value for this sujet has nothing to teach a caption,
-    # however meaningful it looks on its own. A fact that never varies still deserves to be said once,
-    # not silently dropped — orientation says so below, in the sujet's own specs instead of on every
-    # variant.
+    # shape, the orientation and every variant field alike, and handed to every slot below
+    # (variant_caption()): a field that cannot take more than one value for this sujet has nothing to
+    # teach a caption, however meaningful it looks on its own. A fact that never varies still deserves
+    # to be said once, not silently dropped — orientation says so below, in the sujet's own specs
+    # instead of on every variant.
     varies = {"orientation": field_varies(variants, lambda entry: entry.get("orientation", "south")),
              "shape": field_varies(variants, lambda entry: entry.get("shape", DEFAULT_SHAPE))}
-    for axis_key in type_axis_keys(type_def):
-        field = axis_key[:-1]
-        default = type_def[axis_key]["default"]
+    for variant_key in type_variant_keys(type_def):
+        field = variant_key[:-1]
+        default = type_def[variant_key]["default"]
         varies[field] = field_varies(
             variants, lambda entry, field=field, default=default: entry.get(field, default))
 
-    specs = [("Emprise", footprint_label(footprint)), ("Calque", type_def["layer"]),
-             ("Images", f"{produced} / {len(variants)}")]
+    # Two ranks, because a card that shows everything shows nothing: the FIRST holds what is looked at while judging a picture — the ground it takes and how
+    # far it reaches — and the SECOND everything else, opened from the sujet's own icon like a variant's facts are. The forms and the variant field values
+    # left this card altogether: they listed what EXISTS, never what the variant under the eye carries, and each variant now says that for itself.
+    specs = [("Emprise au sol", footprint_label(ground_extent(sujet))),
+             ("Couvert", footprint_label(drawn_extent(sujet)))]
+    detail = [("Profil", sujet.get("profil", "")), ("Calque", type_def["layer"]),
+              ("Images", f"{produced} / {len(variants)}")]
     if not varies["orientation"]:
         orientation = variants[0].get("orientation", "south")
-        specs.append(("Orientation", ORIENTATION_LABELS.get(orientation, orientation)))
-    if type_def.get("assembles"):
-        shapes = []
-        for entry in variants:
-            shape = entry.get("shape", DEFAULT_SHAPE)
-            if shape not in shapes:
-                shapes.append(shape)
-        specs.append(("Formes", ", ".join(f"shape-{name}" for name in shapes)))
-    for axis_key in type_axis_keys(type_def):
-        specs.append((lead_capital(axis_key), ", ".join(type_def[axis_key]["values"])))
+        detail.append(("Orientation", ORIENTATION_LABELS.get(orientation, orientation)))
     if sujet.get("hauteur") is not None:
         height = sujet["hauteur"]
-        specs.append(("Hauteur", f"{height} case{'s' if height != 1 else ''}"))
+        detail.append(("Hauteur de l'image", f"{height} case{'s' if height != 1 else ''}"))
+    if not sujet.get("couvert"):
+        detail.append(("Débordement", "aucun — le couvert vaut l'emprise"))
     spec_markup = "\n".join(
         f"            <div><dt>{escape(name)}</dt><dd>{escape(value)}</dd></div>"
         for name, value in specs)
+
+    key = f"sujet|{sujet_code}"
+    panels[key] = {"title": f"Détail du sujet — {sujet_code}", "kind": "facts",
+                   "rows": [[name, str(value)] for name, value in detail if value != ""]}
+    words = f"Détail du sujet — {escape(sujet_code)}"
+    detail_button = (f'<button type="button" class="judge-toggle panel-open" data-panel="{escape(key)}" '
+                     f'aria-label="{words}" title="{words}">{INFO_ICON}</button>')
 
     label = SUJET_LABELS.get(sujet_code)
     if label is None:
@@ -1126,13 +1368,16 @@ def sujet_markup(sujet_code, type_name, type_def):
         <header class="profile-head">
           <h3>{heading}</h3>
           <p class="profile-id"><code class="code">{escape(sujet_code)}</code>
-            <span class="pname">{escape(sujet['profil'])}</span></p>
+            <span class="pname">{escape(sujet['profil'])}</span>{detail_button}</p>
           <dl class="specs">
 {spec_markup}
           </dl>
+{usage_sample_button(sujet_code)}
         </header>"""]
     blocks.append('        <ul class="slots">')
-    blocks.extend(slot_markup(sujet_code, sujet, type_name, type_def, entry, varies) for entry in variants)
+    blocks.extend(slot_markup(sujet_code, sujet, type_name, type_def, entry, varies,
+                              principal=entry is main_variant(sujet))
+                  for entry in ordered_variants(sujet))
     blocks.append("        </ul>")
     blocks.append("      </article>")
 
@@ -1160,11 +1405,12 @@ def type_section_markup(type_name, type_def):
         return None
     anchor = slug(type_name)
     sujets_markup = "\n".join(sujet_markup(code, type_name, type_def) for code in codes)
-    variant_count = sum(len(SUJETS[code]["variantes"]) for code in codes)
+    variant_count = sum(len(SUJETS[code]["variants"]) for code in codes)
 
     return f"""    <section class="type" aria-labelledby="type-{anchor}">
       <header class="type-head">
-        <h2 id="type-{anchor}">{escape(TYPE_LABELS.get(type_name, type_name))}</h2>
+        <h2 id="type-{anchor}">{escape(TYPE_LABELS.get(type_name, type_name))}
+          <span class="slug">{escape(type_name)}</span></h2>
         <p class="type-count"><span>{variant_count}</span> image{'s' if variant_count > 1 else ''}</p>
         <p class="type-rule">{escape(lead_capital(type_rule(type_def)))}</p>
       </header>
@@ -1284,7 +1530,7 @@ filter_buttons = "\n".join(
 # image data, which exists once and only once in the stylesheet.
 TILE_CODES = {thumbnail_key(rep["path"])
               for sujet in SUJETS.values() if sujet["type"] == TILE_TYPE
-              for entry in sujet["variantes"]
+              for entry in sujet["variants"]
               for rep in entry.get("representations", [])
               if rep["path"].startswith("cutout/")}
 
@@ -1301,7 +1547,8 @@ IMAGES = {code: {"token": image_token(code)[len("--img-"):],
 
 PAYLOAD = json.dumps({"labels": LABELS, "actions": [key for key, _ in ACTIONS],
                       "variants": registry, "images": IMAGES, "storageKey": STORAGE_KEY,
-                      "comparisons": comparisons},
+                      "comparisons": comparisons, "panels": panels, "prompts": prompts,
+                      "reports": reports},
                      ensure_ascii=True).replace("<", "\\u003c")
 
 STYLE = """
@@ -1381,7 +1628,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 * { box-sizing: border-box; }
-.page { max-width: 1080px; margin: 0 auto; padding: 40px 20px 132px; }
+/* The page grows with the screen instead of holding one fixed width: on a wide display it takes the room it needs to show two wide subjects side by side,
+   on a small one it takes everything there is. It never goes edge to edge — a ceiling keeps the reading comfortable and the margins deliberate, and the
+   running text inside keeps its own narrower measure so nothing is read across the whole width. */
+.page { width: min(100%, 1760px); margin: 0 auto; padding: 40px clamp(12px, 3vw, 48px) 132px; }
 
 .masthead { display: flex; flex-direction: column; gap: 20px; }
 .eyebrow {
@@ -1550,13 +1800,18 @@ body {
 .slots {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
   gap: 8px; list-style: none; margin: 14px 0 0; padding: 0;
+  /* A column never grows past what its picture needs: left free, four columns of a wide page stretched each slot far beyond its own content. */
+  justify-content: start;
 }
 .slot {
   display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 8px 9px;
   background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 3px;
 }
 /* A footprint too wide for a column takes the whole row rather than being shrunk out of scale. */
-.slot--wide { grid-column: 1 / -1; flex-direction: column; }
+/* A wide subject takes two columns, not the whole row: at the scale this page draws, two of them sit side by side comfortably, and giving each a full row
+   left most of it empty next to a picture that had stopped growing long before. It falls back to the whole row only when the grid itself has but one. */
+.slot--wide { grid-column: span 2; flex-direction: column; }
+@media (max-width: 640px) { .slot--wide { grid-column: 1 / -1; } }
 .slot-vis { flex: none; max-width: 100%; overflow-x: auto; display: flex; flex-wrap: wrap; gap: 6px; }
 .slot-body { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; }
 .slot-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0; }
@@ -1595,11 +1850,11 @@ body {
 .shot-frame--master { outline: 2px solid var(--warn); outline-offset: 2px; }
 .shot-tag { margin: 2px 0 0; font-size: 10.5px; color: var(--warn); font-style: italic; }
 .slot-caption { font-size: 12px; font-weight: 700; }
-.slot-address {
+.slot-ref {
   margin: 0; font-size: 10px; line-height: 1.35; color: var(--ink-faint);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.slot--wide .slot-address, .slot:hover .slot-address { white-space: normal; overflow-wrap: anywhere; }
+.slot--wide .slot-ref, .slot:hover .slot-ref { white-space: normal; overflow-wrap: anywhere; }
 
 /* The click target: at least one tile per side (frame_style), the picture posed on its bottom edge
    inside it — a flat sprite gets a real target instead of the sliver of its own drawn pixels. Nothing
@@ -1655,9 +1910,61 @@ body {
 /* Tools that live IN the encart, next to the report — never over the picture. */
 .encart-tools { display: flex; flex-wrap: wrap; gap: 4px; margin: 3px 0 0; }
 .slot-more { margin-top: 4px; }
+/* A comment is a real text area, not a one-line field: it grows with what is written, up to four
+   lines, and scrolls past that (see growNote() — the ceiling is computed there from this very
+   line-height, so changing it here is enough). resize is off because the height is driven by the
+   content, and a dragged handle would fight it. */
 .note {
-  width: 100%; font-family: var(--mono); font-size: 11px; padding: 4px 6px;
+  width: 100%; font-family: var(--mono); font-size: 11px; line-height: 1.45; padding: 4px 6px;
   border: 1px solid var(--line); border-radius: 2px; background: var(--surface); color: var(--ink);
+  display: block; resize: none; overflow-y: auto;
+}
+/* The enlarged view holds the picture and, beside it, the consigne that produced it — side by side because they are only useful together. The text column
+   is fixed and scrolls on its own, so a long consigne never shrinks the picture; below 900px the two stack, the picture staying first. */
+.viewer-with-prompt { display: flex; align-items: flex-start; gap: 18px; }
+/* The picture yields, the text does not: a consigne is read line by line and a narrow column makes it unreadable, while an image stays judgeable smaller.
+   The stage therefore shrinks freely (min-width 0 plus a max-width on the image itself) and the text column keeps a fixed, generous width. */
+.viewer-stage { display: flex; flex-direction: column; gap: 12px; min-width: 0; flex: 1 1 auto; }
+/* The side column holds what accounts for the picture: what was asked, then how it was obtained. Each block scrolls on its own and copies on its own —
+   they are pasted into different places and are never wanted stuck together. */
+.viewer-side {
+  flex: 0 0 min(46vw, 760px); display: flex; flex-direction: column; gap: 10px;
+  max-height: min(80vh, 940px);
+}
+/* Each block takes the room its content needs and no more, and shares what is left with its neighbour: fold the consigne away and the report grows into
+   the space it frees, rather than leaving a hole under it. */
+.viewer-block {
+  display: flex; flex-direction: column; gap: 6px; min-height: 0; flex: 1 1 auto;
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: 3px;
+  background: var(--surface-sunk, var(--surface));
+}
+.viewer-block--folded { flex: 0 0 auto; }
+.viewer-block .panel-text { overflow: auto; min-height: 0; }
+/* Folded, a block keeps its head and gives all the room to the one below it. The consigne starts folded: the report already carries it in full, and what is
+   read first is how the image was obtained, not what was asked for it. */
+.viewer-block--folded .panel-text { display: none; }
+.viewer-block-head { display: flex; align-items: center; gap: 10px; }
+.viewer-block-title { margin: 0; font-size: 11px; font-weight: 700; color: var(--ink-soft); flex: 1 1 auto; }
+@media (max-width: 900px) {
+  .viewer-with-prompt { flex-direction: column; }
+  .viewer-side { flex: 1 1 auto; max-width: 100%; }
+}
+
+/* The shared popin's own body — the frame around it is the comparison popin's, reused rather than copied so the two can never drift apart in look. */
+.panel-body { padding: 14px 16px; overflow: auto; max-height: min(72vh, 900px); }
+.panel-facts { margin: 0; }
+/* A consigne is shown exactly as it was sent: monospaced, its own line breaks kept, long lines wrapped rather than cut off out of sight. */
+.panel-text {
+  margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.6; color: var(--ink);
+  white-space: pre-wrap; word-break: break-word;
+}
+
+/* The principal variant leads its sujet and says so: it is the reference every other one is judged
+   against, and it must be told apart at a glance, not hunted for in the list. */
+/* No special border: the "Principale" mark and its place at the head of the list say it already, and a second signal on the frame was noise. */
+.lead-mark {
+  font-family: var(--sans); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--key); border: 1px solid var(--key); border-radius: 2px; padding: 1px 5px;
 }
 .note::placeholder { color: var(--ink-faint); }
 .note:focus-visible { outline: 2px solid var(--key); outline-offset: 1px; }
@@ -1670,6 +1977,15 @@ body {
   font-family: var(--mono); font-size: 10.5px; border: 1px solid var(--line); border-radius: 2px;
   background: var(--surface); color: var(--ink); cursor: pointer;
 }
+/* The technical name stays visible beside its human title, small and quiet: it is what every file, ref and referentiel entry is keyed on, so hiding it
+   forces a translation back and forth at every reading. Same treatment as a sujet's own profile slug, which already sits next to its code. */
+.slug {
+  font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: 0; color: var(--ink-faint);
+  margin-left: 8px; vertical-align: middle;
+}
+
+/* A drawn icon keeps the exact size it declares and never inherits the line box of the text beside it — without this it sits low and looks clipped. */
+.judge-toggle svg { display: block; flex: 0 0 auto; }
 .judge-score { font-weight: 700; font-variant-numeric: tabular-nums; }
 .judge-verdict { color: var(--ink-soft); }
 .judge-open-word { color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -1693,7 +2009,7 @@ body {
 }
 .viewer-img {
   background-repeat: no-repeat; background-position: center; background-size: contain;
-  max-width: 100%; align-self: center;
+  max-width: 100%; max-height: min(78vh, 900px); align-self: center;
 }
 .viewer-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .viewer-cap { margin: 0; font-size: 11.5px; color: var(--ink-soft); flex: 1 1 auto; }
@@ -1702,16 +2018,17 @@ body {
   background-repeat: repeat; border: 1px solid var(--line); border-radius: 2px; max-width: 100%;
 }
 
-/* ---- version comparison popin: current plus up to three earlier attempts, each shown whole ---- */
-.comparaison { position: fixed; inset: 0; z-index: 41; display: grid; place-items: center; padding: 20px; }
-.comparaison-back { position: absolute; inset: 0; background: rgba(8, 10, 7, 0.72); }
-.comparaison-box {
+/* ---- the popin shell, shared by every popin on this page: the version comparison, and the panel that shows a variant's metadata or an image's own
+   ---- consigne. The shell is the frame, the backdrop and the head; what goes inside it is each popin's own business, styled under its own name. ---- */
+.popin { position: fixed; inset: 0; z-index: 41; display: grid; place-items: center; padding: 20px; }
+.popin-back { position: absolute; inset: 0; background: rgba(8, 10, 7, 0.72); }
+.popin-box {
   position: relative; margin: 0; display: flex; flex-direction: column; gap: 12px;
   max-width: min(1100px, 100%); max-height: 100%; overflow-y: auto; padding: 16px;
   background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
 }
-.comparaison-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-.comparaison-title { margin: 0; font-size: 13px; font-weight: 700; flex: 1 1 auto; }
+.popin-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.popin-title { margin: 0; font-size: 13px; font-weight: 700; flex: 1 1 auto; }
 .comparaison-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;
 }
@@ -1779,9 +2096,21 @@ SCRIPT = """
     if (stored) { state = JSON.parse(stored) || {}; }
   } catch (error) { state = {}; }
 
+  function slotNode(id) {
+    return document.querySelector('[data-slot="' + id.replace(/"/g, "") + '"]');
+  }
+
+  // Which image this slot is showing right now — the representation's own path, version suffix and
+  // all. Empty when the variant has no image yet.
+  function shotOf(id) {
+    var node = slotNode(id);
+    return node ? (node.getAttribute("data-shot") || "") : "";
+  }
+
   function entryFor(id) {
-    if (!state[id]) { state[id] = { acts: {}, note: "" }; }
+    if (!state[id]) { state[id] = { acts: {}, note: "", shot: shotOf(id) }; }
     if (!state[id].acts) { state[id].acts = {}; }
+    if (state[id].shot === undefined) { state[id].shot = shotOf(id); }
     return state[id];
   }
 
@@ -1789,6 +2118,29 @@ SCRIPT = """
     try { window.localStorage.setItem(DATA.storageKey, JSON.stringify(state)); }
     catch (error) { /* a full or blocked store must not break the page */ }
   }
+
+  // A verdict and a comment are given to an IMAGE, never to a slot. Each stored answer therefore
+  // remembers which image it was looking at, and a slot whose image has changed since — a new version
+  // produced, a first image landing where there was none — starts blank rather than carrying a
+  // judgement passed on something else. Only the slots whose image actually moved are cleared; every
+  // other answer stands.
+  //
+  // An answer stored before this page recorded images at all has no image on it. It is ADOPTED by
+  // whatever the slot shows now, never thrown away: erasing a review that was very probably about
+  // this same image costs the operator his work, and guards against nothing. The first version of
+  // this pass dropped them and wiped a whole review — the tie goes to keeping what was written.
+  (function tieAnswersToTheImageTheyJudge() {
+    var changed = false;
+    Object.keys(state).forEach(function (id) {
+      if (!slotNode(id) || !state[id]) { return; }  // a slot that no longer exists is not our business
+      var shot = shotOf(id);
+      if (state[id].shot === undefined) { state[id].shot = shot; changed = true; return; }
+      if (state[id].shot === shot) { return; }
+      delete state[id];
+      changed = true;
+    });
+    if (changed) { persist(); }
+  }());
 
   function marked(id) {
     var entry = state[id];
@@ -1809,7 +2161,7 @@ SCRIPT = """
       total += picked.length;
       out.push(L.sections[act] + " (" + picked.length + ")");
       picked.forEach(function (entry) {
-        out.push("  - " + entry.code + " " + entry.address);
+        out.push("  - " + entry.code + " " + entry.ref);
         out.push("      " + entry.type + " / " + entry.profile + " / " + L.scopes[entry.scope]);
       });
       out.push("");
@@ -1822,7 +2174,7 @@ SCRIPT = """
       total += noted.length;
       out.push(L.sections.note + " (" + noted.length + ")");
       noted.forEach(function (entry) {
-        out.push("  - " + entry.code + " " + entry.address);
+        out.push("  - " + entry.code + " " + entry.ref);
         out.push("      " + state[entry.id].note.trim());
       });
       out.push("");
@@ -1933,6 +2285,31 @@ SCRIPT = """
     button.addEventListener("click", copy);
   });
 
+  // A block folds away without leaving the view: its head stays, and the room goes to the block below.
+  Array.prototype.forEach.call(document.querySelectorAll("[data-fold]"), function (button) {
+    var block = document.getElementById(button.getAttribute("data-fold"));
+    if (!block) { return; }
+    button.addEventListener("click", function () {
+      var folded = block.classList.toggle("viewer-block--folded");
+      button.textContent = folded ? L.unfold : L.fold;
+      button.setAttribute("aria-expanded", folded ? "false" : "true");
+    });
+  });
+
+  // Each block of the enlarged view copies on its own — a consigne is pasted into a tool, a report into
+  // a message, and neither is ever wanted with the other stuck to it.
+  Array.prototype.forEach.call(document.querySelectorAll("[data-copy-block]"), function (button) {
+    button.addEventListener("click", function () {
+      var source = document.getElementById(button.getAttribute("data-copy-block"));
+      if (!source) { return; }
+      var text = source.textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { announce(L.copied, "ok"); },
+                                                  function () { fallback(text); });
+      } else { fallback(text); }
+    });
+  });
+
   // ---- comment fields fold away, and announce themselves when they hold something ----
   function markNote(id) {
     var button = document.querySelector('[data-open="' + id + '"]');
@@ -1954,6 +2331,58 @@ SCRIPT = """
     });
   });
 
+  // ---- the shared popin: a variant's metadata, an image's frozen consigne. It opens OVER the page, like the viewer and the comparison do, and never
+  // ---- inside the flow: an inline fold shoves every slot below it out of place, and reading a long text squeezed beside a sprite is unusable.
+  var panelBox = document.getElementById("panel");
+  var panelTitle = document.getElementById("panel-title");
+  var panelBody = document.getElementById("panel-body");
+  var lastPanelOpener = null;
+
+  function openPanel(button) {
+    var entry = DATA.panels[button.getAttribute("data-panel")];
+    if (!entry) { return; }
+    lastPanelOpener = button;
+    panelTitle.textContent = entry.title;
+    panelBody.textContent = "";
+    if (entry.kind === "text") {
+      var block = document.createElement("pre");
+      block.className = "panel-text";
+      block.textContent = entry.text;  // textContent, never innerHTML: the consigne is text, not markup
+      panelBody.appendChild(block);
+    } else {
+      var list = document.createElement("dl");
+      list.className = "specs panel-facts";
+      entry.rows.forEach(function (row) {
+        var pair = document.createElement("div");
+        var name = document.createElement("dt");
+        name.textContent = row[0];
+        var value = document.createElement("dd");
+        value.textContent = row[1];
+        pair.appendChild(name);
+        pair.appendChild(value);
+        list.appendChild(pair);
+      });
+      panelBody.appendChild(list);
+    }
+    panelBox.hidden = false;
+    document.getElementById("panel-close").focus();
+  }
+
+  function closePanel() {
+    panelBox.hidden = true;
+    if (lastPanelOpener) { lastPanelOpener.focus(); }
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".panel-open"), function (button) {
+    button.addEventListener("click", function () { openPanel(button); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-close-panel]"), function (node) {
+    node.addEventListener("click", closePanel);
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !panelBox.hidden) { closePanel(); }
+  });
+
   // ---- judgement report: folded by default, no state kept — the file behind it can change any time
   // ---- a judging agent runs again, so nothing here is worth remembering across a reload. Selected by
   // ---- data-open specifically: the eye and compare-versions buttons borrow this class for looks only.
@@ -1973,6 +2402,10 @@ SCRIPT = """
   var viewerCaption = document.getElementById("viewer-cap");
   var viewerRepeat = document.getElementById("viewer-repeat");
   var viewerRepeatBlock = document.getElementById("viewer-repeat-block");
+  var viewerPrompt = document.getElementById("viewer-prompt");
+  var viewerPromptText = document.getElementById("viewer-prompt-text");
+  var viewerReport = document.getElementById("viewer-report");
+  var viewerReportText = document.getElementById("viewer-report-text");
   var lastOpener = null;
 
   function openViewer(node) {
@@ -1985,6 +2418,16 @@ SCRIPT = """
     viewerImage.style.height = size.height + "px";
     viewerImage.setAttribute("aria-label", code);
     viewerCaption.textContent = code + " " + L.viewerFull;
+    // The consigne that produced this very image, shown BESIDE it in the enlarged view — the two are
+    // read together or not at all: only their pairing says whether the consigne or the generator was
+    // at fault. Absent for an image whose consigne was never frozen; the column then simply goes away.
+    var written = DATA.prompts[code];
+    viewerPromptText.textContent = written || "";
+    viewerPrompt.hidden = !written;
+    // And how it was obtained, under it: the model, the session to reopen, the timings, the measures.
+    var account = DATA.reports[code];
+    viewerReportText.textContent = account || "";
+    viewerReport.hidden = !account;
     // A ground material also gets a repeated view at maquette scale: that is where a join shows,
     // and it is the only place the page repeats anything.
     if (size.tile) {
@@ -2242,10 +2685,32 @@ page = f"""<title>Suivi des sprites — maquette du parc</title>
 <div class="viewer" id="viewer" hidden>
   <div class="viewer-back" data-close="1"></div>
   <figure class="viewer-box">
-    <div class="viewer-img" id="viewer-img" role="img"></div>
-    <div class="viewer-tile" id="viewer-repeat-block" hidden>
-      <div class="viewer-repeat" id="viewer-repeat" role="img"></div>
-      <p class="viewer-cap">Répétée à l'échelle de la maquette — une jointure se verrait ici.</p>
+    <div class="viewer-with-prompt">
+      <div class="viewer-stage">
+        <div class="viewer-img" id="viewer-img" role="img"></div>
+        <div class="viewer-tile" id="viewer-repeat-block" hidden>
+          <div class="viewer-repeat" id="viewer-repeat" role="img"></div>
+          <p class="viewer-cap">Répétée à l'échelle de la maquette — une jointure se verrait ici.</p>
+        </div>
+      </div>
+      <aside class="viewer-side">
+        <section class="viewer-block viewer-block--folded" id="viewer-prompt" hidden>
+          <div class="viewer-block-head">
+            <p class="viewer-block-title">Consigne de génération</p>
+            <button type="button" class="btn btn--quiet" data-fold="viewer-prompt"
+                    aria-expanded="false">{escape(LABELS['unfold'])}</button>
+            <button type="button" class="btn btn--quiet" data-copy-block="viewer-prompt-text">Copier</button>
+          </div>
+          <pre class="panel-text" id="viewer-prompt-text"></pre>
+        </section>
+        <section class="viewer-block" id="viewer-report" hidden>
+          <div class="viewer-block-head">
+            <p class="viewer-block-title">Rapport de production</p>
+            <button type="button" class="btn btn--quiet" data-copy-block="viewer-report-text">Copier</button>
+          </div>
+          <pre class="panel-text" id="viewer-report-text"></pre>
+        </section>
+      </aside>
     </div>
     <div class="viewer-foot">
       <figcaption class="viewer-cap" id="viewer-cap"></figcaption>
@@ -2254,11 +2719,22 @@ page = f"""<title>Suivi des sprites — maquette du parc</title>
   </figure>
 </div>
 
-<div class="comparaison" id="comparaison" hidden>
-  <div class="comparaison-back" data-close-comparaison="1"></div>
-  <div class="comparaison-box">
-    <div class="comparaison-head">
-      <p class="comparaison-title" id="comparaison-title"></p>
+<div class="popin" id="panel" hidden>
+  <div class="popin-back" data-close-panel="1"></div>
+  <div class="popin-box">
+    <div class="popin-head">
+      <p class="popin-title" id="panel-title"></p>
+      <button type="button" class="btn" id="panel-close" data-close-panel="1">{escape(LABELS['viewerClose'])}</button>
+    </div>
+    <div class="panel-body" id="panel-body"></div>
+  </div>
+</div>
+
+<div class="popin" id="comparaison" hidden>
+  <div class="popin-back" data-close-comparaison="1"></div>
+  <div class="popin-box">
+    <div class="popin-head">
+      <p class="popin-title" id="comparaison-title"></p>
       <button type="button" class="btn" id="comparaison-close" data-close-comparaison="1">{escape(LABELS['viewerClose'])}</button>
     </div>
     <div class="comparaison-grid" id="comparaison-grid"></div>
@@ -2327,7 +2803,7 @@ def check_wiring(markup, script, ids):
 # ---- self-check: what the page claims is what the data holds -------------------------------------
 # Derived from the inventory rather than pinned: the counts move as the model and production move,
 # and a frozen figure here would only ever be a false alarm.
-expected_park = sum(len(sujet["variantes"]) for sujet in SUJETS.values())
+expected_park = sum(len(sujet["variants"]) for sujet in SUJETS.values())
 assert len(park_variants) == expected_park, (len(park_variants), expected_park)
 assert not [entry for entry in registry if entry["scope"] == "trial"], "a trial is still on the page"
 assert sum(counts.values()) == len(park_variants), counts
@@ -2381,9 +2857,16 @@ assert "[hidden] { display: none !important; }" in page, "hiding would lose to t
 # ---- the project's rule: no subject is ever measured in pixels -----------------------------------
 # A judgement's report is EXTERNAL, verbatim text this page only displays — not authored here, so it
 # is not held to a rule about what this page itself is allowed to write, the same way a variant's own
-# address or an owner's typed comment never was.
+# ref or an owner's typed comment never was.
 body = page.split("</style>", 1)[1].split("<script", 1)[0]
+# A frozen consigne is verbatim too, and for the same reason: it is the exact text that was SENT to
+# the generator, quoted here so the operator can read it against the image. It legitimately names the
+# definition asked for in pixels — that is a property of the file, not a measure of a subject — and
+# rewriting it to satisfy a rule about this page's own words would destroy the only trace of how the
+# image was obtained.
 body_without_reports = re.sub(r'<div class="judge-report"[^>]*>.*?</div>', "", body, flags=re.S)
+body_without_reports = re.sub(r'<div class="prompt-body"[^>]*>.*?</div>', "",
+                              body_without_reports, flags=re.S)
 mentions = [figure.strip() for figure in re.findall(r"(\d[\d\s,.]*?)\s*pixels?", body_without_reports)]
 assert mentions == [str(tile_scale.PIXELS_PER_TILE)], f"a pixel figure beyond the conversion: {mentions}"
 assert body.count(tile_scale.describe()) == 1, "the conversion must appear once, from the service"

@@ -15,9 +15,7 @@ Two families, because one has a subject to lift out of the image and the other d
 - TILE assets (ground): there is no subject and nothing to lift out. The material fills the frame edge
   to edge and is asked to repeat seamlessly with itself.
 """
-import contextlib
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -104,20 +102,32 @@ def sheet_description(text: str, code: str, qualifier: str = None) -> tuple:
 # in those holes, needed a pink fringe cleanup, and forbade that colour to subjects that may wear it.
 FOND = """\
 LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
-une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS — entre des rondins, sous une lisse, entre
-des feuilles, dans une fenêtre : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune
-ombre portée, aucun sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
 
 AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
 sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
 demande une lueur, auquel cas sa fiche le dit."""
 
 CAMERA_FR = """\
-Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — exactement l'angle des cartes
-de jeu de rôle vues de dessus, le même que celui des planches du monde. On regarde le sujet d'en haut et
-un peu de face. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
 venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
 bas restent lisibles, l'ombrage se fait en deux bandes claires."""
+
+# The camera, said again as the LAST word of every asset prompt. Stating it once at the top is not
+# enough: everything after it — the framing, the piece asked for, the sheet — talks about a map seen
+# from above, and on a flat subject (a path, a gate leaf) that wins over a clause read twenty lines
+# earlier. Constated on the paths and on the gates, whose prompts carried the camera clause word for
+# word and came out drawn flat anyway. Positive prescription: it says what to draw, never what to avoid.
+RAPPEL_CAMERA_FR = """\
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à environ SOIXANTE-DIX DEGRÉS sous l'horizontale. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face."""
 
 CADRAGE_CUTOUT = f"""\
 UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus :
@@ -155,12 +165,14 @@ La matière est RÉGULIÈRE SUR TOUTE LA SURFACE : sa densité, sa teinte et son
 centre et sur les bords, sans zone plus claire ni plus sombre, sans motif dominant qui attirerait l'œil
 à un endroit. Elle doit pouvoir se répéter côte à côte sans qu'on repère la jointure."""
 
-REGLES_FR = """\
+REGLES_FR = f"""\
 Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
 dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
 
-Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
-aucune mesure dans l'image.
+Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et {tile_scale.delivery_fineness()} PIXELS
+dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
+cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
+l'image.
 
 Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
 signature, pas de grille, pas de bordure."""
@@ -228,10 +240,10 @@ TRACE_FR = """\
 CE SUJET EST UNE PIÈCE D'ASSEMBLAGE, PAS UN OBJET ISOLÉ. Des cases voisines porteront la même pièce, et
 l'ensemble doit former une ligne continue, sans décrochement ni interruption.
 
-Le tracé PASSE PAR LE CENTRE de la case et REJOINT LES BORDS indiqués par la variante demandée. Ses
-éléments porteurs — lisses, rondins, rails, revêtement — ATTEIGNENT EXACTEMENT ces bords : ils y sont
-coupés net, à la MÊME HAUTEUR et à la MÊME ÉPAISSEUR de chaque côté, de sorte qu'en posant deux images
-identiques côte à côte, les éléments se prolongent l'un dans l'autre sans marche ni trou.
+Le tracé PASSE PAR LE CENTRE de la case et REJOINT LES BORDS indiqués par la variante demandée. Ce qui
+le constitue — la matière décrite par sa fiche, et elle seule — ATTEINT EXACTEMENT ces bords : il y est
+coupé net, à la MÊME HAUTEUR et à la MÊME ÉPAISSEUR de chaque côté, de sorte qu'en posant deux images
+identiques côte à côte, la matière se prolonge d'une case à l'autre sans marche ni trou.
 
 Les bords que le tracé ne rejoint PAS restent libres : rien ne les touche."""
 
@@ -252,32 +264,23 @@ DEFAULT_FOOTPRINT = (1, 1)
 def definition(footprint: tuple, famille: str) -> str:
     """The output definition asked of the generator, computed by the scale service — never by hand.
 
-    The generator takes no size parameter: it passes the description through and decides the
-    dimensions itself. Left unasked, it returned 1254 square, which is far too little for a wide
-    subject. The plates only came out at 1536 x 1152 because their own prompt demanded it, so an asset
-    prompt has to demand its size the same way.
+    The generator takes no size parameter: it passes the description through and decides the dimensions itself, and left unasked it returned far too little
+    for a wide subject. So the dimensions are asked — IN TILES, NEVER IN PIXELS. The correspondence between the two is stated once, in the shared base of
+    every consigne (REGLES_FR), and the generator works out the rest; a pixel figure was never anything it needed, and asking one taught it nothing about
+    the subject. The pixel computation still exists, but only to validate the file that comes back and to display it (operator, 2026-08-05).
 
-    WHAT IS ASKED IS THE MASTER'S DEFINITION, NEVER THE DELIVERY'S — the service holds the rule.
-
-    It is asked as a TARGET, not as a minimum. A minimum would invite the generator to render far more
-    than anything consumes, which is precisely the cost the cap exists to avoid.
-
-    A GROUND MATERIAL is asked for its exact box: it has to tile on the grid. A CUTOUT SUBJECT is
-    asked for an exact WIDTH — the design scales a sprite on its footprint width, so that width is
-    contractual — while the height follows the subject's own proportions, since a tall subject
-    overflows upwards and fixing its height would squash its base off its tiles.
+    A GROUND MATERIAL is asked for its exact box: it has to tile on the grid. Any other subject is asked for an exact WIDTH — the design scales a sprite on
+    its footprint width, so that width is contractual — while the height follows the subject's own proportions, since a tall subject overflows upwards and
+    fixing its height would squash its base off its tiles.
     """
     columns, rows = footprint
-    box = tile_scale.master_definition(columns, rows)
     if famille == "tuile":
-        return (f"DÉFINITION ATTENDUE : exactement {box['width']} × {box['height']} pixels. "
-                f"La matière doit couvrir toute cette surface, bord à bord.")
+        return (f"DIMENSIONS ATTENDUES : exactement {columns} case(s) sur {rows}. La matière doit "
+                f"couvrir toute cette surface, bord à bord.")
 
-    return (f"DÉFINITION ATTENDUE : {box['width']} pixels de large — c'est la largeur de l'emprise, "
-            f"elle est contractuelle. La hauteur suit les proportions du sujet : compte environ "
-            f"{box['height']} pixels pour un sujet aussi large que haut, davantage pour un sujet "
-            f"élancé, sans jamais dépasser {tile_scale.MASTER_CAP} pixels. Inutile de rendre plus "
-            f"grand : rien ne consomme au-delà. N'écris aucune dimension dans l'image.")
+    return (f"DIMENSIONS ATTENDUES : l'image fait {columns} case(s) de large — c'est la largeur de "
+            f"l'emprise, elle est contractuelle. Sa hauteur suit les proportions du sujet : un sujet "
+            f"élancé monte plus haut, et l'image le suit. N'écris aucune dimension dans l'image.")
 
 
 def emprise_clause(footprint: tuple, trace: bool = False) -> str:
@@ -292,21 +295,19 @@ def emprise_clause(footprint: tuple, trace: bool = False) -> str:
     columns, rows = footprint
 
     marge = ("" if trace else
-             "NE CONFONDS PAS LA MARGE ET L'EMPRISE : la marge transparente demandée plus haut est "
-             "une marge SUR LA TOILE, dont l'unique raison d'être est qu'aucune partie du sujet ne "
-             "soit coupée par un bord de l'image ; elle NE DIT RIEN DE LA PLACE DU SUJET AU SOL. ")
+             "NE CONFONDS PAS LA MARGE ET L'EMPRISE : la marge transparente demandée plus haut est une marge DANS L'IMAGE, dont l'unique raison d'être est "
+             "qu'aucune partie du sujet ne soit coupée par un bord de l'image ; elle NE DIT RIEN DE LA PLACE DU SUJET AU SOL.")
 
-    return (f"EMPRISE AU SOL — {columns} case(s) de large sur {rows} de profondeur. Cette emprise est "
-            f"un contrat dans les deux sens.\n"
-            f"{marge} L'emprise, elle, décrit le sol que le sujet couvre : sur cette "
-            f"largeur-là, le sujet va d'un bord à l'autre sans rien laisser de vide et sans rien "
-            f"faire dépasser.\n"
-            f"CONTENU EN LARGEUR : RIEN du sujet ne dépasse latéralement de cette largeur, ni "
-            f"branche, ni auvent, ni marche, ni ombre. La largeur du sujet est sa largeur au sol.\n"
-            f"REMPLI : le sujet occupe VRAIMENT toute cette largeur — sa silhouette atteint les "
-            f"bords de son emprise, il ne flotte pas au milieu en n'en occupant que la moitié.\n"
-            f"EN HAUTEUR, LE DÉBORDEMENT EST NORMAL : l'emprise décrit le SOL. Un sujet haut monte "
-            f"librement dans l'image ; seule sa largeur est contrainte.")
+    return (f"EMPRISE AU SOL — {columns} case(s) de large sur {rows} de profondeur. C'est la place que le sujet a le droit d'occuper au sol : un plafond, "
+            f"jamais une obligation de le remplir.\n"
+            f"{marge}\n"
+            f"CONTENU EN LARGEUR : RIEN du sujet ne dépasse latéralement de cette largeur, ni branche, ni auvent, ni marche, ni ombre. La largeur du sujet "
+            f"est sa largeur au sol.\n"
+            f"COMBIEN IL EN OCCUPE VRAIMENT, C'EST SA FICHE QUI LE DIT, et elle seule : un bâtiment couvre son emprise d'un bord à l'autre, une bande de "
+            f"chemin n'en couvre qu'une partie et laisse des marges libres de chaque côté. Suis ce que la fiche décrit, sans jamais élargir le sujet pour "
+            f"combler sa case.\n"
+            f"EN HAUTEUR, LE DÉBORDEMENT EST NORMAL : l'emprise décrit le SOL. Un sujet haut monte librement dans l'image ; seule sa largeur est "
+            f"contrainte.")
 
 
 def taille_clause(footprint: tuple, height: float) -> str:
@@ -331,54 +332,74 @@ def taille_clause(footprint: tuple, height: float) -> str:
             f"lire dans l'image une fois la caméra appliquée.")
 
 
+# The marker a fiche uses to carry an extra generation instruction, read by FORM and PLACE like the
+# description itself (see sheet_description) — never by the words that follow it.
+EXTRA_MARKER = "Consigne supplémentaire de génération :"
+
+
+def extra_instructions(code: str, sujet: dict = None) -> dict:
+    """The extra generation instructions given to ONE subject, from the two places they may live.
+
+    Both are optional and neither is required (operator, 2026-08-05): a subject may carry one, the
+    other, both, or none. Whatever is found is quoted to the generator and shown in the report — the
+    report holds the two whenever the two are given, so nothing is silently preferred.
+
+    - the INVENTORY SHEET, after the marker above, in italics like every other quoted text there;
+    - the SUJETS REFERENTIEL, under the sujet's own "consigne_supplementaire" key.
+
+    Returns a dict keyed by the human name of each source, empty values dropped: it is passed straight
+    to the report and iterated to build the prompt block.
+    """
+    found = {}
+    for folder in (Path(__file__).resolve().parents[1] / "doc" / "conception" / "referentiels"
+                   / "visuel" / "inventaire",):
+        for path in sorted(folder.glob("*.md")):
+            for line in path.read_text(encoding="utf-8").splitlines():
+                if not line.startswith(f"- **{code} ") or EXTRA_MARKER not in line:
+                    continue
+                after = line.split(EXTRA_MARKER, 1)[1]
+                match = DESCRIPTION_PATTERN.search(after)
+                if match:
+                    found["Consigne supplémentaire — fiche d'inventaire"] = match.group(1).strip()
+    if sujet and sujet.get("consigne_supplementaire"):
+        found["Consigne supplémentaire — référentiel des sujets"] = sujet["consigne_supplementaire"]
+
+    return found
+
+
+def extra_clause(extras: dict) -> str:
+    """The extra instructions as one block of the consigne — empty when there is none to give."""
+    if not extras:
+        return ""
+
+    return ("CONSIGNE SUPPLÉMENTAIRE POUR CE SUJET — elle s'ajoute à tout ce qui précède et ne "
+            "l'annule pas :\n" + "\n".join(text for text in extras.values()))
+
+
 def reference_clause(reference_name: str) -> str:
-    """Point the generator at the main view, which sits in its working directory.
+    """Point the generator at the main view, by its own path.
 
     The chain's cascade rule: every variant of a profile is produced from its main view, given as a
-    visual reference on top of the sheet, so the subject cannot drift from one image to the next. The
-    wrapper runs the generator with the output directory as its working directory, so a file dropped
-    there is reachable by name — exactly how the reference plates were already produced.
+    visual reference on top of the sheet, so the subject cannot drift from one image to the next.
     """
-    return (f"RÉFÉRENCE VISUELLE — le fichier ./{reference_name}, présent dans ton répertoire de "
-            f"travail, est la VUE PRINCIPALE de ce même sujet, déjà validée. C'EST LE MÊME SUJET, "
+    return (f"RÉFÉRENCE VISUELLE — le fichier {reference_name}, que tu peux ouvrir et regarder, "
+            f"est la VUE PRINCIPALE de ce même sujet, déjà validée. C'EST LE MÊME SUJET, "
             f"le même individu, le même costume, les mêmes couleurs, les mêmes proportions : "
             f"reproduis-le à l'identique et ne change QUE ce que la clause de variante demande "
             f"ci-dessous. En cas de désaccord entre l'image de référence et le texte, l'image fait "
             f"foi pour l'apparence, le texte pour la posture demandée.")
 
 
-@contextlib.contextmanager
-def working_reference(reference: Path, target_dir: Path):
-    """Place `reference` in `target_dir` for the generator to read, and remove exactly that working
-    copy afterwards — success or failure alike.
+def reference_address(reference: Path) -> str:
+    """The address a consigne gives for a reference image: its REAL path, absolute.
 
-    A copy made so the generator can read a reference is working material, not a deliverable: three
-    tools placed one beside the image they were producing and never removed it, which is how
-    multi-megabyte reference plates ended up in assets/poc/, mistaken for sprites by anything that
-    scans that tree. A working copy that outlives the generation it served is exactly the defect this
-    function exists to rule out.
-
-    Never touches the ORIGINAL: only the copy this function itself created. If `target_dir` already
-    holds a file of that name before the copy — including when `reference` already lives there, its
-    own working directory — nothing is copied and nothing is later removed: that file is not this
-    function's to touch, deliverable or not.
-
-    Use as `with working_reference(reference, target_dir): ...` around the generation call. A no-op
-    when `reference` is None.
+    Nothing is ever copied or moved to make a reference reachable (operator, 2026-08-05). The wrapper
+    starts the generator in the output directory, and the generator reads the path it is given — so
+    the path it is given is the file's own, wherever it lives. Copying one into the working directory
+    is what once left multi-megabyte reference plates sitting in assets/poc/, where anything scanning
+    that tree took them for sprites.
     """
-    if not reference or reference.parent == target_dir:
-        yield
-        return
-    destination = target_dir / reference.name
-    if destination.exists():
-        print(f"NOTE référence non copiée : {destination} existe déjà, laissé tel quel")
-        yield
-        return
-    shutil.copy(reference, destination)
-    try:
-        yield
-    finally:
-        destination.unlink()
+    return str(reference.resolve())
 
 
 def fiche(code: str) -> tuple:
@@ -430,28 +451,17 @@ def prompt(type_asset: str, code: str, footprint: tuple = None, reference_name: 
     blocs.append(f"LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :\n{code} : {description}")
     if variant_clause:
         blocs.append(f"LA VARIANTE DEMANDÉE :\n{variant_clause}")
+    blocs.append(RAPPEL_CAMERA_FR)  # always last: see the note above RAPPEL_CAMERA_FR
 
     return "\n\n".join(blocs) + "\n"
 
 
-def reference_file_name(code: str) -> str:
-    """The name the main view takes inside the generator's working directory."""
-    return f"reference-{code}.png"
-
-
-def place_reference(dossier: Path, code: str, main_view: Path) -> str:
-    """Put the main view where the generator will run, and return the name to quote in the prompt.
-
-    The wrapper starts the generator with the OUTPUT DIRECTORY as its working directory, writable.
-    A file copied there is therefore reachable by a plain relative name — the same mechanism the
-    reference plates already use for their style anchor.
-    """
+def name_reference(main_view: Path) -> str:
+    """The address to quote in a consigne for a main view — its own, nothing copied anywhere."""
     if not main_view.is_file():
         raise FileNotFoundError(f"main view missing, cannot cascade from it: {main_view}")
-    name = reference_file_name(code)
-    shutil.copyfile(main_view, dossier / name)
 
-    return name
+    return reference_address(main_view)
 
 
 def shoot(type_asset: str, code: str, footprint: tuple = None, main_view: Path = None,
@@ -467,7 +477,7 @@ def shoot(type_asset: str, code: str, footprint: tuple = None, main_view: Path =
     dossier = ASSETS / type_asset
     dossier.mkdir(parents=True, exist_ok=True)
     stem = output_name or code
-    reference_name = place_reference(dossier, code, main_view) if main_view else None
+    reference_name = name_reference(main_view) if main_view else None
     texte = prompt(type_asset, code, footprint, reference_name, variant_clause)
     cible = dossier / f"{stem}.png"
     # A prompt beside an image is the only trace of how that image was obtained: once the image exists,

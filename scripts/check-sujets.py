@@ -39,7 +39,12 @@ CODE_PATTERN = re.compile(r"^[A-Z]{2,3}-\d{3}$")
 # A representation's statut: the one shown to the player ("courante"), or one kept for record
 # ("anterieure"). The list order carries no meaning — statut is the only thing that says which is which.
 STATUSES = {"courante", "anterieure"}
-MAX_PREVIOUS_REPRESENTATIONS = 3
+# How many earlier versions the review page SHOWS beside the current one. The referentiel itself keeps
+# every version an image has ever had, without limit: on garde tout, on versionne tout, on n'en affiche
+# que trois (operator, 2026-08-05). This figure therefore bounds a display and nothing else — it was
+# once enforced here as a ceiling on what the file may hold, which quietly dropped entries and left
+# their images orphaned on disk.
+SHOWN_PREVIOUS_REPRESENTATIONS = 2
 
 
 class Fault(Exception):
@@ -61,6 +66,10 @@ def load():
 
 
 def check_variant(where, variant):
+    # The ref is the variant's identifier — written, not computed. Without it a variant cannot be
+    # designated at all: not by a tool, not in a file name, not in a sentence.
+    if not variant.get("ref"):
+        raise Fault(f"{where}: missing ref — a variant is designated by its ref, which is written")
     if variant.get("orientation") not in ORIENTATIONS:
         raise Fault(f"{where}: unknown or missing orientation {variant.get('orientation')!r}")
     if not variant.get("action"):
@@ -92,10 +101,7 @@ def check_representations(where, representations):
     if len(current) != 1:
         raise Fault(f"{where}: expected exactly one representation with statut 'courante', "
                     f"found {len(current)}")
-    previous = [r for r in representations if r["statut"] == "anterieure"]
-    if len(previous) > MAX_PREVIOUS_REPRESENTATIONS:
-        raise Fault(f"{where}: {len(previous)} representations with statut 'anterieure', "
-                    f"at most {MAX_PREVIOUS_REPRESENTATIONS} are kept")
+    # No ceiling on how many earlier versions a variant holds: every one is kept and versioned.
 
 
 def check_schema(data):
@@ -115,8 +121,11 @@ def check_schema(data):
             raise Fault(f"type {name}: unknown or missing layer {type_.get('layer')!r}")
         if type_.get("passage_default") not in ("open", "closed"):
             raise Fault(f"type {name}: passage_default must be exactly 'open' or 'closed'")
+        # A type's lot says which variants it expects of its sujets; it names them by their ref, and by
+        # nothing else — the ref is what will be produced, recorded and shown under that name.
         for variant in type_.get("lot_v0", []):
-            check_variant(f"type {name} lot_v0", variant)
+            if not variant.get("ref"):
+                raise Fault(f"type {name} lot_v0: an expected variant carries no ref")
         compositions = type_.get("compositions")
         if compositions and compositions.get("default") not in compositions.get("values", []):
             raise Fault(f"type {name}: composition default is not one of its own values")
@@ -131,9 +140,12 @@ def check_schema(data):
         columns, rows = footprint.get("columns"), footprint.get("rows")
         if not isinstance(columns, int) or not isinstance(rows, int) or columns < 1 or rows < 1:
             raise Fault(f"{code}: emprise missing or not a positive number of tiles")
-        if not sujet.get("variantes"):
-            raise Fault(f"{code}: no variantes")
-        for variant in sujet["variantes"]:
+        if not sujet.get("variants"):
+            raise Fault(f"{code}: no variants")
+        refs = [variant.get("ref") for variant in sujet["variants"]]
+        if len(set(refs)) != len(refs):
+            raise Fault(f"{code}: two variants share a ref — a ref designates one variant and one only")
+        for variant in sujet["variants"]:
             check_variant(code, variant)
             if "representations" not in variant:
                 raise Fault(f"{code}: a variant carries no representations list (empty is fine, "
@@ -212,7 +224,7 @@ def scan_poc():
 def claimed_paths(data):
     claimed = set()
     for sujet in data["sujets"].values():
-        for variant in sujet["variantes"]:
+        for variant in sujet["variants"]:
             for representation in variant.get("representations", []):
                 claimed.add(representation["path"])
     return claimed
@@ -224,7 +236,7 @@ def variants_with_implicit_status(data):
     the referentiel is completed with an explicit statut."""
     pending = []
     for code, sujet in data["sujets"].items():
-        for variant in sujet["variantes"]:
+        for variant in sujet["variants"]:
             representations = variant.get("representations") or []
             if has_unlabelled_single_representation(representations):
                 pending.append((code, representations[0]["path"]))
@@ -251,7 +263,7 @@ def unexported_masters(poc_files):
     return missing
 
 
-def main():
+def main(verbose=False):
     try:
         data = load()
         check_schema(data)
@@ -264,12 +276,22 @@ def main():
     print(f"{len(data['types'])} types, {len(data['sujets'])} sujets, "
           f"{len(hors_referentiel)} hors référentiel\n")
 
+    # The passage of every cell of every sujet is thousands of lines — a building of sixteen by ten
+    # alone prints a hundred and sixty. It is a detail one asks for; what this tool is run for is its
+    # verdict. Kept behind --verbose, and summarised by default.
     print("PASSAGE — résolu niveau par niveau (type, puis sujet)")
     for code in sorted(data["sujets"]):
         sujet = data["sujets"][code]
         type_ = data["types"][sujet["type"]]
+        resolved_cells = list(resolve_passage(sujet, type_))
+        if not verbose:
+            redefined = sum(1 for _, resolved in resolved_cells
+                            if any(state[1] != f"type {sujet['type']}" for state in resolved.values()))
+            print(f"  {code} ({sujet['type']}, défaut du type : {type_['passage_default']}) — "
+                  f"{len(resolved_cells)} case(s), {redefined} redéfinie(s)")
+            continue
         print(f"  {code} ({sujet['type']}, défaut du type : {type_['passage_default']})")
-        for key, resolved in resolve_passage(sujet, type_):
+        for key, resolved in resolved_cells:
             state = "  ".join(f"{edge}={'ouvert' if resolved[edge][0] else 'fermé'}"
                               f"[{resolved[edge][1]}]" for edge in EDGES)
             print(f"    case {key} : {state}")
@@ -322,4 +344,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main("--verbose" in sys.argv[1:]))

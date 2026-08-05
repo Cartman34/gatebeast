@@ -1,4 +1,7 @@
 local/
+# var/ porte ce que l'exécution laisse derrière elle — rapports de génération et journaux du
+# générateur, sous var/generations/. Ce sont des traces, pas la cible : elles ne se versionnent pas.
+var/
 __pycache__/
 *.pyc
 .idea/

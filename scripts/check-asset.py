@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
-"""Measure a produced or cut-out asset against what the design requires — step 6 of the chain.
+"""Measure a produced asset against what the design requires — the measuring step of the chain.
 
-The design lists what the mechanical step must check (chaine-de-production.md): "fond uniforme et
-détourable, transparence effective après détourage, sujet remplissant le cadre, emprise mesurée
-conforme à l'emprise annoncée, régularité et raccord bord à bord pour une matière de sol, luminance
-dans la bande de la direction artistique". Each of those is one block below, and nothing here is a
-matter of taste — the judgement step handles what cannot be counted.
+The design lists what the mechanical step must check (chaine-de-production.md): a transparent
+background, the subject filling its frame, the measured footprint against the declared one, regularity
+and edge-to-edge join for a ground material, luminance within the art direction's band. Each of those
+is one block below, and nothing here is a matter of taste — the judgement step handles what cannot be
+counted.
 
 WHAT IS MEASURED
   SOURCE          size, aspect, whether the file carries an alpha channel.
-  BACKGROUND      (opaque cutout source only) how magenta and how uniform the four border strips are.
-                  A background that is not uniform cannot be keyed without eating into the subject.
-  SUBJECT         the bounding box of what is not background, against the frame.
-  TRANSPARENCY    after the cutout: the share of fully transparent pixels, of partial pixels, and
-                  whether any fully opaque magenta survives — the proof that keying really happened.
+  TRANSPARENCY    the share of fully transparent pixels and of soft-edge pixels. An image without an
+                  alpha channel is reported as a fault: the consigne asks for transparency and the
+                  generator delivers it, enclosed voids included.
+  SUBJECT         the bounding box of the opaque part, against the frame.
   FOOTPRINT       the apparent ground extent, confronted with the footprint the referentiel declares.
                   It is read off the SILHOUETTE WIDTH, not off the ground contact: the footprint is the
                   cell a subject occupies, and a standing human occupies its tile with its body, not
@@ -43,7 +42,6 @@ import numpy
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import key_color
 from plate_metrics import DARK_MAX, LUMINANCE_MAX, LUMINANCE_MIN
 
 # check-sujets.py is hyphenated, so it is loaded by path rather than imported by name (the same
@@ -66,7 +64,6 @@ class Profile:
     footprint: dict
     height: float
 
-BORDER = 0.04        # share of the image width taken as the border strip
 DARK_LEVEL = 60      # luminance under which a pixel counts as a dark zone
 QUADRANT_GAP = 12.0  # luminance points between quadrants above which a tile reads as irregular
 SEAM_RATIO = 1.5     # a seam worse than this many times the natural grain is a visible join
@@ -80,31 +77,14 @@ def luminance(rgb):
     return (0.2126 * rgb[..., 0] + 0.7152 * rgb[..., 1] + 0.0722 * rgb[..., 2]).astype(numpy.float32)
 
 
-def background_block(rgb):
-    """The four border strips: how magenta they are, and how uniform."""
-    height, width = rgb.shape[:2]
-    margin = max(2, int(width * BORDER))
-    strips = numpy.concatenate([
-        rgb[:margin, :].reshape(-1, 3), rgb[-margin:, :].reshape(-1, 3),
-        rgb[:, :margin].reshape(-1, 3), rgb[:, -margin:].reshape(-1, 3),
-    ])
-    measured = key_color.distance(strips)
-    mean = strips.mean(axis=0)
-    spread = float(numpy.mean(numpy.max(numpy.abs(strips.astype(numpy.float32) - mean), axis=1)))
+def subject_mask(alpha):
+    """What is subject: the part the image itself declares opaque.
 
-    return {
-        "magenta": 100 * float(key_color.is_background(measured).mean()),
-        "mean": tuple(int(round(channel)) for channel in mean),
-        "spread": spread,
-        "uniform": spread < 12,
-    }
-
-
-def subject_mask(rgb, alpha):
-    """What is subject: the opaque part when there is alpha, everything not magenta otherwise."""
-    if alpha is not None:
-        return alpha > 0
-    return ~key_color.is_background(key_color.distance(rgb))
+    Every image the generator returns carries its own alpha channel — transparency is asked for in the
+    consigne and delivered in the file, enclosed voids included. An image without alpha is therefore a
+    fault, not a case to fall back on: it is reported as such rather than guessed at.
+    """
+    return alpha > 0
 
 
 def box_block(mask):
@@ -122,18 +102,15 @@ def box_block(mask):
     }
 
 
-def transparency_block(rgb, alpha):
-    """Effective transparency after the cutout, and whether any opaque magenta survived it."""
+def transparency_block(alpha):
+    """How much of the image is transparent, and how much of it is a soft edge."""
     if alpha is None:
         return None
-    opaque = alpha >= 250
-    leftover = float((opaque & key_color.is_background(key_color.distance(rgb))).mean())
 
     return {
         "fully_transparent": 100 * float((alpha == 0).mean()),
         "partial": 100 * float(((alpha > 0) & (alpha < 250)).mean()),
-        "opaque_magenta": 100 * leftover,
-        "keyed": bool((alpha == 0).any()) and leftover < 0.01,
+        "transparent": bool((alpha == 0).any()),
     }
 
 
@@ -234,7 +211,7 @@ def find_profile(data, path, forced=None):
         relative = None
     if relative:
         for code, sujet in sujets.items():
-            for variant in sujet["variantes"]:
+            for variant in sujet["variants"]:
                 for representation in variant.get("representations", []):
                     if representation["path"] == relative:
                         return _profile_of(code, sujet)
@@ -265,21 +242,18 @@ def report(path, profile):
           f"alpha: {'yes' if alpha is not None else 'no'}  "
           f"profile: {profile.code if profile else 'NOT IN REFERENTIEL'}")
 
-    if alpha is None and not is_ground:
-        block = background_block(rgb)
-        print(f"  background   {block['magenta']:.1f} % magenta on the borders, mean {block['mean']}, "
-              f"spread {block['spread']:.1f}  ({'UNIFORM' if block['uniform'] else 'NOT UNIFORM'})")
+    if alpha is None:
+        print("  transparency AUCUN CANAL ALPHA — la consigne demande une image transparente")
+        return
 
-    transparency = transparency_block(rgb, alpha)
-    if transparency is not None:
-        # A ground material fills its frame edge to edge: it has no background, so nothing to key.
-        verdict = ("no background to key" if is_ground
-                   else "KEYED" if transparency["keyed"] else "NOT KEYED")
-        print(f"  transparency {transparency['fully_transparent']:.1f} % fully transparent, "
-              f"{transparency['partial']:.2f} % partial, "
-              f"{transparency['opaque_magenta']:.3f} % opaque magenta left  ({verdict})")
+    transparency = transparency_block(alpha)
+    # A ground material fills its frame edge to edge: it is opaque everywhere, by design.
+    verdict = ("plein cadre, matière de sol" if is_ground
+               else "TRANSPARENTE" if transparency["transparent"] else "AUCUNE TRANSPARENCE")
+    print(f"  transparency {transparency['fully_transparent']:.1f} % fully transparent, "
+          f"{transparency['partial']:.2f} % partial  ({verdict})")
 
-    mask = subject_mask(rgb, alpha)
+    mask = subject_mask(alpha)
     if not is_ground:
         box = box_block(mask)
         if box is None:

@@ -10,9 +10,9 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **Fait — les capacités du générateur sont constatées** : il rend **exactement la définition demandée** ; il rend un **vrai canal alpha**, vides encerclés compris, dès qu'on le demande — le fond magenta et le détourage ont donc été **abandonnés** ; l'angle obtenu est le bon, c'est la vue standard des sprites. **Deux limites** : le traitement varie d'un sujet à l'autre, et surtout il **n'exploite pas l'image de référence** qu'on lui fournit (voir ci-dessous).
 
-**MAJEUR — la cascade ne fonctionne pas.** La règle de cohérence du projet veut qu'une variante se produise **à partir de la vue principale validée**, fournie comme référence visuelle. Le mécanisme est en place et l'image est bien déposée dans le répertoire de travail du générateur ; mais deux essais sur la clôture nord-sud, dont un avec une consigne disant en toutes lettres « exactement la clôture de l'image de référence, vue tournée d'un quart de tour », ont rendu **une autre clôture**. Deux générations de la même fiche donnent aussi deux chênes nettement différents. Ces images n'ont pas été soumises à l'opérateur : le jugement ci-dessus est celui de l'agent principal, pas un verdict de l'opérateur. Conséquence : rien ne garantit aujourd'hui la cohérence entre les variantes d'un même sujet — les huit pièces de clôture, les quatre orientations d'un personnage, les poses d'une marche. **Décision à prendre avec l'opérateur avant toute production de variantes.**
+**MAJEUR — la cascade ne fonctionne pas.** La règle de cohérence du projet veut qu'un variant se produise **à partir de la vue principale validée**, fournie comme référence visuelle. Le mécanisme est en place et l'image est bien déposée dans le répertoire de travail du générateur ; mais deux essais sur la clôture nord-sud, dont un avec une consigne disant en toutes lettres « exactement la clôture de l'image de référence, vue tournée d'un quart de tour », ont rendu **une autre clôture**. Deux générations de la même fiche donnent aussi deux chênes nettement différents. Ces images n'ont pas été soumises à l'opérateur : le jugement ci-dessus est celui de l'agent principal, pas un verdict de l'opérateur. Conséquence : rien ne garantit aujourd'hui la cohérence entre les variants d'un même sujet — les huit pièces de clôture, les quatre orientations d'un personnage, les poses d'une marche. **Décision à prendre avec l'opérateur avant toute production de variants.**
 
-**Fait — la couche assets est conçue** (2026-08-03) : modèle sujet / type / profil / variante, orientation dans le repère du monde, action, et une direction par partie qui pointe dans le repère du sujet (`north` = droit devant), images numérotées en dessous, repli déclaré, empilement à l'écran, lots par type, chaîne de production. Voir [rendu en calques](doc/conception/referentiels/technique/rendu-en-calques.md), [assets](doc/conception/referentiels/visuel/assets/index.md), [sujets et variantes](doc/conception/referentiels/visuel/assets/sujets-et-variantes.md) et le [lexique](doc/lexique.md) enrichi du vocabulaire de production (anglais américain).
+**Fait — la couche assets est conçue** (2026-08-03) : modèle sujet / type / profil / variant, orientation dans le repère du monde, action, et une direction par partie qui pointe dans le repère du sujet (`north` = droit devant), images numérotées en dessous, repli déclaré, empilement à l'écran, lots par type, chaîne de production. Voir [rendu en calques](doc/conception/referentiels/technique/rendu-en-calques.md), [assets](doc/conception/referentiels/visuel/assets/index.md), [sujets et variants](doc/conception/referentiels/visuel/assets/sujets-et-variantes.md) et le [lexique](doc/lexique.md) enrichi du vocabulaire de production (anglais américain).
 
 **Fait — le projet a son dépôt** (2026-08-03) : la conception a quitté `conceptions/` et vit ici, dans `doc/conception/`, sous versionnage. **Les images ont une archive complète hors dépôt, `~/projects/gatebeast-assets/` : elle contient TOUT ce qui a été produit (403 Mo), rien n'est jamais perdu.** Le dépôt ne versionne que les images vivantes — les assets du POC et les six planches courantes ; les versions dépassées et les pages de revue reconstructibles restent dans l'archive seule. **À faire avant tout tir : les outils pointent encore vers l'ancien emplacement** (`conceptions/gatebeast/…`) et doivent être réajustés.
 
@@ -29,7 +29,7 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 | `TR-060` grand chêne, `TR-062` herbe haute | **regénérées sur fond transparent, ni jugées ni inscrites au catalogue**. Le chêne montre beaucoup trop de racines apparentes — c'est **sa fiche** qui les demande, pas la consigne ; l'opérateur l'accepte pour l'instant. |
 | `TR-061` bosquet de sapins, `TR-063` pommier, `CH-019` chemin de terre battue, `BT-001` centre de soin | **à produire**. Le pommier et le bosquet de sapins ont été **renommés et entièrement réécrits** le 2026-08-04 : leurs anciennes fiches décrivaient un « petit arbre » et un « bosquet dense » sans essence. |
 
-**Décisions du 2026-08-04, toutes écrites dans la conception.** On dit **opérateur**, jamais « propriétaire » (terme banni, [glossaire de la méthode](../conceptions/methode/glossaire.md)). Les **types sont fins** — un type regroupe ce qui s'échange sans incohérence : herbe, arbre, bosquet d'arbres, clôture, chemin, et non « végétation ». Le **passage** d'un sujet se déclare **côté par côté**, jamais il ne se déduit d'une forme : tout se traverse par défaut, un type peut renverser cette valeur, et **trois niveaux** — type, sujet, variante — se surchargent en ne portant que ce qu'ils définissent ; fermer deux côtés adjacents ferme ce qui est entre eux ; l'inventaire se revalide à chaque ajout. Le **catalogue est gelé** : un fichier neuf le remplacera, construit autour des **types, sujets, variantes et représentations** — la sprite n'étant qu'une représentation parmi d'autres. Le **lexique** a quitté la conception pour `doc/lexique.md`, **biome** y est défini, et les **humains** sont réunis à l'inventaire sous `HU-nnn` — il n'y a pas de sujet « personnage-joueur ».
+**Décisions du 2026-08-04, toutes écrites dans la conception.** On dit **opérateur**, jamais « propriétaire » (terme banni, [glossaire de la méthode](../conceptions/methode/glossaire.md)). Les **types sont fins** — un type regroupe ce qui s'échange sans incohérence : herbe, arbre, bosquet d'arbres, clôture, chemin, et non « végétation ». Le **passage** d'un sujet se déclare **côté par côté**, jamais il ne se déduit d'une forme : tout se traverse par défaut, un type peut renverser cette valeur, et **trois niveaux** — type, sujet, variant — se surchargent en ne portant que ce qu'ils définissent ; fermer deux côtés adjacents ferme ce qui est entre eux ; l'inventaire se revalide à chaque ajout. Le **catalogue est gelé** : un fichier neuf le remplacera, construit autour des **types, sujets, variants et représentations** — la sprite n'étant qu'une représentation parmi d'autres. Le **lexique** a quitté la conception pour `doc/lexique.md`, **biome** y est défini, et les **humains** sont réunis à l'inventaire sous `HU-nnn` — il n'y a pas de sujet « personnage-joueur ».
 
 **Nouvel outil — le plan de composition** ([sa fiche](doc/outils/plan-de-composition.md)) : `scripts/build-composition-plan.py` rend un plan à plat depuis un JSON déclaratif qui *est* le plan, avec des contrôles qui bloquent. Le moteur partagé est `scripts/composition_plan.py`. Premier plan produit : `assets/poc/cloture/plan-composition-OB-010-usage.json` — carré fermé, croix centrale, quatre antennes, les quinze formes de tracé exercées.
 
@@ -45,6 +45,170 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **En cours — B0/B4.** La chaîne est outillée de bout en bout et tourne. Reste à produire le lot v0 de la scène de référence, puis à composer le parc. B2/B3 peuvent avancer en parallèle. **Le personnage-joueur n'est pas un sujet à part** : il n'y a que des humains, et il pourrait être n'importe lequel (opérateur, 2026-08-04).
 
+## Ce qui a changé le 2026-08-05 dans le modèle et l'outillage
+
+**Une seule commande produit une sprite** : `scripts/generate-sprite.py <ref du sujet> <ref du variant>`. Les deux commandes précédentes n'en font plus qu'une — celle qui ne savait produire que la vue principale est supprimée, et le mot **tracé** est banni : la notion n'a jamais existé, c'était un dessin SVG qui ne passait pas par le générateur.
+
+**Un variant se désigne par sa ref**, écrite dans le référentiel et jamais recomposée : `OB-010 / orientation-south_action-idle_shape-ew_gate-open_frame-01`. Tous les outils s'y réfèrent par elle. Le mot **adresse** est banni pour cet usage.
+
+**On ne parle au générateur qu'en cases.** La correspondance — une case vaut 96 pixels dans le fichier, 24 à l'écran — est donnée une fois dans le socle des consignes, et ces deux valeurs sont écrites une fois dans la conception et une fois dans le code. Le doublement en trop est supprimé : le maître se produit à 96 par case, plus 192.
+
+**Toute génération va jusqu'au bout** : consigne, génération, export, inscription au référentiel, rapport. Plus rien ne peut être produit puis oublié.
+
+**Les traces d'exécution ont quitté `assets/`** : rapports et journaux du générateur vivent sous `var/generations/sprites/` et `var/generations/subjects/`, non versionnés.
+
+**Toutes les versions sont gardées et versionnées ; la page n'en montre que trois** — la courante et les deux précédentes.
+
+## Registre des sujets
+
+**Le suivi guide, il ne fait pas foi : la vérité est sur le disque** (opérateur, 2026-08-05). Tout sujet donné par l'opérateur entre ici avec son numéro, sa référence, son titre et son statut ; le registre se met à jour à chaque échange.
+
+| N° | Référence | Titre | Statut |
+|---|---|---|---|
+| 1 | `outil-production-datee` | Génération horodatée, étapes datées et chronométrées, rapport de validation écrit à côté de l'image | fait — `scripts/production_report.py`, câblé au générateur de tracés |
+| 2 | `consigne-supplementaire-sujet` | Consigne supplémentaire par sujet, fiche et référentiel, les deux au rapport | fait |
+| 3 | `formulaire-revue-image` | Le formulaire de revue se vide quand l'image change | fait |
+| 4 | `commentaire-quatre-lignes` | Champ de commentaire jusqu'à quatre lignes puis défilement | fait |
+| 5 | `portillon-deux-poteaux` | Portillons à deux poteaux, est-ouest, fermé et grand ouvert à 135° | produits, en attente de verdict |
+| 6 | `angle-camera-perdu` | L'angle de caméra manque aux générations | rappel de caméra ajouté ; sans effet sur le chemin |
+| 7 | `hauteur-a-l-inventaire` | Hauteur totale obligatoire à l'inventaire, règle à écrire dans la conception | à écrire |
+| 8 | `maquette-parc` | Maquette du parc, 64 × 48 cases, centre de soin | trois plans de composition proposés le 2026-08-05, un seul à retenir |
+| 9 | `sprite-principal-en-tete` | Le sprite principal d'un sujet se démarque et passe en tête de liste | à faire |
+| 10 | `ch-019-matiere` | La fiche du chemin dit « terre battue » et décrit du sable clair | à trancher |
+| 11 | `bt-001-toit` | Centre de soin trop austère, décor de toit à proposer (puits de lumière ?) | à proposer |
+| 12 | `bt-002-maison-ferme` | Maison de ferme d'après `da-b4-r15-scene.png` | à produire |
+| 13 | `sapins-tronc-visible` | Sapin isolé et bosquet : tronc visible exigé | fiches à corriger |
+| 14 | `tr-060-racines` | Trop de racines apparentes sur le grand chêne | fiche à corriger |
+| 15 | `tr-063-herbe` | Le pommier arrive avec de l'herbe au sol ; le sol seul l'apporte | fiche à corriger |
+| 16 | `tr-064-case-carree` | L'herbe clairsemée rend une case ronde au lieu d'une case carrée | consigne à corriger |
+| 17 | `tr-062-herbe-moins-touffue` | Ajouter un sujet d'herbe moins touffu | sujet à créer, décision de l'opérateur |
+| 18 | `ob-010-nw-deux-lisses` | L'angle nord-ouest montre deux lisses à la verticale au lieu d'une | consigne à corriger |
+| 19 | `reference-laissee-dans-assets` | Une planche de référence reste copiée dans le dossier des assets après génération | à corriger |
+| 20 | `record-asset-casse` | L'inscription au référentiel s'arrête en erreur : elle réclame des mesures du rognage abandonné | fait |
+| 21 | `couvert-du-sujet` | Emprise au sol et couvert : deux étendues distinctes, le couvert valant l'emprise par défaut | fait — écrit dans la conception, porté au référentiel et à la page |
+| 22 | `modele-de-generation` | Choix du modèle de génération, bout en bout, inscrit au rapport | fait — `gpt-5.6-terra` en service |
+| 23 | `session-du-generateur` | Identifiant de session du générateur remonté au rapport, avec le dossier pour la rouvrir | fait |
+| 24 | `generateur-recursif` | Le générateur exécutait l'outillage du dépôt au lieu de dessiner | fait — consigne d'illustrateur ajoutée |
+| 25 | `puc-invisible` | L'exemple d'usage du chemin ne s'affiche pas dans la visionneuse | **en défaut** — tout est en place côté page, la cause est à voir en console |
+| 26 | `icone-info` | L'icône d'information s'affiche comme un carré vide | **en défaut** — redessinée deux fois, à reconstater |
+| 27 | `mot-axe-banni` | Le mot banni vit encore dans le code et dans le référentiel, en anglais | à trancher — le renommage touche plusieurs outils et le fichier des sujets |
+| 28 | `sprites-orphelins` | Trois premières versions gardées sur le disque mais retirées du référentiel par la limite de trois antérieures | à trancher — « rien ne se jette » contre « aucun livrable orphelin » |
+| 29 | `sapin-v6-non-inscrit` | Le sapin `v6` a été produit et jamais inscrit | à faire — simple oubli, aucun arbitrage |
+| 30 | `variants-demandees` | Trois densités d'herbe et trois propositions par bâtiment, déclarées et décrites, jamais produites | densités `medium` et `dense` et propositions `p2` produites le 2026-08-05 |
+| 31 | `sapin-couleur-perdue` | Ma correction du sapin a éclairci la couleur que la version précédente avait obtenue | fiche à reprendre |
+| 32 | `referentiel-ecrase-en-parallele` | Deux générations lancées ensemble s'effacent l'une l'autre au référentiel | proposé, en attente de décision |
+| 33 | `couvert-non-lu-a-l-export` | La génération demande la largeur du couvert, l'export vérifie celle de l'emprise | proposé, en attente de décision |
+
+## Suivi des sprites, sujet par sujet (2026-08-05)
+
+**Verdicts de l'opérateur, portés au référentiel et lisibles sur la page.**
+
+| Sujet | Où il en est | Ce qui reste |
+|---|---|---|
+| `CH-001` herbe rase | validée | écart avec l'ébauche sur les fleurs, à trancher |
+| `CH-019` chemin | produite, en attente de verdict | son exemple d'usage ne s'affiche pas ; couleur encore jaune |
+| `CH-020` cours d'eau | à reprendre | l'angle de caméra ; fiche pas encore revue |
+| `OB-010` clôture | six formes validées, deux portillons est-ouest validés | herbe au pied des poteaux ; portillons nord-sud et angle nord-ouest à juger |
+| `TR-060` grand chêne | à reprendre | couvert à augmenter pour retrouver le chêne de la référence |
+| `TR-061` bosquet de sapins | `v6` produite le 2026-08-05, inscrite | en attente de verdict |
+| `TR-062` herbe haute | validée | un second sujet d'herbe moins touffue, décision de l'opérateur |
+| `TR-063` pommier | produite, en attente de verdict | couvert 3 × 3 en place |
+| `TR-064` herbe clairsemée | densités `medium` et `dense` produites le 2026-08-05, inscrites | en attente de verdict ; la densité `sparse` reste à juger |
+| `TR-065` sapin | **génération perdue** | l'image est bien sortie, l'export l'a refusée — voir « Deux défauts constatés le 2026-08-05 » |
+| `BT-001` centre de soin | proposition `p2` produite le 2026-08-05, inscrite | en attente de verdict |
+| `BT-002` maison de ferme | proposition `p2` produite le 2026-08-05, inscrite | en attente de verdict |
+
+## Deux défauts constatés le 2026-08-05, aucun correctif appliqué
+
+Six générations ont été lancées **en parallèle**. Cinq sont allées jusqu'à l'inscription ; la sixième, le sapin, a
+échoué à l'export. Les deux défauts qui suivent sont des **propositions**, rien n'a été touché.
+
+1. **Deux générations qui tournent ensemble peuvent s'effacer l'une l'autre au référentiel.** Chaque inscription
+   relit `assets/sujets.json` en entier au moment où elle démarre, puis le réécrit en entier quand elle finit : tout
+   ce qui a été écrit entre-temps — par une autre génération ou à la main — disparaîtrait sans un mot. **Rien de tel
+   n'a été constaté** : les cinq inscriptions du 2026-08-05 sont toutes en place. C'est un risque du mécanisme, pas
+   un dégât observé — j'ai d'abord cru le couvert du sapin perdu ainsi, il ne l'était pas. **Proposition :** relire
+   le fichier au moment d'écrire, et non au démarrage, pour ne réécrire que l'entrée concernée.
+2. **La dimension demandée et la dimension vérifiée ne sont pas lues au même endroit.** La génération demande la
+   largeur du **couvert** — ce que le volume surplombe —, tandis que l'export vérifie la largeur de l'**emprise** —
+   ce qui touche le sol. Tout sujet dont le volume déborde de son pied échoue donc systématiquement, alors que
+   l'image reçue est juste. **Proposition :** faire lire le couvert à l'export, exactement comme la génération.
+
+**Conséquence immédiate :** le sapin doit être relancé une fois le second point tranché. Son couvert de 2 × 2 est
+bien déclaré et son image est sortie juste, à 192 px de large ; c'est l'export qui l'a refusée en la mesurant
+contre l'emprise de 1 × 1, et rien ne l'a donc inscrite.
+
+## Le plan de composition du parc — trois propositions écrites le 2026-08-05
+
+**La scène est neuve, décidée par l'opérateur** : format paysage, bosquets de sapins dans le fond, centre de soin
+dans le coin bas-droit, son entrée face à la caméra et prolongée de **trois cases de chemin — le seul chemin du
+parc**, aucun autre. Le reste est de l'herbe et des arbres **épars, irrégulièrement placés**. Aucun enclos n'a été
+demandé, aucun n'a été posé. Trois plans ont été écrits, vérifiés et dessinés ; **aucun n'est retenu, la décision
+appartient à l'opérateur**.
+
+**Le plan A est retenu** (opérateur, 2026-08-05) : *le semis clairsemé*, les arbres dispersés sur toute la surface,
+sans zone privilégiée. Il vit en `assets/maquette/plan-composition-parc-a.json` et son dessin à côté. Les deux
+autres propositions — *la grande pelouse* et *les bosquets* — sont écartées et ne sont plus produites : garder deux
+plans écartés, c'est laisser croire qu'il reste un choix à faire.
+
+**Communs aux trois** : 64 × 48 cases, herbe rase `CH-001` en cellule par défaut, **enceinte `OB-010` sur les quatre
+bords** ouverte d'une case là où le chemin sort, bosquets `TR-061` **dehors, derrière la barrière**, en deux bandes
+décalées, centre de soin `BT-001` au coin bas-droit et ses trois cases d'entrée dessous, butant exactement sur la
+barrière. Les trois passent le contrôle de cohérence : **dix dessins à produire** compte tenu des rotations, deux
+pour le chemin et huit pour la barrière.
+
+**L'ouverture est un trou dans la clôture, pas un portillon.** Le portillon existe et est validé, mais c'est un
+**variant** de la barrière, et un plan ne déclare aujourd'hui que des sujets et leurs raccords — il n'a pas de quoi
+désigner un variant. Poser une case pleine là où l'on passe serait faux ; laisser le trou dit exactement ce qui s'y
+trouve. **Porter le variant au format des plans reste à décider.**
+
+**Les trois plans se lisent sur l'artefact « Le parc »**, et sur lui seul. Ils vivent sous `assets/maquette/` et
+**non sous `assets/poc/`** : ce dossier-là est balayé par la galerie des plans d'usage des sujets, où la maquette
+du parc n'a rien à faire.
+
+La chaîne est toujours la même, et c'est une règle : **la ressource est produite par un script, puis incluse telle
+quelle dans la page — jamais fabriquée à la volée par la page.** La déclaration en JSON est lue par
+`scripts/build-composition-plan.py`, qui la vérifie et en produit le dessin ; puis `artefacts/parc/build.php` part
+de cette même déclaration — pour découvrir les plans, leur titre, leur grille et leurs notes — et **inclut le
+dessin déjà produit sans jamais le redessiner**. Un plan déclaré mais jamais dessiné arrête la construction de la
+page au lieu de passer inaperçu.
+
+**La page est le plan** : il s'y étale en pleine largeur, ajustable à sa taille réelle. **Un clic sur une case
+attache une remarque à cette case** — elle se marque en rouge sur le dessin, et un bouton donne le récapitulatif
+sous la forme `(12,30) : enlève le chêne`, à coller tel quel dans la conversation. C'est par là que passent
+désormais les demandes de retouche du parc.
+
+**Écarté : la popin.** Cette page vit dans un cadre qui grandit avec son contenu, où « toute la hauteur » vaut
+toute la hauteur du document : le dessin sortait de l'écran et la molette faisait défiler le fond derrière lui.
+Avec un seul plan à regarder, le défilement de la page suffit et il n'y a plus de hauteur à deviner.
+
+**Aucun arbre n'est aligné sur un autre** : les positions sont tirées une à une par un générateur à graine fixe,
+et toute position déjà occupée est abandonnée. Le parc paraît non planté, et il se reproduit à l'identique d'une
+reconstruction à l'autre — c'est ce qui permet de comparer, corriger et rejouer une proposition.
+
+**Ce que les trois plans réclament et qui n'existe pas encore** : le chemin `CH-019` n'a qu'une version dont la
+couleur est encore jaune, et le sapin `TR-065` n'a pas de version courante inscrite depuis l'échec du 2026-08-05.
+
+Les plans sont écrits par un script à usage unique, `local/scripts/build-park-plans.php`, jamais commité : la
+disposition y est déclarée en quelques lignes — une bande de fond, le bâtiment et ses trois cases d'entrée, une
+règle de semis — et le script l'étend en refusant tout chevauchement.
+
+## Pourquoi il a fallu attendre une décision avant de l'écrire
+
+L'outil existe et attend : `scripts/build-composition-plan.py` sait déjà lire un plan déclaré case par case, y
+poser des sujets qui occupent plusieurs cases, vérifier que chaque raccord est annoncé des deux côtés, et en
+sortir le dessin. Trois plans tournent déjà avec (chemin, cours d'eau, clôture). Ce n'est donc pas l'outillage
+qui bloque.
+
+**Ce qui manque est la description du parc lui-même.** La conception ne décrit qu'une chose : la **scène de
+référence**, sur 32 × 24 (le format de composition), avec ses chemins, sa rivière, son centre de soin, sa
+maison, sa tour de guet et ses personnages, chacun à une case précise. Le parc, lui, est annoncé sur
+**64 × 48** — quatre fois cette surface — et **rien nulle part ne dit ce qui occupe la différence**. Écrire
+le plan revenait donc à inventer les trois quarts du parc, ce qui est une décision de conception et n'appartient
+pas à l'agent. **L'opérateur a tranché le 2026-08-05** en décrivant une scène neuve, ce qui a débloqué les trois
+propositions ci-dessus. La conception, elle, ne décrit toujours que la scène de référence : le parc n'y est pas
+écrit et devra l'être une fois le plan retenu.
+
 ## Trois décisions attendent l'opérateur — rien ne se produit avant
 
 1. **Retirer du socle de consigne la contrainte « quatre cinquièmes de la hauteur »** ([`asset_common.CADRAGE_CUTOUT`](scripts/asset_common.py)). Elle contredit la clause de caméra : pour remplir quatre cinquièmes de la hauteur, un sujet doit être dressé et vu de face, alors que la plongée à 70° l'écrase. Le générateur suit la plus concrète des deux, d'où les vues frontales du pommier et du bosquet. **Constaté en relisant la consigne figée, pas déduit.**
@@ -57,13 +221,13 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **Relevé par l'opérateur en fin de journée du 2026-08-04, tout est en cours de traitement :**
 
-- **Régression sur la page de suivi** : les sprites s'affichent à la taille de leur fichier au lieu de **24 pixels par case d'emprise en largeur**, la hauteur suivant librement l'image. Le bouton œil vit **dans l'encart de la variante**, jamais sur l'image ; l'image s'ouvre en grand au clic sur elle ou sur l'œil. *Confié à l'assistant « page de suivi ».*
-- **Une variante n'a qu'une version active** : la dernière. Les antérieures (trois au plus) ne s'affichent plus dans le flux, elles s'atteignent par une **popin de comparaison**, sur le modèle de celle des planches de référence. Constaté sur la clôture nord-sud et est-ouest. *Même assistant.*
+- **Régression sur la page de suivi** : les sprites s'affichent à la taille de leur fichier au lieu de **24 pixels par case d'emprise en largeur**, la hauteur suivant librement l'image. Le bouton œil vit **dans l'encart du variant**, jamais sur l'image ; l'image s'ouvre en grand au clic sur elle ou sur l'œil. *Confié à l'assistant « page de suivi ».*
+- **Un variant n'a qu'une version active** : la dernière. Les antérieures (trois au plus) ne s'affichent plus dans le flux, elles s'atteignent par une **popin de comparaison**, sur le modèle de celle des planches de référence. Constaté sur la clôture nord-sud et est-ouest. *Même assistant.*
 - **La parallélisation est fausse** : un script qui enchaîne plusieurs générations n'est pas parallèle. **Un processus système par génération**, et la file les mène de front. `run-fence-campaign.py` groupait ses travaux : c'est la faute. *Confié au codeur Python.*
 - **Le pommier n'avait pas de pomme** : la fiche ne les demandait pas. Fiche entièrement réécrite le 2026-08-04, le fruit y est explicite et visible. **À regénérer.**
 - **Le bosquet de sapins est mal décrit** : ce n'est pas une multitude de petits arbres, mais **deux à quatre arbres à la proportion juste** qui forment ensemble une masse infranchissable. Et une case infranchissable de ce genre **se remplit et se joint à ses voisines de même nature** — la géométrie exacte attend une réponse de l'opérateur avant réécriture.
 - **Les plans de composition n'étaient visibles nulle part** : celui du chemin `CH-019` existe depuis le 2026-08-04 et n'était jamais remonté à l'opérateur. Un artefact dédié leur est ouvert. *Confié à un assistant.*
-- **Le reste des variantes de clôture est à produire.**
+- **Le reste des variants de clôture est à produire.**
 
 ## Leçon de la nuit : ne pas paralléliser ce qui ne se découpe pas
 
@@ -79,7 +243,7 @@ Deux façons de faire qui ont coûté cher, et qu'il faut abandonner :
 
 ## Où on en est vraiment, fin de la nuit du 2026-08-04
 
-**Produit et exporté depuis la reprise** : le pommier, le bosquet, les trois angles de clôture, la ligne est-ouest à un puis à deux poteaux, le centre de soin refait vu de dessus, le sapin isolé, l'herbe clairsemée, et les sprites principaux du chemin et du cours d'eau. Les deux exemples d'usage du chemin et du cours d'eau sont produits mais **ratés** — rendus à plat, sans la caméra du projet ; leur consigne est corrigée depuis, ils sont à refaire.
+**Produit et exporté depuis la reprise** : le pommier, le bosquet, les trois angles de clôture, la ligne est-ouest à un puis à deux poteaux, le centre de soin refait vu de dessus, le sapin, l'herbe clairsemée, et les sprites principaux du chemin et du cours d'eau. Les deux exemples d'usage du chemin et du cours d'eau sont produits mais **ratés** — rendus à plat, sans la caméra du projet ; leur consigne est corrigée depuis, ils sont à refaire.
 
 **Les quatre portillons attendent** : leur outil insère encore d'office une phrase sur le poteau unique, qui n'a aucun sens pour un portillon. Les quatre premières images ont été gâchées pour cette raison et sont écartées.
 
@@ -87,7 +251,7 @@ Deux façons de faire qui ont coûté cher, et qu'il faut abandonner :
 
 **Le référentiel est sain et son contrôleur passe au vert** : douze sujets déclarés, aucun fichier orphelin, aucun maître manquant. Le modèle porte désormais le statut de version, le **verdict de l'opérateur** qui ne s'y confond pas, le maître, le numéro d'image et une place pour les mesures — encore vide, l'outil de mesure n'y écrit pas. Deux règles nouvelles y vivent avec leurs raisons : un axe peut **définir la nature** d'une pièce, et un axe peut en **rendre un autre inapplicable**.
 
-**Attendent ton verdict** : la reprise de la ligne est-ouest à deux poteaux, le chemin, le ruisseau, le centre de soin refait, le sapin isolé et l'herbe clairsemée.
+**Attendent ton verdict** : la reprise de la ligne est-ouest à deux poteaux, le chemin, le ruisseau, le centre de soin refait, le sapin et l'herbe clairsemée.
 
 **La destination d'une image ne se déduit plus de sa référence.** C'était la cause de deux sprites allés se ranger dans les planches de référence — remis en place à la main. Un seul outil portait le défaut, il est corrigé et éprouvé : la destination ne dépend que du code du sujet, et la référence peut vivre n'importe où. Les trois outils qui acceptent une référence sont éprouvés : la destination est identique avec une référence lointaine et sans référence.
 
@@ -99,9 +263,9 @@ Deux façons de faire qui ont coûté cher, et qu'il faut abandonner :
 
 1. **La page de suivi n'affiche pas le centre de soin.** Elle embarque chaque sprite en pleine définition alors qu'elle ne les montre qu'à vingt-quatre pixels par case : un livrable de seize cases pèse 1,7 Mo pour 384 pixels affichés. Un plafond de 500 ko a été posé en garde-fou, il montre « image trop volumineuse » au lieu d'un cadre vide — mais **la vraie réponse est de fabriquer une vignette à la taille d'affichage**, ce qui fait tomber le poids pour toutes les images et rend le plafond inatteignable. Le bouton œil doit continuer d'ouvrir l'image entière.
 2. **Le constructeur de la page échoue en fin de course** : `NameError: name 'UNREADABLE_IMAGES' is not defined`, dans l'étape même qui devait signaler les anomalies au lanceur. La page est pourtant écrite avant l'échec.
-3. **Le libellé d'une variante de portillon doit commencer par le portillon**, pas par « Ligne » : ce qui change la nature de la pièce mène le libellé. Un poteau de plus ou de moins, non — une ligne reste une ligne. La règle générale reste à écrire.
+3. **Le libellé d'un variant de portillon doit commencer par le portillon**, pas par « Ligne » : ce qui change la nature de la pièce mène le libellé. Un poteau de plus ou de moins, non — une ligne reste une ligne. La règle générale reste à écrire.
 4. **Quatre reprises ne sont pas déclarées au référentiel** : `TR-063-v3`, `TR-061-v3`, `OB-010_shape-nw_posts-1-v2`, `OB-010_shape-ew_posts-1-v2`. Chacune devient courante, celle qu'elle remplace passe en antérieure, **et repart sans verdict**. Le pommier et le bosquet atteignent la troisième version : le plafond de trois antérieures se pose, et rien ne se supprime du disque.
-5. **Les lots des tracés sont complétés** : cinq dessins à produire — extrémité, ligne, angle, trois branches, croisement —, quinze configurations couvertes par rotation. La distinction est écrite dans le type : ce qu'il faut **dessiner** n'est pas ce qu'une case doit **savoir accepter**. La clôture, qui ne pivote pas, garde ses six formes, plus les quatre variantes de portillon qui sont à produire elles aussi.
+5. **Les lots des tracés sont complétés** : cinq dessins à produire — extrémité, ligne, angle, trois branches, croisement —, quinze configurations couvertes par rotation. La distinction est écrite dans le type : ce qu'il faut **dessiner** n'est pas ce qu'une case doit **savoir accepter**. La clôture, qui ne pivote pas, garde ses six formes, plus les quatre variants de portillon qui sont à produire eux aussi.
    **Le cours d'eau `CH-020` n'est pas sur la maquette du parc, mais son exemple d'usage se produit quand même** (opérateur, 2026-08-04) : le sujet est déjà dessiné dans les références de direction artistique, il n'y a donc rien à inventer. Ne pas confondre « absent de la maquette » et « à ne pas produire ».
 6. **Le catalogue gelé n'est pas débranché.** La correspondance ligne à ligne est faite et le feu vert donné : `check-asset.py` et `record-asset.py` doivent lire le référentiel des sujets. Deux changements assumés au passage — l'enregistrement **ajoute une version** au lieu d'écraser, et le type se valide contre les types déclarés par le référentiel. `asset_catalog.py` et `check-catalog.py` ne se suppriment pas sans ordre.
 7. **La chaumière de l'ébauche est devenue `BT-002` maison de ferme** (toit de tuiles orange, pas de chaume). **La tour de guet reste hors inventaire** — décision de l'opérateur, elle n'appartient pas au parc du POC ; elle est dessinée dans l'ébauche et pourra être inventoriée le jour où une scène en aura besoin. Le potager clôturé et ses cultures, également dessinés, attendent la même décision.
@@ -119,7 +283,7 @@ Les six planches sont des références **documentées** : chacune a sa fiche, et
 
 **Ce que ça change** : l'inventaire a été écrit avant les planches et n'a jamais été confronté à elles. Rien n'est urgent pour le POC — le parc n'emploie qu'une poignée de sujets — mais **toute production hors du parc partira de fiches fausses** tant que ce n'est pas repris. Et **aucun sujet ne se crée sans l'opérateur** : la liste est une proposition, pas un chantier lancé.
 
-**Contradiction en attente d'arbitrage** : le sapin isolé. L'opérateur le veut « nettement plus petit que les six cases du bosquet », mais la fiche du bosquet dit que chacun de ses sapins est « à la taille d'un sapin isolé ». Les deux ne peuvent être vrais. Sa fiche n'est pas écrite tant que ce n'est pas tranché.
+**Contradiction en attente d'arbitrage** : le sapin. L'opérateur le veut « nettement plus petit que les six cases du bosquet », mais la fiche du bosquet dit que chacun de ses sapins est « à la taille d'un sapin ». Les deux ne peuvent être vrais. Sa fiche n'est pas écrite tant que ce n'est pas tranché.
 
 **Chantiers ouverts en fin de journée du 2026-08-04 :**
 
@@ -131,7 +295,7 @@ Les six planches sont des références **documentées** : chacune a sa fiche, et
 - **La toile demandée au générateur épouse la forme réelle du sujet.** Elle se calculait sur le seul sol : un pommier haut de trois cases recevait un carré et s'écrasait. La profondeur au sol se projette presque en vraie grandeur, la hauteur s'écrase au tiers — la caméra est à soixante-dix degrés **sous l'horizontale**, donc près de la verticale. Cette convention est la source d'une erreur commise et corrigée aujourd'hui : elle est désormais écrite noir sur blanc dans le service qui détient les tailles.
 
 - **Le portillon** `OB-010_shape-ew-avec-portillon.png` est **rattaché** au référentiel le 2026-08-04, sur un axe `ouverture` proposé. Deux points attendent l'opérateur : le nom de l'axe, et **le passage** — un portillon se traverse, ce qui renverse la fermeture du type sur les deux côtés reliés.
-- **`check-sujets.py` a deux défauts** : il réclame qu'une variante revendique aussi les **maîtres** de `assets/poc/`, alors qu'une variante ne pointe que le livrable de `assets/cutout/` ; et il compte en faute les sondes pourtant déclarées `_hors_referentiel`. Il sort donc en erreur alors que le référentiel est sain.
+- **`check-sujets.py` a deux défauts** : il réclame qu'un variant revendique aussi les **maîtres** de `assets/poc/`, alors qu'un variant ne pointe que le livrable de `assets/cutout/` ; et il compte en faute les sondes pourtant déclarées `_hors_referentiel`. Il sort donc en erreur alors que le référentiel est sain.
 - **`reference-OB-010.png`** est une copie de la clôture est-ouest, déposée par l'ancien mécanisme de cascade. Elle traîne au recensement ; proposé de l'exclure comme les `usage-*`.
 - **Le bouton œil a disparu** de la page au lieu d'être déplacé hors de l'image ; tout l'encart est devenu la cible. À confirmer ou à rétablir.
 - **`cut-asset.py`** existe encore mais n'est plus appelé — le rognage est abandonné.
@@ -213,8 +377,7 @@ Les cinq premières tiennent la cible de lumière et l'échelle humaine. Détail
 | Convertir case ↔ pixels, dimensionner | `tile_scale.py` — **seul détenteur** des deux valeurs : case d'écran à 24 px, finesse de livraison dimensionnée sur le zoom maximum |
 | Exporter un livrable | `export-asset.py` — redimensionne, ne rogne rien, mesure l'emprise et le point de pose |
 | Lire ou contrôler le référentiel des sujets | `check-sujets.py` — affiche la valeur résolue du passage, niveau par niveau |
-| Commander la sprite d'un sujet isolé | `generate-sprite-subject.py <code>` — lit la fiche à l'inventaire, jamais une copie |
-| Commander la sprite d'une pièce de tracé | `generate-sprite-trace.py <code> <forme>` (composition, référence) |
+| Commander une sprite, quelle qu'elle soit | `generate-sprite.py <ref du sujet> <ref du variant>` — tout est lu au référentiel ; elle exporte, inscrit et écrit son rapport |
 | Commander tout un jeu de pièces | `run-fence-campaign.py` — une seule campagne, une seule référence |
 | Commander un exemple d'usage | `generate-usage-sample.py` depuis un plan de composition |
 | Enfiler des demandes de sprite et les traiter au fil de l'eau | `sprite-queue.py` — file à `local/sprite-queue.jsonl`, reconstruction de la page sérialisée |
@@ -239,7 +402,7 @@ Toute version se reconstate avant de s'y fier : une version écrite ici est un c
 
 Décidées avec l'opérateur ; elles remplacent les comptes rendus en conversation dès que la matière devient visuelle.
 
-- **Le suivi des sprites** — tous les sujets groupés par type, chaque profil, chaque variante attendue avec son état (prévue, en production, produite, en défaut), un panneau de comptes en tête, et des actions par variante qui alimentent un récapitulatif copiable. C'est l'unique endroit où se lit l'état de la production.
+- **Le suivi des sprites** — tous les sujets groupés par type, chaque profil, chaque variant attendu avec son état (prévu, en production, produit, en défaut), un panneau de comptes en tête, et des actions par variant qui alimentent un récapitulatif copiable. C'est l'unique endroit où se lit l'état de la production.
 - **Le parc** — le plan de composition en haut, la maquette montée en dessous, sur une seule page. Cible : pouvoir **sélectionner une zone** sur l'un ou l'autre et commenter cette zone, le commentaire partant au récapitulatif avec la zone désignée ([méthode](../conceptions/methode/revue-visuelle.md)).
 
 ## Les revues publiées
@@ -259,8 +422,7 @@ Décidées avec l'opérateur ; elles remplacent les comptes rendus en conversati
 | **Calibration de l'échelle humaine** | https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40 | archivé |
 | **Direction artistique** (historique de la revue) | https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5 | clos — DA validée |
 | **Son** (essais, plafond constaté) | https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8 | clos — synthèse abandonnée |
-| *Suivi des sprites — doublon créé par erreur* | https://claude.ai/code/artifact/ddefc8b7-0f50-45ef-ad51-68c64b5ef1bd | **à supprimer par l'opérateur — ne jamais republier dessus** |
-| **Le parc** — plan de composition et maquette montée, commentaire par zone | *pas encore créé* | à ouvrir avec la maquette B0 |
+| **Le parc** — plans de composition, maquette montée, commentaire par zone (`artefacts/parc/`) | https://claude.ai/code/artifact/5f9bb2af-9126-44e6-b953-59afb7ab4e28 | vivant, ouvert le 2026-08-05 avec les trois plans ; la maquette montée et le commentaire par zone restent à ajouter |
 
 ## Ce qui attend l'opérateur
 

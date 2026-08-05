@@ -1,0 +1,67 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — bosquet de sapins, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DÉFINITION ATTENDUE : 384 × 755 pixels.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus :
+aucun décor, aucun sol, aucune herbe, aucun accessoire, aucun autre être vivant, aucun cadre, aucune
+bordure, aucun texte.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+EMPRISE AU SOL — 2 case(s) de large sur 2 de profondeur. C'est la place que le sujet a le droit d'occuper au sol : un plafond, jamais une obligation de le remplir.
+NE CONFONDS PAS LA MARGE ET L'EMPRISE : la marge transparente demandée plus haut est une marge SUR LA TOILE, dont l'unique raison d'être est qu'aucune partie du sujet ne soit coupée par un bord de l'image ; elle NE DIT RIEN DE LA PLACE DU SUJET AU SOL.
+CONTENU EN LARGEUR : RIEN du sujet ne dépasse latéralement de cette largeur, ni branche, ni auvent, ni marche, ni ombre. La largeur du sujet est sa largeur au sol.
+COMBIEN IL EN OCCUPE VRAIMENT, C'EST SA FICHE QUI LE DIT, et elle seule : un bâtiment couvre son emprise d'un bord à l'autre, une bande de chemin n'en couvre qu'une partie et laisse des marges libres de chaque côté. Suis ce que la fiche décrit, sans jamais élargir le sujet pour combler sa case.
+EN HAUTEUR, LE DÉBORDEMENT EST NORMAL : l'emprise décrit le SOL. Un sujet haut monte librement dans l'image ; seule sa largeur est contrainte.
+
+TAILLE RÉELLE DU SUJET — il mesure 6 case(s) de haut, pour une emprise de 2 sur 2 : un rapport hauteur/largeur de 3. C'est cette proportion réelle, jamais une fraction du cadre ni une mesure en pixels, qui doit se lire dans l'image une fois la caméra appliquée.
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/revue-da/planche-p1-campagne-v8.png. Il montre le
+style, la matière, la lumière ET L'ANGLE DE PRISE DE VUE à reprendre. Le sujet demandé est celui
+décrit ci-dessous, pas celui de l'image : la référence donne le traitement, la fiche donne le sujet.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
+aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+CE QUE SA FICHE PRÉCISE :
+fir-thicket-01, type bosquet d'arbres, 2 × 2, hauteur 6 cases, infranchissable. Trois ou quatre sapins, chacun à la taille d'un sapin isolé — jamais une multitude de petits arbres : ce qui fait le bosquet, c'est le serrement, pas la miniaturisation. Le feuillage atteint le bord gauche et le bord droit de l'image, et le bas de l'image reste couvert d'un bord à l'autre, en continu, de sorte que deux bosquets posés côte à côte se rejoignent en une masse continue
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+TR-061 : Trois ou quatre jeunes sapins, chacun à la taille pleine d'un sapin isolé, poussés si serrés que leurs couronnes se chevauchent en une masse dense et vert profond ; le feuillage atteint franchement le bord gauche et le bord droit de l'image, et couvre le bas de l'image d'un bord à l'autre en continu, ainsi deux bosquets posés côte à côte se rejoignent en un mur continu de vert. LES TRONCS SONT VISIBLES : sous la masse des couronnes, les branches basses s'arrêtent nettement au-dessus du sol et laissent voir les fûts bruns et droits de chaque sapin, alignés dans l'ombre du feuillage.
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à environ SOIXANTE-DIX DEGRÉS sous l'horizontale. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

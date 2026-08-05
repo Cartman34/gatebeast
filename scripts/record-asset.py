@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
-"""Cut a produced image out and inscribe it in the referentiel — chain steps 5 and 9, in one gesture.
+"""Export a produced image and inscribe it in the referentiel — the last steps of the chain, in one
+gesture.
 
 The design forbids keeping the referentiel by hand ("Le catalogue s'écrit à l'entrée, jamais à la
 main"), because a hand-kept file and the disk diverge within a week. This is the only writer.
 
-It cuts the source image (cut-asset.py), writes the sprite under assets/cutout/, and records it in
-assets/sujets.json: the sujet (created together with its first variant if the code is new), the
-variant it belongs to, and the representation itself — livrable path, master path, image number, and
-the measures taken at cut time.
+It resizes the master to delivery definition (export-asset.py), writes the sprite under
+assets/cutout/, and records it in assets/sujets.json: the sujet (created together with its first
+variant if the code is new), the variant it belongs to, and the representation itself — livrable path,
+master path, image number, and the measures the export took.
 
-Was built on the frozen assets/catalogue.json (asset_catalog.py) and its Variant/Profile classes.
-Rebuilt against the referentiel directly: the referentiel keeps versions instead of overwriting, and
-does not identify a variant by a computed address string the way the catalogue did — it stores the
-same fields (orientation, action, shape, and a type's own axes) as plain keys, so this tool now does
-too, instead of building and parsing a string nothing else needs.
+The referentiel keeps versions instead of overwriting, and does not identify a variant by a computed
+ref string: it stores the same fields (orientation, action, shape, and a type's own variant
+fields) as plain keys, so this tool does too, instead of building and parsing a string nothing else
+needs.
 
 Usage:
   python3 record-asset.py <source> --code <XX-nnn> --type <type> \\
       [--name <kind-nn>] [--footprint <columns>x<rows>] [--height <tiles>] \\
-      [--variant <key>=<value>,...] [--frame <n>] [--dry-run]
+      [--variant <ref>] [--frame <n>] [--dry-run]
 
   <source>     path relative to assets/, or absolute
   --type       must be one of the types the referentiel already declares
-  --variant    comma-separated key=value pairs among orientation, action, shape, composition,
-               portillon; a key left out keeps the main view's own default (south, idle, plain).
-               e.g. --variant shape=ns,composition=posts-1
+  --variant    the REF of the variant, as the referentiel writes it — e.g.
+               orientation-south_action-idle_shape-ns_posts-1_frame-01. Left out, the main view's.
+               An unknown ref is refused: a variant is declared before it is produced.
   --frame      the image's own number within its variant (lexique: frame-01, frame-02...) — not a
                version number, defaults to 1
   --dry-run    show what would be written, touch nothing
@@ -35,14 +35,14 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import shape_vocab
 
-# cut-asset.py and check-sujets.py are hyphenated, so they are loaded by path rather than imported by
-# name — the same mechanism this file already used for cut-asset.py.
-CUT = Path(__file__).resolve().parent / "cut-asset.py"
-spec = importlib.util.spec_from_file_location("cut_asset", CUT)
-cut_asset = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(cut_asset)
+# export-asset.py and check-sujets.py are hyphenated, so they are loaded by path rather than imported
+# by name. The deliverable is the master resized: this tool records that one, never a second copy of
+# its own making.
+EXPORT = Path(__file__).resolve().parent / "export-asset.py"
+spec = importlib.util.spec_from_file_location("export_asset", EXPORT)
+export_asset = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(export_asset)
 
 CHECK_SUJETS = Path(__file__).resolve().parent / "check-sujets.py"
 spec = importlib.util.spec_from_file_location("check_sujets", CHECK_SUJETS)
@@ -50,12 +50,6 @@ check_sujets = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(check_sujets)
 
 SUJETS = check_sujets.SUJETS  # assets/sujets.json — one path, held by the checker, not recopied here
-
-MAIN_VIEW = {"orientation": "south", "action": "idle", "shape": shape_vocab.DEFAULT_SHAPE}
-# The fields that identify a variant in the referentiel. Never a computed address: the referentiel
-# stores exactly these, as plain keys, and nothing more is needed to find or create one.
-VARIANT_KEYS = ("orientation", "action", "shape", "composition", "portillon")
-
 
 def parse_footprint(text):
     columns, _, rows = text.partition("x")
@@ -65,41 +59,30 @@ def parse_footprint(text):
     return {"columns": int(columns), "rows": int(rows or columns)}
 
 
-def parse_variant(text):
-    """A variant descriptor from the command line: comma-separated key=value pairs, among the fields
-    the referentiel itself stores for a variant. Missing keys fall back to the main view's own
-    defaults. Never an address string — the referentiel does not keep one, so nothing here builds one.
+MAIN_VIEW_REF = "orientation-south_action-idle_frame-01"
+
+
+def matching_variant(sujet, ref):
+    """The variant of `sujet` that goes by this ref.
+
+    A variant is designated by its ref and by nothing else — the ref is its identifier, written in the referentiel, never recomputed (sujets-et-variantes.md).
+    This used to compare the fields one by one, absence included, which is a second way of saying the same thing and a second way of getting it wrong.
     """
-    values = dict(MAIN_VIEW)
-    if text:
-        for pair in text.split(","):
-            key, separator, value = pair.partition("=")
-            key = key.strip()
-            if not separator or key not in VARIANT_KEYS:
-                raise SystemExit(f"FAULT clé de variante inconnue ou mal formée : {pair!r} — attendu "
-                                 f"parmi {VARIANT_KEYS}")
-            values[key] = value.strip()
-    if not shape_vocab.valid_shape(values["shape"]):
-        raise SystemExit(f"FAULT forme invalide : {values['shape']!r}")
-
-    return values
-
-
-def matching_variant(sujet, wanted):
-    """The variant of `sujet` whose fields equal `wanted` exactly — every one of VARIANT_KEYS, absence
-    included, since a variant without a composition is not the same variant as one that has one."""
-    for variant in sujet["variantes"]:
-        if all(variant.get(key) == wanted.get(key) for key in VARIANT_KEYS):
+    for variant in sujet["variants"]:
+        if variant.get("ref") == ref:
             return variant
 
     return None
 
 
-def record(data, code, type_name, wanted, name=None, footprint=None, height=None):
-    """Find or create the sujet and its variant, and return the variant ready to receive a new
+def record(data, code, type_name, ref, name=None, footprint=None, height=None):
+    """Find the sujet and the variant this ref designates, and return the variant ready to receive a new
     representation. A sujet and its first variant are created TOGETHER: the referentiel refuses a
     sujet without at least one variant (check-sujets.py), so there is never a moment where the file
     would hold one without the other.
+
+    A variant is never invented here: its ref is written in the referentiel by whoever declares it, so
+    an unknown ref is a fault and not an invitation to create one under a name nobody chose.
     """
     types = data["types"]
     if type_name not in types:
@@ -112,7 +95,8 @@ def record(data, code, type_name, wanted, name=None, footprint=None, height=None
             "profil": name, "type": type_name,
             "emprise": footprint or {"columns": 1, "rows": 1},
             "hauteur": height,
-            "variantes": [],
+            "variants": [{"ref": ref, "orientation": "south", "action": "idle", "shape": "plain",
+                           "principale": True, "representations": []}],
         }
         data["sujets"][code] = sujet
     else:
@@ -123,36 +107,28 @@ def record(data, code, type_name, wanted, name=None, footprint=None, height=None
         if name is not None:
             sujet["profil"] = name
 
-    variant = matching_variant(sujet, wanted)
+    variant = matching_variant(sujet, ref)
     if variant is None:
-        variant = dict(wanted)
-        variant["representations"] = []
-        sujet["variantes"].append(variant)
+        known = [entry.get("ref") for entry in sujet["variants"]]
+        raise SystemExit(f"FAULT {code} n'a aucune variante de ref {ref!r} — une variante se déclare au référentiel avant d'être produite. Déclarées : {known}")
 
     return variant
 
 
 def add_representation(variant, representation):
-    """Add a new version, never overwrite one — the referentiel's own rule (rien ne se jette), which
-    replaces the frozen catalogue's policy of silently overwriting whatever already sat at the same
-    address. The previous 'courante' becomes 'anterieure'; beyond three kept 'anterieure', the oldest
-    drops out of the FILE only — its image stays on disk, exactly like every image in this repository.
+    """Add a new version, never overwrite one, and NEVER drop one — the referentiel keeps every version
+    an image has ever had (operator, 2026-08-05: on garde tout, on versionne tout).
+
+    It used to drop the oldest beyond three kept: the file lost its entry while the image stayed on
+    disk, and the image became an orphan that no variant claimed — a fault by the referentiel's own
+    checker, born of a rule that was meant to keep things. How many versions are SHOWN is a question for
+    the review page and for it alone; it is not a reason to forget one here.
     """
     representations = variant.setdefault("representations", [])
     for previous in representations:
         if previous.get("statut") == "courante":
             previous["statut"] = "anterieure"
     representations.insert(0, representation)
-
-    kept, extra = 0, []
-    for previous in representations[1:]:
-        if previous.get("statut") != "anterieure":
-            continue
-        kept += 1
-        if kept > check_sujets.MAX_PREVIOUS_REPRESENTATIONS:
-            extra.append(previous)
-    for previous in extra:
-        representations.remove(previous)
 
 
 def main(arguments):
@@ -176,13 +152,12 @@ def main(arguments):
 
     source = Path(positional[0])
     if not source.is_absolute():
-        source = cut_asset.ASSETS / positional[0]
+        source = export_asset.ASSETS / positional[0]
     if not source.is_file():
         print(f"ABSENT {source}")
         return 1
 
     code = options["code"]
-    wanted = parse_variant(options.get("variant"))
     frame = int(options.get("frame", 1))
     footprint = parse_footprint(options["footprint"]) if "footprint" in options else None
     height = float(options["height"]) if "height" in options else None
@@ -192,17 +167,21 @@ def main(arguments):
     except check_sujets.Fault as fault:
         print(f"FAULT {fault}")
         return 1
-    variant = record(data, code, options["type"], wanted, options.get("name"), footprint, height)
+    # The variant is named by its ref, the identifier the referentiel holds for it. Left out, it is the main view's — the ref every sujet's first variant has.
+    ref = options.get("variant") or MAIN_VIEW_REF
+    variant = record(data, code, options["type"], ref, options.get("name"), footprint, height)
 
-    sprite, measures = cut_asset.cut(source)
-    target = cut_asset.destination(source)
+    sprite, measures = export_asset.export(source)
+    target = export_asset.destination(source)
     # Relative to assets/, never to the repository: every path already in the referentiel is written
     # this way (check-sujets.py's own scan_cutout/claimed_paths compare on exactly this form), and a
     # path written the other way would silently read back as an unclaimed file.
-    relative_target = str(target.resolve().relative_to(cut_asset.ASSETS))
-    relative_source = str(source.resolve().relative_to(cut_asset.ASSETS))
+    relative_target = str(target.resolve().relative_to(export_asset.ASSETS))
+    relative_source = str(source.resolve().relative_to(export_asset.ASSETS))
+    # Exactly what the export measured, and nothing else.
     kept = {key: measures[key] for key in
-            ("size_px", "contact_px", "anchor_px", "aspect", "transparency", "thresholds")}
+            ("delivered_px", "silhouette_px", "contact_px", "anchor_px", "master_size_px",
+             "kind", "footprint") if key in measures}
     representation = {
         "type": "sprite", "path": relative_target, "maitre": relative_source,
         "numero_image": frame, "mesures": kept, "statut": "courante",
@@ -215,10 +194,12 @@ def main(arguments):
         print(f"FAULT le référentiel ne validerait plus après cet ajout : {fault}")
         return 1
 
-    print(f"{code}  {wanted}  frame {frame}")
-    print(f"  sprite  {relative_target}")
-    print(f"  source  {relative_source}")
-    print(json.dumps(kept, indent=2))
+    # The measures go into the referentiel, where they are read when needed; printing them here put
+    # thirty lines into the caller's context at every image, for a fact that holds in one line. What
+    # the launcher needs is what was recorded and where — the rest is in the file (execution.md).
+    delivered = kept.get("delivered_px") or {}
+    print(f"{code} / {ref} · frame {frame} · {delivered.get('width')} × {delivered.get('height')} px "
+          f"→ {relative_target}")
     if options.get("dry_run"):
         print("  (dry run — nothing written)")
         return 0

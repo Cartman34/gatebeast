@@ -1,0 +1,79 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — une seule pièce de barrière en rondins, SEUL SUJET DE L'IMAGE, destinée à être détourée et posée
+comme sprite sur une carte vue de dessus.
+
+DÉFINITION ATTENDUE : 192 pixels de large — c'est la largeur de la case, elle est
+contractuelle. La hauteur suit ce que le sujet occupe réellement une fois la caméra appliquée : une
+pièce qui a de l'épaisseur ou qui se dresse monte librement au-dessus de sa case, et l'image la suit.
+
+UN SEUL SUJET, ET RIEN D'AUTRE : la pièce d'assemblage décrite ci-dessous, et absolument rien de plus —
+aucun décor, aucun sol, aucun accessoire, aucun être vivant, aucun cadre, aucune bordure, aucun texte.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet TOUCHE les bords que le tracé rejoint — il y est coupé net, c'est voulu, c'est ce qui
+permet le raccordement. Sur les bords qu'il ne rejoint pas, il reste une marge transparente et rien ne
+dépasse.
+
+CE SUJET EST UNE PIÈCE D'ASSEMBLAGE, PAS UN OBJET ISOLÉ. Des cases voisines porteront la même pièce, et
+l'ensemble doit former une ligne continue, sans décrochement ni interruption.
+
+Le tracé PASSE PAR LE CENTRE de la case et REJOINT LES BORDS indiqués par la variante demandée. Ce qui
+le constitue — la matière décrite par sa fiche, et elle seule — ATTEINT EXACTEMENT ces bords : il y est
+coupé net, à la MÊME HAUTEUR et à la MÊME ÉPAISSEUR de chaque côté, de sorte qu'en posant deux images
+identiques côte à côte, la matière se prolonge d'une case à l'autre sans marche ni trou.
+
+Les bords que le tracé ne rejoint PAS restent libres : rien ne les touche.
+
+LA PIÈCE DEMANDÉE : le tracé passe par le CENTRE de la case et rejoint le bord NORD et SUD, et eux seuls.
+Les bords EST et OUEST restent libres : rien ne les touche.
+
+UN SEUL poteau vertical, planté au CENTRE de la case.
+Les lisses courent de chaque bord rejoint jusqu'au poteau qui porte le battant, à la même hauteur et à la même
+épaisseur qu'elles ont dans l'image de référence, pour que deux cases posées bout à bout se
+prolongent sans décrochement.
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/poc/cloture/usage-OB-010-v2.png. C'est une image
+déjà produite de ce même sujet, montrant plusieurs de ses pièces assemblées, dont celle qu'on te
+demande ici. Elle donne la matière, la couleur et la lumière à reprendre à l'identique. On te demande
+d'extraire cette pièce précise et de la dessiner seule, pas d'en inventer une nouvelle.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
+aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+OB-010 : la même clôture, sa travée centrale remplacée par un portillon bas et battant fait des mêmes rondins fendus, suspendu par des pivots de fer chevillés dans le poteau qui le porte, avec de la mousse au pied de chaque poteau et l'herbe poussée haute contre la clôture comme sur le reste du sujet, fermé et dans l'alignement exact de la clôture, sa lisse supérieure au même niveau que les lisses de part et d'autre.
+
+
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à environ SOIXANTE-DIX DEGRÉS sous l'horizontale. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

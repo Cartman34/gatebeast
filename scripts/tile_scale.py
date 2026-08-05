@@ -10,7 +10,7 @@ WHAT THIS SERVICE OWNS
   both directions  tiles_to_pixels / pixels_to_tiles
   sizing           sprite_box for a subject, tile_box for a ground material
   placement        place, which turns a pose point in tiles into a pixel position
-  delivery         delivery_size, at DELIVERY_SUPERSAMPLE times the display fineness
+  delivery         delivery_size, at FILE_PIXELS_PER_TILE
   master           master_definition, the size asked of the generator — never the delivery size
 
 CALLERS MUST NOT MULTIPLY OR DIVIDE BY THE SCALE THEMSELVES. If an operation is missing, it is added
@@ -61,34 +61,27 @@ STANDING_HEIGHT_FACTOR = math.cos(math.radians(CAMERA_ELEVATION_DEGREES))
 # is a SETTING, while how fine the image file is, is FIXED. Mixing them is what made the tile size
 # look irreversible when it is not.
 
+# TWO VALUES, AND TWO ONLY. Each is written here once and nowhere else in the code; everything that
+# needs one asks this module for it. Intermediate figures and multiplying factors are not written at
+# all: they explained where a value came from, which nobody needs and which made the same number exist
+# in several places at once (operator, 2026-08-05).
+
 # What a tile measures on screen by default. The game varies it — zooming changes THIS value and
 # nothing else, never the files. Adjusting it costs nothing and reworks no image.
 DISPLAY_PIXELS_PER_TILE = 24
 
-# The largest a tile will ever be shown, zoom included. Delivery fineness is sized on this and not on
-# the default: an asset delivered for the default would go soft the first time anyone zoomed in, and
-# it would be too late. Below it the engine scales down, which is always clean.
-MAX_ZOOM_PIXELS_PER_TILE = 48
-
-# Delivery is twice the strongest zoom, so assets stay sharp on high-density screens too. Raising this
-# later regenerates nothing: the masters are kept and a re-export suffices — which is exactly why the
-# masters are kept.
-DELIVERY_SUPERSAMPLE = 2
+# What a tile measures in the file itself, delivered and produced alike. Raising it later regenerates
+# nothing: the masters are kept and a re-export suffices — which is exactly why the masters are kept.
+FILE_PIXELS_PER_TILE = 96
 
 # Kept as the display value under its old name so callers that mean "on screen" keep working. Anything
 # that means "how fine the file is" must go through delivery_size or master_definition instead.
 PIXELS_PER_TILE = DISPLAY_PIXELS_PER_TILE
 
-# A master is rendered at twice the delivered definition, but never beyond this on its longest side.
-# 1536 is the long side of the six reference plates, so it is a definition the generator has already
-# been proved to reach — and a ceiling worth stopping at, since going further costs a great deal for a
-# gain nothing consumes.
+# A master is never larger than this on its longest side. 1536 is the long side of the six reference
+# plates, so it is a definition the generator has already been proved to reach — and a ceiling worth
+# stopping at, since going further costs a great deal for a gain nothing consumes.
 MASTER_CAP = 1536
-
-# Why twice the delivery, and not simply the delivery: it buys the resampling margin down to the
-# delivered size, the precision the cutout needs at the silhouette's edges, and the room to raise the
-# delivery fineness by one step without reshooting the subject.
-MASTER_SUPERSAMPLE = 2
 
 
 def tiles_to_pixels(tiles):
@@ -119,8 +112,8 @@ def tile_box(columns=1, rows=1):
 
 
 def delivery_fineness():
-    """Pixels per tile at delivery — the strongest zoom, doubled for high-density screens."""
-    return MAX_ZOOM_PIXELS_PER_TILE * DELIVERY_SUPERSAMPLE
+    """Pixels per tile in the file — the one figure, held above and never retyped by a caller."""
+    return FILE_PIXELS_PER_TILE
 
 
 def delivery_size(columns, rows):
@@ -153,17 +146,11 @@ def delivery_box(columns, image_width, image_height):
 
 
 def master_definition(columns, rows, height=None):
-    """The definition asked of the generator — the MASTER's, never the delivery's.
+    """The definition of the master — used to VALIDATE the file received, never to ask the generator for anything (the generator is spoken to in tiles).
 
-    Twice the delivered definition, capped at MASTER_CAP on the longest side, and never below the
-    delivered definition itself (assets/index.md).
-
-    The doubling pays for three concrete things: the resampling margin down to the delivered size, the
-    precision the cutout needs at the silhouette's edges, and one spare step of delivery fineness
-    without reshooting. The cap stops that doubling from becoming absurd — a one-tile patch of grass
-    delivered at 96 has no use for 1536, which would be sixteen times what is ever consumed. Past the
-    cap a large subject simply gets no margin: the healing centre's master IS its delivery, and that
-    is accepted rather than paid for.
+    The delivered definition itself, capped at MASTER_CAP on the longest side: 96 pixels per tile, the
+    validated standard, which is already twice the strongest zoom. It was doubled a second time here,
+    which asked for 192 per tile — a figure nothing consumes.
 
     HEIGHT IS OPTIONAL AND CHANGES ONLY THE CANVAS SHAPE, NOT THE RULE ABOVE. Left at its default
     (None), the canvas follows the footprint alone, rows included at their flat, unforeshortened
@@ -193,8 +180,8 @@ def master_definition(columns, rows, height=None):
         projected_depth = rows * fineness * GROUND_DEPTH_FACTOR
         projected_height = max(height, 0) * fineness * STANDING_HEIGHT_FACTOR
         box = {"width": columns * fineness, "height": projected_depth + projected_height}
-    factor = min(MASTER_SUPERSAMPLE, MASTER_CAP / max(box["width"], box["height"]))
-    factor = max(factor, 1.0)  # a master is never coarser than what it has to deliver
+    # The file's own fineness, and nothing beyond it — reduced only when the cap would otherwise be exceeded.
+    factor = min(1.0, MASTER_CAP / max(box["width"], box["height"]))
 
     return {"width": round(box["width"] * factor), "height": round(box["height"] * factor)}
 
@@ -210,5 +197,5 @@ def describe():
 
 
 def describe_delivery():
-    """The delivery fineness, stated the same way and from the same place."""
-    return f"livraison au double de cette finesse (×{DELIVERY_SUPERSAMPLE})"
+    """What a tile measures in the file, stated the same way and from the same place."""
+    return f"fichier : une case = {FILE_PIXELS_PER_TILE} pixels"

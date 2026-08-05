@@ -12,7 +12,11 @@ quoted WORD FOR WORD.
 The draft is written to local/ — never beside the image. A prompt only lands in assets/ at the moment
 its image is produced, and it is frozen from then on.
 
-Usage: python3 scripts/generate-usage-sample.py <plan.json> [--ref <image>] [--generate]
+Usage: python3 scripts/generate-usage-sample.py <plan.json> [--ref <image>] [--model <name>] [--generate]
+
+  --model a model to run the generator on, instead of its own configured default (e.g. gpt-5.6-sol).
+          It is a setting of the run and never enters the consigne, which stays the same text whatever
+          produced it; the report names the model all the same, so two runs can be compared.
 
   --ref   a style reference already validated (e.g. a reference plate). Same mechanism as
           generate-sprite-trace.py's own --ref: the file is dropped in the generator's working
@@ -20,6 +24,7 @@ Usage: python3 scripts/generate-usage-sample.py <plan.json> [--ref <image>] [--g
           never the subject, which stays the fiche's alone.
 """
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -27,6 +32,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import asset_common
 import plate_common
+import production_report
 import tile_scale
 
 REPO = Path(__file__).resolve().parent.parent
@@ -56,7 +62,13 @@ def sheet_of(code: str) -> tuple:
     raise SystemExit(f"FAULT {code} n'est pas à l'inventaire — rien ne se produit sans fiche.")
 
 
-def build(source: Path, generate: bool = False, reference: Path = None) -> int:
+def build(source: Path, generate: bool = False, references: list = None, model: str = None) -> int:
+    references = references or []
+    # No image is ever ordered blind (operator, 2026-08-05): a reference holds the treatment, the
+    # material and the light steady, and without one every generation reinvents them.
+    if generate and not references:
+        raise SystemExit("FAULT aucune référence fournie — une génération se commande toujours avec "
+                         "son image de référence (--ref).")
     source = source.resolve()  # the caller may pass a relative path; every path below is absolute
     plan = json.loads(source.read_text(encoding="utf-8"))
     columns, rows = plan["grid"]["columns"], plan["grid"]["rows"]
@@ -87,14 +99,18 @@ def build(source: Path, generate: bool = False, reference: Path = None) -> int:
 
     # The plan travels as a file too. The generator reads an SVG as well as a PNG, so the drawing and
     # the written list say the same thing twice, by two routes.
-    plan_name = f"plan-{code}.svg"
+    # Its own path, never a copy laid beside the image: nothing is ever duplicated or moved to be read
+    # (operator, 2026-08-05) — the generator opens the file where it actually lives.
+    plan_name = asset_common.reference_address(source.with_suffix(".svg"))
 
     clause = ""
-    if reference:
+    if references:
         clause = f"""
-RÉFÉRENCE — le fichier ./{reference.name} est présent dans ton répertoire de travail. Il montre le
-style, la matière et la lumière à reprendre. Le sujet demandé est celui décrit ci-dessous, pas celui
-de l'image : la référence donne le traitement, la fiche donne le sujet.
+RÉFÉRENCE — ouvre et regarde le fichier {asset_common.reference_address(references[0])}. C'est une image du monde déjà validée, et {label} Y EST DESSINÉ,
+parmi d'autres éléments. C'EST EXACTEMENT CE {label.upper()}-LÀ QUE L'ON TE DEMANDE : sa matière, sa couleur, sa largeur par rapport à ce qui l'entoure, la
+façon dont ses bords se terminent, et l'angle sous lequel on le voit. Repère-le dans l'image et reproduis-le à l'identique. Sa description ci-dessous dit
+la même chose avec des mots : l'image et le texte se confirment, ils ne se contredisent pas. Le reste de l'image — les bâtiments, la végétation, les
+habitants — ne se copie pas et n'apparaît pas dans le résultat.
 """
 
     prompt = f"""{plate_common.STYLE_FR}
@@ -112,20 +128,29 @@ plus symétrique ni plus régulière qu'elle ne l'est — elle est ainsi volonta
 
 {listing}
 
-LE PLAN EST AUSSI FOURNI EN FICHIER : ./{plan_name} est présent dans ton répertoire de travail. C'est
+LE PLAN EST AUSSI FOURNI EN FICHIER : ouvre et regarde {plan_name}. C'est
 le même plan, dessiné : un point au centre de chaque case occupée, et un trait de ce point vers chaque
 bord rejoint. Lis-le, il fait foi avec la liste ci-dessus.
 
-DÉFINITION ATTENDUE : {width} × {height} pixels, soit exactement {columns} × {rows} cases carrées.
-Chaque case fait la même taille, où qu'elle soit dans l'image. N'écris aucune dimension dans l'image.
+LA GRILLE, EN CASES : {columns} cases de large sur {rows} cases de profondeur. Toutes les cases ont le
+même pas, où qu'elles soient dans l'image, et ce pas ne varie jamais : aucune perspective, aucun point
+de fuite, aucun rétrécissement des rangées du fond. Deux cases de même contenu restent superposables au
+décalage près — c'est ce qui permet d'y découper des pièces réutilisables.
 
-PROJECTION RÉGULIÈRE, SOUS LA MÊME CAMÉRA QUE CI-DESSUS, JAMAIS À PLAT : chaque case de la grille est
-vue sous EXACTEMENT la même plongée que celle décrite plus haut — aucune ne se dresse plus de face,
-aucune ne s'aplatit plus de dessus qu'une autre. Ce qui est banni, c'est la fuyante d'une vraie
-perspective, où les cases du fond rétréciraient vers un point de fuite : ici toutes les cases restent
-à la même taille et au même angle, du premier au dernier rang. Deux cases de même contenu sont donc
-superposables au décalage près — c'est ce qui permet d'y découper des pièces réutilisables — sans que
-rien n'y perde le volume et l'inclinaison de la caméra du projet.
+À QUOI CETTE IMAGE VA SERVIR, ET C'EST CE QUI COMMANDE TOUT LE RESTE : ON VA Y DÉCOUPER DES SPRITES DE JEU. Chaque case de ta grille sera prélevée telle
+quelle et posée dans le jeu comme une tuile. Tu dessines donc des sprites, sous l'angle des sprites du projet — celui décrit dans la clause de caméra
+ci-dessus, et celui sous lequel le sujet apparaît dans l'image de référence. Ce que tu rends est ce que le joueur verra à l'écran.
+
+LE PLAN, LUI, N'EST PAS CE QU'IL FAUT DESSINER. Il est donné MIS À PLAT, vu de la verticale, comme une carte : il dit seulement QUELLES CASES sont occupées
+et QUELS BORDS le tracé rejoint dans chacune. Il ne dit rien de l'allure du sujet et ne se recopie pas. Dessine la tuile telle qu'elle sera posée dans le
+jeu, avec sa matière, son grain et sa lumière, puis répète-la de case en case aux emplacements que le plan indique.
+
+L'image fait donc {columns} cases de large. N'écris aucune dimension dans l'image.
+
+LE SUJET ÉPOUSE CE PLAN INCLINÉ : ses traces, ses nuances, ses irrégularités et tout ce que sa fiche
+lui donne sont projetés dans cette même orientation, et la lumière venant du haut à gauche révèle cette
+orientation sur la surface elle-même. Il se montre avec le volume que sa fiche lui donne, et sans lui
+en ajouter aucun si elle ne lui en donne pas.
 
 {asset_common.FOND}
 
@@ -162,15 +187,33 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
         image = source.parent / f"usage-{code}-v{version}.png"
     frozen = image.with_suffix(".txt")
     frozen.write_text(prompt, encoding="utf-8")
-    # The generator works in the image's directory, so the plan must be there for it to be read.
-    (source.parent / plan_name).write_text(source.with_suffix(".svg").read_text(encoding="utf-8"),
-                                           encoding="utf-8")
 
     print(f"consigne figée : {frozen.relative_to(REPO)}")
     print(f"génération lancée vers {image.relative_to(REPO)}")
-    with asset_common.working_reference(reference, source.parent):
-        result = subprocess.run(["php", str(REPO / "scripts" / "generate-image.php"),
-                                 str(image), prompt], cwd=REPO.parent)
+
+    # A usage sample is not a sprite: it is never exported to a delivery definition and never recorded
+    # as a representation. Its run is still timed and still leaves its report, for the same reason
+    # every other one does — an image nobody can account for is an image nobody can judge.
+    run = production_report.Run(f"usage-{code}", kind="subjects")
+    run.model = model
+    with run.step("consigne"):
+        pass
+    try:
+        with run.step("génération"):
+            # The model travels as an environment value, the same way the parallelism does: it is a
+            # setting of the run, never part of the consigne, which must stay the same text whatever
+            # produced it.
+            environment = dict(os.environ, IMAGE_TRACE_KIND="subjects")
+            if model:
+                environment["IMAGE_MODEL"] = model
+            result = subprocess.run(["php", str(REPO / "scripts" / "generate-image.php"),
+                                     str(image), prompt], cwd=REPO.parent, env=environment,
+                                    capture_output=True, text=True)
+            print(result.stdout, end="", flush=True)
+            run.session = production_report.Run.session_of(result.stdout)
+    finally:
+        with run.step("rapport"):
+            run.write(image, prompt)
 
     return result.returncode
 
@@ -180,5 +223,9 @@ if __name__ == "__main__":
         print(__doc__)
         raise SystemExit(2)
     argv = sys.argv[1:]
-    ref = Path(argv[argv.index("--ref") + 1]).resolve() if "--ref" in argv else None
-    raise SystemExit(build(Path(argv[0]), "--generate" in argv, ref))
+    # ONE reference, and one only (operator, 2026-08-05): the consigne points at the sujet INSIDE that
+    # image and asks for that one exactly. Two images would give two versions of the same sujet to copy.
+    refs = [Path(argv[position + 1]).resolve()
+            for position, token in enumerate(argv) if token == "--ref"][:1]
+    chosen = argv[argv.index("--model") + 1] if "--model" in argv else None
+    raise SystemExit(build(Path(argv[0]), "--generate" in argv, refs, chosen))

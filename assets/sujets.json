@@ -1,14 +1,18 @@
 {
   "format": "gatebeast-sujets",
   "version": 1,
-  "_intention": "Le référentiel des sujets — types, sujets, variantes et représentations — remplace assets/catalogue.json (gelé, non lu, non modifié par ce fichier). Décrit à doc/conception/referentiels/technique/rendu-en-calques.md et doc/conception/referentiels/visuel/assets/sujets-et-variantes.md.",
-
+  "_intention": "Le référentiel des sujets — types, sujets, variants et représentations — remplace assets/catalogue.json (gelé, non lu, non modifié par ce fichier). Décrit à doc/conception/referentiels/technique/rendu-en-calques.md et doc/conception/referentiels/visuel/assets/sujets-et-variantes.md.",
   "types": {
     "sol": {
       "layer": "sol",
       "passage_default": "open",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "plain"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-south_action-idle_frame-01"
+        }
       ]
     },
     "chemin": {
@@ -18,14 +22,55 @@
       "rotates": true,
       "_rotates_comment": "Plat : le moteur pivote un dessin pour obtenir les autres bords, un seul dessin par forme suffit (sujets-et-variantes.md, decision 27).",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "n"},
-        {"orientation": "south", "action": "idle", "shape": "ns"},
-        {"orientation": "south", "action": "idle", "shape": "ne"},
-        {"orientation": "south", "action": "idle", "shape": "nes"},
-        {"orientation": "south", "action": "idle", "shape": "nesw"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "n",
+          "ref": "orientation-south_action-idle_shape-n_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "ref": "orientation-south_action-idle_shape-ns_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ne",
+          "ref": "orientation-south_action-idle_shape-ne_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nes",
+          "ref": "orientation-south_action-idle_shape-nes_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nesw",
+          "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+        }
       ],
       "_lot_comment": "Les cinq dessins de tracé (extrémité, ligne, angle, trois branches, croisement) — c'est ce qu'il faut réellement produire, pas ce qu'un chemin doit savoir accepter : voir formes_couvertes_par_rotation ci-dessous, qui porte cette seconde notion et explique pourquoi les deux ne se confondent pas. Complété le 2026-08-04 (l'opérateur : « il manque tous les autres variants !! ») : les deux dessins précédents (ligne, angle) suffisaient pour le lot v0 minimal de lots-de-variantes.md, mais pas pour un tracé qui se ramifie réellement.",
-      "formes_couvertes_par_rotation": ["n", "e", "s", "w", "ns", "ew", "ne", "es", "sw", "nw", "nes", "esw", "nsw", "new", "nesw"],
+      "formes_couvertes_par_rotation": [
+        "n",
+        "e",
+        "s",
+        "w",
+        "ns",
+        "ew",
+        "ne",
+        "es",
+        "sw",
+        "nw",
+        "nes",
+        "esw",
+        "nsw",
+        "new",
+        "nesw"
+      ],
       "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier — ce qu'il doit savoir faire — à ne jamais confondre avec lot_v0 ci-dessus, qui dit ce qu'il faut dessiner. Le type pivote (rotates) : chacun des cinq dessins du lot couvre lui-même toutes ses rotations — l'extrémité shape-n sert aussi à e, s, w ; la ligne shape-ns sert aussi à ew ; l'angle shape-ne sert aussi à es, sw, nw ; les trois branches shape-nes servent aussi à esw, nsw, new ; le croisement shape-nesw n'a pas de rotation distincte. Produire les quinze séparément dessinerait dix fois ce qui n'est qu'une rotation du même dessin (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md, table des lots)."
     },
     "cours-d-eau": {
@@ -36,14 +81,55 @@
       "rotates": true,
       "_rotates_comment": "Plat comme le chemin, jamais un volume : le moteur pivote un dessin pour obtenir les autres bords, un seul dessin par forme suffit (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md range chemin et cours d'eau dans le même lot).",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "n"},
-        {"orientation": "south", "action": "idle", "shape": "ns"},
-        {"orientation": "south", "action": "idle", "shape": "ne"},
-        {"orientation": "south", "action": "idle", "shape": "nes"},
-        {"orientation": "south", "action": "idle", "shape": "nesw"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "n",
+          "ref": "orientation-south_action-idle_shape-n_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "ref": "orientation-south_action-idle_shape-ns_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ne",
+          "ref": "orientation-south_action-idle_shape-ne_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nes",
+          "ref": "orientation-south_action-idle_shape-nes_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nesw",
+          "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+        }
       ],
       "_lot_comment": "Même raisonnement que le type chemin, avec lequel lots-de-variantes.md le regroupe explicitement : cinq dessins de tracé à produire, pas quinze — voir formes_couvertes_par_rotation.",
-      "formes_couvertes_par_rotation": ["n", "e", "s", "w", "ns", "ew", "ne", "es", "sw", "nw", "nes", "esw", "nsw", "new", "nesw"],
+      "formes_couvertes_par_rotation": [
+        "n",
+        "e",
+        "s",
+        "w",
+        "ns",
+        "ew",
+        "ne",
+        "es",
+        "sw",
+        "nw",
+        "nes",
+        "esw",
+        "nsw",
+        "new",
+        "nesw"
+      ],
       "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier — ce qu'il doit savoir faire — à ne jamais confondre avec lot_v0 ci-dessus, qui dit ce qu'il faut dessiner. Le type pivote (rotates) : chacun des cinq dessins du lot couvre lui-même toutes ses rotations, exactement comme pour le type chemin (voir son commentaire). Produire les quinze séparément dessinerait dix fois ce qui n'est qu'une rotation du même dessin (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md, table des lots)."
     },
     "cloture": {
@@ -54,39 +140,111 @@
       "rotates": false,
       "_rotates_comment": "A du volume : la pivoter mettrait le soleil du mauvais côté, chaque combinaison de bords se dessine séparément (decision 27).",
       "compositions": {
-        "values": ["posts-2", "posts-1", "posts-0"],
+        "values": [
+          "posts-2",
+          "posts-1",
+          "posts-0"
+        ],
         "default": "posts-2",
         "_comment": "posts-2 deux poteaux, posts-1 un seul au centre, posts-0 aucun, lisses toujours identiques (decision 28). Le défaut n'est pas écrit dans l'adresse ; posts-2 est pris comme défaut parce que c'est la seule composition produite sans mention de composition dans son nom de fichier (OB-010_shape-ew.png)."
       },
       "portillons": {
-        "values": ["gate-none", "gate-closed", "gate-open"],
+        "values": [
+          "gate-none",
+          "gate-closed",
+          "gate-open"
+        ],
         "default": "gate-none",
         "defines_kind": true,
-        "rend_inapplicable": ["compositions"],
-        "_comment": "Même modèle que l'axe composition ci-dessus : gate-none est le panneau fermé ordinaire, valeur par défaut jamais écrite dans l'adresse (valeurs en anglais américain, comme shape-ew et posts-1, puisqu'elles s'écrivent dans l'adresse d'un fichier — seul le nom de l'axe reste en français en attendant la migration générale des clés). Un portillon existe dans les deux sens de ligne (shape-ns, shape-ew), comme une clôture ordinaire, rien de plus — l'axe ne s'applique qu'à ces deux formes, les angles n'ont pas de portillon. Il existe surtout dans deux états, et c'est tout l'intérêt de l'axe : gate-closed, qui ferme comme le reste de la clôture — aucune redéfinition de passage, la fermeture par défaut du type s'applique ; gate-open, qui laisse entrer sur la case — le passage s'ouvre alors sur les deux côtés que la forme relie. Sans cet état, rien n'expliquerait pourquoi une clôture porterait jamais autre chose que sa fermeture par défaut.",
-        "_defines_kind_comment": "Seul cet axe porte defines_kind: true, la composition ne le porte pas. Un portillon n'est pas une clôture avec une option : c'est une autre pièce, une autre nature — gate-closed et gate-open changent ce que la case laisse ou non traverser, pas seulement son apparence. La composition (posts-2/posts-1/posts-0), elle, reste une finition de la même pièce : le nombre de poteaux ne change ni ce qu'elle est, ni ce qu'elle fait. Rien dans la forme d'un axe (son nom, son nombre de valeurs) ne permet de deviner cette différence : elle se déclare, ici, pour que tout consommateur — page de suivi comprise — la lise sans la reconstruire ni la deviner. C'est une distinction de conception, elle vit dans le référentiel, pas dans l'affichage. Effet demandé par l'opérateur : nommer une variante de portillon en mettant sa nature en premier — « Portillon ouvert, est-ouest », jamais « Ligne est-ouest, portillon ouvert ».",
-        "_rend_inapplicable_comment": "Propriété de l'axe, écrite une fois sur le type, jamais répétée sur chaque variante : dès qu'une variante porte le portillon (n'importe laquelle de ses valeurs, y compris gate-none), l'axe composition ne s'applique pas à elle — son silence sur la composition ne se résout donc plus vers compositions.default (posts-2), il reste un silence à part entière, sans valeur. Nécessaire parce qu'un portillon n'a pas de nombre de poteaux : sa propre fiche (objets.md) ne lui en donne aucun, seulement des pivots de fer ; lui appliquer le défaut du type — même silencieusement — affirmerait une chose fausse. Décidé le 2026-08-05 après une double erreur sur ce même axe : d'abord des variantes fantômes en composition par défaut sur les formes ordinaires (silence non écrit → défaut appliqué à tort, faute inverse) ; puis quatre images produites avec un poteau sur une consigne qui le demandait à tort au portillon. Les deux fautes venaient du même trou dans le modèle : rien ne permettait de dire qu'un axe ne s'applique simplement pas à certaines variantes — voir sujets-et-variantes.md, decision sur les axes qui ne s'appliquent pas partout."
+        "_comment": "Même modèle que la composition ci-dessus : gate-none est le panneau fermé ordinaire, valeur par défaut jamais écrite dans l'adresse (valeurs en anglais américain, comme shape-ew et posts-1, puisqu'elles s'écrivent dans l'adresse d'un fichier — seul le nom de la clé reste en français en attendant la migration générale des clés). Un portillon existe dans les deux sens de ligne (shape-ns, shape-ew), comme une clôture ordinaire, rien de plus — il ne s'applique qu'à ces deux formes, les angles n'ont pas de portillon. Il existe surtout dans deux états, et c'est tout son intérêt : gate-closed, qui ferme comme le reste de la clôture — aucune redéfinition de passage, la fermeture par défaut du type s'applique ; gate-open, qui laisse entrer sur la case — le passage s'ouvre alors sur les deux côtés que la forme relie. Sans cet état, rien n'expliquerait pourquoi une clôture porterait jamais autre chose que sa fermeture par défaut.",
+        "_defines_kind_comment": "Seul le portillon porte defines_kind: true, la composition ne le porte pas. Un portillon n'est pas une clôture avec une option : c'est une autre pièce, une autre nature — gate-closed et gate-open changent ce que la case laisse ou non traverser, pas seulement son apparence. La composition (posts-2/posts-1/posts-0), elle, reste une finition de la même pièce : le nombre de poteaux ne change ni ce qu'elle est, ni ce qu'elle fait. Rien dans la forme d'un tel champ (son nom, son nombre de valeurs) ne permet de deviner cette différence : elle se déclare, ici, pour que tout consommateur — page de suivi comprise — la lise sans la reconstruire ni la deviner. C'est une distinction de conception, elle vit dans le référentiel, pas dans l'affichage. Effet demandé par l'opérateur : nommer un variant de portillon en mettant sa nature en premier — « Portillon ouvert, est-ouest », jamais « Ligne est-ouest, portillon ouvert ».",
+        "_composition_comment": "Un portillon PORTE une composition de poteaux, comme toute autre pièce de la ligne (opérateur, 2026-08-05) : c'est une petite porte classique de clôture, et un battant est forcément suspendu à un poteau — les pivots de fer de sa fiche se chevillent dessus, ils ne tiennent pas en l'air. Le portillon a un temps déclaré rendre la composition inapplicable ; c'était faux et cette déclaration est retirée. Ce qui reste vrai de l'épisode qui l'avait produite : une composition ne s'écrit jamais par héritage silencieux du défaut du type, elle se demande — c'est le silence non écrit qui avait gâché quatre images, pas l'existence du champ."
       },
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "ns", "composition": "posts-1"},
-        {"orientation": "south", "action": "idle", "shape": "ew", "composition": "posts-1"},
-        {"orientation": "south", "action": "idle", "shape": "ne", "composition": "posts-1"},
-        {"orientation": "south", "action": "idle", "shape": "es", "composition": "posts-1"},
-        {"orientation": "south", "action": "idle", "shape": "sw", "composition": "posts-1"},
-        {"orientation": "south", "action": "idle", "shape": "nw", "composition": "posts-1"},
-        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-closed"},
-        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-open"},
-        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-closed"},
-        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-open"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-ns_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-ew_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ne",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-ne_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "es",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-es_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "sw",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-sw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nw",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-nw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "portillon": "gate-closed",
+          "ref": "orientation-south_action-idle_shape-ew_gate-closed_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "portillon": "gate-open",
+          "ref": "orientation-south_action-idle_shape-ew_gate-open_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "portillon": "gate-closed",
+          "ref": "orientation-south_action-idle_shape-ns_gate-closed_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "portillon": "gate-open",
+          "ref": "orientation-south_action-idle_shape-ns_gate-open_frame-01"
+        }
       ],
-      "_lot_comment": "Six formes en composition posts-1, chacune dessinée séparément puisque le type ne pivote pas — la seule composition que l'opérateur ait validée pour ces pièces, écrite explicitement pour ne pas retomber sur le défaut du type (posts-2), ce qui avait fabriqué cinq variantes attendues jamais demandées (corrigé le 2026-08-05). Plus les quatre variantes de l'axe portillon (deux sens de ligne × deux états), qui ne portent aucune composition et n'en héritent aucune non plus : l'axe portillon rend l'axe composition inapplicable dès qu'il est présent (voir `rend_inapplicable` sur l'axe portillons ci-dessus), donc leur silence reste un silence, jamais résolu en compositions.default. Dix images en tout."
+      "_lot_comment": "Six formes en composition posts-1, chacune dessinée séparément puisque le type ne pivote pas — la seule composition que l'opérateur ait validée pour ces pièces, écrite explicitement pour ne pas retomber sur le défaut du type (posts-2), ce qui avait fabriqué cinq variants attendus jamais demandés (corrigé le 2026-08-05). Plus les quatre variants de portillon (deux sens de ligne × deux états), écrites sans composition parce qu'aucune ne leur a été demandée — un silence non écrit ne se résout jamais vers compositions.default. Plus les deux portillons à DEUX POTEAUX demandés par l'opérateur le 2026-08-05, en est-ouest seulement : la décision écrite à l'inventaire veut qu'une pièce nord-sud ne montre qu'un seul poteau, ses deux poteaux se superposant exactement dans l'alignement du regard. Douze images en tout."
     },
     "arbre": {
       "layer": "monde",
       "passage_default": "closed",
       "_passage_comment": "Un arbre est un obstacle par nature : le type ferme tous les côtés de toutes ses cases par défaut, pour qu'un profil futur n'ait pas besoin qu'on pense à le fermer (décision de l'opérateur, 2026-08-04). Les mentions « infranchissable » de l'inventaire (TR-060, TR-063) sont une confirmation, plus la source de cette règle.",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "plain"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-south_action-idle_frame-01"
+        }
       ]
     },
     "bosquet-arbres": {
@@ -94,358 +252,2178 @@
       "passage_default": "closed",
       "_passage_comment": "Même raison que le type arbre : obstacle par nature, fermé au niveau du type. La mention « infranchissable » de l'inventaire (TR-061) est une confirmation.",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "plain"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-south_action-idle_frame-01"
+        }
       ]
     },
     "herbe": {
       "layer": "monde",
       "passage_default": "open",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "plain"}
-      ]
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "densite": "sparse",
+          "ref": "orientation-south_action-idle_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "densite": "medium",
+          "ref": "orientation-south_action-idle_medium_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "densite": "dense",
+          "ref": "orientation-south_action-idle_dense_frame-01"
+        }
+      ],
+      "densites": {
+        "values": [
+          "sparse",
+          "medium",
+          "dense"
+        ],
+        "default": "sparse",
+        "_comment": "Trois densités d'une même herbe, demandées par l'opérateur le 2026-08-05 : l'image actuelle est la clairsemée, la deuxième en porte deux fois plus, la troisième quatre fois plus. C'est la même herbe, dessinée plus ou moins fournie — jamais trois sujets différents."
+      }
     },
     "batiment": {
       "layer": "monde",
       "passage_default": "closed",
       "_passage_comment": "Un bâtiment ferme tous les côtés de toutes ses cases par défaut ; il ne s'ouvre que là où sa propre fiche déclare une entrée — décision de l'opérateur, 2026-08-04, déduite de la fiche sans rien inventer.",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "plain"}
-      ]
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "proposition": "p1",
+          "ref": "orientation-south_action-idle_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "proposition": "p2",
+          "ref": "orientation-south_action-idle_p2_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "proposition": "p3",
+          "ref": "orientation-south_action-idle_p3_frame-01"
+        }
+      ],
+      "propositions": {
+        "values": [
+          "p1",
+          "p2",
+          "p3"
+        ],
+        "default": "p1",
+        "_comment": "Trois propositions d'un même bâtiment, demandées par l'opérateur le 2026-08-05 pour pouvoir choisir : p1 est la version courante, p2 revient aux couleurs de la scène de référence de direction artistique, p3 est une troisième piste. Elles disparaîtront quand il aura tranché — ce sont des propositions, pas une richesse du monde."
+      }
     },
     "humain": {
       "layer": "monde",
       "passage_default": "open",
-      "parts": ["gaze"],
+      "parts": [
+        "gaze"
+      ],
       "_parts_comment": "Le modèle commence avec le seul regard, sans se fermer à d'autres parties plus tard (decision 32).",
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "plain"},
-        {"orientation": "north", "action": "idle", "shape": "plain"},
-        {"orientation": "east", "action": "idle", "shape": "plain"},
-        {"orientation": "west", "action": "idle", "shape": "plain"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-south_action-idle_frame-01"
+        },
+        {
+          "orientation": "north",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-north_action-idle_frame-01"
+        },
+        {
+          "orientation": "east",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-east_action-idle_frame-01"
+        },
+        {
+          "orientation": "west",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-west_action-idle_frame-01"
+        }
       ],
       "_lot_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
     },
     "creature": {
       "layer": "monde",
       "passage_default": "open",
-      "parts": ["gaze"],
+      "parts": [
+        "gaze"
+      ],
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "plain"},
-        {"orientation": "north", "action": "idle", "shape": "plain"},
-        {"orientation": "east", "action": "idle", "shape": "plain"},
-        {"orientation": "west", "action": "idle", "shape": "plain"}
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-south_action-idle_frame-01"
+        },
+        {
+          "orientation": "north",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-north_action-idle_frame-01"
+        },
+        {
+          "orientation": "east",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-east_action-idle_frame-01"
+        },
+        {
+          "orientation": "west",
+          "action": "idle",
+          "shape": "plain",
+          "ref": "orientation-west_action-idle_frame-01"
+        }
       ],
       "_lot_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
     }
   },
-
   "sujets": {
     "CH-001": {
       "profil": "short-grass-01",
       "type": "sol",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": 0,
       "_hauteur_comment": "sols-et-chemins.md : « hauteur 0 case » — un sol ne se dresse pas.",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/sol/CH-001.png",
-                              "maitre": "poc/sol/CH-001.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante", "verdict": "validee"}]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-001.png",
+              "maitre": "poc/sol/CH-001.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        }
       ]
     },
     "CH-019": {
       "profil": "dirt-path-01",
       "type": "chemin",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": 0,
       "_hauteur_comment": "sols-et-chemins.md : « hauteur 0 case » — un chemin ne se dresse pas.",
-      "_variantes_comment": "Les cinq dessins du lot_v0 du type chemin (extrémité, ligne, angle, trois branches, croisement) : complété le 2026-08-04, deux formes ne suffisaient pas à un tracé qui se ramifie. Plus une variante hors du lot minimal (shape-ew), produite et exportée le 2026-08-05.",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "n", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ns", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "nes", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "nesw", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ew",
-         "_comment": "Hors du lot v0 minimal (qui ne demande que shape-ns pour la ligne, l'autre sens s'obtenant par rotation) : première production de cette variante, aucune version antérieure à porter.",
-         "representations": [{"type": "sprite", "path": "cutout/sol/CH-019_shape-ew.png",
-                              "maitre": "poc/sol/CH-019_shape-ew.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante"}]}
+      "_variantes_comment": "Les cinq dessins du lot_v0 du type chemin (extrémité, ligne, angle, trois branches, croisement) : complété le 2026-08-04, deux formes ne suffisaient pas à un tracé qui se ramifie. Plus un variant hors du lot minimal (shape-ew), produit et exporté le 2026-08-05.",
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "n",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-n_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-ns_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ne",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-ne_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nes",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nes_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nesw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "_comment": "Hors du lot v0 minimal (qui ne demande que shape-ns pour la ligne, l'autre sens s'obtenant par rotation) : première production de ce variant, aucune version antérieure à porter.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-ew-v4.png",
+              "maitre": "poc/sol/CH-019_shape-ew-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 52
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 12,
+                  "right": 95,
+                  "bottom": 39,
+                  "width": 96,
+                  "height": 28
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 95,
+                  "width": 96
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 40.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 105
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-ew-v3.png",
+              "maitre": "poc/sol/CH-019_shape-ew-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 29,
+                  "right": 95,
+                  "bottom": 66,
+                  "width": 96,
+                  "height": 38
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 95,
+                  "width": 96
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 67.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-ew.png",
+              "maitre": "poc/sol/CH-019_shape-ew.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+        }
       ]
     },
     "CH-020": {
       "profil": "stream-01",
       "type": "cours-d-eau",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": -0.3,
       "_hauteur_comment": "sols-et-chemins.md : « hauteur -0,3 case » — il ne se dresse pas, il creuse ; son lit reste en retrait du terrain environnant sur cette profondeur.",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "n", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ns", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "nes", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "nesw", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ew",
-         "_comment": "Hors du lot v0 minimal (qui ne demande que shape-ns pour la ligne, l'autre sens s'obtenant par rotation) : première production de cette variante, aucune version antérieure à porter.",
-         "representations": [{"type": "sprite", "path": "cutout/sol/CH-020_shape-ew.png",
-                              "maitre": "poc/sol/CH-020_shape-ew.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante"}]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "n",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-n_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-ns_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ne",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-ne_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nes",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nes_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nesw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "_comment": "Hors du lot v0 minimal (qui ne demande que shape-ns pour la ligne, l'autre sens s'obtenant par rotation) : première production de ce variant, aucune version antérieure à porter.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-ew.png",
+              "maitre": "poc/sol/CH-020_shape-ew.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Il manque l'angle de la caméra. C'est le sprite principal, il devrait être démarqué des autres (highlight ?) et il devrait être en premier de la liste."
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+        }
       ]
     },
     "OB-010": {
       "profil": "log-fence-01",
       "type": "cloture",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": 0.9,
       "_hauteur_comment": "objets.md : « hauteur 0,9 case ».",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "ew",
-         "_comment": "Composition posts-2 (défaut du type, non écrite dans l'adresse) : hors du lot exigé depuis le 2026-08-05 (lot_v0 ne demande plus que la composition posts-1), mais conservée telle quelle — elle porte une image réelle et un verdict de l'opérateur, rien ne se retire ni ne s'écarte du fichier pour ça. OB-010_shape-ew_posts-2.png est la reprise demandée par l'opérateur (« Ancien design ») : dernière produite, elle devient courante, sans verdict ; OB-010_shape-ew.png (sans suffixe) passe en antérieure et garde son propre verdict.",
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-2.png",
-            "maitre": "poc/cloture/OB-010_shape-ew_posts-2.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew.png",
-            "maitre": "poc/cloture/OB-010_shape-ew.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Ancien design"}
-         ]},
-        {"orientation": "south", "action": "idle", "shape": "ne", "composition": "posts-1",
-         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces — retiré le 2026-08-05 les cinq variantes fantômes en composition posts-2 par défaut (ns, ne, es, sw, nw) que l'opérateur voyait « prévue, à produire » sans les avoir jamais demandées. Première production de cet angle : aucune version antérieure à porter.",
-         "representations": [{"type": "sprite",
-                              "path": "cutout/cloture/OB-010_shape-ne_posts-1.png",
-                              "maitre": "poc/cloture/OB-010_shape-ne_posts-1.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante"}]},
-
-        {"orientation": "south", "action": "idle", "shape": "ns", "composition": "posts-1",
-         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Deux versions produites pour la même posture : posts-1-v2 est la dernière produite, donc la variante courante ; posts-1 (sans suffixe) devient sa version antérieure, conservée et non écartée (voir doc/outils/referentiel-des-sujets.md, « une version active par variante »).",
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1-v2.png",
-            "maitre": "poc/cloture/OB-010_shape-ns_posts-1-v2.png", "numero_image": 1, "mesures": null,
-            "statut": "courante", "verdict": "validee"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1.png",
-            "maitre": "poc/cloture/OB-010_shape-ns_posts-1.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure"}
-         ]},
-        {"orientation": "south", "action": "idle", "shape": "ew", "composition": "posts-1",
-         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1-v2.png",
-            "maitre": "poc/cloture/OB-010_shape-ew_posts-1-v2.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1.png",
-            "maitre": "poc/cloture/OB-010_shape-ew_posts-1.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "validee"}
-         ]},
-        {"orientation": "south", "action": "idle", "shape": "es", "composition": "posts-1",
-         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
-         "representations": [{"type": "sprite",
-                              "path": "cutout/cloture/OB-010_shape-es_posts-1.png",
-                              "maitre": "poc/cloture/OB-010_shape-es_posts-1.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante", "verdict": "validee"}]},
-        {"orientation": "south", "action": "idle", "shape": "sw", "composition": "posts-1",
-         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Première production de cet angle : aucune version antérieure à porter.",
-         "representations": [{"type": "sprite",
-                              "path": "cutout/cloture/OB-010_shape-sw_posts-1.png",
-                              "maitre": "poc/cloture/OB-010_shape-sw_posts-1.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante", "verdict": "validee"}]},
-        {"orientation": "south", "action": "idle", "shape": "nw", "composition": "posts-1",
-         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-nw_posts-1-v2.png",
-            "maitre": "poc/cloture/OB-010_shape-nw_posts-1-v2.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-nw_posts-1.png",
-            "maitre": "poc/cloture/OB-010_shape-nw_posts-1.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "à la verticale, on voit 2 lisses, au lieu d'une"}
-         ]},
-        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-closed",
-         "_comment": "Aucune composition : un portillon vaut le défaut du type, comme toute pièce dont on ne précise rien — l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour. Deux versions antérieures, chacune gardant son propre verdict : celle gâchée par la consigne fautive (écartée, motif ci-dessous), et l'ancien portillon jugé « d'un ancien style » (à reprendre). Un portillon fermé ferme comme le reste de la clôture : aucune redéfinition de passage, la fermeture par défaut du type s'applique.",
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_portillon-gate-closed.png",
-            "maitre": "poc/cloture/OB-010_shape-ew_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1_portillon-gate-closed.png",
-            "maitre": "poc/cloture/OB-010_shape-ew_posts-1_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew-avec-portillon.png",
-            "maitre": "poc/cloture/OB-010_shape-ew-avec-portillon.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "C'est d'un ancien style là, non ?"}
-         ]},
-        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-open",
-         "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon ouvert laisse entrer sur la case : il ouvre les deux côtés que la clôture relie, ici est et ouest, ce qui renverse la fermeture par défaut du type clôture sur ces deux côtés seulement.",
-         "passage": {"cells": {"0,0": {"e": true, "w": true}}},
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_portillon-gate-open.png",
-            "maitre": "poc/cloture/OB-010_shape-ew_portillon-gate-open.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1_portillon-gate-open.png",
-            "maitre": "poc/cloture/OB-010_shape-ew_posts-1_portillon-gate-open.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."}
-         ]},
-        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-closed",
-         "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon fermé ferme comme le reste de la clôture : aucune redéfinition de passage, la fermeture par défaut du type s'applique.",
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_portillon-gate-closed.png",
-            "maitre": "poc/cloture/OB-010_shape-ns_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed.png",
-            "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."}
-         ]},
-        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-open",
-         "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon ouvert laisse entrer sur la case : il ouvre les deux côtés que la clôture relie dans ce sens, nord et sud.",
-         "passage": {"cells": {"0,0": {"n": true, "s": true}}},
-         "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_portillon-gate-open.png",
-            "maitre": "poc/cloture/OB-010_shape-ns_portillon-gate-open.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-open.png",
-            "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-open.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."}
-         ]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "_comment": "Composition posts-2 (défaut du type, non écrite dans l'adresse) : hors du lot exigé depuis le 2026-08-05 (lot_v0 ne demande plus que la composition posts-1), mais conservée telle quelle — elle porte une image réelle et un verdict de l'opérateur, rien ne se retire ni ne s'écarte du fichier pour ça. OB-010_shape-ew_posts-2.png est la reprise demandée par l'opérateur (« Ancien design ») : dernière produite, elle devient courante, sans verdict ; OB-010_shape-ew.png (sans suffixe) passe en antérieure et garde son propre verdict.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-2.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-2.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee",
+              "commentaire_operateur": "Ancien design"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew.png",
+              "maitre": "poc/cloture/OB-010_shape-ew.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "ecartee",
+              "commentaire_operateur": "Ancien design"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ne",
+          "composition": "posts-1",
+          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces — retiré le 2026-08-05 les cinq variants fantômes en composition posts-2 par défaut (ns, ne, es, sw, nw) que l'opérateur voyait « prévu, à produire » sans les avoir jamais demandés. Première production de cet angle : aucune version antérieure à porter.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ne_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-ne_posts-1.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ne_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "composition": "posts-1",
+          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Deux versions produites pour la même posture : posts-1-v2 est la dernière produite, donc le variant courant ; posts-1 (sans suffixe) devient sa version antérieure, conservée et non écartée (voir doc/outils/referentiel-des-sujets.md, « une version active par variant »).",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_posts-1-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_posts-1-v2.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_posts-1.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ns_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "composition": "posts-1",
+          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-1-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-1-v2.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-1.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "validee"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_shape-ew_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "es",
+          "composition": "posts-1",
+          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-es_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-es_posts-1.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-es_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "sw",
+          "composition": "posts-1",
+          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Première production de cet angle : aucune version antérieure à porter.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-sw_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-sw_posts-1.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-sw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nw",
+          "composition": "posts-1",
+          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-nw_posts-1-v3.png",
+              "maitre": "poc/cloture/OB-010_shape-nw_posts-1-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 1,
+                  "right": 60,
+                  "bottom": 66,
+                  "width": 60,
+                  "height": 66
+                },
+                "contact_px": {
+                  "left": 42,
+                  "right": 52,
+                  "width": 11
+                },
+                "anchor_px": {
+                  "x": 47.0,
+                  "y": 67.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-nw_posts-1-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-nw_posts-1-v2.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Ce n'est pas une clôture en angle."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-nw_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-nw_posts-1.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "à la verticale, on voit 2 lisses, au lieu d'une"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-nw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "portillon": "gate-closed",
+          "_comment": "Aucune composition : un portillon vaut le défaut du type, comme toute pièce dont on ne précise rien — l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour. Deux versions antérieures, chacune gardant son propre verdict : celle gâchée par la consigne fautive (écartée, motif ci-dessous), et l'ancien portillon jugé « d'un ancien style » (à reprendre). Un portillon fermé ferme comme le reste de la clôture : aucune redéfinition de passage, la fermeture par défaut du type s'applique.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-2_portillon-gate-closed.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-2_portillon-gate-closed.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 29,
+                  "right": 95,
+                  "bottom": 63,
+                  "width": 96,
+                  "height": 35
+                },
+                "contact_px": {
+                  "left": 22,
+                  "right": 73,
+                  "width": 52
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 64.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Y'a pas d'herbe en bas des poteaux mais sinon ok."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_portillon-gate-closed.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_portillon-gate-closed.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-1_portillon-gate-closed.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-1_portillon-gate-closed.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "ecartee",
+              "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew-avec-portillon.png",
+              "maitre": "poc/cloture/OB-010_shape-ew-avec-portillon.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "C'est d'un ancien style là, non ?"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ew_gate-closed_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "portillon": "gate-open",
+          "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon ouvert laisse entrer sur la case : il ouvre les deux côtés que la clôture relie, ici est et ouest, ce qui renverse la fermeture par défaut du type clôture sur ces deux côtés seulement.",
+          "passage": {
+            "cells": {
+              "0,0": {
+                "e": true,
+                "w": true
+              }
+            }
+          },
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-2_portillon-gate-open.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-2_portillon-gate-open.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 31,
+                  "right": 95,
+                  "bottom": 66,
+                  "width": 96,
+                  "height": 36
+                },
+                "contact_px": {
+                  "left": 57,
+                  "right": 66,
+                  "width": 10
+                },
+                "anchor_px": {
+                  "x": 61.5,
+                  "y": 67.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Y'a pas d'herbe en bas des poteaux mais sinon ok."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_portillon-gate-open.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_portillon-gate-open.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-1_portillon-gate-open.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-1_portillon-gate-open.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "ecartee",
+              "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ew_gate-open_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "portillon": "gate-closed",
+          "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon fermé ferme comme le reste de la clôture : aucune redéfinition de passage, la fermeture par défaut du type s'applique.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 169
+                },
+                "silhouette_px": {
+                  "left": 26,
+                  "top": 0,
+                  "right": 69,
+                  "bottom": 168,
+                  "width": 44,
+                  "height": 169
+                },
+                "contact_px": {
+                  "left": 34,
+                  "right": 59,
+                  "width": 26
+                },
+                "anchor_px": {
+                  "x": 46.5,
+                  "y": 169.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 338
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_portillon-gate-closed.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_portillon-gate-closed.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Ce n'est pas le style du sujet, mauvais sens, rien ne va."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "ecartee",
+              "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ns_gate-closed_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "portillon": "gate-open",
+          "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon ouvert laisse entrer sur la case : il ouvre les deux côtés que la clôture relie dans ce sens, nord et sud.",
+          "passage": {
+            "cells": {
+              "0,0": {
+                "n": true,
+                "s": true
+              }
+            }
+          },
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-open-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-open-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 15,
+                  "top": 0,
+                  "right": 63,
+                  "bottom": 95,
+                  "width": 49,
+                  "height": 96
+                },
+                "contact_px": {
+                  "left": 34,
+                  "right": 61,
+                  "width": 28
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 96.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_portillon-gate-open.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_portillon-gate-open.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Bon sens, style acceptable, mais portillon pas ouvert."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-open.png",
+              "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-open.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "ecartee",
+              "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ns_gate-open_frame-01"
+        }
       ]
     },
     "TR-060": {
       "profil": "oak-01",
       "type": "arbre",
-      "emprise": {"columns": 2, "rows": 2},
+      "emprise": {
+        "columns": 2,
+        "rows": 2
+      },
       "hauteur": 6,
       "_hauteur_comment": "vegetation.md : « hauteur 6 cases ».",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-060.png",
-                              "maitre": "poc/vegetation/TR-060.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante"}]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v4.png",
+              "maitre": "poc/vegetation/TR-060-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 192,
+                  "height": 378
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 56,
+                  "right": 190,
+                  "bottom": 317,
+                  "width": 191,
+                  "height": 262
+                },
+                "contact_px": {
+                  "left": 63,
+                  "right": 116,
+                  "width": 54
+                },
+                "anchor_px": {
+                  "x": 89.5,
+                  "y": 318.0
+                },
+                "master_size_px": {
+                  "width": 384,
+                  "height": 755
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 2,
+                  "rows": 2
+                }
+              },
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Il doit être grand, faut augmenter son couvert !"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v3.png",
+              "maitre": "poc/vegetation/TR-060-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 192,
+                  "height": 378
+                },
+                "silhouette_px": {
+                  "left": 11,
+                  "top": 9,
+                  "right": 179,
+                  "bottom": 367,
+                  "width": 169,
+                  "height": 359
+                },
+                "contact_px": {
+                  "left": 64,
+                  "right": 121,
+                  "width": 58
+                },
+                "anchor_px": {
+                  "x": 92.5,
+                  "y": 368.0
+                },
+                "master_size_px": {
+                  "width": 384,
+                  "height": 755
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 2,
+                  "rows": 2
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Faut augmenter la couverture du grand chêne, de manière à avoir un chêne comme la référence de direction artistique."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v2.png",
+              "maitre": "poc/vegetation/TR-060-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 192,
+                  "height": 378
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 83,
+                  "right": 190,
+                  "bottom": 294,
+                  "width": 190,
+                  "height": 212
+                },
+                "contact_px": {
+                  "left": 69,
+                  "right": 120,
+                  "width": 52
+                },
+                "anchor_px": {
+                  "x": 94.5,
+                  "y": 295.0
+                },
+                "master_size_px": {
+                  "width": 384,
+                  "height": 755
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 2,
+                  "rows": 2
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "La couleur du tronc du chêne a changé : c'est quelque chose que tu dois préciser dans la description, et le chêne est déjà présent dans les références de direction artistique — on n'est pas censé obtenir une autre couleur."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060.png",
+              "maitre": "poc/vegetation/TR-060.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Trop de racines."
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        }
       ]
     },
     "TR-061": {
       "profil": "fir-thicket-01",
       "type": "bosquet-arbres",
-      "emprise": {"columns": 2, "rows": 2},
+      "emprise": {
+        "columns": 2,
+        "rows": 2
+      },
       "hauteur": 6,
       "_hauteur_comment": "vegetation.md : « hauteur 6 cases ».",
       "_passage_comment": "Aucune redéfinition : le type bosquet-arbres ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "_comment": "TR-061-v3 est la dernière version produite, donc la variante courante, sans verdict (l'opérateur ne l'a pas encore vue). TR-061-v2 et TR-061 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
-         "representations": [
-           {"type": "sprite", "path": "cutout/vegetation/TR-061-v3.png",
-            "maitre": "poc/vegetation/TR-061-v3.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/vegetation/TR-061-v2.png",
-            "maitre": "poc/vegetation/TR-061-v2.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "J'ai demandé un bosquet carré, le bas de l'image doit être plein de gauche à droite en continue"},
-           {"type": "sprite", "path": "cutout/vegetation/TR-061.png",
-            "maitre": "poc/vegetation/TR-061.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure"}
-         ]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "_comment": "TR-061-v3 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). TR-061-v2 et TR-061 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-061-v6.png",
+              "maitre": "poc/vegetation/TR-061-v6.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 192,
+                  "height": 144
+                },
+                "silhouette_px": {
+                  "left": 5,
+                  "top": 6,
+                  "right": 186,
+                  "bottom": 137,
+                  "width": 182,
+                  "height": 132
+                },
+                "contact_px": {
+                  "left": 15,
+                  "right": 178,
+                  "width": 164
+                },
+                "anchor_px": {
+                  "x": 96.5,
+                  "y": 138.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 144
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 2,
+                  "rows": 2
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-061-v5.png",
+              "maitre": "poc/vegetation/TR-061-v5.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 192,
+                  "height": 378
+                },
+                "silhouette_px": {
+                  "left": 3,
+                  "top": 7,
+                  "right": 188,
+                  "bottom": 367,
+                  "width": 186,
+                  "height": 361
+                },
+                "contact_px": {
+                  "left": 26,
+                  "right": 164,
+                  "width": 139
+                },
+                "anchor_px": {
+                  "x": 95.0,
+                  "y": 368.0
+                },
+                "master_size_px": {
+                  "width": 384,
+                  "height": 755
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 2,
+                  "rows": 2
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Les arrondis sur les bords sont interdits pour des sujets qui sont pleins. Les sapins sont bien disposés mais pas aux bonnes couleurs — voir la remarque sur le sapin seul. Les buissons doivent être sous l'ombre des arbres, donc plus profonds et plus sombres, avec une végétation un peu variée."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-061-v4.png",
+              "maitre": "poc/vegetation/TR-061-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 192,
+                  "height": 378
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 27,
+                  "right": 189,
+                  "bottom": 340,
+                  "width": 188,
+                  "height": 314
+                },
+                "contact_px": {
+                  "left": 88,
+                  "right": 117,
+                  "width": 30
+                },
+                "anchor_px": {
+                  "x": 102.5,
+                  "y": 341.0
+                },
+                "master_size_px": {
+                  "width": 384,
+                  "height": 755
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 2,
+                  "rows": 2
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Un bosquet, ce n'est pas que des arbres : on doit voir des buissons au ras du sol."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-061-v3.png",
+              "maitre": "poc/vegetation/TR-061-v3.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Les sapins n'ont pas de tronc visible."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-061-v2.png",
+              "maitre": "poc/vegetation/TR-061-v2.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "J'ai demandé un bosquet carré, le bas de l'image doit être plein de gauche à droite en continue"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-061.png",
+              "maitre": "poc/vegetation/TR-061.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        }
       ]
     },
     "TR-063": {
       "profil": "apple-tree-01",
       "type": "arbre",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": 3,
       "_hauteur_comment": "vegetation.md : « hauteur 3 cases ».",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "_comment": "TR-063-v3 est la dernière version produite, donc la variante courante, sans verdict (l'opérateur ne l'a pas encore vue). TR-063-v2 et TR-063 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
-         "representations": [
-           {"type": "sprite", "path": "cutout/vegetation/TR-063-v3.png",
-            "maitre": "poc/vegetation/TR-063-v3.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/vegetation/TR-063-v2.png",
-            "maitre": "poc/vegetation/TR-063-v2.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "trop de pommes, on doit en voir quelques une dans l'arbre, 0, au sol"},
-           {"type": "sprite", "path": "cutout/vegetation/TR-063.png",
-            "maitre": "poc/vegetation/TR-063.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure"}
-         ]}
-      ]
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "_comment": "TR-063-v3 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). TR-063-v2 et TR-063 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v5.png",
+              "maitre": "poc/vegetation/TR-063-v5.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 188
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 42,
+                  "right": 95,
+                  "bottom": 145,
+                  "width": 96,
+                  "height": 104
+                },
+                "contact_px": {
+                  "left": 38,
+                  "right": 57,
+                  "width": 20
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 146.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 377
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Tu as perdu la notion du nombre de pommes : on avait dit quelques pommes, et sur la référence de direction artistique il y a trop de pommes pour ce pommier. Tu dois respecter la demande et ne rien perdre — une consigne ne doit pas en annuler une autre."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v4.png",
+              "maitre": "poc/vegetation/TR-063-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 188
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 21,
+                  "right": 95,
+                  "bottom": 163,
+                  "width": 96,
+                  "height": 143
+                },
+                "contact_px": {
+                  "left": 35,
+                  "right": 60,
+                  "width": 26
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 164.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 377
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Il n'est pas assez touffu, le haut de l'arbre doit être bien plus large que le tronc. L'emprise fait 1 × 1, c'est trop juste pour un pommier ; le sujet est déjà ouvert, à voir quoi faire."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v3.png",
+              "maitre": "poc/vegetation/TR-063-v3.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Il faut enlever l'herbe au sol."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v2.png",
+              "maitre": "poc/vegetation/TR-063-v2.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "trop de pommes, on doit en voir quelques une dans l'arbre, 0, au sol"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063.png",
+              "maitre": "poc/vegetation/TR-063.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        }
+      ],
+      "couvert": {
+        "columns": 3,
+        "rows": 3
+      }
     },
     "TR-062": {
       "profil": "tall-grass-01",
       "type": "herbe",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": 0.5,
       "_hauteur_comment": "vegetation.md : « hauteur 0,5 case ».",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-062.png",
-                              "maitre": "poc/vegetation/TR-062.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante", "verdict": "validee"}]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-062.png",
+              "maitre": "poc/vegetation/TR-062.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "courante",
+              "verdict": "validee",
+              "commentaire_operateur": "Il faudrait ajouter un autre sujet herbe un peu moins touffu."
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        }
       ]
     },
     "TR-064": {
       "profil": "sparse-grass-01",
       "type": "herbe",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": 0.3,
       "_hauteur_comment": "vegetation.md : « hauteur 0,3 case ».",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "_comment": "Exportée le 2026-08-05 : première production, aucune version antérieure à porter.",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-064.png",
-                              "maitre": "poc/vegetation/TR-064.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante"}]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "_comment": "Exportée le 2026-08-05 : première production, aucune version antérieure à porter.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064-v4.png",
+              "maitre": "poc/vegetation/TR-064-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 123
+                },
+                "silhouette_px": {
+                  "left": 3,
+                  "top": 4,
+                  "right": 89,
+                  "bottom": 117,
+                  "width": 87,
+                  "height": 114
+                },
+                "contact_px": {
+                  "left": 49,
+                  "right": 54,
+                  "width": 6
+                },
+                "anchor_px": {
+                  "x": 51.5,
+                  "y": 118.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 246
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "La bonne solution, c'est plusieurs variantes de densité : quelques herbes éparses (l'image actuelle), une variante à deux fois plus d'herbes, une variante à quatre fois plus."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064-v3.png",
+              "maitre": "poc/vegetation/TR-064-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 123
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 119,
+                  "width": 96,
+                  "height": 120
+                },
+                "contact_px": {
+                  "left": 3,
+                  "right": 88,
+                  "width": 86
+                },
+                "anchor_px": {
+                  "x": 45.5,
+                  "y": 120.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 246
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Le côté clairsemé a complètement été ignoré, il y a un souci dans la description."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064-v2.png",
+              "maitre": "poc/vegetation/TR-064-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 123
+                },
+                "silhouette_px": {
+                  "left": 5,
+                  "top": 8,
+                  "right": 91,
+                  "bottom": 113,
+                  "width": 87,
+                  "height": 106
+                },
+                "contact_px": {
+                  "left": 16,
+                  "right": 75,
+                  "width": 60
+                },
+                "anchor_px": {
+                  "x": 45.5,
+                  "y": 114.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 246
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Les herbes doivent occuper tout l'espace ; je n'ai pas demandé de dessiner un carré avec des herbes."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064.png",
+              "maitre": "poc/vegetation/TR-064.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "La case est carrée, pas ronde."
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "densite": "medium",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064_densite-medium.png",
+              "maitre": "poc/vegetation/TR-064_densite-medium.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 75
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 2,
+                  "right": 94,
+                  "bottom": 73,
+                  "width": 94,
+                  "height": 72
+                },
+                "contact_px": {
+                  "left": 63,
+                  "right": 69,
+                  "width": 7
+                },
+                "anchor_px": {
+                  "x": 66.0,
+                  "y": 74.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 75
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_medium_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "densite": "dense",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064_densite-dense.png",
+              "maitre": "poc/vegetation/TR-064_densite-dense.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 6,
+                  "top": 9,
+                  "right": 92,
+                  "bottom": 89,
+                  "width": 87,
+                  "height": 81
+                },
+                "contact_px": {
+                  "left": 27,
+                  "right": 84,
+                  "width": 58
+                },
+                "anchor_px": {
+                  "x": 55.5,
+                  "y": 90.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_dense_frame-01"
+        }
       ]
     },
     "TR-065": {
       "profil": "fir-01",
       "type": "arbre",
-      "emprise": {"columns": 1, "rows": 1},
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
       "hauteur": 6,
       "_hauteur_comment": "vegetation.md : « hauteur 6 cases ».",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "_comment": "Exportée le 2026-08-05 : première production, aucune version antérieure à porter.",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-065.png",
-                              "maitre": "poc/vegetation/TR-065.png", "numero_image": 1, "mesures": null,
-                              "statut": "courante"}]}
-      ]
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "_comment": "Exportée le 2026-08-05 : première production, aucune version antérieure à porter.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-065-v6.png",
+              "maitre": "poc/vegetation/TR-065-v6.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 222
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 6,
+                  "right": 95,
+                  "bottom": 212,
+                  "width": 96,
+                  "height": 207
+                },
+                "contact_px": {
+                  "left": 36,
+                  "right": 59,
+                  "width": 24
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 213.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 443
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-065-v5.png",
+              "maitre": "poc/vegetation/TR-065-v5.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 254
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 4,
+                  "right": 95,
+                  "bottom": 235,
+                  "width": 96,
+                  "height": 232
+                },
+                "contact_px": {
+                  "left": 25,
+                  "right": 56,
+                  "width": 32
+                },
+                "anchor_px": {
+                  "x": 40.5,
+                  "y": 236.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 509
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Déjà demandé."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-065-v4.png",
+              "maitre": "poc/vegetation/TR-065-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 222
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 32,
+                  "right": 95,
+                  "bottom": 190,
+                  "width": 96,
+                  "height": 159
+                },
+                "contact_px": {
+                  "left": 32,
+                  "right": 62,
+                  "width": 31
+                },
+                "anchor_px": {
+                  "x": 47.0,
+                  "y": 191.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 443
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-065-v3.png",
+              "maitre": "poc/vegetation/TR-065-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 222
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 15,
+                  "right": 93,
+                  "bottom": 195,
+                  "width": 92,
+                  "height": 181
+                },
+                "contact_px": {
+                  "left": 37,
+                  "right": 58,
+                  "width": 22
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 196.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 443
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Le bas du tronc doit s'étendre dans la terre, un peu comme fait le chêne."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-065-v2.png",
+              "maitre": "poc/vegetation/TR-065-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 287
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 1,
+                  "right": 95,
+                  "bottom": 286,
+                  "width": 96,
+                  "height": 286
+                },
+                "contact_px": {
+                  "left": 38,
+                  "right": 58,
+                  "width": 21
+                },
+                "anchor_px": {
+                  "x": 48.0,
+                  "y": 287.0
+                },
+                "master_size_px": {
+                  "width": 192,
+                  "height": 574
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "L'arbre ne correspond pas à celui de la référence de direction artistique, il semble déformé : soit pas assez large, soit trop haut."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-065.png",
+              "maitre": "poc/vegetation/TR-065.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        }
+      ],
+      "couvert": {
+        "columns": 2,
+        "rows": 2
+      }
     },
     "BT-001": {
       "profil": "healing-center-01",
       "type": "batiment",
-      "emprise": {"columns": 16, "rows": 10},
+      "emprise": {
+        "columns": 16,
+        "rows": 10
+      },
       "hauteur": 8,
       "_hauteur_comment": "batiments.md : « hauteur 8 cases ».",
       "passage": {
-        "cells": {"8,9": {"s": true}},
+        "cells": {
+          "8,9": {
+            "s": true
+          }
+        },
         "_comment": "« entrée au sud », porche au milieu de la face sud (batiments.md) : la case du milieu de la rangée sud s'ouvre au sud, elle seule — tout le reste garde la fermeture du type. Rangée sud = rows-1 = 9 (le sud augmente la coordonnée de ligne). L'emprise est paire (16 colonnes, indices 0 à 15) : aucune case n'est exactement au centre ; colonne 8 (première case de la moitié est) est prise par convention, à ajuster si un plan de composition de BT-001 fixe une autre case."
       },
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain",
-         "_comment": "BT-001-v2 est la dernière version produite, donc la variante courante, sans verdict (l'opérateur ne l'a pas encore vue). BT-001 (sans suffixe) devient sa version antérieure, conservée et non écartée.",
-         "representations": [
-           {"type": "sprite", "path": "cutout/batiment/BT-001-v2.png",
-            "maitre": "poc/batiment/BT-001-v2.png", "numero_image": 1, "mesures": null,
-            "statut": "courante"},
-           {"type": "sprite", "path": "cutout/batiment/BT-001.png",
-            "maitre": "poc/batiment/BT-001.png", "numero_image": 1, "mesures": null,
-            "statut": "anterieure"}
-         ]}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "_comment": "BT-001-v2 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). BT-001 (sans suffixe) devient sa version antérieure, conservée et non écartée.",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v3.png",
+              "maitre": "poc/batiment/BT-001-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1165
+                },
+                "silhouette_px": {
+                  "left": 125,
+                  "top": 31,
+                  "right": 1409,
+                  "bottom": 1136,
+                  "width": 1285,
+                  "height": 1106
+                },
+                "contact_px": {
+                  "left": 568,
+                  "right": 958,
+                  "width": 391
+                },
+                "anchor_px": {
+                  "x": 763.0,
+                  "y": 1137.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1165
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Il est très bien, mais je veux des variantes pour avoir trois ou quatre propositions, dont une qui revient aux couleurs de la version précédente (référence assets/revue-da/da-b4-r15-scene.png)."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v2.png",
+              "maitre": "poc/batiment/BT-001-v2.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Toit trop austère, on doit y voir un ou plusieurs puits de lumière. Faire des propositions."
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001.png",
+              "maitre": "poc/batiment/BT-001.png",
+              "numero_image": 1,
+              "mesures": null,
+              "statut": "anterieure"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "proposition": "p2",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p2.png",
+              "maitre": "poc/batiment/BT-001_proposition-p2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1024
+                },
+                "silhouette_px": {
+                  "left": 201,
+                  "top": 32,
+                  "right": 1344,
+                  "bottom": 980,
+                  "width": 1144,
+                  "height": 949
+                },
+                "contact_px": {
+                  "left": 577,
+                  "right": 903,
+                  "width": 327
+                },
+                "anchor_px": {
+                  "x": 740.0,
+                  "y": 981.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1024
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_p2_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "proposition": "p3",
+          "representations": [],
+          "ref": "orientation-south_action-idle_p3_frame-01"
+        }
       ]
     },
     "BT-002": {
       "profil": "farmhouse-01",
       "type": "batiment",
-      "emprise": {"columns": 5, "rows": 4},
+      "emprise": {
+        "columns": 5,
+        "rows": 4
+      },
       "hauteur": 4.5,
       "_hauteur_comment": "batiments.md : « hauteur 4,5 cases ».",
       "passage": {
-        "cells": {"2,3": {"s": true}},
+        "cells": {
+          "2,3": {
+            "s": true
+          }
+        },
         "_comment": "« entrée au sud » (batiments.md). Rangée sud = rows-1 = 3. Emprise impaire en colonnes (5, indices 0 à 4) : la colonne centrale existe exactement, c'est la 2 — pas de convention à choisir ici, à la différence de BT-001."
       },
-      "variantes": [
-        {"orientation": "south", "action": "idle", "shape": "plain", "representations": []}
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-002.png",
+              "maitre": "poc/batiment/BT-002.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 480,
+                  "height": 508
+                },
+                "silhouette_px": {
+                  "left": 21,
+                  "top": 16,
+                  "right": 461,
+                  "bottom": 481,
+                  "width": 441,
+                  "height": 466
+                },
+                "contact_px": {
+                  "left": 41,
+                  "right": 348,
+                  "width": 308
+                },
+                "anchor_px": {
+                  "x": 194.5,
+                  "y": 482.0
+                },
+                "master_size_px": {
+                  "width": 960,
+                  "height": 1017
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 5,
+                  "rows": 4
+                }
+              },
+              "statut": "courante",
+              "verdict": "a-reprendre",
+              "commentaire_operateur": "Elle est très bien, mais je veux des variantes pour avoir trois ou quatre propositions, dont une qui revient aux couleurs de la référence assets/revue-da/da-b4-r15-scene.png."
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "proposition": "p2",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-002_proposition-p2.png",
+              "maitre": "poc/batiment/BT-002_proposition-p2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 480,
+                  "height": 421
+                },
+                "silhouette_px": {
+                  "left": 5,
+                  "top": 6,
+                  "right": 473,
+                  "bottom": 415,
+                  "width": 469,
+                  "height": 410
+                },
+                "contact_px": {
+                  "left": 168,
+                  "right": 243,
+                  "width": 76
+                },
+                "anchor_px": {
+                  "x": 205.5,
+                  "y": 416.0
+                },
+                "master_size_px": {
+                  "width": 480,
+                  "height": 421
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 5,
+                  "rows": 4
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_p2_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "plain",
+          "proposition": "p3",
+          "representations": [],
+          "ref": "orientation-south_action-idle_p3_frame-01"
+        }
       ]
     }
   },
-
   "_hors_referentiel": {
     "_comment": "Sondes de capacité produites avant que la chaîne n'existe : ni code ni emprise ne leur est fabriqué, elles n'entrent pas au référentiel (rien ne se produit sans fiche). Leurs types existent bien ci-dessus. Elles restent sur le disque et visibles au suivi, hors référentiel, jusqu'à ce qu'un vrai sujet les remplace.",
     "HU-000": "brouillon 'joueur' d'asset_common.py, absent de personnages.md",

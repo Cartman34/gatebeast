@@ -190,6 +190,18 @@ def build(source: Path) -> int:
 
     elements = [(subject, c1, r1, c2, r2, "") for subject, c1, r1, c2, r2 in placed]
 
+    # LE COUVERT DE CHAQUE SUJET POSÉ, LU AU RÉFÉRENTIEL ET JAMAIS DEVINÉ. Le couvert est ce que le volume surplombe ; à défaut d'être déclaré il vaut l'emprise, et rien
+    # n'est alors dessiné, puisqu'il n'y a pas de débord à montrer. Le référentiel n'est chargé qu'une fois : il l'était déjà pour savoir quels types pivotent.
+    sujets = sujets or _load_sujets()
+    spreads = {}
+    for subject in set(subjects.values()) | {name for name, *_ in placed}:
+        sujet = sujets.get("sujets", {}).get(subject) if isinstance(sujets, dict) else None
+        if not sujet:
+            continue
+        spread = sujet.get("couvert") or sujet.get("emprise")
+        if spread:
+            spreads[subject] = (spread["columns"], spread["rows"])
+
     # A short key per DISTINCT piece — same subject, same shape, same subject composition (e.g. same
     # posts variant). The same key is reused wherever that piece is laid, so the plan says at a
     # glance which cells carry the same sprite, and doubles as the cutting map. Letters follow the
@@ -202,13 +214,21 @@ def build(source: Path) -> int:
             pieces[signature] = alphabet[len(pieces) % len(alphabet)]
         keys[key] = pieces[signature]
 
+    # LES LETTRES DE PIÈCES SE DEMANDENT, ELLES NE S'IMPOSENT PAS. Elles servent à un plan d'USAGE d'un sujet, où le plan double la carte de découpe : deux cases portant la
+    # même lettre sont la même sprite à produire. Sur un plan de SCÈNE, où le tracé se lit déjà tout seul, elles ne font qu'encombrer chaque case d'une lettre que personne
+    # ne lit. Le plan dit lequel des deux il est ; sans rien dire, il les garde, ce qui laisse les plans existants inchangés.
+    piece_keys = plan.get("piece_keys", True)
+    if not piece_keys:
+        keys = {}
+
     notes = list(plan.get("notes", []))
-    notes.append("Pièces distinctes — deux cases portant la même lettre sont la même sprite :")
-    # Folded over several lines: a single line of fifteen pieces stretched the canvas to four
-    # thousand pixels, and a plan that scrolls sideways cannot be read.
-    listed = [f"{letter} {subject} {shape}" for (subject, shape), letter in pieces.items()]
-    for start in range(0, len(listed), 5):
-        notes.append("   " + " · ".join(listed[start:start + 5]))
+    if piece_keys:
+        notes.append("Pièces distinctes — deux cases portant la même lettre sont la même sprite :")
+        # Folded over several lines: a single line of fifteen pieces stretched the canvas to four
+        # thousand pixels, and a plan that scrolls sideways cannot be read.
+        listed = [f"{letter} {subject} {shape}" for (subject, shape), letter in pieces.items()]
+        for start in range(0, len(listed), 5):
+            notes.append("   " + " · ".join(listed[start:start + 5]))
     notes.append(f"Cellule par défaut : {default_cell}.")
     notes.append(f"{len(traces)} cases déclarées, {len(tally)} formes distinctes sur "
                  f"{len(EVERY_SHAPE)}. Absentes : " + (", ".join(missing) or "aucune") + ".")
@@ -223,6 +243,8 @@ def build(source: Path) -> int:
         elements=elements,
         traces=traces,
         keys=keys,
+        spreads=spreads,
+        legend=plan.get("legend", True),
         title=plan.get("title", source.stem),
         notes=notes,
         tile=40)
