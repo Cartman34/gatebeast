@@ -221,6 +221,11 @@ def build(source: Path) -> int:
     if not piece_keys:
         keys = {}
 
+    # LE DESSIN PORTE SES NOTES, OU LA PAGE LES PORTE — jamais les deux. Écrites dans le dessin, elles y sont figées à la taille et à la couleur du tracé, elles ne se
+    # sélectionnent pas, elles ne se lient pas, et elles rallongent une image dont on ne voulait que le plan. Une page qui affiche le plan les rend mieux, en clair et en
+    # HTML, depuis la même déclaration. Le plan dit lequel des deux il veut ; sans rien dire, il les garde, ce qui laisse les plans existants inchangés.
+    drawing_notes = plan.get("drawing_notes", True)
+
     notes = list(plan.get("notes", []))
     if piece_keys:
         notes.append("Pièces distinctes — deux cases portant la même lettre sont la même sprite :")
@@ -246,7 +251,7 @@ def build(source: Path) -> int:
         spreads=spreads,
         legend=plan.get("legend", True),
         title=plan.get("title", source.stem),
-        notes=notes,
+        notes=notes if drawing_notes else [],
         tile=40)
 
     out = source.with_suffix(".svg")

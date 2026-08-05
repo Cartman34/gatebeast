@@ -9,6 +9,7 @@
     "default_cell": "CH-001",
     "piece_keys": false,
     "legend": false,
+    "drawing_notes": false,
     "notes": [
         "Parc de 64 × 48 cases, en paysage. Herbe rase partout où rien n'est posé.",
         "Le parc est clos : la barrière court sur les quatre bords, et s'ouvre d'une case là où le chemin sort.",

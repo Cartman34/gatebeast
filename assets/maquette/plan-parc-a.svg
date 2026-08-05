@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 2801" font-family="sans-serif" data-tile="40" data-top="92" data-columns="64" data-rows="48">
-<rect width="2560" height="2801" fill="#f6f2e8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 2055" font-family="sans-serif" data-tile="40" data-top="92" data-columns="64" data-rows="48">
+<rect width="2560" height="2055" fill="#f6f2e8"/>
 <text x="14" y="60" font-size="50" font-weight="600" fill="#1d1a24">Parc — A, le semis clairsemé</text>
 <g transform="translate(0,92)">
 <rect x="0" y="0" width="80" height="80" fill="#a89ec4" fill-opacity="0.75" stroke="#00000040"/>
@@ -2145,19 +2145,4 @@
 <line x1="0" y1="1840" x2="2560" y2="1840" stroke="#00000018"/>
 <line x1="0" y1="1880" x2="2560" y2="1880" stroke="#00000018"/>
 <line x1="0" y1="1920" x2="2560" y2="1920" stroke="#00000018"/>
-<text x="14" y="1977" font-size="39" fill="#5c5468">Parc de 64 × 48 cases, en paysage. Herbe rase partout où rien n'est posé.</text>
-<text x="14" y="2027" font-size="39" fill="#5c5468">Le parc est clos : la barrière court sur les quatre bords, et s'ouvre d'une case là où le chemin sort.</text>
-<text x="14" y="2076" font-size="39" fill="#5c5468">Les bosquets de sapins sont DEHORS, derrière la barrière, en deux bandes décalées : ils ferment l'horizon.</text>
-<text x="14" y="2126" font-size="39" fill="#5c5468">Centre de soin dans le coin bas-droit, son entrée face à la caméra, prolongée de trois cases de chemin — le seul chemin du</text>
-<text x="14" y="2176" font-size="39" fill="#5c5468">parc.</text>
-<text x="14" y="2226" font-size="39" fill="#5c5468">Aucun arbre n'est aligné sur un autre : les positions sont tirées une à une, et toute position déjà occupée est abandonnée.</text>
-<text x="14" y="2276" font-size="39" fill="#5c5468">Trois nappes de hautes herbes, épaisses : on y entre, on n'y voit plus le sol, et quelque chose peut en sortir.</text>
-<text x="14" y="2325" font-size="39" fill="#5c5468">Un petit bosquet à droite du parc : quelques arbres serrés, et de l'herbe haute entre leurs pieds.</text>
-<text x="14" y="2375" font-size="39" fill="#5c5468">Partout ailleurs, les arbres sont dispersés sans zone privilégiée — chênes, sapins isolés, bosquets de sapins et pommiers</text>
-<text x="14" y="2425" font-size="39" fill="#5c5468">mêlés.</text>
-<text x="14" y="2475" font-size="39" fill="#5c5468">Le cercle clair autour d'un sujet est son couvert : ce que son volume surplombe au-delà de son emprise au sol.</text>
-<text x="14" y="2524" font-size="39" fill="#5c5468">Cellule par défaut : CH-001.</text>
-<text x="14" y="2574" font-size="39" fill="#5c5468">214 cases déclarées, 10 formes distinctes sur 15. Absentes : nes, new, nsw, esw, nesw.</text>
-<text x="14" y="2624" font-size="39" fill="#5c5468">10 dessin(s) réellement à produire compte tenu de la rotation (CH-019 : 2, OB-010 : 8) — un sujet plat pivote un seul</text>
-<text x="14" y="2674" font-size="39" fill="#5c5468">dessin par forme équivalente, un sujet à volume en dessine une par forme.</text>
 </g></svg>

@@ -107,8 +107,6 @@ foreach ($declarations as $file) {
     $key = preg_replace('/[^a-z0-9]+/', '-', strtolower(basename($file, '.json')));
     $sections .= '<section class="plan" data-plan="' . escape($plan['title']) . '">'
         . '<h2>' . escape($plan['title']) . '</h2>'
-        . '<ul class="notes">' . $notes . '</ul>'
-        . '<ul class="tally">' . $counts . '</ul>'
         . '<div class="barre"><p class="mode">Clique une case du plan pour lui attacher une remarque. Les cases commentées se marquent en rouge.</p>'
         . '<button type="button" class="taille">Taille réelle</button></div>'
         . '<div class="zone"><div class="dessin" data-cle="' . $key . '" data-colonnes="' . $columns . '" data-lignes="' . $rows
@@ -120,7 +118,11 @@ foreach ($declarations as $file) {
         . '<textarea rows="3" placeholder="Ce qui devrait changer ici."></textarea>'
         . '<div class="saisie-boutons"><button type="button" class="poser">Attacher la remarque</button>'
         . '<button type="button" class="annuler">Annuler</button></div></div></div>'
-        . '<p class="source">' . escape($source) . ' · ' . $columns . ' × ' . $rows . ' cases</p>'
+        // CE QUE DIT LE PLAN, SOUS LE DESSIN ET EN HTML. C'était écrit dans l'image, où le texte est figé à la taille du tracé, ne se sélectionne pas et rallonge le dessin.
+        . '<div class="dit"><ul class="notes">' . $notes . '</ul>'
+        . '<ul class="tally">' . $counts . '</ul>'
+        . '<p class="source">' . escape($source) . ' · ' . $columns . ' × ' . $rows . ' cases · '
+        . count($plan['cells']) . ' cases déclarées</p></div>'
         . '<div class="remarques"><div class="remarques-head"><h3>Les remarques</h3>'
         . '<button type="button" class="copier">Copier le récapitulatif</button>'
         . '<button type="button" class="effacer">Tout effacer</button></div>'
@@ -167,6 +169,7 @@ $page = <<<HTML
 
   .plan { display: flex; flex-direction: column; gap: 1rem; }
   .plan h2 { margin: 0; font-size: 1.35rem; font-weight: 620; letter-spacing: -.01em; }
+  .dit { display: flex; flex-direction: column; gap: .8rem; }
   .notes { margin: 0; padding-left: 1.2rem; max-width: 78ch; color: var(--muted); display: flex; flex-direction: column; gap: .25rem; }
   .notes li::marker { color: var(--accent); }
 
