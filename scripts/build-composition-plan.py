@@ -109,8 +109,21 @@ def _load_sujets() -> dict:
                           f"{error}")
 
 
+# Ce qui se pose À PLAT sur le sol, par opposition à ce qui s'y dresse. Le rendu du jeu empile déjà les deux dans cet ordre : le calque du sol, puis les volumes.
+FLAT_TYPES = {"sol", "chemin", "herbe", "cours-d-eau"}
+
+
+def is_flat(sujets, subject):
+    """Whether a subject lies flat on the ground — read from the referentiel, never guessed from its code."""
+    sujet = (sujets.get("sujets") or {}).get(subject) if isinstance(sujets, dict) else None
+
+    return bool(sujet) and sujet.get("type") in FLAT_TYPES
+
+
 def build(source: Path) -> int:
     plan = json.loads(source.read_text(encoding="utf-8"))
+    # Le référentiel est lu d'emblée : il faut connaître le type de chaque sujet dès le contrôle d'occupation, pour savoir lequel se pose à plat et lequel se dresse.
+    sujets = _load_sujets()
     if plan.get("format") != "gatebeast-composition-plan":
         print(f"FAULT {source.name} is not a composition plan")
         return 1
@@ -128,7 +141,11 @@ def build(source: Path) -> int:
         subject = cell["subject"]
         footprint = composition_plan.tiles(column, row, column + width - 1, row + height - 1)
         for key in sorted(footprint):
-            if key in occupied:
+            # DEUX CALQUES, ET C'EST CE QUI PERMET AU CHEMIN D'ATTEINDRE UNE PORTE. Le monde se dessine en couches : le sol d'abord, ce qui se dresse par-dessus. Une case
+            # peut donc porter les deux — un chemin qui passe SOUS un bâtiment, une herbe sous un arbre —, et c'est même nécessaire : la porte d'un bâtiment ne tombe jamais
+            # sur le bord bas de sa sprite, si bien qu'un chemin arrêté au ras de l'emprise resterait à deux cases d'elle. Ce qui reste interdit est deux sujets qui SE
+            # DRESSENT sur la même case : là, il y en a forcément un de trop.
+            if key in occupied and not (is_flat(sujets, subject) or is_flat(sujets, occupied[key])):
                 print(f"FAULT ({key[0]},{key[1]}) is taken by {occupied[key]} and by {subject}")
                 return 1
             if not (1 <= key[0] <= columns and 1 <= key[1] <= rows):
@@ -176,7 +193,6 @@ def build(source: Path) -> int:
     # needs one drawing per shape — rotating it would put the sun on the wrong side. Asking
     # assets/sujets.json is the only way to tell the two apart; guessing from the subject's own name
     # would be exactly the shortcut the operator flagged.
-    sujets = _load_sujets() if traces else {}
     shapes_by_subject = {}
     for key, joined in traces.items():
         shape = composition_plan.shape_of(joined).replace("shape-", "")
@@ -198,9 +214,12 @@ def build(source: Path) -> int:
         sujet = sujets.get("sujets", {}).get(subject) if isinstance(sujets, dict) else None
         if not sujet:
             continue
-        spread = sujet.get("couvert") or sujet.get("emprise")
-        if spread:
-            spreads[subject] = (spread["columns"], spread["rows"])
+        # LE COUVERT SE COMPARE À L'EMPRISE DÉCLARÉE DU SUJET, jamais à ce que sa case occupe dans ce plan-ci : c'est une propriété du sujet, pas de son emplacement. Le
+        # nombre de cases n'influence que la FORME du cercle, il ne décide pas de son existence (opérateur, 2026-08-05).
+        ground = sujet.get("emprise")
+        spread = sujet.get("couvert") or ground
+        if spread and ground:
+            spreads[subject] = ((spread["columns"], spread["rows"]), (ground["columns"], ground["rows"]))
 
     # A short key per DISTINCT piece — same subject, same shape, same subject composition (e.g. same
     # posts variant). The same key is reused wherever that piece is laid, so the plan says at a

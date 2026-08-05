@@ -198,11 +198,16 @@ def render(columns, rows, elements=(), inhabitants=(), traces=None, keys=None, t
         # THE COUVERT, WHERE IT EXCEEDS THE FOOTPRINT: what the subject's volume overhangs, drawn as a round wash of the subject's own colour, centred on its footprint. Two
         # trees whose washes overlap are two crowns that will grow into each other on the mounted mock-up — the plan is where that is seen, while it still costs nothing to
         # move one of them. It is a wash and not an outline: the footprint's own square has to stay readable through it.
-        spread = spreads.get(kind)
-        if spread and (spread[0] > c2 - c1 + 1 or spread[1] > r2 - r1 + 1):
-            parts.append(f'<ellipse cx="{x + w / 2}" cy="{y + h / 2}" rx="{spread[0] * tile / 2}" '
-                         f'ry="{spread[1] * tile / 2}" fill="{tint[kind]}" fill-opacity="0.22" '
-                         f'stroke="{tint[kind]}" stroke-opacity="0.55" stroke-dasharray="4 3"/>')
+        # LE COUVERT SE DESSINE DÈS QU'IL DÉBORDE DE L'EMPRISE DU SUJET, et le nombre de cases n'y change rien : il n'influence que la forme du cercle, il ne décide pas de
+        # son existence. Un chêne de deux cases au sol dont la couronne en couvre six déborde autant qu'un pommier d'une case, et son cercle manquait au plan alors que
+        # c'est lui qui décide de l'espacement des arbres.
+        declared = spreads.get(kind)
+        if declared:
+            spread, ground = declared
+            if spread[0] > ground[0] or spread[1] > ground[1]:
+                parts.append(f'<ellipse cx="{x + w / 2}" cy="{y + h / 2}" rx="{spread[0] * tile / 2}" '
+                             f'ry="{spread[1] * tile / 2}" fill="{tint[kind]}" fill-opacity="0.22" '
+                             f'stroke="{tint[kind]}" stroke-opacity="0.55" stroke-dasharray="4 3"/>')
         parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{tint[kind]}" '
                      f'fill-opacity="0.75" stroke="#00000040"/>')
         if label:

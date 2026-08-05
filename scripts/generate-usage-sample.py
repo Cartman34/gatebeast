@@ -133,9 +133,15 @@ le même plan, dessiné : un point au centre de chaque case occupée, et un trai
 bord rejoint. Lis-le, il fait foi avec la liste ci-dessus.
 
 LA GRILLE, EN CASES : {columns} cases de large sur {rows} cases de profondeur. Toutes les cases ont le
-même pas, où qu'elles soient dans l'image, et ce pas ne varie jamais : aucune perspective, aucun point
-de fuite, aucun rétrécissement des rangées du fond. Deux cases de même contenu restent superposables au
-décalage près — c'est ce qui permet d'y découper des pièces réutilisables.
+même pas, où qu'elles soient dans l'image, et ce pas ne varie jamais : aucun point de fuite, aucun
+rétrécissement des rangées du fond. Deux cases de même contenu restent superposables au décalage près —
+c'est ce qui permet d'y découper des pièces réutilisables.
+
+CECI NE DIT RIEN DE L'ANGLE DE PRISE DE VUE, ET NE L'ANNULE SURTOUT PAS. C'est le PAS de la grille qui
+est constant, pas le sujet qui serait vu de la verticale : chaque case garde exactement la caméra en
+plongée décrite plus haut, celle sous laquelle le sujet apparaît dans l'image de référence. Confondre
+les deux est l'erreur qui a déjà été faite : le générateur a lu « aucune perspective » comme « vue en
+plan » et a rendu une carte à plat, inutilisable comme sprite.
 
 À QUOI CETTE IMAGE VA SERVIR, ET C'EST CE QUI COMMANDE TOUT LE RESTE : ON VA Y DÉCOUPER DES SPRITES DE JEU. Chaque case de ta grille sera prélevée telle
 quelle et posée dans le jeu comme une tuile. Tu dessines donc des sprites, sous l'angle des sprites du projet — celui décrit dans la clause de caméra

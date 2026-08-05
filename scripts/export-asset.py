@@ -105,7 +105,11 @@ def profile_of(code):
     sujet = data.get("sujets", {}).get(code)
     if sujet is None:
         raise ValueError(f"FAULT {code}: absent de assets/sujets.json — rien ne s'exporte sans fiche")
-    footprint = int(sujet["emprise"]["columns"]), int(sujet["emprise"]["rows"])
+    # LE COUVERT D'ABORD, L'EMPRISE À DÉFAUT — la même lecture que la génération, et c'est tout l'objet de cette ligne. L'image est demandée à la largeur de ce que le volume
+    # SURPLOMBE ; la mesurer contre ce qui touche le SOL refusait toute image juste d'un sujet dont la couronne déborde de son pied. Constaté sur le sapin puis sur le
+    # pommier : deux générations correctes jetées parce que les deux bouts de la chaîne ne lisaient pas la même étendue.
+    spread = sujet.get("couvert") or sujet["emprise"]
+    footprint = int(spread["columns"]), int(spread["rows"])
 
     return sujet["type"], footprint
 

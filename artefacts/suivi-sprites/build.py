@@ -47,6 +47,10 @@ OUT = HERE / "page.html"
 
 JUDGEMENTS_PATH = ASSETS / "jugements.json"
 
+# Les critères mesurés, nommés pour l'opérateur : l'outil de mesure les nomme en anglais parce qu'il est du code, la page se lit.
+CRITERIA_FR = {"transparency": "Fond transparent", "footprint": "Emprise au sol", "light": "Lumière dans la bande",
+               "tiling": "Raccord bord à bord", "regularity": "Régularité de la matière"}
+
 
 def load_judgements():
     """Every judgement, keyed by the same path scheme this page addresses images with.
@@ -69,6 +73,32 @@ def load_judgements():
         if image.startswith("assets/"):
             image = image[len("assets/"):]
         by_path[image] = entry
+
+    # LES ÉVALUATIONS DU RAPPORT PASSENT DEVANT, ET C'EST LA DÉCISION DE L'OPÉRATEUR (2026-08-05) : l'agent qui jugeait a été débranché, et c'est le rapport de production qui
+    # pose désormais le score, à partir de ses propres mesures. Elles sont donc chargées après et écrasent ce que le fichier des jugements disait de la même image — sans quoi
+    # une note d'agent, figée à la veille et jamais réécrite, continuerait de s'afficher à la place de la mesure du jour.
+    for stored in sorted((ASSETS.parent / "var" / "generations").glob("*/*-evaluation.json")):
+        try:
+            evaluation = json.loads(stored.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+        score = evaluation.get("score") or {}
+        criteria = [{"name": CRITERIA_FR.get(item["name"], item["name"]), "passed": item.get("met", False),
+                     "mesure": item.get("mesure", ""), "attendu": item.get("attendu", "")}
+                    for item in evaluation.get("criteria", [])]
+        failed = [item["name"] for item in criteria if not item["passed"]]
+        entry = {"image": evaluation.get("image", ""), "score": score.get("met"), "total": score.get("total"),
+                 # LA PASTILLE NE SE LIT PAS, ELLE SE VOIT. Tout tenu : une coche, et la bordure verte suffit à le dire. Un critère raté : c'est un avertissement ; plusieurs :
+                 # c'est une erreur. Aucun mot, donc rien à replier sur trois lignes — le détail est dans la popin qu'elle ouvre, et la couleur reste le seul signal.
+                 "verdict": "✓" if not failed else "",
+                 "tone": "met" if not failed else ("warn" if len(failed) == 1 else "failed"),
+                 "criteria": criteria}
+        # La même évaluation vaut pour le maître et pour l'image détourée : c'est une seule image examinée, adressée de deux façons par la page. Les familles ne sont pas
+        # devinées — on prend celles qui existent réellement sur le disque, ce qui évite d'inventer une adresse pour un dossier qui n'a jamais existé.
+        for folder in ("cutout", "poc"):
+            for family in sorted(item.name for item in (ASSETS / folder).iterdir() if item.is_dir()):
+                by_path[f"{folder}/{family}/{evaluation.get('image', '')}"] = entry
+
     return by_path
 
 
@@ -99,20 +129,26 @@ ACTIONS = [
     ("drop", "Écarter"),
 ]
 
-# What can be asked of a variant depends on what exists. Nothing can be retried or set aside before an
-# image has ever been produced, and nothing can be asked of one being produced right now.
-# The two failing states are not spelled out by the owner; retry and drop are the only moves that make
-# sense on an image that exists but did not pass, so they are what is offered.
+# What can be asked of a variant depends only on WHETHER AN IMAGE EXISTS. Nothing can be judged before one has ever been produced, and nothing is asked of one being produced
+# right now. Dès qu'une image existe, LES TROIS VERDICTS RESTENT OFFERTS, quel que soit celui déjà donné — l'opérateur change d'avis quand il veut, et il l'a demandé en
+# toutes lettres : « le bouton ne doit jamais être bloqué » (2026-08-05). Retirer « Valider » d'une image marquée à reprendre l'obligeait à passer par un autre état pour
+# revenir sur son propre verdict, ce qui n'est pas un garde-fou mais une porte fermée à clé sur sa propre décision.
+JUDGED = ["validate", "retry", "drop"]
 STATE_ACTIONS = {
     "planned": ["produce"],
     "running": [],
-    "done": ["validate", "retry", "drop"],
-    "validated": ["retry", "drop"],
-    "fault": ["retry", "drop"],
-    "rejected": ["retry", "drop"],
+    "done": JUDGED,
+    "validated": JUDGED,
+    "fault": JUDGED,
+    "rejected": JUDGED,
 }
 
 LABELS = {
+    # Le bouton d'effacement porte deux mots selon son moment : il efface, puis il rend. Ils vivent ici parce que le script ne porte aucun texte français.
+    "fold": "▴",
+    "unfold": "▾",
+    "noteClear": "Effacer le commentaire",
+    "noteRestore": "Rétablir le commentaire effacé",
     "recapTitle": "SUIVI DES SPRITES — RELEVÉ DU PROPRIÉTAIRE",
     "recapEmpty": "Rien de coché pour l'instant. Cochez une action ou écrivez un commentaire sur une "
                   "variante : le relevé se remplit ici, prêt à être copié.",
@@ -520,8 +556,11 @@ def actions_markup(identifier, subject, status):
                         aria-expanded="false" aria-label="Commentaire — {escape(subject)}">＋</button>
               </div>
               <div class="slot-more" data-more="{escape(identifier)}" hidden>
-                <textarea class="note" rows="1" data-note="{escape(identifier)}"
+                <textarea class="note" rows="2" data-note="{escape(identifier)}"
                           placeholder="Commentaire" aria-label="Commentaire — {escape(subject)}"></textarea>
+                <button type="button" class="note-clear" data-clear="{escape(identifier)}"
+                        title="Effacer le commentaire"
+                        aria-label="Effacer le commentaire — {escape(subject)}" hidden>×</button>
               </div>"""
 
 
@@ -698,6 +737,16 @@ def remember_prompt(code, master_path):
             break
     if report.is_file():
         reports[code] = report.read_text(encoding="utf-8")
+    # THE SCORE COMES FIRST, AND IT COMES FROM ITS OWN FILE. The evaluation is stored beside the report by the measuring tool, and it is re-derivable from the image at any
+    # time — so an image produced before the score existed shows one too, as soon as it is re-examined. Placed above the report rather than inside it because it is the one
+    # line anyone reads before deciding whether to read the rest.
+    stored = report.parent / f"{stem}-evaluation.json"
+    if stored.is_file():
+        evaluation = json.loads(stored.read_text(encoding="utf-8"))
+        failed = [criterion["name"] for criterion in evaluation["criteria"] if not criterion["met"]]
+        head = (f"SCORE {evaluation['score']['met']}/{evaluation['score']['total']} critères tenus"
+                + ("" if not failed else " — en échec : " + ", ".join(failed)))
+        reports[code] = head + "\n\n" + reports.get(code, "")
 
 
 # The OPERATOR's own word on a representation — "validee", "a-reprendre", "ecartee" — a wholly
@@ -1148,33 +1197,36 @@ def judge_summary(code):
 
 
 def judge_body_markup(identifier, code, label):
-    """The score and verdict, always visible; the criterion-by-criterion detail folds behind a button,
-    never crowding the encart. A sprite with no judgement yet says so, plainly — normal display, no
-    image, no interaction, just the fact."""
+    """The score and verdict, always visible; the criterion-by-criterion detail OPENS IN THE POPIN, never unfolding in place. A sprite with no evaluation yet says so, plainly.
+
+    Le détail se lit dans la popin partagée, celle des métadonnées et des consignes, et non plus déplié sous la pastille (opérateur, 2026-08-05) : déplié, il repoussait tout
+    l'encart vers le bas et se lisait à côté d'une image qu'il faisait fuir. CHAQUE CRITÈRE Y DONNE SA MESURE ET CE QU'ON ATTENDAIT — un verdict sans ses deux valeurs oblige
+    à rouvrir l'image pour comprendre ce qui cloche.
+    """
     judgement = judgement_for(code)
     if judgement is None:
-        return '            <p class="judge-pending">Pas encore jugée</p>'
-    criteria = "\n".join(
-        f'                  <li class="judge-criterion{"" if item.get("passed") else " judge-criterion--failed"}">'
-        f'<span class="dot" aria-hidden="true">{"✓" if item.get("passed") else "×"}</span> '
-        f'{escape(item.get("name", ""))}'
-        + (f' — {escape(item["comment"])}' if item.get("comment") else "") + "</li>"
-        for item in judgement.get("criteria", []))
-    report_id = f"judge-{slug(identifier)}"
+        return '            <p class="judge-pending">Pas encore évaluée</p>'
+
+    key = f"{identifier}|evaluation"
+    rows = []
+    for item in judgement.get("criteria", []):
+        # Le troisième champ dit au rendu si le critère est tenu : c'est ce qui rend la marque VERTE ou ROUGE. Sans lui la liste était grise d'un bout à l'autre, et le seul
+        # signe distinguant un critère raté d'un critère tenu était une croix minuscule — l'opérateur avait la couleur avant, elle lui a manqué tout de suite.
+        name = ("✓ " if item.get("passed") else "× ") + item.get("name", "")
+        told = item.get("mesure") or item.get("comment") or ""
+        wanted = item.get("attendu")
+        rows.append([name, told + (f"\nAttendu : {wanted}" if wanted else ""),
+                     "met" if item.get("passed") else "failed"])
+    panels[key] = {"title": f"Évaluation — {label}", "kind": "facts", "rows": rows}
+    words = f"Évaluation — {escape(label)}"
 
     return f"""            <div class="judge">
-              <button type="button" class="judge-toggle" data-open="{escape(report_id)}"
-                      aria-expanded="false" aria-label="Rapport de jugement — {escape(label)}">
+              <button type="button" class="judge-toggle panel-open judge--{escape(judgement.get('tone', ''))}"
+                      data-panel="{escape(key)}" aria-label="{words}" title="{words}">
                 <span class="judge-score">{escape(judgement.get('score'))}/{escape(judgement.get('total'))}</span>
                 <span class="judge-verdict">{escape(judgement.get('verdict', ''))}</span>
                 <span class="judge-open-word">Rapport</span>
               </button>
-              <div class="judge-report" data-report="{escape(report_id)}" hidden>
-                <ul class="judge-criteria">
-{criteria}
-                </ul>
-                <p class="judge-rapport">{escape(judgement.get('report', ''))}</p>
-              </div>
             </div>"""
 
 
@@ -1300,10 +1352,10 @@ def variant_meta_markup(identifier, sujet_code, sujet, type_def, entry, label):
                    "rows": [[name, str(value)] for name, value in rows if value != ""]}
     words = f"Métadonnées — {escape(label)}"
 
-    # Worded, not icon-only. The drawn glyph came back as an empty box twice running on the operator's screen, and a control nobody can read is a control
-    # nobody uses: the word carries the meaning, the icon only accompanies it — exactly like the eye button beside it, which has always been legible.
-    return (f'<button type="button" class="judge-toggle panel-open" data-panel="{escape(key)}" '
-            f'aria-label="{words}" title="{words}">{INFO_ICON} Détail</button>')
+    # ICON ONLY, and no wider than the icon (operator, 2026-08-05). The word "Détail" beside it repeated what the icon already says and stretched a control that
+    # sits inline among many others. What it means stays available to a reader and to a screen reader alike, through the title and the aria-label.
+    return (f'<button type="button" class="judge-toggle icon-only panel-open" data-panel="{escape(key)}" '
+            f'aria-label="{words}" title="{words}">{INFO_ICON}</button>')
 
 
 def sujet_markup(sujet_code, type_name, type_def):
@@ -1364,11 +1416,23 @@ def sujet_markup(sujet_code, type_name, type_def):
     else:
         heading = escape(lead_capital(label))
 
-    blocks = [f"""      <article class="profile">
+    # UN SUJET ENTIÈREMENT VALIDÉ SE REPLIE. Il n'y a plus rien à en décider : il ne garde que son libellé, sa ref et son image principale, et plusieurs sujets repliés se
+    # rangent côte à côte en grille. Ce qui reste à juger occupe la page ; ce qui est acquis prend la place d'une vignette.
+    def settled_variant(entry):
+        representations = entry.get("representations") or []
+        if not representations:
+            return False
+
+        return VERDICT_STATUS.get(current_representation(representations).get("verdict")) == "validated"
+
+    settled = all(settled_variant(entry) for entry in ordered_variants(sujet))
+    folded = " profile--folded" if settled else ""
+
+    blocks = [f"""      <article class="profile{folded}">
         <header class="profile-head">
           <h3>{heading}</h3>
           <p class="profile-id"><code class="code">{escape(sujet_code)}</code>
-            <span class="pname">{escape(sujet['profil'])}</span>{detail_button}</p>
+            <span class="pname">{escape(sujet['profil'])}</span>{detail_button}{unfold_button(settled, sujet_code)}</p>
           <dl class="specs">
 {spec_markup}
           </dl>
@@ -1382,6 +1446,21 @@ def sujet_markup(sujet_code, type_name, type_def):
     blocks.append("      </article>")
 
     return "\n".join(blocks)
+
+
+def unfold_button(settled, sujet_code):
+    """The control that folds a sujet away and opens it back up. OFFERED ON EVERY SUJET, without exception.
+
+    Ce que l'état d'un sujet décide n'est PAS l'existence de ce bouton mais seulement la position de départ : replié quand tout est validé, déplié tant qu'il reste à juger.
+    N'en donner qu'à ceux qui sont repliés rendait inatteignable ce qui était acquis, et interdisait de ranger ce qu'on venait de finir de regarder.
+    """
+    words = f"Replier ou déplier le sujet — {escape(sujet_code)}"
+
+    # UN BOUTON ICÔNE, comme les deux autres de cette ligne — c'est ce qui a été demandé, et le remplacer par un mot était une invention de ma part. Le chevron pointe vers
+    # ce qui va se passer : vers le bas pour ouvrir, vers le haut pour ranger. Ce qu'il fait se lit au survol, comme pour l'icône d'information à côté.
+    return (f'<button type="button" class="profile-unfold" aria-label="{words}" title="{words}" '
+            f'aria-expanded="{"false" if settled else "true"}">'
+            f'<span class="unfold-word">{"▾" if settled else "▴"}</span></button>')
 
 
 def slug(text):
@@ -1414,7 +1493,9 @@ def type_section_markup(type_name, type_def):
         <p class="type-count"><span>{variant_count}</span> image{'s' if variant_count > 1 else ''}</p>
         <p class="type-rule">{escape(lead_capital(type_rule(type_def)))}</p>
       </header>
+      <div class="profiles">
 {sujets_markup}
+      </div>
     </section>"""
 
 
@@ -1755,8 +1836,8 @@ body {
 /* ---- type sections ---- */
 .type { margin-top: 54px; }
 .type-head {
-  display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 6px 18px;
-  border-top: 2px solid var(--ink); padding-top: 12px;
+  display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 18px;
+  border-top: 2px solid var(--ink); padding-top: 8px;
 }
 .type-head h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.01em; }
 .type-count {
@@ -1769,12 +1850,40 @@ body {
   color: var(--ink-soft); max-width: 72ch;
 }
 
-/* ---- profile ---- */
-.profile {
-  margin-top: 22px; background: var(--surface); border: 1px solid var(--line);
-  border-radius: 3px; padding: 20px 20px 22px;
+/* Les sujets d'un type se rangent en grille : ceux qui restent à juger prennent la ligne entière, ceux qui sont acquis se serrent côte à côte. */
+.profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; align-items: start; }
+.profiles > .profile:not(.profile--folded) { grid-column: 1 / -1; }
+
+/* UN SUJET REPLIÉ NE MONTRE QUE CE QU'IL EST : son image principale, son libellé, sa ref. Tout ce qui sert à décider disparaît, puisqu'il n'y a plus rien à décider — et un
+   bouton le rouvre, parce que ranger n'est pas fermer. L'image passe à gauche, le texte à sa droite : la carte tient alors sur deux lignes au lieu de quatre. */
+.profile--folded { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+.profile--folded .specs,
+.profile--folded .profile-detail,
+.profile--folded .slot-body,
+.profile--folded .slot:not(.slot--lead) { display: none; }
+.profile--folded .profile-head { gap: 2px; order: 2; min-width: 0; }
+.profile--folded .slots { order: 1; margin: 0; display: block; flex: 0 0 auto; }
+.profile--folded .slot { padding: 0; background: none; border: 0; }
+.profile--folded .slot > .slot-vis { float: none; margin: 0; }
+.profile--folded h3 { font-size: 15px; }
+.profile--folded .profile-id { gap: 6px; }
+/* Posé contre l'icône d'information, pas rejeté au bout de la ligne : les deux commandes du sujet se tiennent ensemble, là où on regarde son identité. */
+.profile-unfold {
+  width: 22px; height: 22px; padding: 0; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px;
+  border: 1px solid var(--line); border-radius: 2px; background: var(--surface); color: var(--ink); cursor: pointer;
 }
-.profile-head { display: flex; flex-direction: column; gap: 8px; }
+.profile-unfold:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+/* ---- profile ---- */
+/* RESSERRÉ, PARCE QUE LA PAGE SE PARCOURT. Un type d'un seul sujet et d'une seule image tenait un écran entier, presque vide (opérateur, 2026-08-05) : ce sont les marges
+   qui prenaient la place, pas le contenu. Rien n'est retiré, tout est simplement rapproché — la page se lit d'un coup d'œil au lieu de se dérouler. */
+.profile {
+  margin-top: 12px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 3px; padding: 11px 12px 12px;
+}
+.profile-head { display: flex; flex-direction: column; gap: 5px; }
 .profile-id { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .code {
   font-size: 13px; font-weight: 700; letter-spacing: 0.05em; padding: 2px 7px;
@@ -1785,8 +1894,8 @@ body {
 .missing-label { color: var(--warn); font-style: italic; font-weight: 600; }
 .profile h3 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.012em; }
 .specs {
-  display: flex; flex-wrap: wrap; gap: 6px 26px; margin: 4px 0 0;
-  padding: 11px 0 0; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 3px 0 0;
+  padding: 6px 0 0; border-top: 1px solid var(--line);
 }
 .specs div { display: flex; align-items: baseline; gap: 8px; }
 .specs dt { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
@@ -1799,21 +1908,30 @@ body {
 /* ---- variant slots: dense, because production will fill this page ---- */
 .slots {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
-  gap: 8px; list-style: none; margin: 14px 0 0; padding: 0;
+  gap: 6px; list-style: none; margin: 8px 0 0; padding: 0;
   /* A column never grows past what its picture needs: left free, four columns of a wide page stretched each slot far beyond its own content. */
   justify-content: start;
 }
+/* LA VIGNETTE NE PREND PAS UNE COLONNE À ELLE. Posée en flottant, elle laisse le titre venir à côté d'elle — l'alignement que l'opérateur veut garder — puis tout ce qui
+   suit reprend TOUTE la largeur sous elle. En colonne, elle réservait sa largeur sur toute la hauteur du bloc et repliait chaque libellé sur trois lignes contre un vide. */
 .slot {
-  display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 8px 9px;
+  display: block; min-width: 0; padding: 8px 9px;
   background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 3px;
 }
+.slot::after { content: ""; display: block; clear: both; }
+.slot > .slot-vis { float: left; margin: 0 8px 4px 0; }
 /* A footprint too wide for a column takes the whole row rather than being shrunk out of scale. */
 /* A wide subject takes two columns, not the whole row: at the scale this page draws, two of them sit side by side comfortably, and giving each a full row
    left most of it empty next to a picture that had stopped growing long before. It falls back to the whole row only when the grid itself has but one. */
-.slot--wide { grid-column: span 2; flex-direction: column; }
+.slot--wide { grid-column: span 2; }
+/* Une emprise large occupe déjà toute la largeur : sa vignette ne flotte pas, elle se pose au-dessus du texte comme avant. */
+.slot--wide > .slot-vis { float: none; margin: 0 0 6px; }
 @media (max-width: 640px) { .slot--wide { grid-column: 1 / -1; } }
 .slot-vis { flex: none; max-width: 100%; overflow-x: auto; display: flex; flex-wrap: wrap; gap: 6px; }
-.slot-body { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; }
+/* En bloc, et non en colonne flex : un enfant de flex ne coule pas autour d'un flottant, et la vignette redeviendrait une colonne. Les écarts entre lignes sont donc portés
+   par les lignes elles-mêmes. */
+.slot-body { min-width: 0; display: block; }
+.slot-body > * + * { margin-top: 3px; }
 .slot-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0; }
 /* An unshot variant is a magenta keying field the exact size of the ground it will cover. */
 .frame {
@@ -1904,18 +2022,23 @@ body {
   background: var(--key-field); border-color: var(--key-edge); color: var(--key); font-weight: 700;
 }
 .act input:focus-visible + span, .act-note:focus-visible { outline: 2px solid var(--key); outline-offset: 2px; }
-.act-note[aria-expanded="true"], .act-note[data-filled="true"] {
+/* DEUX ÉTATS, DEUX SIGNES, ET SURTOUT PAS LE MÊME. Rose plein : il y a un commentaire écrit là-dessous. Simple cadre marqué : le champ est ouvert, et c'est tout. Les deux
+   partageaient la même couleur, si bien qu'un champ vidé mais resté ouvert continuait d'annoncer un texte qui n'existait plus. */
+.act-note[data-filled="true"] {
   background: var(--key-field); border-color: var(--key-edge); color: var(--key);
 }
+.act-note[aria-expanded="true"][data-filled="false"] { border-color: var(--ink-faint); color: var(--ink); }
 /* Tools that live IN the encart, next to the report — never over the picture. */
 .encart-tools { display: flex; flex-wrap: wrap; gap: 4px; margin: 3px 0 0; }
-.slot-more { margin-top: 4px; }
 /* A comment is a real text area, not a one-line field: it grows with what is written, up to four
    lines, and scrolls past that (see growNote() — the ceiling is computed there from this very
    line-height, so changing it here is enough). resize is off because the height is driven by the
    content, and a dragged handle would fight it. */
+/* Le champ s'ouvre sur deux lignes, et il grandit avec ce qu'on y écrit jusqu'à quatre lignes, où il s'arrête et défile. Sa hauteur est
+   posée en JS (voir fitNote) parce qu'elle dépend du texte réellement replié, que le CSS ne connaît pas. Il ne se redimensionne pas à la main : sa hauteur dit ce qu'il
+   contient, et une poignée laisserait croire le contraire. */
 .note {
-  width: 100%; font-family: var(--mono); font-size: 11px; line-height: 1.45; padding: 4px 6px;
+  width: 100%; box-sizing: border-box; font-family: var(--mono); font-size: 11px; line-height: 1.45; padding: 4px 6px;
   border: 1px solid var(--line); border-radius: 2px; background: var(--surface); color: var(--ink);
   display: block; resize: none; overflow-y: auto;
 }
@@ -1953,6 +2076,11 @@ body {
 /* The shared popin's own body — the frame around it is the comparison popin's, reused rather than copied so the two can never drift apart in look. */
 .panel-body { padding: 14px 16px; overflow: auto; max-height: min(72vh, 900px); }
 .panel-facts { margin: 0; }
+/* Un critère tenu et un critère raté se distinguent à la couleur avant de se lire : c'est ce qui permet de voir en un coup d'œil ce qui cloche, sans parcourir la liste. */
+/* Écrit avec la même portée que `.specs dt`, qui grise tous les intitulés : sans ça la couleur du verdict était annulée par lui et la liste restait uniformément terne. */
+.specs dt.fact--met { color: var(--st-validated); }
+.specs dt.fact--failed { color: var(--st-fault); }
+.panel-facts dd { white-space: pre-line; }
 /* A consigne is shown exactly as it was sent: monospaced, its own line breaks kept, long lines wrapped rather than cut off out of sight. */
 .panel-text {
   margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.6; color: var(--ink);
@@ -1966,9 +2094,23 @@ body {
   font-family: var(--sans); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--key); border: 1px solid var(--key); border-radius: 2px; padding: 1px 5px;
 }
+/* Le bouton d'effacement se pose CONTRE le champ, à sa droite, et non dedans : il lui est rattaché sans lui prendre de place sur son texte. Une croix suffit à le dire ; une
+   flèche de retour la remplace quand le texte effacé est encore récupérable. */
+.slot-more { margin-top: 4px; display: flex; align-items: flex-start; gap: 4px; }
+.slot-more .note { flex: 1 1 auto; }
+.note-clear {
+  flex: 0 0 auto; width: 18px; height: 18px; padding: 0; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px;
+  border: 1px solid var(--line); border-radius: 2px; background: var(--surface); color: var(--ink-soft); cursor: pointer;
+}
+.note-clear:hover { color: var(--ink); border-color: var(--ink-faint); }
+.note-clear[hidden] { display: none; }
 .note::placeholder { color: var(--ink-faint); }
 .note:focus-visible { outline: 2px solid var(--key); outline-offset: 1px; }
-.slot[data-marked="true"], .trial[data-marked="true"] { border-color: var(--key-edge); }
+/* Une image sur laquelle un verdict est coché ne s'entoure plus de rose : le bouton coché le dit déjà, en couleur, à trois centimètres de là. Le cadre teinté ajoutait un
+   second signal pour le même fait, et laissait croire à un état particulier de l'image elle-même. */
+.trial[data-marked="true"] { border-color: var(--key-edge); }
 
 /* ---- judgement: score always visible, the criterion-by-criterion detail folds behind it ---- */
 .judge-pending { margin: 2px 0 0; font-size: 10.5px; color: var(--ink-faint); font-style: italic; }
@@ -1986,6 +2128,16 @@ body {
 
 /* A drawn icon keeps the exact size it declares and never inherits the line box of the text beside it — without this it sits low and looks clipped. */
 .judge-toggle svg { display: block; flex: 0 0 auto; }
+/* An icon button is exactly as wide as its icon: no word to make room for, so no room is made. The padding is even on all four sides, which is what makes it
+   read as a square control among the worded ones rather than as a button whose label failed to load. */
+.judge-toggle.icon-only { gap: 0; padding: 4px; width: fit-content; align-self: start; justify-self: start; }
+/* La pastille prend la couleur de son verdict, et rien de plus : une bordure et le chiffre. Pas de fond teinté, pas de mot — la page compte déjà assez de couleurs à elle. */
+.judge--met { border-color: var(--st-validated); }
+.judge--met .judge-score, .judge--met .judge-verdict { color: var(--st-validated); }
+.judge--warn { border-color: var(--warn); }
+.judge--warn .judge-score { color: var(--warn); }
+.judge--failed { border-color: var(--st-fault); }
+.judge--failed .judge-score { color: var(--st-fault); }
 .judge-score { font-weight: 700; font-variant-numeric: tabular-nums; }
 .judge-verdict { color: var(--ink-soft); }
 .judge-open-word { color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -2237,19 +2389,168 @@ SCRIPT = """
       persist();
       syncActs(id);
       render();
+      // TURNING AN IMAGE DOWN MEANS SAYING WHY. Ticking retry or drop opens the comment field and gives it the keyboard: without the reason, the next attempt starts blind,
+      // which is exactly what cost three tries on the fir. Validating opens nothing — an accepted image has nothing to justify.
+      if (box.checked && (act === "retry" || act === "drop")) {
+        var field = document.querySelector('.note[data-note="' + id + '"]');
+        var opener = document.querySelector('.act-note[data-open="' + id + '"]');
+        var holder = document.querySelector('[data-more="' + id + '"]');
+        if (field && holder) {
+          holder.hidden = false;
+          if (opener) { opener.setAttribute("aria-expanded", "true"); }
+          field.focus({preventScroll: true});
+        }
+      }
     });
   });
+
+  // A comment field is as tall as what it holds: one line to begin with, opening as you type up to FOUR lines, after which it scrolls. The height is measured here rather than
+  // set in CSS because it depends on the text once wrapped to the field's own width, which only layout knows. Resetting the height to "auto" before reading scrollHeight is
+  // what lets a field that has grown come back down when the text is deleted.
+  function fitNote(field) {
+    var style = window.getComputedStyle(field);
+    var line = parseFloat(style.lineHeight);
+    var edges = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+    var frame = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) + edges;
+    field.style.height = "auto";
+    // TWO LINES AT REST, FOUR AT MOST. Measured alone, a single line gives a slot too shallow to write in — it reads as a broken input rather than a field, and the first
+    // wrapped word is already hidden. Two lines is a field one can start writing in; four is where it stops growing and scrolls.
+    var floor = Math.round(line * 2 + frame);
+    var ceiling = Math.round(line * 4 + frame);
+    field.style.height = Math.max(floor, Math.min(field.scrollHeight + edges, ceiling)) + "px";
+  }
+
+  // RAP — REPRISE AU POINT. This page is republished while it is being read, and a republish reloads it: the text is kept, but the view jumps back to the top and the reader
+  // has to find their place again, mid-sentence. So the last place touched is written down with the moment it was touched, and a reload that happens soon after brings it
+  // back into view. Only soon after: a page opened an hour later must open at the top, on the whole state of the production, not on the last field of the last session.
+  // NEVER BY HEIGHT, ALWAYS BY ELEMENT. A scroll position in pixels is wrong the moment an image is added or removed above it — it lands somewhere else and reads as a bug.
+  // What is remembered is WHICH VARIANT was in front of the reader, and the page brings that variant back into view whatever moved around it.
+  var RECALL_EDIT_MS = 2000;    // after typing: a sentence is being carried on, so the window is short
+  var RECALL_VIEW_MS = 30000;   // after plain scrolling: one was reading, so the window is wider
+
+  var RECALL_KEY = "gatebeast-suivi-derniere-action";
+
+  // The browser restores its own position in pixels, which is precisely what must not happen here: it is taken away so that only the element marker remains.
+  if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+  }
+
+  function rememberPlace(id, kind) {
+    try {
+      window.localStorage.setItem(RECALL_KEY, JSON.stringify({id: id, at: Date.now(), kind: kind || "edit"}));
+    } catch (error) {
+      // An unavailable store costs nothing but this automatic return: none of what is typed depends on it.
+    }
+  }
+
+  // What is in front of the eyes: the first variant whose top edge shows in the window. It is the closest thing to what the reader would say themselves — "I was at that one"
+  // — and it depends on no height at all.
+  var watching = null;
+  window.addEventListener("scroll", function () {
+    if (watching) { return; }
+    watching = window.setTimeout(function () {
+      watching = null;
+      var slots = document.querySelectorAll("[data-id]");
+      for (var index = 0; index < slots.length; index++) {
+        var box = slots[index].getBoundingClientRect();
+        if (box.top >= 0 && box.top < window.innerHeight) {
+          rememberPlace(slots[index].getAttribute("data-id"), "view");
+          return;
+        }
+      }
+    }, 200);
+  }, {passive: true});
+
+  function returnToPlace() {
+    var kept = null;
+    try {
+      kept = JSON.parse(window.localStorage.getItem(RECALL_KEY));
+    } catch (error) {
+      return;
+    }
+    var window_ms = kept && kept.kind === "view" ? RECALL_VIEW_MS : RECALL_EDIT_MS;
+    if (!kept || !kept.id || Date.now() - kept.at > window_ms) {
+      return;
+    }
+    var field = document.querySelector('.note[data-note="' + kept.id + '"]');
+    var anchor = field || document.querySelector('[data-id="' + kept.id + '"]');
+    if (!anchor) {
+      return;
+    }
+    anchor.scrollIntoView({block: "center"});
+    if (field) {
+      // The field takes the keyboard back too, with the caret at the end of the text: the sentence carries on where it stopped, without one more click.
+      field.focus({preventScroll: true});
+      field.setSelectionRange(field.value.length, field.value.length);
+    }
+  }
 
   Array.prototype.forEach.call(document.querySelectorAll(".note"), function (field) {
     var id = field.getAttribute("data-note");
     var entry = entryFor(id);
     field.value = entry.note || "";
-    field.addEventListener("input", function () {
+    fitNote(field);
+
+    // CLEARING PUTS AWAY, IT DOES NOT DESTROY. A comment is cleared in one click, but the text stays within reach: the button turns into its restore wording and gives the
+    // text back exactly as it was, until something else is typed. Without that, clearing hand-typed lines is a move nobody dares make, and the field stays cluttered.
+    var clear = document.querySelector('.note-clear[data-clear="' + id + '"]');
+    var stashed = null;
+
+    function showClear() {
+      clear.hidden = !field.value.trim() && stashed === null;
+      clear.textContent = stashed === null ? "×" : "↺";
+      clear.title = stashed === null ? L.noteClear : L.noteRestore;
+    }
+
+    // ONE WAY ONLY to record what the field holds, whichever hand changed it — the keyboard or the clear button. Two parallel paths is how a marker stays lit on a field that
+    // has just been emptied, which is exactly what happened.
+    function applyNote() {
+      fitNote(field);
       entryFor(id).note = field.value;
       persist();
-      markNote(id);
       render();
+      markNote(id);
+      showClear();
+    }
+
+    clear.addEventListener("click", function () {
+      if (stashed === null) {
+        stashed = field.value;
+        field.value = "";
+      } else {
+        field.value = stashed;
+        stashed = null;
+      }
+      applyNote();
     });
+
+    field.addEventListener("focus", function () { fitNote(field); rememberPlace(id); });
+    field.addEventListener("input", function () {
+      rememberPlace(id);
+      stashed = null;
+      applyNote();
+    });
+    showClear();
+  });
+
+  // A settled sujet is folded away; this opens it back up, and folds it again. Nothing is lost either way — the fold is a tidy-up, never a closure.
+  Array.prototype.forEach.call(document.querySelectorAll(".profile-unfold"), function (button) {
+    button.addEventListener("click", function () {
+      var card = button.closest(".profile");
+      var folded = card.classList.toggle("profile--folded");
+      button.setAttribute("aria-expanded", folded ? "false" : "true");
+      // The chevron points at what is about to happen. It carries no wording to translate — what the button does is read from its tooltip.
+      button.querySelector(".unfold-word").textContent = folded ? "▾" : "▴";
+    });
+  });
+
+  // THREE TIMES, AND ALL THREE ARE NEEDED. The page embeds every one of its images: until they have their height, an element brought back into view ends up somewhere else
+  // as soon as those above it unfold. So the marker is honoured at once, then again once the images have loaded, then once more shortly after — the last two cost nothing
+  // when there is nothing left to correct, and without them the return kept missing its target.
+  returnToPlace();
+  window.addEventListener("load", function () {
+    returnToPlace();
+    window.setTimeout(returnToPlace, 250);
   });
 
   function announce(message, tone) {
@@ -2356,6 +2657,8 @@ SCRIPT = """
         var pair = document.createElement("div");
         var name = document.createElement("dt");
         name.textContent = row[0];
+        // A row may say whether it stands or fails; that is what colours it. Rows that say nothing stay neutral, which is every plain fact panel.
+        if (row[2]) { name.className = "fact--" + row[2]; }
         var value = document.createElement("dd");
         value.textContent = row[1];
         pair.appendChild(name);
@@ -2610,7 +2913,7 @@ SCRIPT = """
 })();
 """
 
-page = f"""<title>Suivi des sprites — maquette du parc</title>
+page = f"""<title>Suivi des sprites</title>
 <style>{STYLE}</style>
 <style>
 /* Each image's bytes appear exactly once in this page. The maquette-scale views and the full-size
@@ -2621,17 +2924,19 @@ page = f"""<title>Suivi des sprites — maquette du parc</title>
 </style>
 <main class="page">
   <header class="masthead">
-    <p class="eyebrow">GateBeast · maquette du parc · suivi de production</p>
-    <h1>Suivi des sprites de la maquette du parc</h1>
-    <p class="standfirst">Chaque type, chaque profil, chaque image attendue, une par une, avec son
-      adresse exacte et son état. Une case magenta est une image qui reste à tirer — le magenta est
-      la couleur que la chaîne détoure, donc ici le vide à combler.</p>
+    <p class="eyebrow">GateBeast · suivi de production</p>
+    <h1>Suivi des sprites</h1>
+    <p class="standfirst">Tous les sprites du projet, quel que soit ce pour quoi ils sont produits :
+      chaque type, chaque profil, chaque image attendue, une par une, avec son adresse exacte et son
+      état. La maquette du parc est la première à en consommer, d'autres suivront et viendront s'y
+      ajouter. Une case magenta est une image qui reste à tirer — le magenta est la couleur que la
+      chaîne détoure, donc ici le vide à combler.</p>
   </header>
 
   <section class="track" aria-labelledby="track-title">
     <div class="track-head">
       <h2 id="track-title">État de la production</h2>
-      <p class="track-total"><strong>{len(park_variants)}</strong> images à produire pour la maquette,
+      <p class="track-total"><strong>{len(park_variants)}</strong> images attendues,
         réparties sur {sujet_total} sujets</p>
     </div>
     <ul class="track-grid">

@@ -34,6 +34,7 @@ Usage:
   python3 check-asset.py --code CH-010 <path> force the referentiel's sujet instead of guessing it
 """
 import importlib.util
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -226,7 +227,7 @@ def _profile_of(code, sujet):
     return Profile(code, sujet["type"], sujet["emprise"], sujet.get("hauteur"))
 
 
-def report(path, profile):
+def report(path, profile, data):
     raw = Image.open(path)
     alpha = None
     if raw.mode in ("RGBA", "LA"):
@@ -246,10 +247,18 @@ def report(path, profile):
         print("  transparency AUCUN CANAL ALPHA — la consigne demande une image transparente")
         return
 
+    # THE SCORE IS THE REPORT'S OWN, and it replaces the judging agent that used to give one (operator, 2026-08-05): every criterion measured below adds a mark, passed or
+    # failed, and the tally closes the report. A measurement that is only printed is a measurement nobody acts on — it was written here, in full, while an image left the
+    # chain under-lit and nothing said a word. The score says in one line whether the image is worth looking at, before anyone opens it.
+    marks = []
+
     transparency = transparency_block(alpha)
     # A ground material fills its frame edge to edge: it is opaque everywhere, by design.
     verdict = ("plein cadre, matière de sol" if is_ground
                else "TRANSPARENTE" if transparency["transparent"] else "AUCUNE TRANSPARENCE")
+    marks.append(("transparency", is_ground or transparency["transparent"],
+                  f"{transparency['fully_transparent']:.1f} % de l'image entièrement transparente",
+                  "un fond transparent, sauf pour une matière de sol qui remplit son cadre"))
     print(f"  transparency {transparency['fully_transparent']:.1f} % fully transparent, "
           f"{transparency['partial']:.2f} % partial  ({verdict})")
 
@@ -282,6 +291,11 @@ def report(path, profile):
             else:
                 line += "  — the profile declares no height, so no comparison is possible"
             print(line)
+            if footprint.get("declared_ratio") is not None:
+                marks.append(("footprint", footprint["consistent"],
+                              f"proportion mesurée {footprint['measured_ratio']:.3f}, soit un écart de {100 * footprint['gap']:.0f} %",
+                              f"proportion {footprint['declared_ratio']:.3f}, d'après l'emprise déclarée "
+                              f"{footprint['declared']['columns']} × {footprint['declared']['rows']} cases"))
     else:
         tiling = tiling_block(rgb)
         print(f"  tiling       seam {tiling['vertical_seam']:.1f} vertical / "
@@ -289,15 +303,75 @@ def report(path, profile):
               f"{tiling['natural_columns']:.1f} / {tiling['natural_rows']:.1f}  "
               f"(x{tiling['vertical_ratio']:.2f} / x{tiling['horizontal_ratio']:.2f} — "
               f"{'JOINS EDGE TO EDGE' if tiling['joins'] else 'VISIBLE JOIN'})")
+        marks.append(("tiling", tiling["joins"],
+                      f"coutures ×{tiling['vertical_ratio']:.2f} verticale et ×{tiling['horizontal_ratio']:.2f} horizontale",
+                      "une couture qui ne dépasse pas la variation naturelle de la matière"))
         regular = regularity_block(rgb)
         print(f"  regularity   {regular['gap']:.1f} luminance points between quadrants  "
               f"({'regular' if regular['regular'] else 'IRREGULAR'})")
+        marks.append(("regularity", regular["regular"],
+                      f"{regular['gap']:.1f} points de luminance entre les quadrants",
+                      "des quadrants assez proches pour que la matière paraisse d'un seul tenant"))
 
     light = light_block(rgb, mask)
     if light:
         print(f"  light        luminance {light['luminance']:.1f} (band {LUMINANCE_MIN:.0f}-"
               f"{LUMINANCE_MAX:.0f}), dark share {light['dark']:.1f} % (ceiling {DARK_MAX:.0f} %)  "
               + ("WITHIN THE BAND" if light["within"] else "OUT OF BAND — " + ", ".join(light["gaps"])))
+        marks.append(("light", light["within"],
+                      f"luminance {light['luminance']:.1f}, part sombre {light['dark']:.1f} %",
+                      f"luminance entre {LUMINANCE_MIN:.0f} et {LUMINANCE_MAX:.0f}, part sombre au plus {DARK_MAX:.0f} %"))
+
+    # The tally, last line and the one anyone reads first. Each failed criterion is named, so the score never has to be traced back through the lines above it.
+    if marks:
+        passed = sum(1 for _, ok, *_ in marks if ok)
+        failed = [name for name, ok, *_ in marks if not ok]
+        print(f"  SCORE        {passed}/{len(marks)} criteria met"
+              + ("" if not failed else " — failed: " + ", ".join(failed)))
+        write_evaluation(path, profile, marks, passed, variant_ref(data, profile, path))
+
+
+# THE EVALUATION IS STORED, AND IT LIVES WITH THE REPORT (operator, 2026-08-05). The Markdown report is what a human reads; this JSON is the same verdict for a machine — a
+# page, a chain step, a later comparison. The two stay side by side under var/generations/ rather than one going to the catalogue: they are the two faces of one examination,
+# and separating them would let a report exist without its score, or a score without the reading that produced it.
+#
+# IDEMPOTENT BY CONSTRUCTION: the score is computed from the image and its profile alone, so re-examining a file already produced rewrites the same content. Nothing
+# accumulates, nothing drifts, and an evaluation lost with var/ is one command away from coming back.
+def variant_ref(data, profile, path):
+    """The ref of the variant this image belongs to, found by looking the image up in the referentiel — never rebuilt from the file name.
+
+    Without it an evaluation cannot be tied to anything: a subject alone has several variants, each with its own images, and a score that only says "BT-001" says nothing
+    about WHICH of them was examined. The ref is written down in the referentiel precisely so it is never recomposed, and it is read from there.
+    """
+    if profile is None:
+        return None
+    sujet = (data.get("sujets") or {}).get(profile.code) or {}
+    wanted = str(path.relative_to(ASSETS)) if path.is_relative_to(ASSETS) else path.name
+    for variant in sujet.get("variants", []):
+        for representation in variant.get("representations", []):
+            if representation.get("path") == wanted:
+                return variant.get("ref")
+
+    return None
+
+
+def write_evaluation(path, profile, marks, passed, ref):
+    for kind in ("sprites", "subjects"):
+        folder = REPOSITORY / "var" / "generations" / kind
+        if (folder / f"{path.stem}-rapport.md").is_file():
+            break
+    folder.mkdir(parents=True, exist_ok=True)
+    evaluation = {
+        "image": path.name,
+        "sujet": profile.code if profile else None,
+        "variant": ref,
+        "score": {"met": passed, "total": len(marks)},
+        # Chaque critère porte ce qui a été MESURÉ et ce qui était ATTENDU : un verdict sans ses deux nombres oblige à rouvrir l'image pour comprendre ce qui cloche.
+        "criteria": [{"name": name, "met": bool(ok), "mesure": measured, "attendu": expected}
+                     for name, ok, measured, expected in marks],
+    }
+    (folder / f"{path.stem}-evaluation.json").write_text(
+        json.dumps(evaluation, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 def main(arguments):
@@ -324,7 +398,7 @@ def main(arguments):
             print(f"ABSENT {path}")
             missing += 1
             continue
-        report(path, find_profile(data, path, forced))
+        report(path, find_profile(data, path, forced), data)
 
     print("\nNote — the footprint is confronted on the shape ratio, not on an absolute count of tiles. "
           "The world is seen under a 70° camera, which foreshortens the vertical; turning a horizontal "

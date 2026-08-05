@@ -59,6 +59,90 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **Toutes les versions sont gardées et versionnées ; la page n'en montre que trois** — la courante et les deux précédentes.
 
+## Relevé du propriétaire — 2026-08-05, second passage
+
+**Validées, cinq** : `TR-060` grand chêne, `BT-001` centre de soin en vue principale, `BT-002` maison de ferme en vue principale et ses propositions `p2` et `p3`.
+
+**À reprendre, six** : les trois portillons `OB-010` — est-ouest fermé, est-ouest ouvert, nord-sud fermé —, le sapin `TR-065`, le bosquet `TR-061`, l'herbe clairsemée `TR-064` en densité `dense`.
+
+| Sujet | Ce que dit l'opérateur | Ce que j'en fais |
+|---|---|---|
+| `OB-010` est-ouest, fermé et ouvert | « Y'a pas d'herbe en bas des poteaux mais sinon ok » | Clair : ajouter l'herbe au pied des poteaux, ne toucher à rien d'autre. |
+| `OB-010` nord-sud fermé | « Il est raté » | **Zone d'ombre** : rien ne dit sur quel point. À demander avant de relancer. |
+| `TR-063` pommier | « 4 pommes max sur ce variant » | Clair : la fiche disait « une dizaine tout au plus », elle dira quatre au plus. |
+| `TR-065` sapin | « Ce n'est toujours pas ce que j'ai demandé, si tu ne comprends pas, demande-moi. Je t'ai donné les exemples. » | **Zone d'ombre, et c'est la troisième tentative** : à demander plutôt qu'à retenter à l'aveugle. |
+| `TR-061` bosquet | Premier passage : « il faut des buissons qui correspondent à ce qu'on voit en forêt, n'invente pas une masse […] des fougères et/ou des ronces ». Après la reprise : **« Un peu trop dense, pas assez inquiétant encore »** | La fiche a gagné ses fougères et ses ronces ; il reste à **desserrer** le sous-bois et à **accentuer l'inquiétant** — l'un ne vient pas de l'autre, c'est un sous-bois plus ouvert mais plus sombre qu'il faut. |
+| `TR-062` herbe haute | « Bien mais propose 2 autres herbes hautes (nouveaux sujets) » | Clair : deux sujets à créer à l'inventaire, puis à produire. |
+| `TR-064` herbe clairsemée | « En fait, variante avec x4 herbes ! » | Clair : une variante à quatre touffes. |
+| `BT-001` centre de soin | « Il est très bien mais je veux que tu fasses des variants juste pour avoir 3-4 propositions. Donc une qui revient aux couleurs de la version précédente » (réf. `assets/revue-da/da-b4-r15-scene.png`) | Fait : `p2` et `p3` produites ; reste à trancher entre elles. |
+
+## Relevé sur le plan du parc — 2026-08-05, second passage
+
+| Case | Ce que dit l'opérateur | Ce que j'en fais |
+|---|---|---|
+| (25,1) | « Ajouter un bosquet ici » | Un bosquet de sapins de plus dans la ligne du fond. |
+| (35,11) à (64,7) | Le cours d'eau continue : points 4 à 11 — (35,11), (40,11), (40,10), (45,10), (45,9), (55,9), (55,7), (64,7). « Cette barrière et celles au-dessus sautent » | Prolonger le tracé point par point jusqu'au bord est, et **supprimer les barrières que le cours d'eau traverse ainsi que celles au-dessus**. |
+| (56,35) | « Y'a une bande hor de vide à compléter par ici » | Une bande nue à combler — semis d'herbe comme le reste du parc. |
+| (24,46) | « Ajouter pommier ici » | Un pommier de plus. |
+| (28,7) | « J'ai dit de l'herbe autour du cours d'eau mais 2 cases pleines, ça fait beaucoup, faut garder un peu d'aléatoire. Par contre, un peu plus d'herbe haute par occasion » | Les berges se desserrent : plus de bande continue de deux cases, un tirage aléatoire — et **plus d'herbe haute** dans ce qui reste. |
+| (21,45) | « La zone d'herbes hautes est coupée par la barrière, c'est ok mais en dessous de la barrière, il faut enlever cette partie de zone d'herbes hautes et revenir à un pattern normal » | Sous la barrière, la nappe cesse : on revient au semis ordinaire. |
+
+## Fait le 2026-08-05, en fin de séance
+
+**La maquette du parc est montée** : `artefacts/parc/monter.php` lit le plan, demande au référentiel l'image courante de chaque sujet **selon la forme que la case déclare**, et pose tout à l'échelle du monde. Le sol de la cellule par défaut est carrelé sur toute la scène. Trois boutons font varier la case entre 24, 32 et 48 pixels — le zoom ne change que cette valeur, jamais les images. L'outil de revue y est le même que sur le plan, dupliqué et adapté puisque la scène est posée en pixels et non dans un repère SVG ; **les deux doivent converger un jour**.
+
+**Les calques existent** : un plan accepte désormais deux sujets sur une même case tant que l'un des deux se pose **à plat** — sol, chemin, herbe, cours d'eau. Deux sujets qui se dressent restent refusés. C'est ce qui permet à un chemin de passer sous un bâtiment et d'atteindre une porte qui ne tombe jamais sur le bord bas de sa sprite.
+
+**Le contrôle des couverts est écrit** : `scripts/check-plan-couverts.php`, indépendant, lancé à la main après un nouveau plan ou une grosse modification, et **il ne bloque rien**. Il nomme le type de chacun des deux sujets en cause, ce qui permet de juger si le constat est réel — c'est ce qui manquait quand il a fait déplacer une rivière pour préserver un chêne.
+
+**Le sapin et le pommier** ont vu leurs fiches corrigées en profondeur ; le chemin aussi, sa couleur passant du sable doré à un **ocre brun terreux** — la fiche disait terre battue et décrivait du sable.
+
+## La pile — ce qui reste à faire, dans l'ordre où je le dépile
+
+**C'est ici que tout entre.** Une demande de l'opérateur, un défaut que je constate, une remarque en passant : rien ne reste dans la conversation. Le contexte se résume et se perd ; cette liste, non. Tant qu'une ligne est ici, elle est due.
+
+**Une capture d'écran s'écrit avant d'être traitée, toujours** : ce que j'y vois est noté en toutes lettres, même si l'image parle d'elle-même — une image ne survit pas au résumé du contexte, sa description si. Et **quand ce qu'elle montre ne suffit pas à savoir quoi faire, je le dis dans la ligne** : j'écris ce que je vois, puis mon appréciation et ce qui me manque pour agir. C'est à l'opérateur de trancher, pas à moi de deviner — mais c'est à moi de repérer le manque et de le nommer, plutôt que de partir sur une hypothèse et de produire à côté.
+
+### Production
+
+1. **Les quatre arbres relancés le 2026-08-05**, à juger : `TR-060` chêne `v5`, `TR-063` pommier `v6`, `TR-065` sapin `v8`, `TR-061` bosquet `v7`. Tous produits avec la planche de campagne en référence.
+2. **`BT-002` maison de ferme `p3`** — trois tentatives, trois fois la même silhouette. La référence de scène impose son pignon ; à relancer sans elle.
+3. **`BT-001` centre de soin** — `p2` et `p3` sortis face à la caméra ; reste à trancher la palette, `p3` étant sortie verte alors que sa fiche demande une palette chaude.
+4. **`OB-010` portillons** — « pas d'herbe en bas des poteaux mais sinon ok » : l'herbe au pied manque, le reste est bon.
+5. **`TR-062` herbe haute** — deux nouveaux sujets d'herbe haute à créer à l'inventaire, puis à produire.
+6. **`TR-064` herbe clairsemée** — une variante à quatre herbes est demandée.
+7. **`CH-019` chemin** — couleur encore trop jaune ; sa fiche dit « terre battue » et décrit du sable clair, à trancher.
+8. **`CH-020` cours d'eau** — angle de caméra à reprendre, fiche pas encore revue.
+
+### Page des sprites — défauts en attente
+
+**Capture du 2026-08-05** : sur une image commentée, la barre d'actions ne montre que « À reprendre », « Écarter » et « + ». **Le bouton de validation a disparu.** L'opérateur : « je ne peux pas valider un variant quand j'ai fait une remarque dessus, peut-être que la condition est autre, mais le bouton ne doit jamais être bloqué ». Les actions offertes dépendent aujourd'hui de l'état courant — l'image est à reprendre, donc la validation n'est pas proposée. À corriger : **toutes les actions restent toujours offertes**, l'opérateur change d'avis quand il veut.
+
+**Capture du 2026-08-05, second point** : le bouton « + » qui déplie le commentaire reste rose une fois replié, ce qui signale bien qu'un texte est écrit dessous — mais **rien ne permet d'effacer ce texte d'un clic**. L'opérateur veut une solution **sans perte** : effacer doit rester rattrapable, pas détruire ce qu'il vient d'écrire.
+
+**Le plan d'usage du chemin sort à plat, et on sait enfin pourquoi** (échange de l'opérateur avec l'agent générateur, 2026-08-05). Deux causes, toutes deux dans la fiche :
+
+1. **La fiche dit « une bande de terre battue » là où le sujet est un CHEMIN de terre battue.** Le générateur dessine ce qu'on nomme : on lui demande une bande, il rend une bande — « on obtient une brioche au lieu d'un chemin » (opérateur). Le nom du sujet ne se paraphrase pas.
+2. **Deux clauses contredisent frontalement la caméra** : « ABSOLUMENT PLATE […] aucune épaisseur, aucune tranche visible » et « aucune perspective, aucun point de fuite, aucun rétrécissement des rangées du fond ». Le générateur les a lues comme une commande de vue orthographique verticale, et a aplati la matière au lieu de garder la projection à 70°. Il l'a dit lui-même. L'intention de ces clauses reste juste — un chemin n'est pas un objet posé en relief — mais elle doit s'écrire sans nier l'angle de prise de vue.
+
+**Capture du 2026-08-05, la page prend trop de place.** Un type entier — « Sol », un seul sujet, une seule image validée — occupe la hauteur d'un écran : titre du type, carte du sujet, emprise et couvert, la variante, son état écrit deux fois, ses boutons. **Deux demandes de l'opérateur :** un sujet dont tout est validé doit se réduire à une vignette dans une **grille compacte de sujets** ; et même déplié, l'ensemble doit tenir dans beaucoup moins de hauteur.
+
+**L'écart entre l'entrée d'un bâtiment et le bas de sa sprite — vaut pour TOUS les bâtiments** (opérateur, 2026-08-05, capture du centre de soin). La porte ne tombe pas sur le bord bas de l'image : le porche, les massifs et le socle descendent en dessous d'elle. Un chemin posé au ras de la sprite s'arrête donc à une ou deux cases de la porte, et rien ne les relie.
+
+**Solution retenue par l'opérateur** : autoriser des cases de chemin **sous le bâtiment**. Le sol se dessine d'abord, le bâtiment se pose par-dessus, et le chemin peut alors remonter jusqu'à la porte quelle que soit la hauteur à laquelle elle se trouve dans l'image.
+
+**Ce que ça implique, et qui n'existe pas encore** : un plan refuse aujourd'hui deux sujets sur une même case — c'est même son seul contrôle d'occupation. Il faudra que la déclaration porte des **calques** : une case peut avoir un sol ET un volume posé dessus. Le rendu en calques est déjà la façon dont le jeu affiche la carte, donc la conception ne s'y oppose pas ; c'est le format du plan qui est à étendre. **Rien n'est engagé là-dessus.**
+
+### Outillage
+
+9. **Le score n'est pas encore relié à un verdict** : il mesure, il s'affiche, mais rien n'en découle automatiquement.
+10. **L'évaluation ne couvre que ce qui se compte** — fond, emprise, lumière, raccord, régularité. Ce qui relève du jugement reste à l'œil de l'opérateur depuis que l'agent qui jugeait a été débranché.
+11. **`scripts/check-asset-prompt.py` est en panne** : il s'arrête sur un fichier absent. À remettre en marche.
+
+### Défauts de la page des sprites, signalés et corrigés le 2026-08-05
+
+Le bouton d'information sans son mot, le champ de commentaire qui s'ouvre sur deux lignes et grandit jusqu'à quatre, le score revenu à sa source, la pastille réduite à deux mots, le détail des critères passé en popin avec mesure et attendu. **Tous corrigés et publiés.**
+
 ## Registre des sujets
 
 **Le suivi guide, il ne fait pas foi : la vérité est sur le disque** (opérateur, 2026-08-05). Tout sujet donné par l'opérateur entre ici avec son numéro, sa référence, son titre et son statut ; le registre se met à jour à chaque échange.
@@ -117,6 +201,32 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 | `TR-065` sapin | **génération perdue** | l'image est bien sortie, l'export l'a refusée — voir « Deux défauts constatés le 2026-08-05 » |
 | `BT-001` centre de soin | proposition `p2` produite le 2026-08-05, inscrite | en attente de verdict |
 | `BT-002` maison de ferme | proposition `p2` produite le 2026-08-05, inscrite | en attente de verdict |
+
+## Relevé du propriétaire du 2026-08-05 — verdicts et commentaires, rien n'est encore engagé
+
+**Un défaut de la page est signalé au passage, et il est bloquant** : sur `BT-002` variant `p2`, l'opérateur ne peut plus valider l'image. À reproduire et à corriger avant tout autre travail sur cette page.
+
+**À produire** — `BT-001` proposition `p3`, `BT-002` proposition `p3`. **Validée** — `BT-002` proposition `p2`.
+
+**À reprendre**, neuf : les deux portillons est-ouest de `OB-010` (ouvert et fermé), le grand chêne `TR-060`, le pommier `TR-063`, le sapin `TR-065`, le bosquet `TR-061`, l'herbe clairsemée `TR-064` en densité `dense`, le centre de soin `BT-001` en version principale et en proposition `p2`.
+
+Les commentaires, sujet par sujet, tels que donnés :
+
+| Sujet | Ce que dit l'opérateur |
+|---|---|
+| `OB-010` portillons fermé et ouvert | « Y'a pas d'herbe en bas des poteaux mais sinon ok » — le reste est bon, seule l'herbe au pied manque. |
+| `TR-060` grand chêne | « Il doit être grand, faut augmenter son couvert ! » |
+| `TR-063` pommier | « Tu as perdu la notion du nombre de pommes, on avait dit quelques pommes […] Une consigne ne doit pas annuler une autre ! » — régression déjà constatée, la règle est écrite à la conception des assets. |
+| `TR-065` sapin | « Ma demande n'a pas été respectée ! J'ai demandé un arbre COMME celui de `assets/revue-da/planche-p1-campagne-v8.png` (en haut à gauche) » — un aperçu avait été fourni pour s'en inspirer. |
+| `TR-061` bosquet | « ça a régressé, c'est moins bien qu'avant. Ma demande n'a pas été respectée !! » |
+| `TR-062` herbe haute | « Bien mais propose 2 autres herbes hautes (nouveaux sujets) » — deux sujets à créer à l'inventaire. |
+| `TR-064` herbe clairsemée | « En fait, variante avec x4 herbes ! » |
+| `BT-001` centre de soin | « Il est très bien mais je veux que tu fasses des variants juste pour avoir 3-4 propositions. Donc une qui revient aux couleurs de la version précédente » (réf. `assets/revue-da/da-b4-r15-scene.png`). |
+| `BT-001` proposition `p2` | « L'orientation est mauvaise mais le style est bon. » |
+| `BT-001` proposition `p3` | « Le centre de soin doit faire face à la caméra, adapte la description. Le style doit se rapprocher de `cutout/batiment/BT-001-v2.png` mais avec les mêmes contraintes de toiture que les autres. » |
+| `BT-002` maison de ferme | « Elle est très bien mais je veux que tu fasses des variants juste pour avoir 3-4 propositions. Donc une qui revient aux couleurs de la version réf. DA `assets/revue-da/da-b4-r15-scene.png` » + **le défaut de validation ci-dessus**. |
+| `BT-002` proposition `p2` | « Bien mais en terme de forme, c'est trop proche de la première. » |
+| `BT-002` proposition `p3` | « proposer une autre forme ! » |
 
 ## Deux défauts constatés le 2026-08-05, aucun correctif appliqué
 

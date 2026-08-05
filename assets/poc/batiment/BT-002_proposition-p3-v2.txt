@@ -1,0 +1,70 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — maison de ferme, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES : l'image fait 5 case(s) de large — c'est contractuel. Sa hauteur
+suit ce que le sujet occupe réellement une fois la caméra appliquée : un sujet qui a de l'épaisseur ou
+qui se dresse monte librement au-dessus de son emprise, et l'image le suit.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus :
+aucun décor, aucun sol, aucune herbe, aucun accessoire, aucun autre être vivant, aucun cadre, aucune
+bordure, aucun texte.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+
+
+LE SUJET EST SEUL DANS SA CASE : il ne rejoint aucun bord, rien ne se prolonge hors de lui, et il ne s'assemble avec rien.
+
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/revue-da/planche-p1-campagne-v8.png. C'est une scène du
+monde, déjà validée, où maison de ferme apparaît PARMI D'AUTRES éléments — pas une image de ce seul sujet.
+Elle donne le style, la matière, la lumière ET L'ANGLE DE PRISE DE VUE à reprendre pour CE SUJET
+précis, repéré dans l'image ; le reste de la scène ne se copie pas et n'apparaît pas dans le résultat.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et 96 PIXELS
+dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
+cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
+l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+BT-002 : Une petite maison de ferme vue de dessus, en profondeur, son corps aux murs crépis clairs sous une ossature de bois apparente, coiffé d'un toit à deux pans de tuiles orange qui occupe l'essentiel de ce qu'on voit ; le pignon, tourné vers le sud, porte une petite ouverture triangulaire près du faîte et une cheminée de pierre grise perçant le toit sur un côté ; en façade, une porte de bois en plein cintre encadrée de pierre, de petites fenêtres à volets de bois avec un bac fleuri sous l'une d'elles, et un appentis bas accolé sur un flanc, sous son propre pan de toit, abritant un tonneau et une réserve de bois ; au-delà de cette façade, le corps du bâtiment et sa toiture s'étirent vers le nord sur toute la profondeur de l'emprise.
+
+
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à environ SOIXANTE-DIX DEGRÉS sous l'horizontale. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

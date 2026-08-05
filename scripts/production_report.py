@@ -27,6 +27,7 @@ INTENTION
 """
 from __future__ import annotations
 
+import json
 import subprocess
 import time
 from contextlib import contextmanager
@@ -118,6 +119,30 @@ class Run:
                               cwd=REPO.parent, capture_output=True, text=True)
         return (done.stdout or "").strip() or (done.stderr or "").strip() or "aucune mesure rendue"
 
+    # Les libellés des critères, en français et pour l'opérateur : l'outil de mesure les nomme en anglais parce qu'il est du code, le rapport se lit.
+    CRITERIA = {"transparency": "Fond transparent", "footprint": "Emprise au sol", "light": "Lumière dans la bande",
+                "tiling": "Raccord bord à bord", "regularity": "Régularité de la matière"}
+
+    def evaluation(self, image: Path) -> list:
+        """The stored evaluation, rendered as a Markdown table — read from the file the measuring tool has just written, never recomputed here.
+
+        Its absence is said out loud rather than passed over: an image whose evaluation is missing has not been examined, and a report that stayed silent about it would let
+        it pass for examined and found good.
+        """
+        stored = self.traces / f"{image.stem}-evaluation.json"
+        if not stored.is_file():
+            return ["", "**Aucune évaluation** — l'outil de mesure n'en a pas produit pour cette image."]
+
+        evaluation = json.loads(stored.read_text(encoding="utf-8"))
+        score = evaluation["score"]
+        lines = ["", f"**Score : {score['met']} / {score['total']} critères tenus** — évaluation stockée dans `{stored.relative_to(REPO)}`", "",
+                 "| Critère | Verdict |", "|---|---|"]
+        for criterion in evaluation["criteria"]:
+            name = self.CRITERIA.get(criterion["name"], criterion["name"])
+            lines.append(f"| {name} | {'tenu' if criterion['met'] else '**ÉCHEC**'} |")
+
+        return lines
+
     def write(self, image: Path, prompt: str, extras: dict | None = None) -> Path:
         """Write the report beside the image and return its path.
 
@@ -150,7 +175,11 @@ class Run:
             if text:
                 lines += ["", f"## {title}", "", text.strip()]
 
-        lines += ["", "## Mesures de l'image", "", "```", self.measures(image), "```",
+        # L'évaluation d'abord, les mesures ensuite : le score dit en une ligne si l'image vaut qu'on l'ouvre, et le détail chiffré ne se lit qu'après, quand on veut savoir
+        # POURQUOI. Le tableau est en Markdown parce qu'un rapport se lit, se cite et s'affiche dans une page — le bloc de mesures, lui, reste tel que l'outil l'a rendu.
+        measured = self.measures(image)
+        lines += ["", "## Évaluation"] + self.evaluation(image)
+        lines += ["", "## Mesures de l'image", "", "```", measured, "```",
                   "", "## Consigne envoyée", "", "```", prompt.strip(), "```", ""]
 
         report = self.traces / f"{image.stem}-rapport.md"

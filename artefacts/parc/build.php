@@ -108,11 +108,14 @@ foreach ($declarations as $file) {
   <div class="barre">
     <p class="mode">Clique une case du plan pour lui attacher une remarque. Les cases commentées se marquent en rouge.</p>
     <button type="button" class="taille">Taille réelle</button>
+    <?php // Le récapitulatif se copie AUSSI d'ici, en tête du plan : la page vit dans un cadre qui ne défile pas de lui-même, donc un bouton posé tout en bas se cherche. ?>
+    <button type="button" class="copier">Copier le récapitulatif</button>
   </div>
 
   <div class="zone">
     <div class="dessin" data-cle="<?= $key ?>" data-colonnes="<?= $columns ?>" data-lignes="<?= $rows ?>"
          data-cote="<?= $side ?>" data-haut="<?= $topOffset ?>" data-defaut="<?= escape(label($plan['default_cell'])) ?>"
+         data-resolus="<?= escape(json_encode($plan['resolved'] ?? [], JSON_UNESCAPED_UNICODE)) ?>"
          data-cases="<?= escape(json_encode($occupancy, JSON_UNESCAPED_UNICODE)) ?>"
          data-noms="<?= escape(json_encode(LABELS, JSON_UNESCAPED_UNICODE)) ?>"><?= $svg ?></div>
 
@@ -123,6 +126,8 @@ foreach ($declarations as $file) {
       <textarea rows="3" placeholder="Ce qui devrait changer ici."></textarea>
       <div class="saisie-boutons">
         <button type="button" class="poser">Attacher la remarque</button>
+        <button type="button" class="supprimer" hidden>Supprimer</button>
+        <button type="button" class="rouvrir" hidden>Rouvrir</button>
         <button type="button" class="annuler">Annuler</button>
       </div>
     </div>
@@ -299,6 +304,9 @@ $page = <<<HTML
   }
   .remarques li .quoi { flex: 1 1 auto; }
   .remarques .ou { font-family: var(--mono); font-size: .78rem; color: var(--marque); font-variant-numeric: tabular-nums; }
+  /* Une remarque réglée reste dans la liste, en retrait : elle témoigne de ce qui a été fait sans réclamer l'attention de ce qui attend encore. */
+  .remarques li.remarque--reglee { opacity: .5; }
+  .remarques li.remarque--reglee .ou { color: var(--muted); }
   .remarques li button { padding: .15rem .6rem; font-size: .8rem; }
 
   footer { color: var(--muted); font-size: .9rem; max-width: 64ch; }
@@ -330,6 +338,8 @@ document.querySelectorAll('.plan').forEach(function (section) {
   var saisie = section.querySelector('.saisie');
   var saisieOu = section.querySelector('.saisie-ou');
   var saisieTexte = section.querySelector('textarea');
+  var supprimer = section.querySelector('.supprimer');
+  var rouvrir = section.querySelector('.rouvrir');
   var liste = section.querySelector('.remarques ul');
   var vide = section.querySelector('.remarques-vides');
   var copier = section.querySelector('.copier');
@@ -346,6 +356,26 @@ document.querySelectorAll('.plan').forEach(function (section) {
   var defaut = dessin.dataset.defaut;
   var remarques = [];
   var vise = null;
+
+  /* UNE REMARQUE TRAITÉE SE RANGE, ELLE NE DISPARAÎT PAS. Le plan publié porte la liste des cases dont je me suis occupé ; la page les marque résolues : leur croix passe au
+     gris pâle sur le dessin, elles sortent du récapitulatif, et le texte reste consultable d'un clic. L'opérateur peut en rouvrir une : elle redevient active chez lui, et
+     ce choix ne vit que dans son navigateur — moi je ne sais que ce que le plan déclare. */
+  var traitees = {};
+  JSON.parse(dessin.dataset.resolus || '[]').forEach(function (cle) { traitees[cle] = true; });
+
+  var MEMOIRE_ROUVERTES = memoire + '-rouvertes';
+  var rouvertes = {};
+  try {
+    rouvertes = JSON.parse(localStorage.getItem(MEMOIRE_ROUVERTES)) || {};
+  } catch (erreur) {
+    rouvertes = {};
+  }
+
+  function resolue(remarque) {
+    var cle = remarque.colonne + ',' + remarque.ligne;
+
+    return Boolean(traitees[cle]) && !rouvertes[cle];
+  }
 
   /* La case sous un point de l'écran, dans le repère du dessin : le dessin est affiché à la largeur que la page lui laisse, donc tout passe par son échelle du moment. Rend
      null hors de la grille — les marges, le titre et les notes ne sont pas des cases. */
@@ -391,10 +421,12 @@ document.querySelectorAll('.plan').forEach(function (section) {
       carre.setAttribute('y', (remarque.ligne - 1) * cote + haut);
       carre.setAttribute('width', cote);
       carre.setAttribute('height', cote);
-      carre.setAttribute('fill', '#c2410c');
-      carre.setAttribute('fill-opacity', '0.4');
-      carre.setAttribute('stroke', '#c2410c');
-      carre.setAttribute('stroke-width', Math.max(1, cote * 0.15));
+      // Une remarque traitée reste visible, mais discrète : gris pâle et trait fin, elle ne réclame plus l'œil comme celles qui attendent encore.
+      var reglee = resolue(remarque);
+      carre.setAttribute('fill', reglee ? '#8a8f88' : '#c2410c');
+      carre.setAttribute('fill-opacity', reglee ? '0.15' : '0.4');
+      carre.setAttribute('stroke', reglee ? '#8a8f88' : '#c2410c');
+      carre.setAttribute('stroke-width', Math.max(1, cote * (reglee ? 0.06 : 0.15)));
       carre.setAttribute('data-marque', '1');
       svg.appendChild(carre);
     });
@@ -411,6 +443,9 @@ document.querySelectorAll('.plan').forEach(function (section) {
       var quoi = document.createElement('span');
       quoi.className = 'quoi';
       quoi.textContent = remarque.texte;
+      if (resolue(remarque)) {
+        ligne.className = 'remarque--reglee';
+      }
       var retirer = document.createElement('button');
       retirer.type = 'button';
       retirer.textContent = 'Retirer';
@@ -425,8 +460,10 @@ document.querySelectorAll('.plan').forEach(function (section) {
       ligne.appendChild(retirer);
       liste.appendChild(ligne);
     });
-    copier.disabled = remarques.length === 0;
-    effacer.disabled = remarques.length === 0;
+    // Les deux commandes restent OFFERTES, même sans remarque : un bouton qui apparaît et disparaît selon l'état oblige à deviner s'il existe, et l'opérateur a constaté
+    // l'écart avec la page des sprites, où ils sont toujours là. Copier un récapitulatif vide ne coûte rien ; ne pas trouver le bouton, si.
+    copier.disabled = false;
+    effacer.disabled = false;
   }
 
   dessin.addEventListener('mousemove', function (evenement) {
@@ -455,7 +492,16 @@ document.querySelectorAll('.plan').forEach(function (section) {
     var ligne = ou.ligne;
     vise = ou;
     saisieOu.textContent = 'Case (' + colonne + ',' + ligne + ') — ' + nature(ou);
-    saisieTexte.value = '';
+    // Une case déjà commentée rouvre SA remarque, pour la corriger ou la compléter : un champ vide inviterait à la réécrire, et on se retrouverait avec deux avis sur la
+    // même case sans savoir lequel est le bon.
+    var deja = remarques.filter(function (remarque) {
+      return remarque.colonne === colonne && remarque.ligne === ligne;
+    })[0];
+    saisieTexte.value = deja ? deja.texte : '';
+    // Le bouton de suppression n'apparaît que là où il y a quelque chose à supprimer : sur une case vierge il ne voudrait rien dire.
+    supprimer.hidden = !deja;
+    // Une remarque réglée se rouvre d'un clic : elle redevient active, ressort au récapitulatif, et sa marque reprend sa couleur.
+    rouvrir.hidden = !(deja && resolue(deja));
     saisie.hidden = false;
 
     // La carte s'ouvre à l'endroit cliqué, puis se rabat dans la zone si elle en sortirait : une saisie qui déborde du plan est une saisie qu'on va chercher au lieu de la lire.
@@ -473,7 +519,40 @@ document.querySelectorAll('.plan').forEach(function (section) {
     if (!vise || !texte) {
       return;
     }
+    // Une case ne porte qu'une remarque : celle qu'on vient d'écrire remplace la précédente au lieu de s'ajouter à côté d'elle.
+    remarques = remarques.filter(function (remarque) {
+      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
+    });
     remarques.push({colonne: vise.colonne, ligne: vise.ligne, texte: texte});
+    retenir();
+    saisie.hidden = true;
+    vise = null;
+    marquer();
+    afficher();
+  });
+
+  rouvrir.addEventListener('click', function () {
+    if (!vise) {
+      return;
+    }
+    rouvertes[vise.colonne + ',' + vise.ligne] = true;
+    try {
+      localStorage.setItem(MEMOIRE_ROUVERTES, JSON.stringify(rouvertes));
+    } catch (erreur) {
+      // Sans mémoire, la réouverture ne survit pas au rechargement : le texte, lui, n'est jamais en jeu.
+    }
+    rouvrir.hidden = true;
+    marquer();
+    afficher();
+  });
+
+  supprimer.addEventListener('click', function () {
+    if (!vise) {
+      return;
+    }
+    remarques = remarques.filter(function (remarque) {
+      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
+    });
     retenir();
     saisie.hidden = true;
     vise = null;
@@ -493,19 +572,41 @@ document.querySelectorAll('.plan').forEach(function (section) {
   });
 
   copier.addEventListener('click', function () {
-    var texte = titre + '\n' + remarques.map(function (remarque) {
+    // Le récapitulatif ne porte QUE ce qui attend encore : renvoyer une remarque déjà traitée la ferait refaire.
+    var vivantes = remarques.filter(function (remarque) { return !resolue(remarque); });
+    var texte = titre + '\n' + (vivantes.length ? vivantes.map(function (remarque) {
       return '(' + remarque.colonne + ',' + remarque.ligne + ') : ' + remarque.texte;
-    }).join('\n');
-    navigator.clipboard.writeText(texte).then(function () {
+    }).join('\n') : 'Aucune remarque.');
+    // LA COPIE PASSE PAR UN CHAMP CACHÉ, comme sur la page des sprites où elle a toujours fonctionné. L'appel direct au presse-papiers est refusé dans le cadre où vit cet
+    // artefact : il échoue sans rien dire, et le bouton paraît cassé. Sélectionner le texte dans un champ et le copier marche partout.
+    var holder = document.createElement('textarea');
+    holder.value = texte;
+    holder.setAttribute('readonly', 'readonly');
+    holder.style.position = 'fixed';
+    holder.style.opacity = '0';
+    document.body.appendChild(holder);
+    holder.select();
+    var done = false;
+    try {
+      done = document.execCommand('copy');
+    } catch (erreur) {
+      done = false;
+    }
+    document.body.removeChild(holder);
+
+    if (done) {
       copier.textContent = 'Copié';
       setTimeout(function () { copier.textContent = 'Copier le récapitulatif'; }, 1600);
-    }, function () {
-      // Le presse-papiers peut être refusé : la sélection reste alors le moyen sûr, et elle est faite pour l'opérateur plutôt que laissée à sa charge.
-      saisieOu.textContent = 'Récapitulatif — à copier à la main';
-      saisieTexte.value = texte;
-      saisie.hidden = false;
-      saisieTexte.select();
-    });
+      return;
+    }
+    // Rien n'a pu être copié : le texte est mis sous les yeux et déjà sélectionné, plutôt que laissé à reconstituer.
+    saisieOu.textContent = 'Récapitulatif — à copier à la main';
+    saisieTexte.value = texte;
+    saisie.hidden = false;
+    supprimer.hidden = true;
+    saisie.style.left = '8px';
+    saisie.style.top = '8px';
+    saisieTexte.select();
   });
 
   effacer.addEventListener('click', function () {
