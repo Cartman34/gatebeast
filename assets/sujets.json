@@ -2308,6 +2308,84 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/vegetation/TR-064_densite-dense-v4.png",
+              "maitre": "poc/vegetation/TR-064_densite-dense-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 9,
+                  "top": 4,
+                  "right": 85,
+                  "bottom": 89,
+                  "width": 77,
+                  "height": 86
+                },
+                "contact_px": {
+                  "left": 26,
+                  "right": 71,
+                  "width": 46
+                },
+                "anchor_px": {
+                  "x": 48.5,
+                  "y": 90.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064_densite-dense-v3.png",
+              "maitre": "poc/vegetation/TR-064_densite-dense-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 8,
+                  "top": 9,
+                  "right": 87,
+                  "bottom": 88,
+                  "width": 80,
+                  "height": 80
+                },
+                "contact_px": {
+                  "left": 56,
+                  "right": 61,
+                  "width": 6
+                },
+                "anchor_px": {
+                  "x": 58.5,
+                  "y": 89.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/vegetation/TR-064_densite-dense-v2.png",
               "maitre": "poc/vegetation/TR-064_densite-dense-v2.png",
               "numero_image": 1,
@@ -2343,7 +2421,7 @@
                   "rows": 1
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             },
             {
               "type": "sprite",

@@ -133,6 +133,10 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **Ce que ça implique, et qui n'existe pas encore** : un plan refuse aujourd'hui deux sujets sur une même case — c'est même son seul contrôle d'occupation. Il faudra que la déclaration porte des **calques** : une case peut avoir un sol ET un volume posé dessus. Le rendu en calques est déjà la façon dont le jeu affiche la carte, donc la conception ne s'y oppose pas ; c'est le format du plan qui est à étendre. **Rien n'est engagé là-dessus.**
 
+**LA CLAUSE D'UN VARIANT N'ARRIVE PAS AU GÉNÉRATEUR — défaut d'outillage, constaté le 2026-08-05 en fin de séance.** Vérifié sur la consigne réellement envoyée pour `TR-064` en densité `dense` (`var/generations/sprites/TR-064_densite-dense-v4-rapport.md`) : elle ne porte **aucun mot** de la description propre à `dense`, seulement la description de base du sujet. Les trois tentatives successives ne pouvaient donc que redonner une herbe clairsemée, quelle que soit la fiche.
+
+**Ce que ça invalide** : chaque fois qu'une variante est sortie « identique à la précédente », la cause a pu être celle-là et non le modèle ni la formulation — les propositions `p2` et `p3` des bâtiments sont à re-vérifier sous cet angle. **C'est le premier point à traiter à la reprise** : sans lui, toute variante produite est en réalité une vue principale.
+
 ### Outillage
 
 9. **Le score n'est pas encore relié à un verdict** : il mesure, il s'affiche, mais rien n'en découle automatiquement.
