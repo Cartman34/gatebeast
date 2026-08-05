@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "gatebeast" / "scripts"))
 
 import asset_catalog
+import shape_vocab
 from asset_catalog import Catalog, Image, Profile, Variant, parse_address
 
 checks = 0
@@ -46,6 +47,8 @@ expect("nesw" in asset_catalog.EDGE_SHAPES and "es" in asset_catalog.EDGE_SHAPES
        "a full crossing and an angle are both edge sets")
 expect(asset_catalog.edges_of("nes") == ["n", "e", "s"], "a shape reads back as its edges")
 expect(asset_catalog.edges_of("plain") == [], "a subject that does not assemble reaches no edge")
+expect(asset_catalog.EDGE_SHAPES == shape_vocab.edge_combinations(),
+       "the catalogue's fifteen combinations are shape_vocab's, not a copy of its own")
 
 print("\nA LAYOUT IS CHECKED BY CALCULATION")
 # A fence running west to east along three tiles: a dead end, a line, a dead end.

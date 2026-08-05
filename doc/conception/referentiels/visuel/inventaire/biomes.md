@@ -2,9 +2,9 @@
 
 Voir les [règles de l'inventaire](README.md). Un biome décrit une ambiance de terrain : sol dominant, végétation, eau, lumière propre. Il ne décrit ni les bâtiments ni les habitants.
 
-- **BI-001 campagne boisée** — *Rolling cultivated land: hedged fields, orchards, meadows, copses of broadleaf trees, a brook, soft green tones, gentle relief.*
-- **BI-002 bourg** — *A built-up market town: paved ground almost everywhere, walled gardens between houses, a few planted trees, warm stone and timber tones.*
-- **BI-003 contreforts** — *Steep rocky foothills: bare grey rock breaking through short wiry grass, scree slopes, dark pines, a gorge with a torrent below, cold clear light.*
-- **BI-004 marais** — *Flat still wetland: shallow open water and mud flats threaded by reed beds, twisted willows and alders, floating weed, low mist clinging to the ground.*
-- **BI-005 falaise** — *A windswept clifftop: cropped salt turf over pale rock, a sheer drop to the sea below, sparse gorse, everything leaning inland.*
-- **BI-006 plage** — *A sheltered shore: firm damp sand near the water, loose dunes inland held by marram grass, pebble banks, shallow foam, scattered rocks.*
+- **BI-001 campagne boisée** — *Une campagne vallonnée et cultivée : des champs bordés de haies, des vergers, des prairies, des bosquets de feuillus, un ruisseau, des tons verts doux, un relief adouci.*
+- **BI-002 bourg** — *Un bourg marchand bâti dense : un sol pavé presque partout, des jardins clos entre les maisons, quelques arbres plantés, des tons chauds de pierre et de bois.*
+- **BI-003 contreforts** — *Des contreforts rocheux et abrupts : une roche grise nue perçant une herbe courte et raide, des pentes d'éboulis, des pins sombres, une gorge avec un torrent en contrebas, une lumière froide et claire.*
+- **BI-004 marais** — *Une zone humide plate et immobile : une eau libre peu profonde et des bancs de vase traversés de roselières, des saules et des aulnes tordus, des herbes flottantes, une brume basse accrochée au sol.*
+- **BI-005 falaise** — *Un sommet de falaise balayé par le vent : un gazon salé et tondu sur une roche pâle, un à-pic vertigineux vers la mer en contrebas, des ajoncs clairsemés, tout penché vers l'intérieur des terres.*
+- **BI-006 plage** — *Un rivage abrité : un sable ferme et humide près de l'eau, des dunes meubles à l'intérieur retenues par de l'oyat, des bancs de galets, une écume peu profonde, des rochers épars.*

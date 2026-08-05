@@ -1,0 +1,55 @@
+<title>GateBeast — exemples d'usage</title>
+<style>
+  :root{
+    --ground:#f4f2ec; --card:#fdfcf9; --ink:#1a1c18; --soft:#5f645a; --faint:#8f958a;
+    --line:#dedad0; --accent:#7a5d34; --accent-ink:#fdfcf9; --notice-bg:#efe6d3; --notice-line:#c9a76c;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--ground:#161814; --card:#1f221d; --ink:#eff1ea; --soft:#a8aea2; --faint:#7d8378;
+      --line:#2f332b; --accent:#c9a76c; --accent-ink:#161814; --notice-bg:#2c2513; --notice-line:#7a5f28;}
+  }
+  :root[data-theme="light"]{--ground:#f4f2ec; --card:#fdfcf9; --ink:#1a1c18; --soft:#5f645a;
+    --faint:#8f958a; --line:#dedad0; --accent:#7a5d34; --accent-ink:#fdfcf9;
+    --notice-bg:#efe6d3; --notice-line:#c9a76c;}
+  :root[data-theme="dark"]{--ground:#161814; --card:#1f221d; --ink:#eff1ea; --soft:#a8aea2;
+    --faint:#7d8378; --line:#2f332b; --accent:#c9a76c; --accent-ink:#161814;
+    --notice-bg:#2c2513; --notice-line:#7a5f28;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans);
+    padding:2.25rem 1.25rem 4rem;}
+  .sheet{max-width:1200px;margin:0 auto;}
+  h1{font:600 2rem/1.15 var(--serif);margin:0 0 .5rem;text-wrap:balance;}
+  .lede{color:var(--soft);max-width:66ch;margin:0 0 1rem;}
+  .notice{background:var(--notice-bg);border:1px solid var(--notice-line);border-radius:.4rem;
+    padding:.75rem 1rem;margin:0 0 2rem;max-width:66ch;font-size:.92rem;}
+  section.subject{margin:0 0 2.75rem;}
+  section.subject h2{font:600 1.3rem/1.25 var(--serif);margin:0 0 1rem;
+    border-bottom:1px solid var(--line);padding-bottom:.5rem;}
+  .gallery{display:flex;flex-wrap:wrap;gap:1.25rem;align-items:flex-start;}
+  figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:.5rem;
+    padding:.9rem;width:420px;max-width:100%;}
+  figcaption{font:650 1rem/1.3 var(--serif);margin-bottom:.6rem;}
+  figcaption span{display:block;font:.78rem/1.5 var(--mono);font-weight:400;color:var(--faint);
+    word-break:break-all;}
+  figure.plan figcaption{color:var(--accent);}
+  /* Checkerboard behind every image: the usage examples carry alpha, and a missing background
+     reads as plain white — without it, transparency cannot be judged at all. */
+  .frame{display:block;border-radius:.35rem;overflow:hidden;
+    background:repeating-conic-gradient(#0000 0 25%, #00000014 0 50%) 0 0/18px 18px;}
+  .frame img{display:block;width:100%;height:auto;}
+  figure.plan svg{display:block;width:100%;height:auto;border-radius:.35rem;}
+  @media (min-resolution:1.5x){ figure{width:460px;} }
+</style>
+
+<div class="sheet">
+  <h1>Exemples d'usage</h1>
+  <p class="lede">Toute image de référence de style produite pour un sujet, groupée par sujet et
+    posée à côté du plan de composition qui l'a demandée — la comparaison juge, pas l'image seule.</p>
+  <p class="notice">Ce sont des images de <strong>référence de style</strong>, pas des sprites : elles
+    ne sont jamais découpées ni livrées telles quelles, elles ne comptent donc pas sur la page de
+    suivi.</p>
+  __BODY__
+</div>

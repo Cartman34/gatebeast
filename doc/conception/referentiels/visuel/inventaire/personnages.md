@@ -16,41 +16,41 @@ Tous de type **humain**, emprise 1 × 1.
 
 ## Campagne et bourg
 
-- **HU-001 le fermier** — *A farmer in his forties, deep brown skin, short tight-cropped black hair, broad build, a plain earth-brown work tunic with rolled sleeves, sturdy boots. Open, weathered face.*
-- **HU-002 la porteuse de pommes** — *A woman in her thirties, East Asian features, black hair in a low bun, slim build, a rust-red apron over a cream blouse, carrying things with easy habit.*
-- **HU-003 le meunier** — *An old miller, pale skin dusted with flour, grey hair and thick grey brows, lean and slightly stooped, a pale linen shirt and a canvas apron tied high.*
-- **HU-004 la boulangère** — *A stout woman in her fifties, warm brown skin, black hair under a white kerchief, flour-dusted apron over a plum dress, strong forearms, a warm laughing face.*
-- **HU-005 le forgeron** — *A broad man in his forties, dark skin, shaved head, thick beard, a heavy leather apron over a bare muscled torso, leather cuffs at the wrists.*
-- **HU-006 la garde** — *A tall woman in her thirties, olive skin, dark hair in a tight braid, a simple leather-and-cloth uniform in slate blue with a small shoulder plate, a plain staff, an even watchful expression.*
-- **HU-007 le potier** — *A young man about twenty, pale freckled skin, red curly hair, a clay-stained smock, slender quick hands.*
-- **HU-013 l'enfant des chemins** — *A child of about nine, brown skin, short dark curls, bare feet, simple play clothes, always in motion.*
-- **HU-014 la voyageuse** — *A young traveller, pale freckled skin, red hair, a small worn pack with a bedroll, sturdy walking boots, a curious face.*
-- **HU-015 l'enfant des prés** — *A child of about seven, pale skin, blond tousled hair, a green smock, quick and laughing, often chasing or being chased.*
+- **HU-001 le fermier** — hauteur 1,85 case. *Un fermier dans la quarantaine, peau brun foncé, cheveux noirs courts et ras, carrure large, une tunique de travail brun terre unie aux manches retroussées, des bottes robustes. Visage ouvert et buriné.*
+- **HU-002 la porteuse de pommes** — hauteur 1,75 case. *Une femme dans la trentaine, traits est-asiatiques, cheveux noirs en chignon bas, silhouette mince, un tablier rouille par-dessus un chemisier crème, portant les choses avec une aisance habituelle.*
+- **HU-003 le meunier** — hauteur 1,75 case. *Un vieux meunier, peau pâle poudrée de farine, cheveux gris et sourcils gris et épais, silhouette maigre et légèrement voûtée, une chemise de lin pâle et un tablier de toile noué haut.*
+- **HU-004 la boulangère** — hauteur 1,8 case. *Une femme corpulente dans la cinquantaine, peau brun chaud, cheveux noirs sous un foulard blanc, un tablier poudré de farine par-dessus une robe prune, des avant-bras puissants, un visage chaleureux et rieur.*
+- **HU-005 le forgeron** — hauteur 1,95 case. *Un homme large dans la quarantaine, peau sombre, crâne rasé, barbe épaisse, un lourd tablier de cuir sur un torse musclé et nu, des bracelets de cuir aux poignets.*
+- **HU-006 la garde** — hauteur 2 cases. *Une femme grande dans la trentaine, peau mate, cheveux sombres en tresse serrée, un uniforme simple de cuir et de tissu bleu ardoise avec une petite épaulière, un bâton uni, une expression calme et vigilante.*
+- **HU-007 le potier** — hauteur 1,78 case. *Un jeune homme d'une vingtaine d'années, peau pâle et tachée de son, cheveux roux bouclés, une blouse tachée d'argile, des mains fines et vives.*
+- **HU-013 l'enfant des chemins** — hauteur 1,1 case. *Un enfant d'environ neuf ans, peau brune, courtes boucles sombres, pieds nus, des vêtements de jeu simples, toujours en mouvement.*
+- **HU-014 la voyageuse** — hauteur 1,78 case. *Une jeune voyageuse, peau pâle et tachée de son, cheveux roux, un petit sac usé avec un rouleau de couchage, de solides chaussures de marche, un visage curieux.*
+- **HU-015 l'enfant des prés** — hauteur 0,95 case. *Un enfant d'environ sept ans, peau pâle, cheveux blonds ébouriffés, une blouse verte, vif et rieur, souvent en train de poursuivre ou d'être poursuivi.*
 
 ## Montagne
 
-- **HU-011 la bergère des pentes** — *A weathered woman in her fifties, olive skin, braided grey hair, a thick woven shawl over a wool dress, a herder's staff.*
-- **HU-012 le mineur** — *A stocky man in his thirties, medium-brown skin, a leather helmet with a small unlit lamp, a dusty canvas jacket, heavy gloves at his belt.*
-- **HU-020 le berger** — *A weathered man in his fifties, deep brown skin, short grey beard, a felted wool cloak over one shoulder, a long crook in hand, sturdy boots.*
-- **HU-021 la mineuse** — *A broad-shouldered woman in her thirties, light olive skin, hair tied under a cloth, canvas trousers, a leather apron and a lamp hooked at her belt.*
-- **HU-022 la gardienne du refuge** — *An older woman, pale freckled skin, white braid, layered woollens, an armful of split logs.*
+- **HU-011 la bergère des pentes** — hauteur 1,78 case. *Une femme burinée dans la cinquantaine, peau mate, cheveux gris tressés, un épais châle tissé par-dessus une robe de laine, un bâton de bergère.*
+- **HU-012 le mineur** — hauteur 1,8 case. *Un homme trapu dans la trentaine, peau brun moyen, un casque de cuir avec une petite lampe éteinte, une veste de toile poussiéreuse, de lourds gants à la ceinture.*
+- **HU-020 le berger** — hauteur 1,85 case. *Un homme buriné dans la cinquantaine, peau brun foncé, une courte barbe grise, une cape de laine feutrée jetée sur une épaule, une longue houlette à la main, de solides bottes.*
+- **HU-021 la mineuse** — hauteur 1,85 case. *Une femme aux larges épaules dans la trentaine, peau mate claire, cheveux noués sous un tissu, un pantalon de toile, un tablier de cuir et une lampe accrochée à sa ceinture.*
+- **HU-022 la gardienne du refuge** — hauteur 1,75 case. *Une femme âgée, peau pâle et tachée de son, une tresse blanche, des lainages superposés, une brassée de bûches fendues.*
 
 ## Marais
 
-- **HU-008 le tourbier** — *A lean young man, dark skin, close-cropped hair, rolled trousers, bare feet or low boots, a cutting spade habitually over his shoulder.*
-- **HU-009 la pêcheuse des marais** — *A wiry woman in her forties, tanned skin, a wide straw hat, an oiled coat the colour of dark reeds, quick precise gestures.*
-- **HU-032 l'enfant du marais** — *A child of about nine, brown skin, bare feet, patched shorts, holding a frog cupped in both hands.*
+- **HU-008 le tourbier** — hauteur 1,8 case. *Un jeune homme maigre, peau sombre, cheveux coupés ras, un pantalon retroussé, pieds nus ou bottes basses, une bêche à tourbe habituellement sur l'épaule.*
+- **HU-009 la pêcheuse des marais** — hauteur 1,78 case. *Une femme nerveuse dans la quarantaine, peau hâlée, un large chapeau de paille, un ciré couleur de roseaux sombres, des gestes vifs et précis.*
+- **HU-032 l'enfant du marais** — hauteur 1,1 case. *Un enfant d'environ neuf ans, peau brune, pieds nus, un short rapiécé, tenant une grenouille au creux de ses deux mains.*
 
 ## Littoral
 
-- **HU-010 la gardienne du phare** — *A sturdy woman in her sixties, dark skin, white hair tied back, a yellow oilskin coat, boots, a steady gaze used to distance.*
-- **HU-016 la pêcheuse de la côte** — *A fisherwoman in her thirties, brown skin, black curls under a knotted headscarf, a sleeveless sun-faded blue dress, strong shoulders, a woven basket of nets on her hip.*
-- **HU-017 le pêcheur de l'appontement** — *A fisherman in his forties, pale sun-reddened skin, blond beard, a rolled woollen cap, a patched blue shirt with rolled sleeves, thick weathered hands.*
-- **HU-040 le gardien du phare** — *A heavy-set man in his sixties, ruddy pale skin, a thick knitted jumper and a peaked cap, a brass lamp in hand.*
-- **HU-041 la raccommodeuse de filets** — *A woman in her fifties, dark skin, headscarf, sitting cross-legged with a net across her knees and a wooden needle.*
-- **HU-042 le jeune pêcheur** — *A young man, East Asian features, oilskin trousers held by braces, barefoot, carrying a crate of fish on one shoulder.*
-- **HU-043 la ramasseuse de coquillages** — *A teenage girl, South Asian features, a linen dress kilted up, a woven basket on her hip, ankle-deep in shallow water.*
-- **HU-044 le charpentier de marine** — *A middle-aged man, Mediterranean features, sleeves rolled, an adze in hand, kneeling beside an upturned hull.*
+- **HU-010 la gardienne du phare** — hauteur 1,8 case. *Une femme solide dans la soixantaine, peau sombre, cheveux blancs attachés en arrière, un ciré jaune, des bottes, un regard assuré habitué au lointain.*
+- **HU-016 la pêcheuse de la côte** — hauteur 1,85 case. *Une pêcheuse dans la trentaine, peau brune, boucles noires sous un foulard noué, une robe bleue sans manches délavée par le soleil, des épaules puissantes, un panier tressé de filets sur la hanche.*
+- **HU-017 le pêcheur de l'appontement** — hauteur 1,85 case. *Un pêcheur dans la quarantaine, peau pâle rougie par le soleil, barbe blonde, un bonnet de laine roulé, une chemise bleue rapiécée aux manches retroussées, des mains épaisses et burinées.*
+- **HU-040 le gardien du phare** — hauteur 1,9 case. *Un homme corpulent dans la soixantaine, peau pâle et rougeaude, un épais pull tricoté et une casquette à visière, une lampe de laiton à la main.*
+- **HU-041 la raccommodeuse de filets** — hauteur 1,75 case. *Une femme dans la cinquantaine, peau sombre, un foulard, assise en tailleur avec un filet sur les genoux et une aiguille de bois.*
+- **HU-042 le jeune pêcheur** — hauteur 1,8 case. *Un jeune homme, traits est-asiatiques, un pantalon de ciré tenu par des bretelles, pieds nus, portant une caisse de poissons sur une épaule.*
+- **HU-043 la ramasseuse de coquillages** — hauteur 1,6 case. *Une adolescente, traits sud-asiatiques, une robe de lin relevée, un panier tressé sur la hanche, dans une eau peu profonde jusqu'à la cheville.*
+- **HU-044 le charpentier de marine** — hauteur 1,85 case. *Un homme d'âge mûr, traits méditerranéens, manches retroussées, une herminette à la main, agenouillé près d'une coque retournée.*
 
 ## Les doublons ne sont pas un problème
 

@@ -19,7 +19,6 @@ INTENTION
   goes stale the day the real one changes, and nothing says so.
 """
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -32,35 +31,39 @@ import tile_scale
 REPO = Path(__file__).resolve().parent.parent
 SHEETS = [REPO / "doc" / "conception" / "referentiels" / "visuel" / "inventaire",
           REPO / "doc" / "conception" / "referentiels" / "contenu"]
-TARGET = {"TR": "vegetation", "BT": "batiment", "CH": "sol", "OB": "cloture",
-          "HU": "personnage", "SP": "creature"}
 
 
 def sheet_of(code: str) -> tuple:
-    """The label, the English description and the footprint, read from the inventory entry itself."""
+    """The label, the description, the footprint and the height, read from the inventory entry itself
+    — never from a copy kept in code, so a rewritten sheet is picked up unchanged."""
     for folder in SHEETS:
         for path in sorted(folder.glob("*.md")):
             for line in path.read_text(encoding="utf-8").splitlines():
                 if not line.startswith(f"- **{code} "):
                     continue
                 label = line.split("**")[1].replace(code, "").strip()
-                english = next((part.strip() for part in reversed(line.split("*"))
-                                if part.strip().startswith(("A ", "An ", "The "))), "")
                 after = line.split("** — ", 1)[-1]
-                detail = after.replace(f"*{english}*", "").replace("**", "").replace("`", "")
-                detail = detail.split("Description propre")[0]
-                size = re.search(r"(\d+)\s*×\s*(\d+)", detail)
+                size = re.search(r"(\d+)\s*×\s*(\d+)", after)
                 if not size:
                     raise SystemExit(f"FAULT {code} n'a pas d'emprise écrite — elle est obligatoire.")
+                height = re.search(r"hauteur\s+(\d+(?:[.,]\d+)?)\s*cases?", after)
+                if not height:
+                    raise SystemExit(f"FAULT {code} n'a pas de hauteur écrite — elle est obligatoire.")
+                # Everything before the description belongs to the precisions; everything from the
+                # description onward — the description itself, and any "Description propre à ..." that
+                # follows it for one particular form or value — never does.
+                description, start = asset_common.sheet_description(after, code)
+                detail = after[:start].replace("**", "").replace("`", "")
 
-                return (label, english, " ".join(detail.split()).strip(" .—,"),
-                        (int(size.group(1)), int(size.group(2))))
+                return (label, description, " ".join(detail.split()).strip(" .—,"),
+                        (int(size.group(1)), int(size.group(2))),
+                        float(height.group(1).replace(",", ".")))
     raise SystemExit(f"FAULT {code} n'est pas à l'inventaire — rien ne se produit sans fiche.")
 
 
-def build(code: str, reference: Path, generate: bool, motive: str = "") -> int:
-    label, english, detail, footprint = sheet_of(code)
-    master = tile_scale.master_definition(*footprint)
+def build(code: str, reference: Path, generate: bool) -> int:
+    label, description, detail, footprint, height = sheet_of(code)
+    master = tile_scale.master_definition(*footprint, height=height)
 
     clause = ""
     if reference:
@@ -70,6 +73,10 @@ style, la matière et la lumière à reprendre. Le sujet demandé est celui déc
 de l'image : la référence donne le traitement, la fiche donne le sujet.
 """
 
+    # No retry clause here, on purpose: one was tried and removed on the operator's word — the
+    # generator never saw the rejected image, so describing its fault in negative terms does not help
+    # it, what helps it is a better sheet. A rejection motive is not for the generator: it goes back
+    # into the SHEET, never into this prompt.
     prompt = f"""{plate_common.STYLE_FR}
 
 {asset_common.CAMERA_FR}
@@ -82,14 +89,15 @@ DÉFINITION ATTENDUE : {master['width']} × {master['height']} pixels.
 {asset_common.CADRAGE_CUTOUT}
 
 {asset_common.emprise_clause(footprint)}
+
+{asset_common.taille_clause(footprint, height)}
 {clause}
 {asset_common.REGLES_FR}
-{retry_clause(motive)}
 CE QUE SA FICHE PRÉCISE :
 {detail}
 
 LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
-{code} : {english}
+{code} : {description}
 """
 
     draft = REPO / "local" / f"prompt-{code}.txt"
@@ -102,7 +110,7 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
     if not generate:
         return 0
 
-    folder = REPO / "assets" / "poc" / TARGET.get(code[:2], "divers")
+    folder = REPO / "assets" / "poc" / asset_common.CODE_FOLDER.get(code[:2], "divers")
     folder.mkdir(parents=True, exist_ok=True)
     # One generation per version, nothing overwritten.
     version, image = 1, folder / f"{code}.png"
@@ -110,8 +118,6 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
         version += 1
         image = folder / f"{code}-v{version}.png"
     image.with_suffix(".txt").write_text(prompt, encoding="utf-8")
-    if reference:
-        shutil.copy(reference, folder / reference.name)
 
     print(f"consigne figée : {image.with_suffix('.txt').relative_to(REPO)}")
     # This tool generates, and stops there. Exporting the master and rebuilding the review page
@@ -120,8 +126,9 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
     # prevent it.
     print(f"génération vers {image.relative_to(REPO)}")
 
-    return subprocess.run(["php", str(REPO / "scripts" / "generate-image.php"),
-                           str(image), prompt], cwd=REPO.parent).returncode
+    with asset_common.working_reference(reference, folder):
+        return subprocess.run(["php", str(REPO / "scripts" / "generate-image.php"),
+                               str(image), prompt], cwd=REPO.parent).returncode
 
 
 if __name__ == "__main__":
@@ -130,5 +137,4 @@ if __name__ == "__main__":
         print(__doc__)
         raise SystemExit(2)
     ref = Path(argv[argv.index("--ref") + 1]).resolve() if "--ref" in argv else None
-    why = argv[argv.index("--reprise") + 1] if "--reprise" in argv else ""
-    raise SystemExit(build(argv[0], ref, "--generate" in argv, why))
+    raise SystemExit(build(argv[0], ref, "--generate" in argv))

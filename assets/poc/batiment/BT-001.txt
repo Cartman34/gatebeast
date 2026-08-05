@@ -1,0 +1,57 @@
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — exactement l'angle des cartes
+de jeu de rôle vues de dessus, le même que celui des planches du monde. On regarde le sujet d'en haut et
+un peu de face. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — centre de soin, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DÉFINITION ATTENDUE : 1536 × 1165 pixels.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus :
+aucun décor, aucun sol, aucune herbe, aucun accessoire, aucun autre être vivant, aucun cadre, aucune
+bordure, aucun texte.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS — entre des rondins, sous une lisse, entre
+des feuilles, dans une fenêtre : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune
+ombre portée, aucun sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+EMPRISE AU SOL — 16 case(s) de large sur 10 de profondeur. Cette emprise est un contrat dans les deux sens.
+NE CONFONDS PAS LA MARGE ET L'EMPRISE : la marge transparente demandée plus haut est une marge SUR LA TOILE, dont l'unique raison d'être est qu'aucune partie du sujet ne soit coupée par un bord de l'image ; elle NE DIT RIEN DE LA PLACE DU SUJET AU SOL.  L'emprise, elle, décrit le sol que le sujet couvre : sur cette largeur-là, le sujet va d'un bord à l'autre sans rien laisser de vide et sans rien faire dépasser.
+CONTENU EN LARGEUR : RIEN du sujet ne dépasse latéralement de cette largeur, ni branche, ni auvent, ni marche, ni ombre. La largeur du sujet est sa largeur au sol.
+REMPLI : le sujet occupe VRAIMENT toute cette largeur — sa silhouette atteint les bords de son emprise, il ne flotte pas au milieu en n'en occupant que la moitié.
+EN HAUTEUR, LE DÉBORDEMENT EST NORMAL : l'emprise décrit le SOL. Un sujet haut monte librement dans l'image ; seule sa largeur est contrainte.
+
+TAILLE RÉELLE DU SUJET — il mesure 8 case(s) de haut, pour une emprise de 16 sur 10 : un rapport hauteur/largeur de 0,5. C'est cette proportion réelle, jamais une fraction du cadre ni une mesure en pixels, qui doit se lire dans l'image une fois la caméra appliquée.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre. Ne dessine pas de grille, n'écris
+aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+CE QUE SA FICHE PRÉCISE :
+healing-center-01, type bâtiment, 16 × 10, hauteur 8 cases, entrée au sud. *Un vaste centre de soin accueillant aux volumes arrondis, coiffé d'un large toit galbé de tuiles terre cuite chaudes, des murs crépis crème sous une ossature de bois apparente, un porche profond au milieu de sa façade sud surmonté d'un emblème sculpté et d'une lanterne sur le côté, de hautes fenêtres à petits carreaux, de la végétation grimpante à ses angles et de la mousse au pied de ses murs.*
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+BT-001 : 

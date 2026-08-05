@@ -18,9 +18,33 @@
       "rotates": true,
       "_rotates_comment": "Plat : le moteur pivote un dessin pour obtenir les autres bords, un seul dessin par forme suffit (sujets-et-variantes.md, decision 27).",
       "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "n"},
         {"orientation": "south", "action": "idle", "shape": "ns"},
-        {"orientation": "south", "action": "idle", "shape": "ne"}
-      ]
+        {"orientation": "south", "action": "idle", "shape": "ne"},
+        {"orientation": "south", "action": "idle", "shape": "nes"},
+        {"orientation": "south", "action": "idle", "shape": "nesw"}
+      ],
+      "_lot_comment": "Les cinq dessins de tracé (extrémité, ligne, angle, trois branches, croisement) — c'est ce qu'il faut réellement produire, pas ce qu'un chemin doit savoir accepter : voir formes_couvertes_par_rotation ci-dessous, qui porte cette seconde notion et explique pourquoi les deux ne se confondent pas. Complété le 2026-08-04 (l'opérateur : « il manque tous les autres variants !! ») : les deux dessins précédents (ligne, angle) suffisaient pour le lot v0 minimal de lots-de-variantes.md, mais pas pour un tracé qui se ramifie réellement.",
+      "formes_couvertes_par_rotation": ["n", "e", "s", "w", "ns", "ew", "ne", "es", "sw", "nw", "nes", "esw", "nsw", "new", "nesw"],
+      "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier — ce qu'il doit savoir faire — à ne jamais confondre avec lot_v0 ci-dessus, qui dit ce qu'il faut dessiner. Le type pivote (rotates) : chacun des cinq dessins du lot couvre lui-même toutes ses rotations — l'extrémité shape-n sert aussi à e, s, w ; la ligne shape-ns sert aussi à ew ; l'angle shape-ne sert aussi à es, sw, nw ; les trois branches shape-nes servent aussi à esw, nsw, new ; le croisement shape-nesw n'a pas de rotation distincte. Produire les quinze séparément dessinerait dix fois ce qui n'est qu'une rotation du même dessin (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md, table des lots)."
+    },
+    "cours-d-eau": {
+      "layer": "decor-au-sol",
+      "passage_default": "closed",
+      "_passage_comment": "Un cours d'eau ferme le passage par défaut : on ne le franchit que par un ouvrage dédié — pont, gué, passerelle (format-de-composition.md, « Ouvrages d'eau : ponts, gués, passerelles »). scene-de-reference.md confirme la règle en pratique : un chemin qui rencontre une rivière la franchit par un pont, jamais en la traversant directement.",
+      "assembles": true,
+      "rotates": true,
+      "_rotates_comment": "Plat comme le chemin, jamais un volume : le moteur pivote un dessin pour obtenir les autres bords, un seul dessin par forme suffit (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md range chemin et cours d'eau dans le même lot).",
+      "lot_v0": [
+        {"orientation": "south", "action": "idle", "shape": "n"},
+        {"orientation": "south", "action": "idle", "shape": "ns"},
+        {"orientation": "south", "action": "idle", "shape": "ne"},
+        {"orientation": "south", "action": "idle", "shape": "nes"},
+        {"orientation": "south", "action": "idle", "shape": "nesw"}
+      ],
+      "_lot_comment": "Même raisonnement que le type chemin, avec lequel lots-de-variantes.md le regroupe explicitement : cinq dessins de tracé à produire, pas quinze — voir formes_couvertes_par_rotation.",
+      "formes_couvertes_par_rotation": ["n", "e", "s", "w", "ns", "ew", "ne", "es", "sw", "nw", "nes", "esw", "nsw", "new", "nesw"],
+      "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier — ce qu'il doit savoir faire — à ne jamais confondre avec lot_v0 ci-dessus, qui dit ce qu'il faut dessiner. Le type pivote (rotates) : chacun des cinq dessins du lot couvre lui-même toutes ses rotations, exactement comme pour le type chemin (voir son commentaire). Produire les quinze séparément dessinerait dix fois ce qui n'est qu'une rotation du même dessin (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md, table des lots)."
     },
     "cloture": {
       "layer": "monde",
@@ -29,19 +53,33 @@
       "assembles": true,
       "rotates": false,
       "_rotates_comment": "A du volume : la pivoter mettrait le soleil du mauvais côté, chaque combinaison de bords se dessine séparément (decision 27).",
-      "garnitures": {
+      "compositions": {
         "values": ["posts-2", "posts-1", "posts-0"],
         "default": "posts-2",
-        "_comment": "posts-2 deux poteaux, posts-1 un seul au centre, posts-0 aucun, lisses toujours identiques (decision 28). Le défaut n'est pas écrit dans l'adresse ; posts-2 est pris comme défaut parce que c'est la seule garniture produite sans mention de garniture dans son nom de fichier (OB-010_shape-ew.png)."
+        "_comment": "posts-2 deux poteaux, posts-1 un seul au centre, posts-0 aucun, lisses toujours identiques (decision 28). Le défaut n'est pas écrit dans l'adresse ; posts-2 est pris comme défaut parce que c'est la seule composition produite sans mention de composition dans son nom de fichier (OB-010_shape-ew.png)."
+      },
+      "portillons": {
+        "values": ["gate-none", "gate-closed", "gate-open"],
+        "default": "gate-none",
+        "defines_kind": true,
+        "rend_inapplicable": ["compositions"],
+        "_comment": "Même modèle que l'axe composition ci-dessus : gate-none est le panneau fermé ordinaire, valeur par défaut jamais écrite dans l'adresse (valeurs en anglais américain, comme shape-ew et posts-1, puisqu'elles s'écrivent dans l'adresse d'un fichier — seul le nom de l'axe reste en français en attendant la migration générale des clés). Un portillon existe dans les deux sens de ligne (shape-ns, shape-ew), comme une clôture ordinaire, rien de plus — l'axe ne s'applique qu'à ces deux formes, les angles n'ont pas de portillon. Il existe surtout dans deux états, et c'est tout l'intérêt de l'axe : gate-closed, qui ferme comme le reste de la clôture — aucune redéfinition de passage, la fermeture par défaut du type s'applique ; gate-open, qui laisse entrer sur la case — le passage s'ouvre alors sur les deux côtés que la forme relie. Sans cet état, rien n'expliquerait pourquoi une clôture porterait jamais autre chose que sa fermeture par défaut.",
+        "_defines_kind_comment": "Seul cet axe porte defines_kind: true, la composition ne le porte pas. Un portillon n'est pas une clôture avec une option : c'est une autre pièce, une autre nature — gate-closed et gate-open changent ce que la case laisse ou non traverser, pas seulement son apparence. La composition (posts-2/posts-1/posts-0), elle, reste une finition de la même pièce : le nombre de poteaux ne change ni ce qu'elle est, ni ce qu'elle fait. Rien dans la forme d'un axe (son nom, son nombre de valeurs) ne permet de deviner cette différence : elle se déclare, ici, pour que tout consommateur — page de suivi comprise — la lise sans la reconstruire ni la deviner. C'est une distinction de conception, elle vit dans le référentiel, pas dans l'affichage. Effet demandé par l'opérateur : nommer une variante de portillon en mettant sa nature en premier — « Portillon ouvert, est-ouest », jamais « Ligne est-ouest, portillon ouvert ».",
+        "_rend_inapplicable_comment": "Propriété de l'axe, écrite une fois sur le type, jamais répétée sur chaque variante : dès qu'une variante porte le portillon (n'importe laquelle de ses valeurs, y compris gate-none), l'axe composition ne s'applique pas à elle — son silence sur la composition ne se résout donc plus vers compositions.default (posts-2), il reste un silence à part entière, sans valeur. Nécessaire parce qu'un portillon n'a pas de nombre de poteaux : sa propre fiche (objets.md) ne lui en donne aucun, seulement des pivots de fer ; lui appliquer le défaut du type — même silencieusement — affirmerait une chose fausse. Décidé le 2026-08-05 après une double erreur sur ce même axe : d'abord des variantes fantômes en composition par défaut sur les formes ordinaires (silence non écrit → défaut appliqué à tort, faute inverse) ; puis quatre images produites avec un poteau sur une consigne qui le demandait à tort au portillon. Les deux fautes venaient du même trou dans le modèle : rien ne permettait de dire qu'un axe ne s'applique simplement pas à certaines variantes — voir sujets-et-variantes.md, decision sur les axes qui ne s'appliquent pas partout."
       },
       "lot_v0": [
-        {"orientation": "south", "action": "idle", "shape": "ns"},
-        {"orientation": "south", "action": "idle", "shape": "ew"},
-        {"orientation": "south", "action": "idle", "shape": "ne"},
-        {"orientation": "south", "action": "idle", "shape": "es"},
-        {"orientation": "south", "action": "idle", "shape": "sw"},
-        {"orientation": "south", "action": "idle", "shape": "nw"}
-      ]
+        {"orientation": "south", "action": "idle", "shape": "ns", "composition": "posts-1"},
+        {"orientation": "south", "action": "idle", "shape": "ew", "composition": "posts-1"},
+        {"orientation": "south", "action": "idle", "shape": "ne", "composition": "posts-1"},
+        {"orientation": "south", "action": "idle", "shape": "es", "composition": "posts-1"},
+        {"orientation": "south", "action": "idle", "shape": "sw", "composition": "posts-1"},
+        {"orientation": "south", "action": "idle", "shape": "nw", "composition": "posts-1"},
+        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-closed"},
+        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-open"},
+        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-closed"},
+        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-open"}
+      ],
+      "_lot_comment": "Six formes en composition posts-1, chacune dessinée séparément puisque le type ne pivote pas — la seule composition que l'opérateur ait validée pour ces pièces, écrite explicitement pour ne pas retomber sur le défaut du type (posts-2), ce qui avait fabriqué cinq variantes attendues jamais demandées (corrigé le 2026-08-05). Plus les quatre variantes de l'axe portillon (deux sens de ligne × deux états), qui ne portent aucune composition et n'en héritent aucune non plus : l'axe portillon rend l'axe composition inapplicable dès qu'il est présent (voir `rend_inapplicable` sur l'axe portillons ci-dessus), donc leur silence reste un silence, jamais résolu en compositions.default. Dix images en tout."
     },
     "arbre": {
       "layer": "monde",
@@ -106,102 +144,301 @@
       "profil": "short-grass-01",
       "type": "sol",
       "emprise": {"columns": 1, "rows": 1},
-      "hauteur": null,
+      "hauteur": 0,
+      "_hauteur_comment": "sols-et-chemins.md : « hauteur 0 case » — un sol ne se dresse pas.",
       "variantes": [
         {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/sol/CH-001.png"}]}
+         "representations": [{"type": "sprite", "path": "cutout/sol/CH-001.png",
+                              "maitre": "poc/sol/CH-001.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante", "verdict": "validee"}]}
       ]
     },
     "CH-019": {
       "profil": "dirt-path-01",
       "type": "chemin",
       "emprise": {"columns": 1, "rows": 1},
-      "hauteur": null,
+      "hauteur": 0,
+      "_hauteur_comment": "sols-et-chemins.md : « hauteur 0 case » — un chemin ne se dresse pas.",
+      "_variantes_comment": "Les cinq dessins du lot_v0 du type chemin (extrémité, ligne, angle, trois branches, croisement) : complété le 2026-08-04, deux formes ne suffisaient pas à un tracé qui se ramifie. Plus une variante hors du lot minimal (shape-ew), produite et exportée le 2026-08-05.",
       "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "n", "representations": []},
         {"orientation": "south", "action": "idle", "shape": "ns", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []}
+        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "nes", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "nesw", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "ew",
+         "_comment": "Hors du lot v0 minimal (qui ne demande que shape-ns pour la ligne, l'autre sens s'obtenant par rotation) : première production de cette variante, aucune version antérieure à porter.",
+         "representations": [{"type": "sprite", "path": "cutout/sol/CH-019_shape-ew.png",
+                              "maitre": "poc/sol/CH-019_shape-ew.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante"}]}
+      ]
+    },
+    "CH-020": {
+      "profil": "stream-01",
+      "type": "cours-d-eau",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": -0.3,
+      "_hauteur_comment": "sols-et-chemins.md : « hauteur -0,3 case » — il ne se dresse pas, il creuse ; son lit reste en retrait du terrain environnant sur cette profondeur.",
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "n", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "ns", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "nes", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "nesw", "representations": []},
+        {"orientation": "south", "action": "idle", "shape": "ew",
+         "_comment": "Hors du lot v0 minimal (qui ne demande que shape-ns pour la ligne, l'autre sens s'obtenant par rotation) : première production de cette variante, aucune version antérieure à porter.",
+         "representations": [{"type": "sprite", "path": "cutout/sol/CH-020_shape-ew.png",
+                              "maitre": "poc/sol/CH-020_shape-ew.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante"}]}
       ]
     },
     "OB-010": {
       "profil": "log-fence-01",
       "type": "cloture",
       "emprise": {"columns": 1, "rows": 1},
-      "hauteur": null,
+      "hauteur": 0.9,
+      "_hauteur_comment": "objets.md : « hauteur 0,9 case ».",
       "variantes": [
         {"orientation": "south", "action": "idle", "shape": "ew",
-         "representations": [{"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew.png"}]},
-        {"orientation": "south", "action": "idle", "shape": "ns", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ne", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "es", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "sw", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "nw", "representations": []},
-        {"orientation": "south", "action": "idle", "shape": "ns", "garniture": "posts-1",
-         "_comment": "Hors du lot v0 minimal, mais une variante valide de l'axe garniture : produite et représentée. Deux versions : v2 est une seconde tentative de la même posture, aucune des deux n'est écartée.",
+         "_comment": "Composition posts-2 (défaut du type, non écrite dans l'adresse) : hors du lot exigé depuis le 2026-08-05 (lot_v0 ne demande plus que la composition posts-1), mais conservée telle quelle — elle porte une image réelle et un verdict de l'opérateur, rien ne se retire ni ne s'écarte du fichier pour ça. OB-010_shape-ew_posts-2.png est la reprise demandée par l'opérateur (« Ancien design ») : dernière produite, elle devient courante, sans verdict ; OB-010_shape-ew.png (sans suffixe) passe en antérieure et garde son propre verdict.",
          "representations": [
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1.png"},
-           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1-v2.png"}
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-2.png",
+            "maitre": "poc/cloture/OB-010_shape-ew_posts-2.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew.png",
+            "maitre": "poc/cloture/OB-010_shape-ew.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Ancien design"}
          ]},
-        {"orientation": "south", "action": "idle", "shape": "ew", "garniture": "posts-1",
-         "_comment": "Hors du lot v0 minimal, vague de trois pièces de garniture.",
+        {"orientation": "south", "action": "idle", "shape": "ne", "composition": "posts-1",
+         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces — retiré le 2026-08-05 les cinq variantes fantômes en composition posts-2 par défaut (ns, ne, es, sw, nw) que l'opérateur voyait « prévue, à produire » sans les avoir jamais demandées. Première production de cet angle : aucune version antérieure à porter.",
          "representations": [{"type": "sprite",
-                              "path": "cutout/cloture/OB-010_shape-ew_posts-1.png"}]},
-        {"orientation": "south", "action": "idle", "shape": "es", "garniture": "posts-1",
-         "_comment": "Hors du lot v0 minimal, vague de trois pièces de garniture.",
+                              "path": "cutout/cloture/OB-010_shape-ne_posts-1.png",
+                              "maitre": "poc/cloture/OB-010_shape-ne_posts-1.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante"}]},
+
+        {"orientation": "south", "action": "idle", "shape": "ns", "composition": "posts-1",
+         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Deux versions produites pour la même posture : posts-1-v2 est la dernière produite, donc la variante courante ; posts-1 (sans suffixe) devient sa version antérieure, conservée et non écartée (voir doc/outils/referentiel-des-sujets.md, « une version active par variante »).",
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1-v2.png",
+            "maitre": "poc/cloture/OB-010_shape-ns_posts-1-v2.png", "numero_image": 1, "mesures": null,
+            "statut": "courante", "verdict": "validee"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1.png",
+            "maitre": "poc/cloture/OB-010_shape-ns_posts-1.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure"}
+         ]},
+        {"orientation": "south", "action": "idle", "shape": "ew", "composition": "posts-1",
+         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1-v2.png",
+            "maitre": "poc/cloture/OB-010_shape-ew_posts-1-v2.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1.png",
+            "maitre": "poc/cloture/OB-010_shape-ew_posts-1.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "validee"}
+         ]},
+        {"orientation": "south", "action": "idle", "shape": "es", "composition": "posts-1",
+         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
          "representations": [{"type": "sprite",
-                              "path": "cutout/cloture/OB-010_shape-es_posts-1.png"}]}
+                              "path": "cutout/cloture/OB-010_shape-es_posts-1.png",
+                              "maitre": "poc/cloture/OB-010_shape-es_posts-1.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante", "verdict": "validee"}]},
+        {"orientation": "south", "action": "idle", "shape": "sw", "composition": "posts-1",
+         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Première production de cet angle : aucune version antérieure à porter.",
+         "representations": [{"type": "sprite",
+                              "path": "cutout/cloture/OB-010_shape-sw_posts-1.png",
+                              "maitre": "poc/cloture/OB-010_shape-sw_posts-1.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante", "verdict": "validee"}]},
+        {"orientation": "south", "action": "idle", "shape": "nw", "composition": "posts-1",
+         "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces.",
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-nw_posts-1-v2.png",
+            "maitre": "poc/cloture/OB-010_shape-nw_posts-1-v2.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-nw_posts-1.png",
+            "maitre": "poc/cloture/OB-010_shape-nw_posts-1.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "à la verticale, on voit 2 lisses, au lieu d'une"}
+         ]},
+        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-closed",
+         "_comment": "Aucune composition : un portillon vaut le défaut du type, comme toute pièce dont on ne précise rien — l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour. Deux versions antérieures, chacune gardant son propre verdict : celle gâchée par la consigne fautive (écartée, motif ci-dessous), et l'ancien portillon jugé « d'un ancien style » (à reprendre). Un portillon fermé ferme comme le reste de la clôture : aucune redéfinition de passage, la fermeture par défaut du type s'applique.",
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_portillon-gate-closed.png",
+            "maitre": "poc/cloture/OB-010_shape-ew_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1_portillon-gate-closed.png",
+            "maitre": "poc/cloture/OB-010_shape-ew_posts-1_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew-avec-portillon.png",
+            "maitre": "poc/cloture/OB-010_shape-ew-avec-portillon.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "C'est d'un ancien style là, non ?"}
+         ]},
+        {"orientation": "south", "action": "idle", "shape": "ew", "portillon": "gate-open",
+         "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon ouvert laisse entrer sur la case : il ouvre les deux côtés que la clôture relie, ici est et ouest, ce qui renverse la fermeture par défaut du type clôture sur ces deux côtés seulement.",
+         "passage": {"cells": {"0,0": {"e": true, "w": true}}},
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_portillon-gate-open.png",
+            "maitre": "poc/cloture/OB-010_shape-ew_portillon-gate-open.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ew_posts-1_portillon-gate-open.png",
+            "maitre": "poc/cloture/OB-010_shape-ew_posts-1_portillon-gate-open.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."}
+         ]},
+        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-closed",
+         "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon fermé ferme comme le reste de la clôture : aucune redéfinition de passage, la fermeture par défaut du type s'applique.",
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_portillon-gate-closed.png",
+            "maitre": "poc/cloture/OB-010_shape-ns_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed.png",
+            "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-closed.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."}
+         ]},
+        {"orientation": "south", "action": "idle", "shape": "ns", "portillon": "gate-open",
+         "_comment": "Aucune composition : un portillon vaut le défaut du type, l'opérateur n'a jamais demandé de portillon à un poteau. L'image courante a été produite et exportée le 2026-08-05, sans composition, remplaçant celle gâchée par la consigne fautive du même jour, qui passe en antérieure et garde son verdict écarté. Un portillon ouvert laisse entrer sur la case : il ouvre les deux côtés que la clôture relie dans ce sens, nord et sud.",
+         "passage": {"cells": {"0,0": {"n": true, "s": true}}},
+         "representations": [
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_portillon-gate-open.png",
+            "maitre": "poc/cloture/OB-010_shape-ns_portillon-gate-open.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/cloture/OB-010_shape-ns_posts-1_portillon-gate-open.png",
+            "maitre": "poc/cloture/OB-010_shape-ns_posts-1_portillon-gate-open.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "ecartee", "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."}
+         ]}
       ]
     },
     "TR-060": {
       "profil": "oak-01",
       "type": "arbre",
       "emprise": {"columns": 2, "rows": 2},
-      "hauteur": null,
+      "hauteur": 6,
+      "_hauteur_comment": "vegetation.md : « hauteur 6 cases ».",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
       "variantes": [
         {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-060.png"}]}
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-060.png",
+                              "maitre": "poc/vegetation/TR-060.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante"}]}
       ]
     },
     "TR-061": {
       "profil": "fir-thicket-01",
       "type": "bosquet-arbres",
       "emprise": {"columns": 2, "rows": 2},
-      "hauteur": null,
+      "hauteur": 6,
+      "_hauteur_comment": "vegetation.md : « hauteur 6 cases ».",
       "_passage_comment": "Aucune redéfinition : le type bosquet-arbres ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
       "variantes": [
         {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-061.png"}]}
+         "_comment": "TR-061-v3 est la dernière version produite, donc la variante courante, sans verdict (l'opérateur ne l'a pas encore vue). TR-061-v2 et TR-061 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
+         "representations": [
+           {"type": "sprite", "path": "cutout/vegetation/TR-061-v3.png",
+            "maitre": "poc/vegetation/TR-061-v3.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/vegetation/TR-061-v2.png",
+            "maitre": "poc/vegetation/TR-061-v2.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "J'ai demandé un bosquet carré, le bas de l'image doit être plein de gauche à droite en continue"},
+           {"type": "sprite", "path": "cutout/vegetation/TR-061.png",
+            "maitre": "poc/vegetation/TR-061.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure"}
+         ]}
       ]
     },
     "TR-063": {
       "profil": "apple-tree-01",
       "type": "arbre",
       "emprise": {"columns": 1, "rows": 1},
-      "hauteur": null,
+      "hauteur": 3,
+      "_hauteur_comment": "vegetation.md : « hauteur 3 cases ».",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
       "variantes": [
         {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-063.png"}]}
+         "_comment": "TR-063-v3 est la dernière version produite, donc la variante courante, sans verdict (l'opérateur ne l'a pas encore vue). TR-063-v2 et TR-063 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
+         "representations": [
+           {"type": "sprite", "path": "cutout/vegetation/TR-063-v3.png",
+            "maitre": "poc/vegetation/TR-063-v3.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/vegetation/TR-063-v2.png",
+            "maitre": "poc/vegetation/TR-063-v2.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure", "verdict": "a-reprendre", "commentaire_operateur": "trop de pommes, on doit en voir quelques une dans l'arbre, 0, au sol"},
+           {"type": "sprite", "path": "cutout/vegetation/TR-063.png",
+            "maitre": "poc/vegetation/TR-063.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure"}
+         ]}
       ]
     },
     "TR-062": {
       "profil": "tall-grass-01",
       "type": "herbe",
       "emprise": {"columns": 1, "rows": 1},
-      "hauteur": null,
+      "hauteur": 0.5,
+      "_hauteur_comment": "vegetation.md : « hauteur 0,5 case ».",
       "variantes": [
         {"orientation": "south", "action": "idle", "shape": "plain",
-         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-062.png"}]}
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-062.png",
+                              "maitre": "poc/vegetation/TR-062.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante", "verdict": "validee"}]}
+      ]
+    },
+    "TR-064": {
+      "profil": "sparse-grass-01",
+      "type": "herbe",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": 0.3,
+      "_hauteur_comment": "vegetation.md : « hauteur 0,3 case ».",
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "_comment": "Exportée le 2026-08-05 : première production, aucune version antérieure à porter.",
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-064.png",
+                              "maitre": "poc/vegetation/TR-064.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante"}]}
+      ]
+    },
+    "TR-065": {
+      "profil": "fir-01",
+      "type": "arbre",
+      "emprise": {"columns": 1, "rows": 1},
+      "hauteur": 6,
+      "_hauteur_comment": "vegetation.md : « hauteur 6 cases ».",
+      "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "_comment": "Exportée le 2026-08-05 : première production, aucune version antérieure à porter.",
+         "representations": [{"type": "sprite", "path": "cutout/vegetation/TR-065.png",
+                              "maitre": "poc/vegetation/TR-065.png", "numero_image": 1, "mesures": null,
+                              "statut": "courante"}]}
       ]
     },
     "BT-001": {
       "profil": "healing-center-01",
       "type": "batiment",
       "emprise": {"columns": 16, "rows": 10},
-      "hauteur": null,
+      "hauteur": 8,
+      "_hauteur_comment": "batiments.md : « hauteur 8 cases ».",
       "passage": {
         "cells": {"8,9": {"s": true}},
         "_comment": "« entrée au sud », porche au milieu de la face sud (batiments.md) : la case du milieu de la rangée sud s'ouvre au sud, elle seule — tout le reste garde la fermeture du type. Rangée sud = rows-1 = 9 (le sud augmente la coordonnée de ligne). L'emprise est paire (16 colonnes, indices 0 à 15) : aucune case n'est exactement au centre ; colonne 8 (première case de la moitié est) est prise par convention, à ajuster si un plan de composition de BT-001 fixe une autre case."
+      },
+      "variantes": [
+        {"orientation": "south", "action": "idle", "shape": "plain",
+         "_comment": "BT-001-v2 est la dernière version produite, donc la variante courante, sans verdict (l'opérateur ne l'a pas encore vue). BT-001 (sans suffixe) devient sa version antérieure, conservée et non écartée.",
+         "representations": [
+           {"type": "sprite", "path": "cutout/batiment/BT-001-v2.png",
+            "maitre": "poc/batiment/BT-001-v2.png", "numero_image": 1, "mesures": null,
+            "statut": "courante"},
+           {"type": "sprite", "path": "cutout/batiment/BT-001.png",
+            "maitre": "poc/batiment/BT-001.png", "numero_image": 1, "mesures": null,
+            "statut": "anterieure"}
+         ]}
+      ]
+    },
+    "BT-002": {
+      "profil": "farmhouse-01",
+      "type": "batiment",
+      "emprise": {"columns": 5, "rows": 4},
+      "hauteur": 4.5,
+      "_hauteur_comment": "batiments.md : « hauteur 4,5 cases ».",
+      "passage": {
+        "cells": {"2,3": {"s": true}},
+        "_comment": "« entrée au sud » (batiments.md). Rangée sud = rows-1 = 3. Emprise impaire en colonnes (5, indices 0 à 4) : la colonne centrale existe exactement, c'est la 2 — pas de convention à choisir ici, à la différence de BT-001."
       },
       "variantes": [
         {"orientation": "south", "action": "idle", "shape": "plain", "representations": []}

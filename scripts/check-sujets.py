@@ -17,6 +17,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import shape_vocab
+
 REPOSITORY = Path(__file__).resolve().parents[1]
 ASSETS = REPOSITORY / "assets"
 SUJETS = ASSETS / "sujets.json"
@@ -24,14 +27,19 @@ INVENTAIRE = REPOSITORY / "doc" / "conception" / "referentiels" / "visuel" / "in
 CREATURES = REPOSITORY / "doc" / "conception" / "referentiels" / "contenu" / "creatures-temoins.md"
 
 # The passage is written at the four compass points today; diagonals are meant to join them later
-# without rewriting anything (sujets-et-variantes.md, decision 14) — EDGES is the one place that would
-# grow.
-EDGES = ["n", "e", "s", "w"]
+# without rewriting anything (sujets-et-variantes.md, decision 14). EDGES is shape_vocab's, not a copy
+# of its own: the passage rose and a shape's edges are the same four compass points, and this checker
+# used to keep a second list of them next to shape_vocab's, which is exactly the defect that module was
+# written to end.
+EDGES = shape_vocab.EDGES
 # The five layer families in their drawing order (rendu-en-calques.md, decision 11).
 LAYERS = {"sol", "decor-au-sol", "monde", "dessus", "interface"}
 ORIENTATIONS = {"north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"}
-DEFAULT_SHAPE = "plain"
 CODE_PATTERN = re.compile(r"^[A-Z]{2,3}-\d{3}$")
+# A representation's statut: the one shown to the player ("courante"), or one kept for record
+# ("anterieure"). The list order carries no meaning — statut is the only thing that says which is which.
+STATUSES = {"courante", "anterieure"}
+MAX_PREVIOUS_REPRESENTATIONS = 3
 
 
 class Fault(Exception):
@@ -47,15 +55,9 @@ def load():
         raise Fault(f"not valid JSON: {error}")
 
 
-def valid_shape(shape):
-    """A shape is "plain", or the edges a track reaches, written n before e before s before w
-    (sujets-et-variantes.md, decision 26) — never a drawing name, never a repeated or out-of-order
-    letter."""
-    if shape == DEFAULT_SHAPE:
-        return True
-    if not shape or any(character not in "nesw" for character in shape):
-        return False
-    return list(shape) == sorted(shape, key="nesw".index) and len(set(shape)) == len(shape)
+# The validation of a shape NAME — bare edges, the fifteen combinations — is shape_vocab's alone (see
+# that module for why). This checker is exactly where the copies were found and the reason the module
+# now exists; it must not become one again by keeping its own valid_shape.
 
 
 def check_variant(where, variant):
@@ -63,8 +65,37 @@ def check_variant(where, variant):
         raise Fault(f"{where}: unknown or missing orientation {variant.get('orientation')!r}")
     if not variant.get("action"):
         raise Fault(f"{where}: missing action")
-    if not valid_shape(variant.get("shape", DEFAULT_SHAPE)):
+    if not shape_vocab.valid_shape(variant.get("shape", shape_vocab.DEFAULT_SHAPE)):
         raise Fault(f"{where}: invalid shape {variant.get('shape')!r}")
+
+
+def has_unlabelled_single_representation(representations):
+    """True for the one tolerated gap: a variant with exactly one representation and no statut yet.
+    Treated as 'courante' by default (there is nothing else it could be), but signalled — not silently
+    accepted — until the referentiel is completed."""
+    return len(representations) == 1 and "statut" not in representations[0]
+
+
+def check_representations(where, representations):
+    """A variant's representations: several are allowed (a redraw keeps its predecessors, they are not
+    a fault), but exactly one must carry statut 'courante', and at most three may carry 'anterieure'.
+    List order means nothing — statut is the only thing that decides which is shown. The one exception
+    is a variant with a single representation and no statut at all: tolerated as an implicit 'courante'
+    (see has_unlabelled_single_representation), reported separately, never here."""
+    if not representations or has_unlabelled_single_representation(representations):
+        return
+    for representation in representations:
+        if representation.get("statut") not in STATUSES:
+            raise Fault(f"{where}: representation {representation.get('path')!r} has missing or "
+                        f"invalid statut {representation.get('statut')!r}")
+    current = [r for r in representations if r["statut"] == "courante"]
+    if len(current) != 1:
+        raise Fault(f"{where}: expected exactly one representation with statut 'courante', "
+                    f"found {len(current)}")
+    previous = [r for r in representations if r["statut"] == "anterieure"]
+    if len(previous) > MAX_PREVIOUS_REPRESENTATIONS:
+        raise Fault(f"{where}: {len(previous)} representations with statut 'anterieure', "
+                    f"at most {MAX_PREVIOUS_REPRESENTATIONS} are kept")
 
 
 def check_schema(data):
@@ -86,9 +117,9 @@ def check_schema(data):
             raise Fault(f"type {name}: passage_default must be exactly 'open' or 'closed'")
         for variant in type_.get("lot_v0", []):
             check_variant(f"type {name} lot_v0", variant)
-        garnitures = type_.get("garnitures")
-        if garnitures and garnitures.get("default") not in garnitures.get("values", []):
-            raise Fault(f"type {name}: garniture default is not one of its own values")
+        compositions = type_.get("compositions")
+        if compositions and compositions.get("default") not in compositions.get("values", []):
+            raise Fault(f"type {name}: composition default is not one of its own values")
 
     for code, sujet in sujets.items():
         if not CODE_PATTERN.match(code):
@@ -108,10 +139,15 @@ def check_schema(data):
                 raise Fault(f"{code}: a variant carries no representations list (empty is fine, "
                             f"absent is not — the referentiel must always be able to say there are "
                             f"none yet)")
-            garniture = variant.get("garniture")
-            allowed = (types[type_name].get("garnitures") or {}).get("values")
-            if garniture and (not allowed or garniture not in allowed):
-                raise Fault(f"{code}: garniture {garniture!r} is not declared by type {type_name}")
+            check_representations(code, variant["representations"])
+            composition = variant.get("composition")
+            allowed = (types[type_name].get("compositions") or {}).get("values")
+            if composition and (not allowed or composition not in allowed):
+                raise Fault(f"{code}: composition {composition!r} is not declared by type {type_name}")
+            portillon = variant.get("portillon")
+            allowed_gates = (types[type_name].get("portillons") or {}).get("values")
+            if portillon and (not allowed_gates or portillon not in allowed_gates):
+                raise Fault(f"{code}: portillon {portillon!r} is not declared by type {type_name}")
         overrides = (sujet.get("passage") or {}).get("cells", {})
         for cell in overrides:
             if not re.fullmatch(r"\d+,\d+", cell):
@@ -158,12 +194,19 @@ def code_in_inventory(code, texts):
     return any(pattern.search(text) for text in texts.values())
 
 
-def scan_disk():
-    files = []
-    for base in (ASSETS / "poc", ASSETS / "cutout"):
-        if base.is_dir():
-            files.extend(sorted(base.rglob("*.png")))
-    return files
+def scan_cutout():
+    """The delivered files: a master from assets/poc/ resized to delivery definition. A variant's
+    representations point here, never at assets/poc/ (rendu-en-calques.md) — this is the only tree the
+    referentiel must fully claim."""
+    base = ASSETS / "cutout"
+    return sorted(base.rglob("*.png")) if base.is_dir() else []
+
+
+def scan_poc():
+    """The masters: a generator's raw render, kept next to its frozen consigne. Not what a variant
+    claims — only its cutout export is."""
+    base = ASSETS / "poc"
+    return sorted(base.rglob("*.png")) if base.is_dir() else []
 
 
 def claimed_paths(data):
@@ -173,6 +216,39 @@ def claimed_paths(data):
             for representation in variant.get("representations", []):
                 claimed.add(representation["path"])
     return claimed
+
+
+def variants_with_implicit_status(data):
+    """Every variant tolerated under has_unlabelled_single_representation: its lone representation is
+    treated as 'courante' by default, but it is surfaced here so the gap does not stay invisible until
+    the referentiel is completed with an explicit statut."""
+    pending = []
+    for code, sujet in data["sujets"].items():
+        for variant in sujet["variantes"]:
+            representations = variant.get("representations") or []
+            if has_unlabelled_single_representation(representations):
+                pending.append((code, representations[0]["path"]))
+    return pending
+
+
+def probe_stems(hors_referentiel):
+    """The file stems of the deliberately out-of-referentiel probes (sujets.json, _hors_referentiel):
+    their files are expected on disk without any variant claiming them, so they must not be reported as
+    unclaimed."""
+    return set(hors_referentiel)
+
+
+def unexported_masters(poc_files):
+    """A master under assets/poc/ whose delivered file is missing from assets/cutout/ at the same
+    relative position — an export forgotten on the way to delivery. Advisory only: this never fails the
+    check, it only surfaces a gap for a human to judge (a usage example or a reliquat never gets a
+    cutout, and that is not a fault)."""
+    missing = []
+    for poc_path in poc_files:
+        cutout_path = ASSETS / "cutout" / poc_path.relative_to(ASSETS / "poc")
+        if not cutout_path.is_file():
+            missing.append(poc_path)
+    return missing
 
 
 def main():
@@ -207,15 +283,35 @@ def main():
     else:
         print(f"  les {len(data['sujets'])} sujets sont bien à l'inventaire")
 
-    print("\nDISQUE — tout fichier sous assets/poc/ et assets/cutout/ doit être réclamé")
+    print("\nDISQUE — tout livrable sous assets/cutout/ doit être réclamé")
     claimed = claimed_paths(data)
-    unclaimed = [path for path in scan_disk()
-                if path.relative_to(ASSETS).as_posix() not in claimed]
+    expected_probes = probe_stems(hors_referentiel)
+    unclaimed = [path for path in scan_cutout()
+                if path.relative_to(ASSETS).as_posix() not in claimed
+                and path.stem not in expected_probes]
     if unclaimed:
         for path in unclaimed:
             print(f"  AUCUNE VARIANTE NE RÉCLAME : {path.relative_to(ASSETS).as_posix()}")
     else:
-        print("  chaque fichier est réclamé par une variante")
+        print("  chaque livrable est réclamé par une variante")
+
+    print("\nMAÎTRES — signalement, pas une faute : un maître de assets/poc/ sans livrable dans "
+          "assets/cutout/")
+    missing_exports = unexported_masters(scan_poc())
+    if missing_exports:
+        for path in missing_exports:
+            print(f"  AUCUN LIVRABLE POUR CE MAÎTRE : {path.relative_to(ASSETS).as_posix()}")
+    else:
+        print("  chaque maître a son livrable")
+
+    print("\nSTATUT IMPLICITE — signalement, pas une faute : variante à une seule représentation, "
+          "sans statut, traitée comme courante")
+    implicit_status = variants_with_implicit_status(data)
+    if implicit_status:
+        for code, path in implicit_status:
+            print(f"  {code} : {path} — à compléter d'un statut 'courante' explicite")
+    else:
+        print("  chaque représentation porte un statut explicite")
 
     if hors_referentiel:
         print(f"\nHORS RÉFÉRENTIEL ({len(hors_referentiel)}) — sondes sans code ni emprise fabriqués")

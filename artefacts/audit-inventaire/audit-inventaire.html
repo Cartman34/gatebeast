@@ -1,0 +1,273 @@
+<title>GateBeast — audit de l'inventaire</title>
+<style>
+  :root{
+    --ground:#f2f3f0; --card:#fbfbfa; --sunk:#e8eae5;
+    --ink:#16191a; --ink-soft:#5a625f; --ink-faint:#8b938f;
+    --line:#d6dad3; --accent:#2f6d63; --accent-soft:#dfeae7;
+    --notice-bg:#fbf3e3; --notice-line:#d9b874; --notice-ink:#5a4a1f;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#141716; --card:#1c201e; --sunk:#232825;
+      --ink:#eef1ee; --ink-soft:#a3ada8; --ink-faint:#79837e;
+      --line:#2d3330; --accent:#6fb9ab; --accent-soft:#20302c;
+      --notice-bg:#2c2513; --notice-line:#7a5f28; --notice-ink:#e8d9ab;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#f2f3f0; --card:#fbfbfa; --sunk:#e8eae5;
+    --ink:#16191a; --ink-soft:#5a625f; --ink-faint:#8b938f;
+    --line:#d6dad3; --accent:#2f6d63; --accent-soft:#dfeae7;
+    --notice-bg:#fbf3e3; --notice-line:#d9b874; --notice-ink:#5a4a1f;
+  }
+  :root[data-theme="dark"]{
+    --ground:#141716; --card:#1c201e; --sunk:#232825;
+    --ink:#eef1ee; --ink-soft:#a3ada8; --ink-faint:#79837e;
+    --line:#2d3330; --accent:#6fb9ab; --accent-soft:#20302c;
+    --notice-bg:#2c2513; --notice-line:#7a5f28; --notice-ink:#e8d9ab;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ground);color:var(--ink);
+    font:16px/1.6 var(--sans);padding:2rem 1.25rem 15rem;}
+  .sheet{max-width:940px;margin:0 auto;}
+  header.head{border-bottom:2px solid var(--ink);padding-bottom:1rem;margin-bottom:1.25rem;}
+  .eyebrow{font:600 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);}
+  h1{font:600 2.1rem/1.1 var(--serif);margin:.5rem 0 .4rem;text-wrap:balance;letter-spacing:-.01em;}
+  .lede{color:var(--ink-soft);max-width:62ch;margin:0;}
+  .tally{display:flex;gap:1.75rem;margin-top:1.1rem;font-variant-numeric:tabular-nums;}
+  .tally div{font:400 .8rem/1.3 var(--sans);color:var(--ink-faint);}
+  .tally b{display:block;font:600 1.5rem/1 var(--serif);color:var(--ink);}
+  .notice{background:var(--notice-bg);border:1px solid var(--notice-line);color:var(--notice-ink);
+    border-radius:.4rem;padding:.9rem 1.1rem;margin:0 0 1.75rem;max-width:70ch;}
+  .notice p{margin:.25rem 0;font-size:.92rem;}
+  .notice p:first-child{margin-top:0;}
+  .notice p:last-child{margin-bottom:0;}
+  h2.section-title{font:600 1.4rem/1.25 var(--serif);margin:0 0 .25rem;}
+  .section-intro{margin:2.5rem 0 1.25rem;}
+  section.cat-block{margin:2.25rem 0;}
+  .cat{display:flex;flex-wrap:wrap;align-items:baseline;gap:.75rem;
+    border-bottom:1px solid var(--line);padding-bottom:.5rem;margin-bottom:.25rem;}
+  .cat h3{font:600 1.15rem/1.3 var(--serif);margin:0;flex:1 1 14rem;}
+  .cat .code{font:600 .7rem/1 var(--mono);letter-spacing:.1em;color:var(--accent);}
+  .cat-note{color:var(--ink-soft);font-size:.86rem;margin:0 0 .6rem;}
+  .bulk{display:flex;gap:.4rem;flex-wrap:wrap;}
+  .bulk button{font:500 .75rem/1 var(--sans);padding:.4rem .7rem;border:1px solid var(--line);
+    background:var(--card);color:var(--ink-soft);border-radius:.3rem;cursor:pointer;}
+  .bulk button:hover{border-color:var(--accent);color:var(--accent);}
+  .bulk button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .item{display:grid;grid-template-columns:1fr auto;gap:.5rem 1.25rem;align-items:start;
+    padding:.85rem 0;border-bottom:1px solid var(--line);}
+  .item:last-child{border-bottom:0;}
+  .what{min-width:0;}
+  .ref{font:500 .78rem/1.4 var(--mono);color:var(--ink-faint);word-break:break-all;}
+  .ref b{color:var(--accent);font-weight:600;}
+  .say{margin:.15rem 0 0;}
+  .why{margin:.2rem 0 0;color:var(--ink-soft);font-size:.88rem;}
+  .pick{display:flex;gap:.3rem;flex-wrap:wrap;}
+  .pick label{font:500 .8rem/1 var(--sans);padding:.45rem .75rem;border:1px solid var(--line);
+    border-radius:2rem;cursor:pointer;user-select:none;white-space:nowrap;background:var(--card);}
+  .pick input{position:absolute;opacity:0;width:0;height:0;}
+  .pick label:has(input:checked){border-color:currentColor;font-weight:650;color:var(--accent);
+    background:var(--accent-soft);}
+  .pick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px;}
+  .note{grid-column:1 / -1;}
+  .note textarea{width:100%;min-height:2.2rem;resize:vertical;padding:.4rem .55rem;
+    font:.85rem/1.5 var(--sans);background:var(--sunk);color:var(--ink);
+    border:1px solid var(--line);border-radius:.3rem;}
+  .note textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  footer.bar{position:fixed;inset:auto 0 0 0;background:var(--card);
+    border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.10);padding:.75rem 1.25rem;}
+  .bar-in{max-width:940px;margin:0 auto;display:flex;gap:1rem;align-items:flex-start;}
+  #recap{flex:1;min-height:6rem;font:.76rem/1.5 var(--mono);padding:.5rem .6rem;
+    background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:.3rem;
+    resize:vertical;}
+  .bar-side{display:flex;flex-direction:column;gap:.4rem;min-width:11rem;}
+  #copy{font:600 .85rem/1 var(--sans);padding:.6rem .9rem;border:0;border-radius:.3rem;
+    background:var(--accent);color:var(--ground);cursor:pointer;}
+  #copy:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  #state{font-size:.78rem;color:var(--ink-faint);}
+  @media (max-width:640px){
+    .item{grid-template-columns:1fr;}
+    .bar-in{flex-direction:column;}
+    .bar-side{flex-direction:row;align-items:center;width:100%;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+
+<div class="sheet">
+  <header class="head">
+    <div class="eyebrow">__SCREEN__</div>
+    <h1>__TITLE__</h1>
+    <p class="lede">__LEDE__</p>
+    <div class="tally">
+      <div><b id="n-total">__TOTAL__</b>éléments relevés</div>
+      <div><b id="n-open">__TOTAL__</b>sans réponse</div>
+    </div>
+  </header>
+  <div class="notice">__NOTICE__</div>
+  <div id="body">__BODY__</div>
+</div>
+
+<footer class="bar"><div class="bar-in">
+  <textarea id="recap" readonly aria-label="Récapitulatif"></textarea>
+  <div class="bar-side">
+    <button id="copy" type="button">Copier le récapitulatif</button>
+    <span id="state"></span>
+  </div>
+</div></footer>
+
+<script>
+// Progressive enhancement only: every line of the audit above is already real, visible HTML,
+// rendered by build.py. Nothing here is required to READ the page — only to act on it faster
+// (tick a whole category at once) and to hand back a recap. If this script fails to run, for
+// any reason, the operator still sees every item and can still pick a verdict by hand: the
+// native radio buttons already work. (A first version built the whole page from a JSON blob in
+// JavaScript; when that script did not run, the page showed nothing but its empty skeleton —
+// this rewrite exists because of that failure.)
+(function(){
+  try {
+    run();
+  } catch (error) {
+    var box = document.createElement('pre');
+    box.style.whiteSpace = 'pre-wrap';
+    box.style.color = '#9c4326';
+    box.style.border = '1px solid #9c4326';
+    box.style.padding = '1rem';
+    box.style.borderRadius = '.3rem';
+    box.textContent = 'Le récapitulatif ne fonctionne pas : ' +
+      (error && error.message ? error.message : error);
+    document.body.appendChild(box);
+  }
+
+function run(){
+  var STORE = 'gatebeast-audit-inventaire-v1';
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item'));
+  var recap = document.getElementById('recap');
+  var state = document.getElementById('state');
+  var copiedMessage = "__COPIED__";
+  var copyRefusedMessage = "__COPY_REFUSED__";
+  var stamp = "__SCREEN__ — __TITLE__";
+
+  function chosenInput(item){
+    return item.querySelector('input:checked');
+  }
+  function noteOf(item){
+    var zone = item.querySelector('textarea[data-note]');
+    return zone ? zone.value.trim() : '';
+  }
+  function refText(item){
+    var ref = item.querySelector('.ref');
+    return ref ? ref.textContent.replace(/\s+/g, ' ').trim() : item.dataset.code;
+  }
+
+  // Every bulk button ticks every item inside the same <section class="cat-block"> that
+  // declares the matching data-value — no need to know the category's items in advance,
+  // the DOM already groups them.
+  Array.prototype.forEach.call(document.querySelectorAll('.bulk-btn'), function(button){
+    button.addEventListener('click', function(){
+      var block = button.closest('.cat-block');
+      if(!block){ return; }
+      Array.prototype.forEach.call(block.querySelectorAll('.item'), function(item){
+        var input = item.querySelector('input[value="' + CSS.escape(button.dataset.value) + '"]');
+        if(input){ input.checked = true; }
+      });
+      refresh(); save();
+    });
+  });
+
+  function refresh(){
+    var lines = [stamp, ''];
+    var answered = 0;
+    var currentSection = null, currentCat = null, block = [];
+
+    function flushCategory(){
+      if(currentCat && block.length){
+        lines.push(currentCat);
+        lines.push.apply(lines, block);
+      }
+      block = [];
+    }
+
+    items.forEach(function(item){
+      // The item carries its own section name (data-section, written by build.py) — it is not
+      // a descendant of ".section-intro", which is only a preceding sibling of its ".cat-block",
+      // so there is nothing to walk up to. The category, by contrast, IS an ancestor.
+      var catBlock = item.closest('.cat-block');
+      var sectionTitle = item.dataset.section || '';
+      var catCode = catBlock ? catBlock.querySelector('.code').textContent : '';
+      var catName = catBlock ? catBlock.querySelector('h3').textContent : '';
+
+      if(sectionTitle !== currentSection){
+        flushCategory();
+        currentSection = sectionTitle; currentCat = null;
+        lines.push(sectionTitle);
+      }
+      var thisCat = catCode + ' ' + catName;
+      if(thisCat !== currentCat){
+        flushCategory();
+        currentCat = thisCat;
+      }
+
+      var input = chosenInput(item);
+      var note = noteOf(item);
+      if(input){ answered += 1; }
+      if(!input && !note){ return; }
+      var label = input ? input.parentElement.querySelector('span').textContent.toUpperCase()
+        : '(commentaire seul)';
+      block.push('  ' + item.dataset.code + ' ' + label + ' — ' + refText(item));
+      if(note){ block.push('    ' + note); }
+    });
+    flushCategory();
+
+    recap.value = lines.join('\n');
+    document.getElementById('n-total').textContent = items.length;
+    document.getElementById('n-open').textContent = items.length - answered;
+    state.textContent = answered + ' / ' + items.length + ' tranchés.';
+  }
+
+  function save(){
+    var out = {};
+    items.forEach(function(item){
+      var input = chosenInput(item);
+      out[item.dataset.code] = {v: input ? input.value : '', n: noteOf(item)};
+    });
+    try{ localStorage.setItem(STORE, JSON.stringify(out)); }catch(e){}
+  }
+
+  function restore(){
+    var raw = null;
+    try{ raw = JSON.parse(localStorage.getItem(STORE) || 'null'); }catch(e){ return; }
+    if(!raw){ return; }
+    items.forEach(function(item){
+      var kept = raw[item.dataset.code];
+      if(!kept){ return; }
+      if(kept.v){
+        var input = item.querySelector('input[value="' + CSS.escape(kept.v) + '"]');
+        if(input){ input.checked = true; }
+      }
+      var zone = item.querySelector('textarea[data-note]');
+      if(zone && kept.n){ zone.value = kept.n; }
+    });
+  }
+
+  document.addEventListener('change', function(){ refresh(); save(); });
+  document.addEventListener('input', function(){ refresh(); save(); });
+
+  document.getElementById('copy').addEventListener('click', function(){
+    recap.removeAttribute('readonly');
+    recap.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+    recap.setAttribute('readonly', 'readonly');
+    state.textContent = ok ? copiedMessage : copyRefusedMessage;
+  });
+
+  restore();
+  refresh();
+} // end of run()
+})();
+</script>

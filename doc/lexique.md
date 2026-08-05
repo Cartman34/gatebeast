@@ -37,10 +37,12 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 | sujet | subject | Tout élément du jeu qui a une représentation graphique. Le mot **entité** est banni de ce vocabulaire : côté fonctionnel il désigne aussi des éléments sans image. |
 | type | type | La sorte de chose qu'est un sujet — arbre, créature, humain, bâtiment, objet, sol, chemin, point de passage. Le type porte les comportements, les évènements et le lot exigé. |
 | profil | profile | L'apparence concrète d'un sujet à l'intérieur de son type : `birch-01`, `oak-01`, `asian-01`. Un profil est une apparence et une seule, et une entrée d'inventaire. |
-| variante | variant | Une posture précise d'un profil : une orientation, une action, et les directions de ses parties. C'est ce qu'on demande au jeu. |
+| variante | variant | Une posture précise d'un profil, définie par les axes que porte son type — orientation, action, forme, composition, directions de ses parties. C'est ce qu'on demande au jeu ; elle n'est pas une image mais porte des **représentations**, dont la sprite n'est qu'une possibilité parmi d'autres. |
 | image | frame | Un fichier d'une variante, numéroté `frame-01`, `frame-02`… Une posture fixe n'en a qu'un, une marche en a plusieurs. |
+| représentation | representation | Ce par quoi une variante se réalise concrètement — une sprite aujourd'hui, un modèle en trois dimensions ou autre chose demain. Une variante porte des représentations, elle n'est jamais elle-même une image. |
 | lot | variant set | L'ensemble des variantes exigées d'un profil, fixé par son type et complétable à tout moment. |
 | vue principale | base view | La variante de repos, de face : elle existe toujours et sert de référence visuelle à toutes les autres. |
+| tracé | trace* | Ce qui s'assemble de case en case en reliant des bords de sa case — clôture, chemin, mur, cours d'eau ; sa forme dit lesquels. |
 | forme | shape | Pour un sujet qui se pose bout à bout — clôture, chemin, mur, cours d'eau —, l'ensemble des bords de la case que le tracé rejoint, écrits dans l'ordre `n`, `e`, `s`, `w` : `shape-ns` une ligne, `shape-ne` un angle, `shape-nesw` un croisement. La forme dit où la pièce touche ses voisines, donc elle se vérifie par calcul. |
 | composition d'un sujet | subject composition | De quoi une pièce est faite, **à forme égale** : la clôture `shape-ns` existe avec deux poteaux, avec un seul, ou sans aucun, ses lisses toujours identiques. On alterne les compositions le long d'une portée pour que les poteaux s'espacent au lieu de se doubler à chaque jointure. S'écrit dans l'adresse `posts-2`, `posts-1`, `posts-0`. |
 | composition d'une scène | scene composition | Quels sujets se placent sur quelles cases d'une grille. Se déclare dans un **plan de composition** avant toute génération. Même mot que ci-dessus, autre échelle : l'un parle d'un plan, l'autre d'une pièce. |
@@ -72,4 +74,4 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 | reprise | retry | La seconde et dernière tentative accordée à une image jugée fautive. |
 | mise en défaut | flagged | L'état d'une image qui a échoué deux fois : elle est écartée, signalée, et n'arrête pas le reste du lot. |
 
-Aucun terme en attente.
+Terme en attente : **tracé** — forme anglaise provisoire (`trace`), à confirmer avec quelqu'un dont c'est le métier.

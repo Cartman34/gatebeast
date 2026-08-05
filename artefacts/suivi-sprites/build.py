@@ -17,12 +17,13 @@ Run from the workspace root: python3 gatebeast/local/build-review-page.py
 """
 import base64
 import html
+import io
 import json
 import re
 import sys
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 HERE = Path(__file__).resolve().parent
 SCRIPTS = HERE.parents[1] / "scripts"
@@ -50,7 +51,7 @@ def load_judgements():
     except (json.JSONDecodeError, OSError):
         return {}
     by_path = {}
-    for entry in data.get("jugements", []):
+    for entry in data.get("judgments", []):
         image = entry.get("image", "")
         # A judgement names its image from the repository root; this page addresses images relative
         # to assets/, so the leading "assets/" is dropped to line the two up.
@@ -68,23 +69,23 @@ STORAGE_KEY = "gatebeast-suivi-sprites-v1"
 # ever carried by colour alone. "en défaut" is a mechanical failure of the chain; "rejetée" is the
 # owner turning an image down — two different things that must never be counted together.
 STATUS = {
-    "planned": {"label": "prévue", "mark": "○"},
-    "running": {"label": "en production", "mark": "◐"},
-    "done": {"label": "produite", "mark": "●"},
-    "validated": {"label": "validée", "mark": "✓"},
+    "planned": {"label": "Prévue", "mark": "○"},
+    "running": {"label": "En production", "mark": "◐"},
+    "done": {"label": "Produite", "mark": "●"},
+    "validated": {"label": "Validée", "mark": "✓"},
     # U+00D7 rather than a heavier cross: it is present in every font, so the mark cannot turn to tofu.
-    "fault": {"label": "en défaut", "mark": "×"},
-    "rejected": {"label": "rejetée", "mark": "⊘"},
+    "fault": {"label": "En défaut", "mark": "×"},
+    "rejected": {"label": "Rejetée", "mark": "⊘"},
 }
 # The life of an image, then the two ways it can end badly. "produite" means the chain returned an
 # image; "validée" means the owner accepted it — two different facts that must never be counted as one.
 STATUS_ORDER = ["planned", "running", "done", "validated", "fault", "rejected"]
 
 ACTIONS = [
-    ("produce", "à produire"),
-    ("validate", "valider"),
-    ("retry", "à reprendre"),
-    ("drop", "écarter"),
+    ("produce", "À produire"),
+    ("validate", "Valider"),
+    ("retry", "À reprendre"),
+    ("drop", "Écarter"),
 ]
 
 # What can be asked of a variant depends on what exists. Nothing can be retried or set aside before an
@@ -125,6 +126,8 @@ LABELS = {
     "viewerFull": "— pleine taille de la source embarquée",
     "viewerRepeat": "répétée à l'échelle de la maquette",
     "viewerClose": "Fermer",
+    "compareCurrent": "Version actuelle",
+    "comparePrevious": "Version antérieure",
     "scopes": {
         "park": "maquette du parc",
         "later": "cible ultérieure",
@@ -136,27 +139,72 @@ LABELS = {
 DEFAULT_SHAPE = "plain"
 
 
-def address(orientation="south", action="idle", shape=DEFAULT_SHAPE, garniture=None, frame=1):
-    """The address of one image, per sujets-et-variantes.md.
+def address(orientation="south", action="idle", shape=DEFAULT_SHAPE, axis_values=(), frame=1):
+    """The address of one image, per sujets-et-variantes.md and doc/lexique.md.
 
     Orientation and action are always written. The shape follows the action, and only when it leaves
     its default `plain` — the value of every subject that does not assemble end to end, which is very
-    nearly all of them. The garniture, when the variant carries one, follows the shape it belongs to.
-    Directions would come next, then the frame.
+    nearly all of them. Every other axis a type declares (composition, portillon, and whichever comes
+    next) follows the shape, each written as its own bare value, no axis name in front of it, exactly
+    what the delivered file names themselves already do — and only when it leaves its own default
+    (doc/lexique.md states this rule for the composition axis; it holds the same way for any axis of
+    the same shape). axis_values is computed once per variant by variant_axis_values(), in a fixed
+    order — no axis is ever named here, so a new one needs no change to this function. Directions
+    would come next, then the frame.
     """
     pieces = [f"orientation-{orientation}", f"action-{action}"]
     if shape != DEFAULT_SHAPE:
         pieces.append(f"shape-{shape}")
-    if garniture:
-        pieces.append(f"garniture-{garniture}")
+    pieces.extend(axis_values)
     pieces.append(f"frame-{frame:02d}")
 
     return "_".join(pieces)
 
 
+def type_axis_keys(type_def):
+    """Every extra variant axis a type declares, in a fixed alphabetical order.
+
+    An axis is any type key ending in "s" whose value carries "values" and "default" — the shape
+    `compositions` and `portillons` already have, and whichever comes next without needing a change
+    here. Alphabetical because nothing in the referentiel orders axes itself, and the address and the
+    caption must agree on the very same order everywhere on the page.
+    """
+    return sorted(key for key, value in type_def.items()
+                 if key.endswith("s") and isinstance(value, dict)
+                 and "values" in value and "default" in value)
+
+
+def leading_axis_keys(type_def):
+    """Axes the type marks as changing what a variant fundamentally IS, not just how it is finished —
+    `defines_kind: true` on the axis' own declaration, read generically like every other axis property
+    (type_axis_keys()): a fixed marker the referentiel states, never a guess from an axis' name or its
+    number of values (composition also has three values, and never changes what the piece is). No
+    current axis carries this marker yet, so nothing leads until the referentiel adds it to one.
+    """
+    return [key for key in type_axis_keys(type_def) if type_def[key].get("defines_kind")]
+
+
+def variant_axis_values(type_def, entry):
+    """Every value a variant carries on one of its type's axes that is not that axis' own default —
+    the referentiel's own rule (doc/lexique.md, composition d'un sujet): a default is never written,
+    since writing it on every variant would only make every other one harder to read by comparison.
+    A variant names its value under the axis' own singular field (`compositions` -> `composition`,
+    `portillons` -> `portillon`), read here from what the type actually declares, never assumed from
+    a fixed list — a third axis tomorrow needs no change to this function either.
+    """
+    values = []
+    for axis_key in type_axis_keys(type_def):
+        field = axis_key[:-1]
+        value = entry.get(field)
+        if value and value != type_def[axis_key]["default"]:
+            values.append(value)
+
+    return values
+
+
 # ---- the referentiel of sujets is the single source: no duplicate model lives here anymore ---------
 # This page used to carry its own list of expected types, profiles and variants, kept by hand beside
-# assets/sujets.json. The two drifted apart the day a new axis (garnitures) or a new shape arrived and
+# assets/sujets.json. The two drifted apart the day a new axis (compositions) or a new shape arrived and
 # only one of them learned about it — exactly what left three freshly produced fence pieces sitting in
 # "hors modèle" although they were perfectly legitimate. There is now exactly one model: the referentiel
 # itself, read here and never copied.
@@ -165,6 +213,34 @@ TYPES = SUJETS_DATA["types"]
 SUJETS = SUJETS_DATA["sujets"]
 HORS_REFERENTIEL = {key: value for key, value in SUJETS_DATA.get("_hors_referentiel", {}).items()
                     if key != "_comment"}
+
+# The French label a human actually reads is not this page's to invent or copy: it lives on the
+# inventory sheets, the sole source of truth, and it changes there without this page knowing. Same
+# read as artefacts/exemples-usage/build.py (`\*\*CODE libellé\*\*`), so a sheet is written once and
+# both consumers agree on what it says.
+INVENTAIRE_DIR = HERE.parents[1] / "doc" / "conception" / "referentiels" / "visuel" / "inventaire"
+
+# Every sujet code the inventory sheets could not put a label to — a fact about the inventory, not a
+# defect in this page, but one nobody should have to open the page to discover (see the report printed
+# at the end of this script, alongside SKIPPED_IMAGES).
+MISSING_LABELS = []
+
+
+def load_sujet_labels():
+    labels = {}
+    if not INVENTAIRE_DIR.is_dir():
+        return labels
+    sheets = {path: path.read_text(encoding="utf-8") for path in sorted(INVENTAIRE_DIR.glob("*.md"))}
+    for code in SUJETS:
+        for text in sheets.values():
+            match = re.search(rf"\*\*{re.escape(code)}\s+([^*]+)\*\*", text)
+            if match:
+                labels[code] = match.group(1).strip()
+                break
+    return labels
+
+
+SUJET_LABELS = load_sujet_labels()
 
 # A ground material is the one type delivered as an exact box rather than at a contractual width —
 # the same fact export-asset.py holds under the same name, asked of the referentiel rather than
@@ -178,7 +254,14 @@ TYPE_LABELS = {
     "bosquet-arbres": "Bosquet d'arbres", "herbe": "Herbe", "batiment": "Bâtiment",
     "humain": "Humain", "creature": "Créature",
 }
-GARNITURE_LABELS = {"posts-2": "deux poteaux", "posts-1": "un poteau", "posts-0": "sans poteau"}
+# Human-readable text for a value the referentiel names, tried by ANY axis (composition, portillon,
+# and whichever comes next) — never keyed to one axis by name, since a raw value like "posts-1" or
+# "ferme" cannot collide between axes. A value with no entry here is shown exactly as the referentiel
+# spells it (variant_caption()) rather than block on a translation this page does not own.
+AXIS_VALUE_LABELS = {
+    "posts-2": "deux poteaux", "posts-1": "un poteau", "posts-0": "sans poteau",
+    "gate-none": "sans portillon", "gate-closed": "portillon fermé", "gate-open": "portillon ouvert",
+}
 
 
 def type_rule(type_def):
@@ -189,9 +272,10 @@ def type_rule(type_def):
             else "passage fermé par défaut"]
     if type_def.get("assembles"):
         bits.append("s'assemble bout à bout, " + ("pivote" if type_def.get("rotates") else "ne pivote pas"))
-    if type_def.get("garnitures"):
-        values = ", ".join(type_def["garnitures"]["values"])
-        bits.append(f"garnitures {values} (défaut {type_def['garnitures']['default']})")
+    for axis_key in type_axis_keys(type_def):
+        axis = type_def[axis_key]
+        values = ", ".join(axis["values"])
+        bits.append(f"{axis_key} {values} (défaut {axis['default']})")
     if type_def.get("parts"):
         bits.append("parties qui pointent : " + ", ".join(type_def["parts"]))
 
@@ -270,6 +354,19 @@ def shape_label(shape):
         drawing = "angle"
 
     return f"{drawing} {'-'.join(EDGE_LABELS[edge] for edge in edges)}"
+
+
+def shape_edges_label(shape):
+    """Just the edges a shape connects, no drawing word in front (`ligne`, `angle`...) — used when a
+    leading axis already names what kind of piece this is (variant_caption()): repeating the drawing
+    word in front of it would only restate what the leading label already said. A plain subject
+    (DEFAULT_SHAPE) has no edges of its own to name.
+    """
+    if shape == DEFAULT_SHAPE:
+        return ""
+    return "-".join(EDGE_LABELS[edge] for edge in shape)
+
+
 ORIENTATION_LABELS = {"north": "nord", "east": "est", "south": "sud", "west": "ouest"}
 
 
@@ -301,15 +398,13 @@ def footprint_label(footprint):
 
 
 def working_box(footprint, kind, code):
-    """The size a sprite is actually SHOWN at: delivery-scale pixels, 96 per tile by default — the
-    working size of this page, big enough to judge a sprite, no toggle down to the game's own display
-    size (an earlier version of this page showed sprites at the real game's 24 px per tile; the
-    operator could not judge anything at that size, so it is not the default any more).
+    """The size a sprite is actually SHOWN at: the game's own display fineness, 24 pixels per tile of
+    footprint width — exactly what the player sees on screen, so nothing validated here can read
+    differently once it is in the game.
 
-    Every figure is ASKED of tile_scale.py, never retyped here. A deliverable is already exported at
-    exactly this fineness, so it is shown at its own native size; a master stand-in, exported at a
-    different, larger definition, is scaled down to the very same effective size instead of its own —
-    the two must read at one consistent scale on this page, whichever one happens to be on screen.
+    Every figure is ASKED of tile_scale.py, never retyped here, whatever definition the underlying
+    file happens to be exported or mastered at — a deliverable and a master stand-in both come down to
+    the same display size, so the two read at one consistent scale on this page.
 
     Width comes from the footprint — the ground the subject occupies — and height only ever follows the
     image's own proportions, never the other way around: scaling to a declared height would shrink a
@@ -319,10 +414,10 @@ def working_box(footprint, kind, code):
     """
     columns, rows = footprint
     if kind == "tile":
-        return tile_scale.delivery_size(columns, rows)
+        return tile_scale.tile_box(columns, rows)
     width, height = image_size(code)
 
-    return tile_scale.delivery_box(columns, width, height)
+    return tile_scale.sprite_box(columns, width, height)
 
 
 def maquette_style(code, footprint, kind):
@@ -341,9 +436,45 @@ def empty_style(footprint):
 # Every variant the page carries, in page order, for the runtime recap.
 registry = []
 
+# Every variant that holds more than one representation, keyed by its identifier — the comparison
+# popin's own data, built as each slot is rendered and read back only once every slot has run.
+comparisons = {}
+
+
+def current_representation(representations):
+    """The one representation a variant shows in its main slot — the referentiel's own authority, not
+    a guess read off a file name: a representation carries `statut: "courante"` once a variant has
+    more than one, per doc/outils/referentiel-des-sujets.md ("une version active par variante"). A
+    lone representation needs no marking at all — there is nothing else it could be.
+    """
+    if len(representations) == 1:
+        return representations[0]
+    marked = [rep for rep in representations if rep.get("statut") == "courante"]
+    assert len(marked) == 1, (
+        f"exactly one representation must carry statut=\"courante\" among {len(representations)}: "
+        f"{[rep['path'] for rep in representations]}")
+
+    return marked[0]
+
+
+def previous_representations(representations, current):
+    """Every representation that is not the current one, in the referentiel's own order (most recent
+    first, per the same doc) — capped to the three the comparison popin shows."""
+    return [rep for rep in representations if rep is not current][:3]
+
 
 def escape(text):
     return html.escape(str(text), quote=True)
+
+
+def lead_capital(text):
+    """Capitalise a standalone label's leading letter, and nothing else — never Title Case the rest
+    of it, and never touch a code or a technical address, which keep the exact case their files
+    carry. Applied only at the point a composed phrase (a variant's caption, a type's rule) becomes
+    the whole content of a displayed label; the fragments it is built from stay as they are, since
+    most of them are also used mid-sentence elsewhere, where a leading capital would be wrong.
+    """
+    return text[:1].upper() + text[1:] if text else text
 
 
 def status_markup(status, extra=""):
@@ -376,7 +507,7 @@ def actions_markup(identifier, subject, status):
               </div>
               <div class="slot-more" data-more="{escape(identifier)}" hidden>
                 <input class="note" type="text" data-note="{escape(identifier)}"
-                       placeholder="commentaire" aria-label="Commentaire — {escape(subject)}" />
+                       placeholder="Commentaire" aria-label="Commentaire — {escape(subject)}" />
               </div>"""
 
 
@@ -385,34 +516,117 @@ def register(identifier, code, profile_label, type_label, address_text, scope, s
                      "address": address_text, "scope": scope, "status": status})
 
 
-def variant_caption(type_def, entry):
-    """What actually distinguishes this variant, in the order it matters: shape first (the defining
-    fact of an assembling subject), its garniture next when it carries one, and its orientation last —
-    but only for a subject the renderer does not turn, the same condition the address itself follows.
+def field_varies(variants, getter):
+    """Whether `getter(entry)` takes more than one distinct value across ONE sujet's own variantes —
+    the population variant_caption()'s label-brevity rule is judged against: a field that can only
+    ever be one thing for this sujet distinguishes none of its variants from another, however many
+    values it could take elsewhere in the referentiel or for another sujet of the same type. A sujet
+    with a single variant never varies on anything, by construction — there is nothing to tell it
+    apart from.
     """
-    if type_def.get("assembles"):
+    return len({getter(entry) for entry in variants}) > 1
+
+
+def variant_caption(type_def, entry, varies):
+    """What actually distinguishes this variant, in the order it matters.
+
+    A LABEL SAYS WHAT DISTINGUISHES A VARIANT, NOTHING MORE (the operator's own rule): a field that
+    cannot take more than one value across this sujet's own variantes (varies, from field_varies() —
+    asked of the shape, the orientation and every axis alike, never hardcoded per field) is left out
+    of the caption entirely, however meaningful it looks in isolation — "sud" says nothing when every
+    variant of this sujet faces south. The day a sujet actually has more than one orientation (a
+    character, a creature), it reappears in the caption on its own, with no change needed here.
+
+    Every axis that DOES vary is always named, default value included (a caption exists to tell two
+    variants apart at a glance, and staying silent on an axis whenever it holds the default would let
+    "deux poteaux" and "un poteau" both read as plain "ligne nord-sud"). Most axes trail after the
+    shape, in the same fixed order the address itself lists them. But an axis the type marks as
+    changing what the piece fundamentally IS (leading_axis_keys(): `defines_kind`) LEADS the caption
+    instead, and only when it actually holds a value other than its own default — a fence stays "ligne
+    nord-sud" until a portillon is what it is, at which point the caption reads "Portillon ouvert,
+    nord-sud", not "Ligne nord-sud · … · portillon ouvert" where the one fact that matters arrives
+    last. The shape's own drawing word (`ligne`, `angle`...) is dropped in that case
+    (shape_edges_label()): the leading label already says what kind of piece this is, so it would only
+    repeat itself.
+    """
+    leading_keys = leading_axis_keys(type_def)
+    leading_labels = []
+    trailing_labels = []
+    for axis_key in type_axis_keys(type_def):
+        field = axis_key[:-1]
+        if not varies.get(field):
+            continue
+        default = type_def[axis_key]["default"]
+        value = entry.get(field, default)
+        label = AXIS_VALUE_LABELS.get(value, value)
+        if axis_key in leading_keys and value != default:
+            leading_labels.append(label)
+        else:
+            trailing_labels.append(label)
+
+    shape_speaks = type_def.get("assembles") and varies.get("shape")
+    if leading_labels:
+        edges = shape_edges_label(entry.get("shape", DEFAULT_SHAPE)) if shape_speaks else ""
+        caption = ", ".join(filter(None, [" · ".join(leading_labels), edges]))
+    elif shape_speaks:
         caption = shape_label(entry.get("shape", DEFAULT_SHAPE))
     else:
+        # Either the subject does not assemble, or it does but this sujet only ever uses one shape:
+        # either way there is nothing left to say about shape, so it falls back to the same neutral
+        # caption a non-assembling subject gets.
         caption = "vue principale"
-    if entry.get("garniture"):
-        caption = f"{caption} · {GARNITURE_LABELS.get(entry['garniture'], entry['garniture'])}"
-    orientation_speaks = type_def.get("assembles") and not type_def.get("rotates")
+
+    for label in trailing_labels:
+        caption = f"{caption} · {label}"
+    orientation_speaks = (type_def.get("assembles") and not type_def.get("rotates")
+                         and varies.get("orientation"))
     if orientation_speaks and entry.get("orientation") in ORIENTATION_LABELS:
         caption = f"{caption} · {ORIENTATION_LABELS[entry['orientation']]}"
 
     return caption
 
 
+def unread_shot_markup(label, path, style):
+    """A representation the referentiel names but this page could not embed — for whichever reason
+    SKIPPED_IMAGES names for this exact path (unreadable, or too heavy — see master_entry()).
+
+    GENERAL RULE, NOT SPECIFIC TO EITHER CASE: a page whose one job is to report the state of
+    production must never crash, and never show an empty frame under a "produced" label either, over
+    an image it could not embed. It shows this plainly marked placeholder instead, at exactly the box
+    the caller sizes it at — never an invented size — so every other sprite on the page keeps showing
+    regardless. Applies wherever a representation's bytes are embedded: a modelled variant's slot
+    (variant_shot()) and a stray file alike (stray_vis_markup()).
+    """
+    reason = SKIPPED_IMAGES.get(path, {"short": "Image indisponible", "detail": "raison inconnue"})
+
+    return (f'<div class="frame frame--unread" style="{style}" role="img" '
+            f'aria-label="{escape(label)} — {escape(reason["detail"])} : {escape(path)}">'
+            f'<span>{escape(reason["short"])}</span></div>')
+
+
 def variant_shot(path, footprint, kind, label):
     """One representation. A path under poc/ is a master standing in for a livrable that does not
     exist yet, marked as such; a path under cutout/ is the livrable itself — the distinction the slot
     used to read off a disk scan is now read directly off the referentiel's own path.
+
+    The referentiel naming a representation does not mean this page can already read its bytes: a
+    fresh export can land on disk before scripts/build-thumbnails.py has caught up (see
+    resolve_image()). When even a direct read fails, unread_shot_markup() shows the gap honestly
+    instead of taking the whole page down over one file.
+
+    A representation heavy enough to cross MAX_EMBED_BYTES still shows — as a thumbnail sized to the
+    very box it is displayed at (display_code_for()), never the untouched original, which stays
+    reachable through the eye and a click on the picture (shot_markup()'s own full_code).
     """
-    code = thumbnail_key(path)
+    full_code = resolve_image(path)
+    if full_code is None:
+        return unread_shot_markup(label, path, empty_style(footprint))
+    box = working_box(footprint, kind, full_code)
+    display_code = display_code_for(path, full_code, box)
     if path.startswith("poc/"):
-        return shot_markup(code, footprint, kind, f"{label} — maître, pas encore exporté",
-                           extra=" shot-frame--master")
-    return shot_markup(code, footprint, kind, label)
+        return shot_markup(display_code, footprint, kind, f"{label} — maître, pas encore exporté",
+                           extra=" shot-frame--master", full_code=full_code)
+    return shot_markup(display_code, footprint, kind, label, full_code=full_code)
 
 
 def representation_meta_markup(identifier, path, code, label):
@@ -420,24 +634,71 @@ def representation_meta_markup(identifier, path, code, label):
     whether it stands in for an unexported master, and its judgement — nothing here is ever laid over
     the image (see shot_markup()), so reading it never hides part of the sprite it is about.
     """
-    tag = ('<p class="shot-tag">maître, pas encore exporté</p>' if path.startswith("poc/") else "")
+    tag = ('<p class="shot-tag">Maître, pas encore exporté</p>' if path.startswith("poc/") else "")
 
     return tag + judge_body_markup(identifier, code, label)
 
 
-def slot_markup(sujet_code, sujet, type_name, type_def, entry):
-    """One variant, captioned by what actually distinguishes it, holding every representation it has —
-    never just one, so a second attempt at the same posture is never hidden behind the first.
+# The OPERATOR's own word on a representation — "validee", "a-reprendre", "ecartee" — a wholly
+# different opinion from the judging agent's scored report (judge_body_markup(), assets/jugements.json):
+# one is the owner deciding, the other is a machine critique. Different vocabulary on purpose (never
+# "retenue"/"à refaire", the judge's own words), so the two can never be misread as the same fact.
+VERDICT_LABELS = {"validee": "Validée", "a-reprendre": "À reprendre", "ecartee": "Écartée"}
+# The verdict's own CSS colour family — named for what it reads as, not reusing the production
+# STATUS's "validated"/"fault"/"rejected" slots (those track the CHAIN's own state, a different axis
+# entirely: whether an image exists at all, never whether the operator liked it).
+VERDICT_STYLES = {"validee": "validated", "a-reprendre": "rework", "ecartee": "rejected"}
+
+
+def operator_verdict_markup(representation):
+    """The operator's verdict and comment on one exact representation, visible without opening
+    anything — the comment is often what matters most, so it travels right along with the word, never
+    behind a fold. Nothing is shown at all when the referentiel carries no verdict yet for this exact
+    representation: silence here means "not yet judged by the operator", the same way
+    judge_body_markup() stays silent for an unjudged image.
+    """
+    verdict = representation.get("verdict")
+    if not verdict:
+        return ""
+    style = VERDICT_STYLES.get(verdict, "rework")
+    label = VERDICT_LABELS.get(verdict, verdict)
+    comment = representation.get("commentaire_operateur")
+    comment_markup = f'<p class="verdict-comment">{escape(comment)}</p>' if comment else ""
+
+    return (f'<div class="verdict verdict--{style}">'
+            f'<span class="verdict-word">{escape(label)}</span></div>{comment_markup}')
+
+
+def rejected_shot_markup(path, footprint, label):
+    """The picture behind a representation the operator has already turned down: never painted in the
+    main flow — the project's own rule, an écartée image is retired from view, never deleted or
+    hidden — but still one click away through the eye, which is why the file is resolved (embedded)
+    here even though nothing draws it.
+    """
+    resolve_image(path)
+
+    return (f'<div class="frame frame--rejected" style="{empty_style(footprint)}" role="img" '
+            f'aria-label="{escape(label)} — image écartée, disponible via le bouton œil">'
+            f'<span>Image&nbsp;écartée</span></div>')
+
+
+def slot_markup(sujet_code, sujet, type_name, type_def, entry, varies):
+    """One variant, captioned by what actually distinguishes it, holding its current representation.
+
+    A variant can carry more than one representation when a posture was attempted twice — only the
+    latest is ever shown in this flow; the earlier attempts are not dropped, they move to the
+    comparison popin (see compare_button_markup()) so a second attempt at the same posture is never
+    hidden, only kept out of the way.
 
     The operator's own actions and comment field are offered here UNCONDITIONALLY, whether or not a
     representation exists and whether or not a judgement covers it: the machine's score is one more
     fact next to the sprite, never a gate on what the operator may do with it.
     """
-    caption = variant_caption(type_def, entry)
+    caption = variant_caption(type_def, entry, varies)
     footprint = (sujet["emprise"]["columns"], sujet["emprise"]["rows"])
     kind = "tile" if type_name == TILE_TYPE else "sprite"
     addr = address(entry.get("orientation", "south"), entry.get("action", "idle"),
-                  entry.get("shape", DEFAULT_SHAPE), entry.get("garniture"))
+                  entry.get("shape", DEFAULT_SHAPE), variant_axis_values(type_def, entry))
     identifier = f"{sujet_code}|{addr}"
     subject = f"{sujet_code} {caption}"
     representations = entry.get("representations", [])
@@ -448,13 +709,47 @@ def slot_markup(sujet_code, sujet, type_name, type_def, entry):
     register(identifier, sujet_code, sujet["profil"], TYPE_LABELS.get(type_name, type_name), addr,
              "park", status)
 
-    wide = tile_scale.delivery_width(footprint[0]) > 200
+    # The layout threshold is asked at the very scale the page actually draws at, never at a scale
+    # that was true under an earlier rendering choice.
+    wide = tile_scale.sprite_width(footprint[0]) > 200
+    tools = ""
+    verdict_markup = ""
     if representations:
-        vis = "".join(variant_shot(rep["path"], footprint, kind, subject) for rep in representations)
-        judge = "\n".join(
-            representation_meta_markup(f"{identifier}|{index}", rep["path"],
-                                       thumbnail_key(rep["path"]), subject)
-            for index, rep in enumerate(representations))
+        current = current_representation(representations)
+        previous = previous_representations(representations, current)
+        # An écartée current representation is retired from the flow — the operator already turned
+        # it down — but never deleted and never hidden: it stays one click away through the eye
+        # (rejected_shot_markup()), while the ordinary picture simply is not painted here.
+        if current.get("verdict") == "ecartee":
+            vis = rejected_shot_markup(current["path"], footprint, subject)
+        else:
+            vis = variant_shot(current["path"], footprint, kind, subject)
+        current_code = thumbnail_key(current["path"])
+        judge = representation_meta_markup(identifier, current["path"], current_code, subject)
+        verdict_markup = operator_verdict_markup(current)
+        tool_buttons = [enlarge_button_markup(current_code, subject)]
+        if previous:
+            tool_buttons.append(compare_button_markup(identifier, subject))
+            # Each previous representation must actually be embedded here, not merely named: the
+            # comparison popin shows it in full, and nothing guarantees a superseded version is
+            # already in THUMBNAILS just because the current one is. resolve_image() reads it off
+            # disk when needed (or records why it could not, per master_entry()); the JS side already
+            # degrades gracefully to a blank tile with its caption if a code never resolves.
+            for rep in previous:
+                resolve_image(rep["path"])
+            comparisons[identifier] = {
+                "subject": subject,
+                "current": {"code": current_code, "path": current["path"],
+                           "verdict": VERDICT_LABELS.get(current.get("verdict")),
+                           "comment": current.get("commentaire_operateur"),
+                           "judge": judge_summary(current_code)},
+                "previous": [{"code": thumbnail_key(rep["path"]), "path": rep["path"],
+                             "verdict": VERDICT_LABELS.get(rep.get("verdict")),
+                             "comment": rep.get("commentaire_operateur"),
+                             "judge": judge_summary(thumbnail_key(rep["path"]))}
+                            for rep in previous],
+            }
+        tools = f'              <div class="encart-tools">{"".join(tool_buttons)}</div>'
     else:
         vis = (f'<div class="frame" style="{empty_style(footprint)}" role="img" '
                f'aria-label="Aucune image produite — {escape(footprint_label(footprint))}"></div>')
@@ -463,8 +758,10 @@ def slot_markup(sujet_code, sujet, type_name, type_def, entry):
     return f"""          <li class="slot slot--park{' slot--wide' if wide else ''}" data-slot="{escape(identifier)}" data-status="{status}">
             <div class="slot-vis">{vis}</div>
             <div class="slot-body">
-              <div class="slot-line"><span class="slot-caption">{escape(caption)}</span>{status_markup(status, ' status--pill')}</div>
+              <div class="slot-line"><span class="slot-caption">{escape(lead_capital(caption))}</span>{status_markup(status, ' status--pill')}</div>
               <p class="slot-address">{escape(addr)}</p>
+{verdict_markup}
+{tools}
 {judge}
 {actions_markup(identifier, subject, status)}
             </div>
@@ -476,23 +773,130 @@ def thumbnail_key(relative_path):
     return relative_path[:-4] if relative_path.endswith(".png") else relative_path
 
 
-# Masters are loaded on demand, never scanned up front like THUMBNAILS: a master is only worth its
-# weight on the page when it stands in for a deliverable that does not exist yet, so only the ones
-# actually shown are ever read and base64-encoded.
+# Masters are loaded on demand, never scanned up front like THUMBNAILS: an image is only worth its
+# weight on the page when it is actually shown, so only the ones actually shown are ever read and
+# base64-encoded. Originally holding only poc masters standing in for an unexported deliverable, this
+# cache now equally holds any representation whose bytes have not reached THUMBNAILS yet (see
+# master_entry()) — the name stays because most of what lands here still is a master.
 MASTERS = {}
 
 
+# Every representation the referentiel names but this run could not read at all — a fact of
+# production (missing, still landing, or corrupt), never a code error, so it must not raise. Keyed by
+# relative path; each value holds the short phrase the page itself shows in the slot
+# (unread_shot_markup()) and the fuller detail printed to whoever launched the build (see the report
+# at the end of this script) — a defect visible only inside the page is a defect nobody watches.
+SKIPPED_IMAGES = {}
+
+# The size past which a representation gets a genuine thumbnail for the main slot instead of embedding
+# its own full bytes there (see display_code_for()) — a GUARD-RAIL now, not a refusal: no image at or
+# under this weight has ever failed to display on this page (the heaviest confirmed working is
+# cutout/vegetation/TR-061-v2.png at 120 263 bytes), so this sits comfortably above that with room to
+# spare, in one place, easy to raise the day a heavier image turns out to display fine too. The FULL
+# image is still always embedded, whatever its weight — the eye and a click on the picture must keep
+# opening the untouched original (shot_markup()), never the thumbnail.
+MAX_EMBED_BYTES = 500_000
+
+# The thumbnail is built at this many times its own CSS display size, so a screen that packs two (or
+# three) device pixels into one CSS pixel still shows it sharp rather than upscaled and soft.
+THUMBNAIL_SUPERSAMPLE = 2
+
+
 def master_entry(relative_path):
-    """Read a poc master straight off the disk and cache it under the same key scheme as THUMBNAILS."""
+    """Read any image straight off the disk and cache it under the same key scheme as THUMBNAILS.
+
+    Originally written for a poc master standing in for an unexported deliverable, this is now the
+    general fallback for any representation the referentiel names whose bytes are not in THUMBNAILS
+    yet: a fresh export can land on disk between two runs of scripts/build-thumbnails.py, and this
+    page must show it anyway rather than wait for that cache to catch up.
+
+    Always reads and caches the FULL file, whatever its weight — the eye and a click on the picture
+    must be able to open the untouched original (shot_markup()); see display_code_for() for what the
+    main slot actually paints instead when that full file is heavy.
+
+    Returns the cache key on success. Returns None, touching nothing, when the file is missing or PIL
+    cannot identify it as an image (still being written, truncated, corrupt) — the two conditions this
+    function can actually NAME as a fact of production rather than a defect in this script. Only these
+    are caught: nothing here shields a KeyError, a TypeError, or any other failure this function cannot
+    name — those are code errors, and the project's rule is that a code error always raises and always
+    reaches the operator running the build, never swallowed for the sake of a prettier page. On what it
+    does catch, the caller shows a plainly marked "unread" placeholder for that one representation
+    instead of losing every other sprite over it (unread_shot_markup()), and its size is never guessed
+    from a name or a footprint — only ever read from the file itself.
+    """
     key = thumbnail_key(relative_path)
-    if key not in MASTERS:
-        path = ASSETS / relative_path
+    if key in MASTERS:
+        return key
+    path = ASSETS / relative_path
+    try:
         data = path.read_bytes()
         with Image.open(path) as probe:
             size = probe.size
-        MASTERS[key] = {"uri": f"data:image/png;base64,{base64.b64encode(data).decode('ascii')}",
-                        "size": size}
+    except (FileNotFoundError, UnidentifiedImageError) as error:
+        SKIPPED_IMAGES[relative_path] = {
+            "short": "Image non lisible",
+            "detail": f"illisible ({type(error).__name__}: {error})",
+        }
+        return None
+    MASTERS[key] = {"uri": f"data:image/png;base64,{base64.b64encode(data).decode('ascii')}",
+                    "size": size, "bytes": len(data)}
+
     return key
+
+
+def image_bytes(code):
+    """How many bytes an embedded image's own file held, from whichever catalogue holds it — the
+    figure display_code_for() weighs against MAX_EMBED_BYTES."""
+    return (THUMBNAILS.get(code) or MASTERS[code])["bytes"]
+
+
+def thumbnail_entry(relative_path, full_code, css_width, css_height):
+    """Build (once, then cache) a genuine thumbnail for a representation too heavy to embed at its own
+    full size in the main slot: resized to the exact box the page shows it at, times
+    THUMBNAIL_SUPERSAMPLE for a dense screen — never the untouched original, and never smaller than
+    what is actually shown. Cached under its own key, distinct from full_code, so the eye and a click
+    on the picture keep reaching the original untouched (see display_code_for(), shot_markup()).
+    """
+    key = f"{full_code}#thumbnail"
+    if key in MASTERS:
+        return key
+    target_width = max(1, round(css_width * THUMBNAIL_SUPERSAMPLE))
+    target_height = max(1, round(css_height * THUMBNAIL_SUPERSAMPLE))
+    with Image.open(ASSETS / relative_path) as source:
+        resized = source.convert("RGBA").resize((target_width, target_height), Image.LANCZOS)
+    buffer = io.BytesIO()
+    resized.save(buffer, format="PNG", optimize=True)
+    data = buffer.getvalue()
+    MASTERS[key] = {"uri": f"data:image/png;base64,{base64.b64encode(data).decode('ascii')}",
+                    "size": (target_width, target_height), "bytes": len(data)}
+
+    return key
+
+
+def display_code_for(relative_path, full_code, box):
+    """The code the main slot actually paints, given the CSS box (box['width']/box['height']) it is
+    shown at. Identical to full_code for anything already at or under MAX_EMBED_BYTES — nothing to
+    gain from a second copy of an image already light. Past that weight, a genuine thumbnail
+    (thumbnail_entry()) takes its place in the slot; the eye and a click on the picture still open
+    full_code, untouched, regardless of which one this function returns.
+    """
+    if image_bytes(full_code) <= MAX_EMBED_BYTES:
+        return full_code
+
+    return thumbnail_entry(relative_path, full_code, box["width"], box["height"])
+
+
+def resolve_image(relative_path):
+    """The embeddable code for a representation's bytes, whichever catalogue ends up holding them:
+    the pre-built THUMBNAILS cache when it already knows the path, a direct disk read otherwise (see
+    master_entry()). None means neither succeeded — the file could not be characterised at all, and
+    nothing about it may be guessed.
+    """
+    key = thumbnail_key(relative_path)
+    if key in THUMBNAILS:
+        return key
+
+    return master_entry(relative_path)
 
 
 def image_size(code):
@@ -517,10 +921,9 @@ def shot_background(code, kind):
 
 def frame_style(footprint, kind, code):
     """The click target's own size: never smaller than the picture shown at working_box(), and never
-    smaller either than the real game's own display size (tile_scale's 24 px per tile) — a FLOOR, not
-    a viewing size, so a very flat sprite still keeps a full tile to aim at even if a future working
-    scale were ever turned down. At today's 96 px working scale the floor essentially never binds; it
-    stays here because the day it does, it is exactly the fault it exists to prevent.
+    smaller either than the footprint's own tile box — a FLOOR, not a viewing size, so a very flat
+    sprite (an image much wider than it is tall) still keeps a full tile to aim at rather than the
+    sliver its own drawn pixels would otherwise offer.
     """
     shown = working_box(footprint, kind, code)
     floor = tile_scale.tile_box(*footprint)
@@ -528,7 +931,7 @@ def frame_style(footprint, kind, code):
     return {"width": max(shown["width"], floor["width"]), "height": max(shown["height"], floor["height"])}
 
 
-def shot_markup(code, footprint, kind, label, extra=""):
+def shot_markup(code, footprint, kind, label, extra="", full_code=None):
     """A produced image, posed on the bottom edge of a click target sized by frame_style() — never
     smaller than the footprint, however thin or tall the picture itself is, so the WHOLE target is
     worth aiming at, not just the pixels the image happens to draw.
@@ -543,15 +946,20 @@ def shot_markup(code, footprint, kind, label, extra=""):
     <button>, because the button that used to sit on the image is gone and this is what replaces it —
     the SAME action, moved off the picture rather than dropped.
 
-    The bytes live once in a CSS custom property; this element only points at it, and the enlarged
-    view points at the very same declaration. The page never carries an image twice.
+    `code` is what is actually PAINTED here — possibly a thumbnail (display_code_for()). `full_code`
+    (the untouched original, defaulting to `code` when the two are the same file) is what opens in the
+    viewer: a click on the picture, or the eye, must always reach the real thing, never the thumbnail
+    substituted for it. Each of the two bytes involved lives once in its own CSS custom property; nothing
+    here or in the viewer ever carries either one twice.
     """
+    if full_code is None:
+        full_code = code
     frame = frame_style(footprint, kind, code)
 
     return (f'<div class="shot-frame{extra}" role="button" tabindex="0" '
             f'aria-label="{escape(label)} — voir en pleine taille" '
             f'style="width:{frame["width"]}px;height:{frame["height"]:.0f}px" '
-            f'data-img="{escape(code)}">'
+            f'data-img="{escape(full_code)}">'
             f'<div class="shot" style="{maquette_style(code, footprint, kind)};'
             f'{shot_background(code, kind)}"></div>'
             f'</div>')
@@ -575,36 +983,90 @@ def judgement_for(code):
     return None
 
 
+def judge_summary(code):
+    """A short, text-only account of the judging agent's report for one exact image — score, its own
+    verdict, its own words — for the comparison popin, which builds its content with textContent only
+    (never innerHTML, see the SCRIPT's own rule): the full folding criteria list judge_body_markup()
+    offers inline has no place there, only what a plain paragraph can carry. A JUDGEMENT FOLLOWS THE
+    IMAGE, NEVER THE VARIANT: judgement_for(code) is already keyed to this exact file, so a
+    representation that has become "antérieure" still reads its own report here, right next to it,
+    instead of losing it the moment a new version takes its place in the main flow.
+    """
+    judgement = judgement_for(code)
+    if judgement is None:
+        return None
+    score = f"{judgement.get('score')}/{judgement.get('total')}"
+    verdict = judgement.get("verdict", "")
+    report = judgement.get("report", "")
+
+    return f"{score} {verdict} — {report}" if report else f"{score} {verdict}"
+
+
 def judge_body_markup(identifier, code, label):
     """The score and verdict, always visible; the criterion-by-criterion detail folds behind a button,
     never crowding the encart. A sprite with no judgement yet says so, plainly — normal display, no
     image, no interaction, just the fact."""
     judgement = judgement_for(code)
     if judgement is None:
-        return '            <p class="judge-pending">pas encore jugée</p>'
+        return '            <p class="judge-pending">Pas encore jugée</p>'
     criteria = "\n".join(
-        f'                  <li class="judge-criterion{"" if item.get("tenu") else " judge-criterion--failed"}">'
-        f'<span class="dot" aria-hidden="true">{"✓" if item.get("tenu") else "×"}</span> '
-        f'{escape(item.get("nom", ""))}'
-        + (f' — {escape(item["note"])}' if item.get("note") else "") + "</li>"
-        for item in judgement.get("criteres", []))
+        f'                  <li class="judge-criterion{"" if item.get("passed") else " judge-criterion--failed"}">'
+        f'<span class="dot" aria-hidden="true">{"✓" if item.get("passed") else "×"}</span> '
+        f'{escape(item.get("name", ""))}'
+        + (f' — {escape(item["comment"])}' if item.get("comment") else "") + "</li>"
+        for item in judgement.get("criteria", []))
     report_id = f"judge-{slug(identifier)}"
 
     return f"""            <div class="judge">
               <button type="button" class="judge-toggle" data-open="{escape(report_id)}"
                       aria-expanded="false" aria-label="Rapport de jugement — {escape(label)}">
-                <span class="judge-score">{escape(judgement.get('score'))}/{escape(judgement.get('sur'))}</span>
+                <span class="judge-score">{escape(judgement.get('score'))}/{escape(judgement.get('total'))}</span>
                 <span class="judge-verdict">{escape(judgement.get('verdict', ''))}</span>
-                <span class="judge-open-word">rapport</span>
+                <span class="judge-open-word">Rapport</span>
               </button>
               <div class="judge-report" data-report="{escape(report_id)}" hidden>
                 <ul class="judge-criteria">
 {criteria}
                 </ul>
-                <p class="judge-rapport">{escape(judgement.get('rapport', ''))}</p>
+                <p class="judge-rapport">{escape(judgement.get('report', ''))}</p>
               </div>
             </div>"""
 
+
+
+# An eye, drawn inline so the page keeps no external resource: an open-eye outline plus its pupil,
+# the plainest glyph that reads as "look at this" without a word. aria-hidden because the button that
+# holds it already carries the accessible name — a screen reader must not hear the icon a second time.
+EYE_ICON = ('<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">'
+            '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" fill="none" '
+            'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+            '<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>'
+            '</svg>')
+
+
+def enlarge_button_markup(code, label):
+    """The eye control: opens the very same full-size viewer a click on the picture opens, but living
+    in the encart next to the other buttons rather than over the image — nothing is ever laid over the
+    picture itself (see shot_markup()). It borrows the judge-toggle's own look rather than a new one.
+
+    Shown as an EYE GLYPH, not a text label — the operator asked for the icon specifically. The
+    accessible name (aria-label) and the hover tooltip (title) both carry the same words a sighted
+    reader would otherwise get from a label, so nothing is lost by dropping the text on screen.
+    """
+    words = f"Agrandir — {escape(label)}"
+
+    return (f'<button type="button" class="judge-toggle enlarge" data-img="{escape(code)}" '
+            f'aria-label="{words}" title="{words}">{EYE_ICON}</button>')
+
+
+def compare_button_markup(identifier, subject):
+    """Opens the version-comparison popin for a variant that carries more than one representation.
+    Only offered when there is something to compare against — a single-version variant has nothing
+    behind its current shot.
+    """
+    return (f'<button type="button" class="judge-toggle compare-versions" '
+            f'data-compare="{escape(identifier)}" '
+            f'aria-label="Comparer les versions — {escape(subject)}">Comparer les versions</button>')
 
 
 def sujet_markup(sujet_code, type_name, type_def):
@@ -618,8 +1080,25 @@ def sujet_markup(sujet_code, type_name, type_def):
     produced = sum(1 for entry in variants if entry.get("representations"))
     footprint = (sujet["emprise"]["columns"], sujet["emprise"]["rows"])
 
+    # What actually distinguishes one variant of THIS sujet from another — asked once here, of the
+    # shape, the orientation and every axis alike, and handed to every slot below (variant_caption()):
+    # a field that cannot take more than one value for this sujet has nothing to teach a caption,
+    # however meaningful it looks on its own. A fact that never varies still deserves to be said once,
+    # not silently dropped — orientation says so below, in the sujet's own specs instead of on every
+    # variant.
+    varies = {"orientation": field_varies(variants, lambda entry: entry.get("orientation", "south")),
+             "shape": field_varies(variants, lambda entry: entry.get("shape", DEFAULT_SHAPE))}
+    for axis_key in type_axis_keys(type_def):
+        field = axis_key[:-1]
+        default = type_def[axis_key]["default"]
+        varies[field] = field_varies(
+            variants, lambda entry, field=field, default=default: entry.get(field, default))
+
     specs = [("Emprise", footprint_label(footprint)), ("Calque", type_def["layer"]),
              ("Images", f"{produced} / {len(variants)}")]
+    if not varies["orientation"]:
+        orientation = variants[0].get("orientation", "south")
+        specs.append(("Orientation", ORIENTATION_LABELS.get(orientation, orientation)))
     if type_def.get("assembles"):
         shapes = []
         for entry in variants:
@@ -627,8 +1106,8 @@ def sujet_markup(sujet_code, type_name, type_def):
             if shape not in shapes:
                 shapes.append(shape)
         specs.append(("Formes", ", ".join(f"shape-{name}" for name in shapes)))
-    if type_def.get("garnitures"):
-        specs.append(("Garnitures", ", ".join(type_def["garnitures"]["values"])))
+    for axis_key in type_axis_keys(type_def):
+        specs.append((lead_capital(axis_key), ", ".join(type_def[axis_key]["values"])))
     if sujet.get("hauteur") is not None:
         height = sujet["hauteur"]
         specs.append(("Hauteur", f"{height} case{'s' if height != 1 else ''}"))
@@ -636,16 +1115,24 @@ def sujet_markup(sujet_code, type_name, type_def):
         f"            <div><dt>{escape(name)}</dt><dd>{escape(value)}</dd></div>"
         for name, value in specs)
 
+    label = SUJET_LABELS.get(sujet_code)
+    if label is None:
+        MISSING_LABELS.append(sujet_code)
+        heading = '<span class="missing-label">Libellé manquant</span>'
+    else:
+        heading = escape(lead_capital(label))
+
     blocks = [f"""      <article class="profile">
         <header class="profile-head">
-          <p class="profile-id"><code class="code">{escape(sujet_code)}</code></p>
-          <h3>{escape(sujet['profil'])}</h3>
+          <h3>{heading}</h3>
+          <p class="profile-id"><code class="code">{escape(sujet_code)}</code>
+            <span class="pname">{escape(sujet['profil'])}</span></p>
           <dl class="specs">
 {spec_markup}
           </dl>
         </header>"""]
     blocks.append('        <ul class="slots">')
-    blocks.extend(slot_markup(sujet_code, sujet, type_name, type_def, entry) for entry in variants)
+    blocks.extend(slot_markup(sujet_code, sujet, type_name, type_def, entry, varies) for entry in variants)
     blocks.append("        </ul>")
     blocks.append("      </article>")
 
@@ -679,43 +1166,58 @@ def type_section_markup(type_name, type_def):
       <header class="type-head">
         <h2 id="type-{anchor}">{escape(TYPE_LABELS.get(type_name, type_name))}</h2>
         <p class="type-count"><span>{variant_count}</span> image{'s' if variant_count > 1 else ''}</p>
-        <p class="type-rule">{escape(type_rule(type_def))}</p>
+        <p class="type-rule">{escape(lead_capital(type_rule(type_def)))}</p>
       </header>
 {sujets_markup}
     </section>"""
 
 
-DISK_KIND_LABELS = {"poc": "brute (poc)", "cutout": "livrable"}
+DISK_KIND_LABELS = {"poc": "Brute (poc)", "cutout": "Livrable"}
 STRAY_CAP = 220  # a stray carries no footprint to size against, so it is capped instead
 
 
-def stray_shot_markup(key, label):
+def stray_shot_markup(full_code, label, path):
     """A stray image, near its own resolution, over a checkerboard, opening full size on click. Works
     for a deliverable and for a master alike: image_size() does not care which catalogue it came from.
 
-    The frame equals the image here — a stray carries no footprint to size a bigger target against —
-    but it is, like every other shot, the whole and only click target: nothing is laid over the
-    picture (see shot_markup()), so its own score and kind live in stray-body instead.
+    The frame equals the DISPLAY image here — a stray carries no footprint to size a bigger target
+    against — but it is, like every other shot, the whole and only click target: nothing is laid over
+    the picture (see shot_markup()), so its own score and kind live in stray-body instead. A click or
+    the eye still opens full_code untouched, exactly like a modelled variant's slot
+    (display_code_for()).
     """
-    width, height = image_size(key)
+    width, height = image_size(full_code)
     scale = min(1.0, STRAY_CAP / width)
-    style = f"width:{width * scale:.0f}px;height:{height * scale:.0f}px"
+    box = {"width": width * scale, "height": height * scale}
+    display_code = display_code_for(path, full_code, box)
 
     return (f'<div class="shot-frame" role="button" tabindex="0" '
-            f'aria-label="{escape(label)} — voir en pleine taille" style="{style}" '
-            f'data-img="{escape(key)}">'
-            f'<div class="shot" style="{shot_background(key, "sprite")}"></div>'
+            f'aria-label="{escape(label)} — voir en pleine taille" '
+            f'style="width:{box["width"]:.0f}px;height:{box["height"]:.0f}px" '
+            f'data-img="{escape(full_code)}">'
+            f'<div class="shot" style="{shot_background(display_code, "sprite")}"></div>'
             f'</div>')
 
 
 def stray_vis_markup(entry):
+    """A stray's own picture — same resolve-then-show rule as a modelled variant's slot
+    (variant_shot()): a stray found on disk is not guaranteed to already be in THUMBNAILS either, and
+    an unreadable file must not take the whole "hors modèle" section down with it.
+    """
     if entry["kind"] == "cutout":
-        return stray_shot_markup(thumbnail_key(entry["path"]), entry["path"])
+        key = resolve_image(entry["path"])
+        if key is None:
+            return unread_shot_markup(entry["path"], entry["path"],
+                                      f"width:{STRAY_CAP}px;height:{STRAY_CAP}px")
+        return stray_shot_markup(key, entry["path"], entry["path"])
 
     # No deliverable exists for this stray either: its master is shown instead, same rule as a
     # modelled variant — nothing on disk stays invisible for lack of an export.
     key = master_entry(entry["path"])
-    return stray_shot_markup(key, f'{entry["path"]} — maître, pas encore exporté')
+    if key is None:
+        return unread_shot_markup(entry["path"], entry["path"],
+                                  f"width:{STRAY_CAP}px;height:{STRAY_CAP}px")
+    return stray_shot_markup(key, f'{entry["path"]} — maître, pas encore exporté', entry["path"])
 
 
 def hors_modele_markup():
@@ -798,7 +1300,8 @@ IMAGES = {code: {"token": image_token(code)[len("--img-"):],
           for code in set(THUMBNAILS) | set(MASTERS)}
 
 PAYLOAD = json.dumps({"labels": LABELS, "actions": [key for key, _ in ACTIONS],
-                      "variants": registry, "images": IMAGES, "storageKey": STORAGE_KEY},
+                      "variants": registry, "images": IMAGES, "storageKey": STORAGE_KEY,
+                      "comparisons": comparisons},
                      ensure_ascii=True).replace("<", "\\u003c")
 
 STYLE = """
@@ -1028,6 +1531,8 @@ body {
   background: var(--surface-sunk); border: 1px solid var(--line); border-radius: 2px;
 }
 .pname { font-size: 12.5px; color: var(--ink-faint); }
+/* A sujet the inventory sheets never gave a label to — shown for what it is, not filled in. */
+.missing-label { color: var(--warn); font-style: italic; font-weight: 600; }
 .profile h3 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.012em; }
 .specs {
   display: flex; flex-wrap: wrap; gap: 6px 26px; margin: 4px 0 0;
@@ -1060,6 +1565,29 @@ body {
   border-radius: 2px; background: var(--key-field); border: 1.5px dashed var(--key-edge);
   display: flex; align-items: center; justify-content: center;
 }
+/* A representation the referentiel names but this page could not embed — unreadable or too heavy —
+   never the same warning as an unshot variant (above): something exists, it just is not shown here. */
+.frame--unread {
+  background: var(--warn-field); border: 1.5px dashed var(--warn); color: var(--warn);
+  font-size: 10.5px; text-align: center; padding: 4px;
+}
+/* An écartée representation: the operator's own call, never a chain fault — its own colour, never
+   the warning tone above (that one means "this page could not read the file", a different fact). */
+.frame--rejected {
+  background: var(--surface-sunk); border: 1.5px dashed var(--st-rejected); color: var(--st-rejected);
+  font-size: 10.5px; text-align: center; padding: 4px;
+}
+
+/* ---- operator verdict: a different opinion from the judge's own score, never the same look ---- */
+.verdict { margin: 3px 0 0; }
+.verdict-word {
+  display: inline-block; padding: 1px 7px 2px; border-radius: 2px; font-size: 10.5px;
+  font-weight: 700; letter-spacing: 0.03em;
+}
+.verdict--validated .verdict-word { background: var(--st-validated); color: var(--ground); }
+.verdict--rework .verdict-word { background: var(--st-running); color: var(--ground); }
+.verdict--rejected .verdict-word { background: var(--st-rejected); color: var(--ground); }
+.verdict-comment { margin: 3px 0 0; font-family: var(--sans); font-size: 11.5px; color: var(--ink-soft); }
 /* A master standing in for a missing deliverable is a real picture, but not the one that will end up
    in the game: a warm ring outside the frame keeps it visibly different from a genuine, delivered
    shot at a glance — OUTSIDE, on a positive offset, so it never draws over the picture itself; the
@@ -1124,6 +1652,8 @@ body {
 .act-note[aria-expanded="true"], .act-note[data-filled="true"] {
   background: var(--key-field); border-color: var(--key-edge); color: var(--key);
 }
+/* Tools that live IN the encart, next to the report — never over the picture. */
+.encart-tools { display: flex; flex-wrap: wrap; gap: 4px; margin: 3px 0 0; }
 .slot-more { margin-top: 4px; }
 .note {
   width: 100%; font-family: var(--mono); font-size: 11px; padding: 4px 6px;
@@ -1170,6 +1700,32 @@ body {
 .viewer-tile { display: flex; flex-direction: column; gap: 7px; align-items: center; }
 .viewer-repeat {
   background-repeat: repeat; border: 1px solid var(--line); border-radius: 2px; max-width: 100%;
+}
+
+/* ---- version comparison popin: current plus up to three earlier attempts, each shown whole ---- */
+.comparaison { position: fixed; inset: 0; z-index: 41; display: grid; place-items: center; padding: 20px; }
+.comparaison-back { position: absolute; inset: 0; background: rgba(8, 10, 7, 0.72); }
+.comparaison-box {
+  position: relative; margin: 0; display: flex; flex-direction: column; gap: 12px;
+  max-width: min(1100px, 100%); max-height: 100%; overflow-y: auto; padding: 16px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+}
+.comparaison-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.comparaison-title { margin: 0; font-size: 13px; font-weight: 700; flex: 1 1 auto; }
+.comparaison-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;
+}
+.comparaison-item { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.comparaison-pic {
+  background-repeat: no-repeat; background-position: center; background-size: contain;
+  background-color: var(--surface-sunk); width: 100%; border: 1px solid var(--line); border-radius: 2px;
+}
+.comparaison-item figcaption { font-size: 10.5px; color: var(--ink-soft); overflow-wrap: anywhere; }
+.comparaison-verdict {
+  margin: 2px 0 0; font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--ink);
+}
+.comparaison-judge {
+  margin: 2px 0 0; font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft);
 }
 
 /* ---- hors modèle: files the model could not claim, listed and never hidden ---- */
@@ -1303,14 +1859,31 @@ SCRIPT = """
     });
   }
 
+  // The moves offered on one image exclude one another: validate, rework and reject can never both
+  // hold for the same image, or the recap would list it twice, under two contradictory verdicts.
+  // Checking one clears every other one already set for the same data-id; unchecking the one that is
+  // set returns to no verdict at all, on purpose — the operator may want an image back in limbo
+  // without being forced to pick a new one.
+  function syncActs(id) {
+    var acts = entryFor(id).acts;
+    Array.prototype.forEach.call(
+      document.querySelectorAll('.act input[data-id="' + id.replace(/"/g, "") + '"]'),
+      function (box) { box.checked = Boolean(acts[box.getAttribute("data-act")]); });
+  }
+
   Array.prototype.forEach.call(document.querySelectorAll(".act input"), function (box) {
     var id = box.getAttribute("data-id");
     var act = box.getAttribute("data-act");
     var entry = entryFor(id);
     box.checked = Boolean(entry.acts[act]);
     box.addEventListener("change", function () {
-      entryFor(id).acts[act] = box.checked;
+      var current = entryFor(id);
+      if (box.checked) {
+        Object.keys(current.acts).forEach(function (other) { current.acts[other] = false; });
+      }
+      current.acts[act] = box.checked;
       persist();
+      syncActs(id);
       render();
     });
   });
@@ -1382,8 +1955,9 @@ SCRIPT = """
   });
 
   // ---- judgement report: folded by default, no state kept — the file behind it can change any time
-  // ---- a judging agent runs again, so nothing here is worth remembering across a reload.
-  Array.prototype.forEach.call(document.querySelectorAll(".judge-toggle"), function (button) {
+  // ---- a judging agent runs again, so nothing here is worth remembering across a reload. Selected by
+  // ---- data-open specifically: the eye and compare-versions buttons borrow this class for looks only.
+  Array.prototype.forEach.call(document.querySelectorAll(".judge-toggle[data-open]"), function (button) {
     var id = button.getAttribute("data-open");
     var panel = document.querySelector('[data-report="' + id + '"]');
     button.addEventListener("click", function () {
@@ -1432,9 +2006,11 @@ SCRIPT = """
     if (lastOpener) { lastOpener.focus(); }
   }
 
-  // The whole frame is the click target and the ONLY one — nothing is laid over the picture any
-  // more, so there is no separate eye button to also wire up. It is a div, not a native <button>,
-  // so its own keyboard activation (Enter and Space) is handled here explicitly.
+  // Two ways to open the same viewer on the same declaration: a click on the picture itself, and the
+  // eye button living in the encart (see enlarge_button_markup() in build.py). Nothing is ever laid
+  // over the picture, so the button lives beside it, never on top of it.
+  // The frame is a div, not a native <button>, so its own keyboard activation (Enter and Space) is
+  // handled here explicitly; the eye button is a real <button> and needs none of that.
   Array.prototype.forEach.call(document.querySelectorAll(".shot-frame"), function (node) {
     node.addEventListener("click", function () { openViewer(node); });
     node.addEventListener("keydown", function (event) {
@@ -1444,11 +2020,84 @@ SCRIPT = """
       }
     });
   });
+  Array.prototype.forEach.call(document.querySelectorAll(".enlarge"), function (node) {
+    node.addEventListener("click", function () { openViewer(node); });
+  });
   Array.prototype.forEach.call(document.querySelectorAll("[data-close]"), function (node) {
     node.addEventListener("click", closeViewer);
   });
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && !viewer.hidden) { closeViewer(); }
+  });
+
+  // ---- version comparison popin: the current representation next to up to three earlier attempts,
+  // ---- each shown whole (never cropped, never scored) so the operator can tell which one to keep.
+  var comparaison = document.getElementById("comparaison");
+  var comparaisonTitle = document.getElementById("comparaison-title");
+  var comparaisonGrid = document.getElementById("comparaison-grid");
+  var lastComparaisonOpener = null;
+
+  function comparaisonItem(record, isCurrent) {
+    var size = DATA.images[record.code];
+    var figure = document.createElement("figure");
+    figure.className = "comparaison-item";
+    var picture = document.createElement("div");
+    picture.className = "comparaison-pic";
+    if (size) {
+      picture.style.backgroundImage = "var(--img-" + size.token + ")";
+      picture.style.aspectRatio = size.width + " / " + size.height;
+    }
+    figure.appendChild(picture);
+    var caption = document.createElement("figcaption");
+    caption.textContent = (isCurrent ? L.compareCurrent : L.comparePrevious) + " \\u2014 " + record.path;
+    figure.appendChild(caption);
+    // The operator's own verdict travels with its own version here too — a different opinion from
+    // the judge's score, shown nowhere near it, so a reader can never mistake one for the other.
+    if (record.verdict) {
+      var verdict = document.createElement("p");
+      verdict.className = "comparaison-verdict";
+      verdict.textContent = record.comment ? record.verdict + " \\u2014 " + record.comment : record.verdict;
+      figure.appendChild(verdict);
+    }
+    // A judgement follows the image, never the variant: this exact file's own report, whether it is
+    // the current picture or one already superseded — kept apart from the operator's verdict above,
+    // a different opinion from a different source.
+    if (record.judge) {
+      var judge = document.createElement("p");
+      judge.className = "comparaison-judge";
+      judge.textContent = record.judge;
+      figure.appendChild(judge);
+    }
+    return figure;
+  }
+
+  function openComparaison(node) {
+    var entry = DATA.comparisons[node.getAttribute("data-compare")];
+    if (!entry) { return; }
+    lastComparaisonOpener = node;
+    comparaisonTitle.textContent = entry.subject;
+    comparaisonGrid.textContent = "";
+    comparaisonGrid.appendChild(comparaisonItem(entry.current, true));
+    entry.previous.forEach(function (record) {
+      comparaisonGrid.appendChild(comparaisonItem(record, false));
+    });
+    comparaison.hidden = false;
+    document.getElementById("comparaison-close").focus();
+  }
+
+  function closeComparaison() {
+    comparaison.hidden = true;
+    if (lastComparaisonOpener) { lastComparaisonOpener.focus(); }
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".compare-versions"), function (button) {
+    button.addEventListener("click", function () { openComparaison(button); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-close-comparaison]"), function (node) {
+    node.addEventListener("click", closeComparaison);
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !comparaison.hidden) { closeComparaison(); }
   });
 
   // ---- filter by production state. The panel counters sit outside it and never move. ----
@@ -1549,7 +2198,7 @@ page = f"""<title>Suivi des sprites — maquette du parc</title>
       seule une image en défaut en demande un.</p>
     <div class="filters" role="group" aria-labelledby="filter-label">
       <p class="filter-label" id="filter-label">N'afficher que</p>
-      <button type="button" class="filter is-on" data-filter="all" aria-pressed="true">tout</button>
+      <button type="button" class="filter is-on" data-filter="all" aria-pressed="true">Tout</button>
 {filter_buttons}
     </div>
     <p class="filter-state" id="filter-state" role="status" aria-live="polite"></p>
@@ -1573,14 +2222,13 @@ page = f"""<title>Suivi des sprites — maquette du parc</title>
   <footer class="colophon">
     <p>Les adresses suivent le référentiel des sujets, <code>assets/sujets.json</code>, la seule
       source que cette page lit : l'orientation et l'action s'écrivent toujours ; la
-      <strong>forme</strong> et la <strong>garniture</strong> ne s'écrivent que si elles s'écartent de
+      <strong>forme</strong> et la <strong>composition</strong> ne s'écrivent que si elles s'écartent de
       leur défaut. Aucune image n'a été générée pour cette page.</p>
     <p>Ce qui est plat, le rendu le pivote — une seule image par forme de chemin ; ce qui a du volume
       se dessine orientation par orientation et combinaison par combinaison, sans quoi le soleil
       passerait du mauvais côté.</p>
     <p>Toutes les emprises sont en <strong>cases</strong> — une case vaut un mètre. Cette page affiche
-      chaque sprite à sa propre <strong>définition de livraison</strong>, plus grande que sa taille
-      réelle en jeu pour qu'on puisse la juger ; le jeu, lui, affiche
+      chaque sprite à la taille exacte où le jeu le montre réellement,
       <strong>{escape(tile_scale.describe())}</strong> — une valeur que cette page ne mesure jamais
       elle-même, et tient du seul service qui la détient.</p>
   </footer>
@@ -1604,6 +2252,17 @@ page = f"""<title>Suivi des sprites — maquette du parc</title>
       <button type="button" class="btn" id="viewer-close" data-close="1">{escape(LABELS['viewerClose'])}</button>
     </div>
   </figure>
+</div>
+
+<div class="comparaison" id="comparaison" hidden>
+  <div class="comparaison-back" data-close-comparaison="1"></div>
+  <div class="comparaison-box">
+    <div class="comparaison-head">
+      <p class="comparaison-title" id="comparaison-title"></p>
+      <button type="button" class="btn" id="comparaison-close" data-close-comparaison="1">{escape(LABELS['viewerClose'])}</button>
+    </div>
+    <div class="comparaison-grid" id="comparaison-grid"></div>
+  </div>
 </div>
 
 <script type="application/json" id="suivi-data">{PAYLOAD}</script>
@@ -1737,3 +2396,17 @@ print(f"park {len(park_variants)} variants across {sujet_total} sujets; "
 print(f"registry {len(registry)} variants, {expected_boxes} action boxes offered "
       f"(state by state), {len(registry)} comment fields")
 print(f"filterable units {len(units)} -> {by_state}")
+
+# A defect visible only inside the page is a defect nobody watches: whoever launched this build must
+# see it here too, distinctly, without opening page.html — the page itself only shows it per slot.
+if SKIPPED_IMAGES:
+    print(f"SKIPPED — {len(SKIPPED_IMAGES)} representation(s) the referentiel names but this run "
+          f"could not embed (each shown in the page as its own short label):", file=sys.stderr)
+    for path, reason in SKIPPED_IMAGES.items():
+        print(f"  - {path}: {reason['detail']}", file=sys.stderr)
+
+if MISSING_LABELS:
+    print(f"MISSING LABELS — {len(MISSING_LABELS)} sujet(s) with no French label in "
+          f"{INVENTAIRE_DIR} (shown in the page as \"Libellé manquant\"):", file=sys.stderr)
+    for code in MISSING_LABELS:
+        print(f"  - {code}", file=sys.stderr)

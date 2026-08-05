@@ -52,6 +52,9 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import shape_vocab
+
 REPOSITORY = Path(__file__).resolve().parents[1]
 CATALOG = REPOSITORY / "assets" / "catalogue.json"
 
@@ -67,25 +70,13 @@ DEFAULT_ACTION = "idle"
 # The shape axis. "plain" is the value of every subject that does not assemble end to end — very
 # nearly all of them — and is never written into an address.
 #
-# A TRACK'S SHAPE IS THE SET OF EDGES IT REACHES. Every track passes through the centre of its tile
-# and joins one or more of its four edges, named by compass point in the order n, e, s, w: "ns" is a
-# line, "ne" an angle, "nes" a three-way, "nesw" a full crossing, "n" a dead end. Drawing names
-# ("straight", "corner") described the picture, not the connection, and allowed no checking at all.
-# No diagonals for now: a track reaches only its four edges.
-EDGES = ["n", "e", "s", "w"]
-DEFAULT_SHAPE = "plain"
-
-
-def _edge_shapes():
-    """The fifteen non-empty edge sets, each written in the canonical n, e, s, w order."""
-    shapes = []
-    for mask in range(1, 1 << len(EDGES)):
-        shapes.append("".join(edge for index, edge in enumerate(EDGES) if mask & (1 << index)))
-
-    return sorted(shapes, key=lambda name: (len(name), [EDGES.index(e) for e in name]))
-
-
-EDGE_SHAPES = _edge_shapes()
+# A TRACK'S SHAPE IS THE SET OF EDGES IT REACHES, and what makes a shape NAME well-formed — the four
+# edges, the fifteen combinations — is shape_vocab's alone to say (see that module for why). This
+# catalogue asks it rather than keeping its own copy, exactly as it asks tile_scale for pixel sizes
+# rather than keeping its own.
+EDGES = shape_vocab.EDGES
+DEFAULT_SHAPE = shape_vocab.DEFAULT_SHAPE
+EDGE_SHAPES = shape_vocab.edge_combinations()
 SHAPES = [DEFAULT_SHAPE] + EDGE_SHAPES
 
 # The opposite edge, which is the one a neighbour shares.
@@ -95,8 +86,11 @@ NEIGHBOUR = {"n": (0, -1), "e": (1, 0), "s": (0, 1), "w": (-1, 0)}
 
 
 def edges_of(shape):
-    """The edges a shape reaches. A subject that does not assemble reaches none."""
-    return [] if shape == DEFAULT_SHAPE else list(shape)
+    """The edges a shape reaches. Delegates to shape_vocab: a LAYOUT's neighbour geometry (OPPOSITE,
+    NEIGHBOUR, joins, check_layout below) is this catalogue's own concern, but what a shape NAME means
+    is not — shape_vocab knows nothing of a grid and this catalogue keeps it that way.
+    """
+    return shape_vocab.edges_of(shape)
 
 
 def joins(shape, other_shape, edge):
@@ -201,7 +195,7 @@ class Variant:
     def __init__(self, orientation, action=DEFAULT_ACTION, directions=None, shape=DEFAULT_SHAPE):
         if orientation not in ORIENTATIONS:
             raise ValueError(f"unknown orientation: {orientation}")
-        if shape not in SHAPES:
+        if not shape_vocab.valid_shape(shape):
             raise ValueError(f"unknown shape: {shape}")
         self.orientation = orientation
         self.action = action
@@ -255,7 +249,7 @@ def parse_address(address):
     shape = DEFAULT_SHAPE
     if middle and middle[0].startswith("shape-"):
         shape = middle[0][len("shape-"):]
-        if shape not in SHAPES:
+        if not shape_vocab.valid_shape(shape):
             raise ValueError(f"unknown shape in address: {shape}")
         middle = middle[1:]
     directions = {}

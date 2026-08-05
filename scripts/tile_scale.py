@@ -20,7 +20,42 @@ A SPRITE IS SCALED ON ITS WIDTH, NEVER ON ITS HEIGHT. The design fixes this: the
 exactly the width of its footprint, and the height follows the image's own proportions. A tall subject
 therefore overflows upwards, which is wanted — the footprint describes the ground, not the silhouette.
 Scaling on a declared height would shrink a tall building's base until it stopped covering its tiles.
+
+A MASTER'S CANVAS FOLLOWS THE SUBJECT'S REAL SHAPE, NOT ITS FOOTPRINT ALONE, once its height is known
+(master_definition's height parameter). A footprint only describes the ground; asking a square canvas
+for a subject three tiles tall and one tile wide leaves it nothing to stand in but a square, which is
+exactly the defect constated on the apple tree and the fir grove. See CAMERA_ELEVATION_DEGREES,
+GROUND_DEPTH_FACTOR and STANDING_HEIGHT_FACTOR below for the rule and why it holds under this world's
+camera.
 """
+
+import math
+
+# THE CAMERA'S ANGLE, THE ONE FACT EVERY PROJECTION BELOW IS BUILT ON. Convention, fixed here so it is
+# never re-guessed at a call site: 0° is a flat, eye-level view (the horizon — you stand level with the
+# ground and look straight across it), 90° is a pure top-down view (straight overhead, no perspective
+# at all). The world's camera sits at 70°, i.e. close to straight overhead but "un peu de face" (see
+# CAMERA_FR in asset_common.py) — the ten degrees short of 90 are exactly that little bit of front-on
+# view. Getting this convention backwards is the one mistake this constant exists to rule out: it was
+# made once, while drafting this very feature, before scripts/check-asset.py ("the world is seen under
+# a 70° camera, which foreshortens the vertical") and the note above asset_common.CADRAGE_CUTOUT ("la
+# plongée l'écrase") settled it the other way.
+CAMERA_ELEVATION_DEGREES = 70
+
+# GROUND DEPTH — a span lying flat on the ground, receding away from the camera (a footprint's ROWS) —
+# projects onto the screen scaled by sin(θ). At θ=90° (straight overhead) the ground is seen in true
+# plan, factor 1: nothing is lost. At θ=0° (eye level) the ground recedes to the horizon and shows no
+# depth at all, factor 0. At 70°, close to overhead, depth is shown at ~94% of its true scale — barely
+# foreshortened, because the camera is looking almost straight down at it.
+GROUND_DEPTH_FACTOR = math.sin(math.radians(CAMERA_ELEVATION_DEGREES))
+
+# STANDING HEIGHT — a span rising straight up off the ground (a subject's own height) — projects onto
+# the screen scaled by cos(θ), the complementary case: at θ=90° a column directly under the camera
+# shows no length at all (you are looking straight down its axis), factor 0; at θ=0° a side-on column
+# stands at its full true height, factor 1. At 70°, height is shown at only ~34% of its true scale —
+# THIS is the foreshortening scripts/check-asset.py names and scripts/asset_common.py warns fighting:
+# a subject drawn to stand tall and face-on defeats the very camera that is meant to flatten it.
+STANDING_HEIGHT_FACTOR = math.cos(math.radians(CAMERA_ELEVATION_DEGREES))
 
 # TWO VALUES, NEVER CONFUSED. One tile is one metre in the world; how many pixels that is on screen
 # is a SETTING, while how fine the image file is, is FIXED. Mixing them is what made the tile size
@@ -117,7 +152,7 @@ def delivery_box(columns, image_width, image_height):
     return {"width": width, "height": round(width * image_height / image_width)}
 
 
-def master_definition(columns, rows):
+def master_definition(columns, rows, height=None):
     """The definition asked of the generator — the MASTER's, never the delivery's.
 
     Twice the delivered definition, capped at MASTER_CAP on the longest side, and never below the
@@ -129,8 +164,35 @@ def master_definition(columns, rows):
     delivered at 96 has no use for 1536, which would be sixteen times what is ever consumed. Past the
     cap a large subject simply gets no margin: the healing centre's master IS its delivery, and that
     is accepted rather than paid for.
+
+    HEIGHT IS OPTIONAL AND CHANGES ONLY THE CANVAS SHAPE, NOT THE RULE ABOVE. Left at its default
+    (None), the canvas follows the footprint alone, rows included at their flat, unforeshortened
+    extent — correct for a GROUND MATERIAL, which is a flat plan texture the camera never looks at
+    obliquely. Pass the subject's own height, in tiles, and the canvas becomes what the 70° camera
+    actually SEES of that subject standing on its footprint: its ground depth (rows) foreshortened by
+    GROUND_DEPTH_FACTOR, plus its own standing height foreshortened by STANDING_HEIGHT_FACTOR — the two
+    project at very different scales under this camera, so simply adding a bare height in tiles to the
+    footprint's rows would overstate it by roughly three to one. The width is untouched either way: it
+    is dictated by the footprint's columns alone (see sprite_width), which the camera does not
+    foreshorten sideways.
+
+    A NEGATIVE HEIGHT IS A LEGITIMATE SUBJECT, NOT A FAULT — a streambed that is dug into the ground
+    rather than standing on it, its lowest point below the surrounding terrain. It is real information
+    (a streambed sunk by 0.3 tile is a different subject from one flush with the ground) and keeping the
+    signed value, rather than clamping it to zero at the inventory, is exactly what preserves that.  But
+    it must not shrink the CANVAS below the footprint's own depth: what is dug below the surface takes
+    no room ABOVE it, and an assembling piece — this is where a recessed subject actually occurs — has
+    to fill its case regardless of what it does below the surface line, or it stops meeting its
+    neighbours edge to edge. So only a RISING height (max(height, 0)) ever adds to the canvas; a
+    recessed one leaves it exactly at the footprint's own projected depth, same as height=0 would.
     """
-    box = delivery_size(columns, rows)
+    if height is None:
+        box = delivery_size(columns, rows)
+    else:
+        fineness = delivery_fineness()
+        projected_depth = rows * fineness * GROUND_DEPTH_FACTOR
+        projected_height = max(height, 0) * fineness * STANDING_HEIGHT_FACTOR
+        box = {"width": columns * fineness, "height": projected_depth + projected_height}
     factor = min(MASTER_SUPERSAMPLE, MASTER_CAP / max(box["width"], box["height"]))
     factor = max(factor, 1.0)  # a master is never coarser than what it has to deliver
 

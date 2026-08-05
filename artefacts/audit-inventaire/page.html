@@ -1,0 +1,820 @@
+<title>GateBeast — audit de l'inventaire</title>
+<style>
+  :root{
+    --ground:#f2f3f0; --card:#fbfbfa; --sunk:#e8eae5;
+    --ink:#16191a; --ink-soft:#5a625f; --ink-faint:#8b938f;
+    --line:#d6dad3; --accent:#2f6d63; --accent-soft:#dfeae7;
+    --notice-bg:#fbf3e3; --notice-line:#d9b874; --notice-ink:#5a4a1f;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#141716; --card:#1c201e; --sunk:#232825;
+      --ink:#eef1ee; --ink-soft:#a3ada8; --ink-faint:#79837e;
+      --line:#2d3330; --accent:#6fb9ab; --accent-soft:#20302c;
+      --notice-bg:#2c2513; --notice-line:#7a5f28; --notice-ink:#e8d9ab;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#f2f3f0; --card:#fbfbfa; --sunk:#e8eae5;
+    --ink:#16191a; --ink-soft:#5a625f; --ink-faint:#8b938f;
+    --line:#d6dad3; --accent:#2f6d63; --accent-soft:#dfeae7;
+    --notice-bg:#fbf3e3; --notice-line:#d9b874; --notice-ink:#5a4a1f;
+  }
+  :root[data-theme="dark"]{
+    --ground:#141716; --card:#1c201e; --sunk:#232825;
+    --ink:#eef1ee; --ink-soft:#a3ada8; --ink-faint:#79837e;
+    --line:#2d3330; --accent:#6fb9ab; --accent-soft:#20302c;
+    --notice-bg:#2c2513; --notice-line:#7a5f28; --notice-ink:#e8d9ab;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ground);color:var(--ink);
+    font:16px/1.6 var(--sans);padding:2rem 1.25rem 15rem;}
+  .sheet{max-width:940px;margin:0 auto;}
+  header.head{border-bottom:2px solid var(--ink);padding-bottom:1rem;margin-bottom:1.25rem;}
+  .eyebrow{font:600 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);}
+  h1{font:600 2.1rem/1.1 var(--serif);margin:.5rem 0 .4rem;text-wrap:balance;letter-spacing:-.01em;}
+  .lede{color:var(--ink-soft);max-width:62ch;margin:0;}
+  .tally{display:flex;gap:1.75rem;margin-top:1.1rem;font-variant-numeric:tabular-nums;}
+  .tally div{font:400 .8rem/1.3 var(--sans);color:var(--ink-faint);}
+  .tally b{display:block;font:600 1.5rem/1 var(--serif);color:var(--ink);}
+  .notice{background:var(--notice-bg);border:1px solid var(--notice-line);color:var(--notice-ink);
+    border-radius:.4rem;padding:.9rem 1.1rem;margin:0 0 1.75rem;max-width:70ch;}
+  .notice p{margin:.25rem 0;font-size:.92rem;}
+  .notice p:first-child{margin-top:0;}
+  .notice p:last-child{margin-bottom:0;}
+  h2.section-title{font:600 1.4rem/1.25 var(--serif);margin:0 0 .25rem;}
+  .section-intro{margin:2.5rem 0 1.25rem;}
+  section.cat-block{margin:2.25rem 0;}
+  .cat{display:flex;flex-wrap:wrap;align-items:baseline;gap:.75rem;
+    border-bottom:1px solid var(--line);padding-bottom:.5rem;margin-bottom:.25rem;}
+  .cat h3{font:600 1.15rem/1.3 var(--serif);margin:0;flex:1 1 14rem;}
+  .cat .code{font:600 .7rem/1 var(--mono);letter-spacing:.1em;color:var(--accent);}
+  .cat-note{color:var(--ink-soft);font-size:.86rem;margin:0 0 .6rem;}
+  .bulk{display:flex;gap:.4rem;flex-wrap:wrap;}
+  .bulk button{font:500 .75rem/1 var(--sans);padding:.4rem .7rem;border:1px solid var(--line);
+    background:var(--card);color:var(--ink-soft);border-radius:.3rem;cursor:pointer;}
+  .bulk button:hover{border-color:var(--accent);color:var(--accent);}
+  .bulk button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .item{display:grid;grid-template-columns:1fr auto;gap:.5rem 1.25rem;align-items:start;
+    padding:.85rem 0;border-bottom:1px solid var(--line);}
+  .item:last-child{border-bottom:0;}
+  .what{min-width:0;}
+  .ref{font:500 .78rem/1.4 var(--mono);color:var(--ink-faint);word-break:break-all;}
+  .ref b{color:var(--accent);font-weight:600;}
+  .say{margin:.15rem 0 0;}
+  .why{margin:.2rem 0 0;color:var(--ink-soft);font-size:.88rem;}
+  .pick{display:flex;gap:.3rem;flex-wrap:wrap;}
+  .pick label{font:500 .8rem/1 var(--sans);padding:.45rem .75rem;border:1px solid var(--line);
+    border-radius:2rem;cursor:pointer;user-select:none;white-space:nowrap;background:var(--card);}
+  .pick input{position:absolute;opacity:0;width:0;height:0;}
+  .pick label:has(input:checked){border-color:currentColor;font-weight:650;color:var(--accent);
+    background:var(--accent-soft);}
+  .pick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px;}
+  .note{grid-column:1 / -1;}
+  .note textarea{width:100%;min-height:2.2rem;resize:vertical;padding:.4rem .55rem;
+    font:.85rem/1.5 var(--sans);background:var(--sunk);color:var(--ink);
+    border:1px solid var(--line);border-radius:.3rem;}
+  .note textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  footer.bar{position:fixed;inset:auto 0 0 0;background:var(--card);
+    border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.10);padding:.75rem 1.25rem;}
+  .bar-in{max-width:940px;margin:0 auto;display:flex;gap:1rem;align-items:flex-start;}
+  #recap{flex:1;min-height:6rem;font:.76rem/1.5 var(--mono);padding:.5rem .6rem;
+    background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:.3rem;
+    resize:vertical;}
+  .bar-side{display:flex;flex-direction:column;gap:.4rem;min-width:11rem;}
+  #copy{font:600 .85rem/1 var(--sans);padding:.6rem .9rem;border:0;border-radius:.3rem;
+    background:var(--accent);color:var(--ground);cursor:pointer;}
+  #copy:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  #state{font-size:.78rem;color:var(--ink-faint);}
+  @media (max-width:640px){
+    .item{grid-template-columns:1fr;}
+    .bar-in{flex-direction:column;}
+    .bar-side{flex-direction:row;align-items:center;width:100%;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+
+<div class="sheet">
+  <header class="head">
+    <div class="eyebrow">AUDIT — inventaire contre planches</div>
+    <h1>Écarts entre l&#x27;inventaire et les six planches de référence</h1>
+    <p class="lede">Rien n&#x27;a été changé dans le référentiel ni dans l&#x27;inventaire. Chaque ligne attend un verdict ; un bouton par catégorie tranche tout d&#x27;un coup. Le récapitulatif se copie et se colle en conversation.</p>
+    <div class="tally">
+      <div><b id="n-total">48</b>éléments relevés</div>
+      <div><b id="n-open">48</b>sans réponse</div>
+    </div>
+  </header>
+  <div class="notice"><p>Rien de tout ça n&#x27;est urgent pour la maquette du parc, qui n&#x27;emploie qu&#x27;une poignée de sujets.</p><p>Mais toute production hors du parc partira de fiches fausses tant que ce n&#x27;est pas repris.</p><p>Créer un sujet est ta décision, jamais la nôtre : cette page est une proposition, pas un inventaire déjà décidé.</p></div>
+  <div id="body">
+<div class="section-intro"><h2 class="section-title">Contradictions — la fiche et la planche ne disent pas la même chose</h2></div>
+
+<section class="cat-block">
+  <div class="cat">
+    <span class="code">CONTRA</span>
+    <h3>Contradictions</h3>
+    <div class="bulk"><button type="button" class="bulk-btn" data-cat="CONTRA" data-value="fiche">Tout : la fiche cède</button><button type="button" class="bulk-btn" data-cat="CONTRA" data-value="planche">Tout : la planche cède</button><button type="button" class="bulk-btn" data-cat="CONTRA" data-value="plus-tard">Tout : à revoir plus tard</button></div>
+  </div>
+  
+  
+<div class="item" data-code="TR-060" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>TR-060  </b>Grand chêne</div>
+    <p class="say">Fiche : emprise 2 × 2. Planche : un arbre dessiné à l&#x27;emprise de 3 × 3.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="TR-060" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="TR-060" value="planche"><span>La planche cède</span></label><label><input type="radio" name="TR-060" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="TR-060"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-020" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-020  </b>Bergerie</div>
+    <p class="say">Fiche : emprise 8 × 5. Planche : 8 × 8.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-020" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-020" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-020" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-020"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-021" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-021  </b>Entrée de mine</div>
+    <p class="say">Fiche : emprise 5 × 3. Planche : 8 × 7.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-021" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-021" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-021" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-021"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-023" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-023  </b>Tour en ruine</div>
+    <p class="say">Fiche : emprise 5 × 5. Planche : 4 × 4.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-023" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-023" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-023" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-023"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-030" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-030  </b>Hutte sur pilotis</div>
+    <p class="say">Fiche : emprise 5 × 4. Planche : 12 × 10.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-030" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-030" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-030" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-030"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-040" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-040  </b>Phare</div>
+    <p class="say">Fiche : emprise 5 × 5, hauteur 10 cases. Planche : emprise 4 × 4, hauteur d&#x27;environ 24 cases.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-040" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-040" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-040" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-040"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-041" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-041  </b>Cabanon de pêcheur</div>
+    <p class="say">Fiche : emprise 4 × 3. Planche : 8 × 8.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-041" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-041" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-041" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-041"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-051" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-051  </b>Cabane de plage</div>
+    <p class="say">Fiche : emprise 5 × 4. Planche : 8 × 8.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-051" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-051" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-051" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-051"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OB-042" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>OB-042  </b>Barque échouée</div>
+    <p class="say">Fiche : emprise 4 × 2. Planche : 2 cases.</p>
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OB-042" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="OB-042" value="planche"><span>La planche cède</span></label><label><input type="radio" name="OB-042" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="OB-042"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-050" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-050  </b>Appontement</div>
+    <p class="say">Fiche : une jetée de bois sur pilotis. Planche : un tablier plat posé à même le sable, sans pilotis.</p>
+    <p class="why">Ce n&#x27;est pas qu&#x27;une différence de mesure : les deux planches ne décrivent pas le même objet.</p>
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-050" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-050" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-050" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-050"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BT-031" data-section="Contradictions — la fiche et la planche ne disent pas la même chose">
+  <div class="what">
+    <div class="ref"><b>BT-031  </b>Séchoir à poissons</div>
+    <p class="say">Fiche : une charpente où sèchent des poissons et des nasses à anguilles.</p>
+    <p class="why">Une règle écrite dit qu&#x27;un monde sans poissons n&#x27;en sèche pas — la fiche se contredit elle-même, indépendamment de toute planche.</p>
+  </div>
+  <div class="pick"><label><input type="radio" name="BT-031" value="fiche"><span>La fiche cède</span></label><label><input type="radio" name="BT-031" value="planche"><span>La planche cède</span></label><label><input type="radio" name="BT-031" value="plus-tard"><span>À revoir plus tard</span></label></div>
+  <div class="note"><textarea data-note="BT-031"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+</section>
+<div class="section-intro"><h2 class="section-title">Sujets absents — dessinés sur une planche, sans aucune fiche</h2></div>
+
+<section class="cat-block">
+  <div class="cat">
+    <span class="code">VEG</span>
+    <h3>Végétation</h3>
+    <div class="bulk"><button type="button" class="bulk-btn" data-cat="VEG" data-value="inventorier">Tout : à inventorier</button><button type="button" class="bulk-btn" data-cat="VEG" data-value="hors">Tout : hors périmètre</button></div>
+  </div>
+  
+  
+<div class="item" data-code="VEG-1" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-1  </b>Bouleau</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-1" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-1" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-1"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-2" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-2  </b>Poirier</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-2" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-2" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-2"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-3" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-3  </b>Prunier</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-3" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-3" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-3"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-4" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-4  </b>Cerisier</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-4" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-4" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-4"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-5" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-5  </b>Cognassier</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-5" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-5" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-5"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-6" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-6  </b>Mangrove</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-6" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-6" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-6"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-7" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-7  </b>Nénuphar</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-7" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-7" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-7"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-8" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-8  </b>Bruyère</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-8" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-8" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-8"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-9" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-9  </b>Palmier</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-9" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-9" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-9"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="VEG-10" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>VEG-10  </b>Malcolmie</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="VEG-10" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="VEG-10" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="VEG-10"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+</section>
+<section class="cat-block">
+  <div class="cat">
+    <span class="code">CULT</span>
+    <h3>Cultures</h3>
+    <div class="bulk"><button type="button" class="bulk-btn" data-cat="CULT" data-value="inventorier">Tout : à inventorier</button><button type="button" class="bulk-btn" data-cat="CULT" data-value="hors">Tout : hors périmètre</button></div>
+  </div>
+  <p class="cat-note">Aucune des quatre n&#x27;existe aujourd&#x27;hui : une famille entière manque, pas des cas isolés.</p>
+  
+<div class="item" data-code="CULT-1" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>CULT-1  </b>Champ de blé</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="CULT-1" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="CULT-1" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="CULT-1"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="CULT-2" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>CULT-2  </b>Champ de légumes</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="CULT-2" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="CULT-2" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="CULT-2"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="CULT-3" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>CULT-3  </b>Potager</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="CULT-3" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="CULT-3" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="CULT-3"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="CULT-4" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>CULT-4  </b>Verger</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="CULT-4" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="CULT-4" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="CULT-4"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+</section>
+<section class="cat-block">
+  <div class="cat">
+    <span class="code">TERRAIN</span>
+    <h3>Terrain</h3>
+    <div class="bulk"><button type="button" class="bulk-btn" data-cat="TERRAIN" data-value="inventorier">Tout : à inventorier</button><button type="button" class="bulk-btn" data-cat="TERRAIN" data-value="hors">Tout : hors périmètre</button></div>
+  </div>
+  
+  
+<div class="item" data-code="TER-1" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>TER-1  </b>Crevasse</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="TER-1" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="TER-1" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="TER-1"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="TER-2" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>TER-2  </b>Enclos</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="TER-2" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="TER-2" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="TER-2"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="TER-3" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>TER-3  </b>Dunes</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="TER-3" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="TER-3" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="TER-3"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+</section>
+<section class="cat-block">
+  <div class="cat">
+    <span class="code">BAT</span>
+    <h3>Bâtiments</h3>
+    <div class="bulk"><button type="button" class="bulk-btn" data-cat="BAT" data-value="inventorier">Tout : à inventorier</button><button type="button" class="bulk-btn" data-cat="BAT" data-value="hors">Tout : hors périmètre</button></div>
+  </div>
+  <p class="cat-note">Comprend tout le bourg : halle, lavoir, boulangerie, forge, auberge, maisons mitoyennes, maison et atelier du potier.</p>
+  
+<div class="item" data-code="BAT-1" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-1  </b>Moulin</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-1" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-1" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-1"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-2" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-2  </b>Grange</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-2" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-2" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-2"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-3" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-3  </b>Chaumière de chaume</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-3" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-3" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-3"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-4" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-4  </b>Halle</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-4" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-4" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-4"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-5" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-5  </b>Lavoir</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-5" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-5" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-5"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-6" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-6  </b>Boulangerie</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-6" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-6" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-6"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-7" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-7  </b>Forge</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-7" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-7" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-7"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-8" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-8  </b>Auberge</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-8" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-8" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-8"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-9" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-9  </b>Maisons mitoyennes</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-9" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-9" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-9"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="BAT-10" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>BAT-10  </b>Maison et atelier du potier</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="BAT-10" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="BAT-10" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="BAT-10"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+</section>
+<section class="cat-block">
+  <div class="cat">
+    <span class="code">OBJ</span>
+    <h3>Objets</h3>
+    <div class="bulk"><button type="button" class="bulk-btn" data-cat="OBJ" data-value="inventorier">Tout : à inventorier</button><button type="button" class="bulk-btn" data-cat="OBJ" data-value="hors">Tout : hors périmètre</button></div>
+  </div>
+  
+  
+<div class="item" data-code="OBJ-1" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-1  </b>Puits</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-1" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-1" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-1"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-2" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-2  </b>Charrette</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-2" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-2" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-2"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-3" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-3  </b>Meules de foin</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-3" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-3" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-3"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-4" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-4  </b>Caisses</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-4" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-4" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-4"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-5" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-5  </b>Tonneaux</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-5" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-5" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-5"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-6" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-6  </b>Fontaine</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-6" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-6" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-6"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-7" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-7  </b>Étals</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-7" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-7" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-7"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-8" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-8  </b>Murets de pierre sèche</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-8" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-8" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-8"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+<div class="item" data-code="OBJ-9" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>OBJ-9  </b>Coquillages</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="OBJ-9" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="OBJ-9" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="OBJ-9"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+</section>
+<section class="cat-block">
+  <div class="cat">
+    <span class="code">HUM</span>
+    <h3>Humains</h3>
+    <div class="bulk"><button type="button" class="bulk-btn" data-cat="HUM" data-value="inventorier">Tout : à inventorier</button><button type="button" class="bulk-btn" data-cat="HUM" data-value="hors">Tout : hors périmètre</button></div>
+  </div>
+  
+  
+<div class="item" data-code="HUM-1" data-section="Sujets absents — dessinés sur une planche, sans aucune fiche">
+  <div class="what">
+    <div class="ref"><b>HUM-1  </b>Vendeur de légumes du bourg</div>
+    
+    
+  </div>
+  <div class="pick"><label><input type="radio" name="HUM-1" value="inventorier"><span>À inventorier</span></label><label><input type="radio" name="HUM-1" value="hors"><span>Hors périmètre</span></label></div>
+  <div class="note"><textarea data-note="HUM-1"
+    placeholder="Dire pourquoi, ou ce qu&#x27;il faut en faire."></textarea></div>
+</div>
+</section></div>
+</div>
+
+<footer class="bar"><div class="bar-in">
+  <textarea id="recap" readonly aria-label="Récapitulatif"></textarea>
+  <div class="bar-side">
+    <button id="copy" type="button">Copier le récapitulatif</button>
+    <span id="state"></span>
+  </div>
+</div></footer>
+
+<script>
+// Progressive enhancement only: every line of the audit above is already real, visible HTML,
+// rendered by build.py. Nothing here is required to READ the page — only to act on it faster
+// (tick a whole category at once) and to hand back a recap. If this script fails to run, for
+// any reason, the operator still sees every item and can still pick a verdict by hand: the
+// native radio buttons already work. (A first version built the whole page from a JSON blob in
+// JavaScript; when that script did not run, the page showed nothing but its empty skeleton —
+// this rewrite exists because of that failure.)
+(function(){
+  try {
+    run();
+  } catch (error) {
+    var box = document.createElement('pre');
+    box.style.whiteSpace = 'pre-wrap';
+    box.style.color = '#9c4326';
+    box.style.border = '1px solid #9c4326';
+    box.style.padding = '1rem';
+    box.style.borderRadius = '.3rem';
+    box.textContent = 'Le récapitulatif ne fonctionne pas : ' +
+      (error && error.message ? error.message : error);
+    document.body.appendChild(box);
+  }
+
+function run(){
+  var STORE = 'gatebeast-audit-inventaire-v1';
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item'));
+  var recap = document.getElementById('recap');
+  var state = document.getElementById('state');
+  var copiedMessage = "Récapitulatif copié — collez-le en conversation.";
+  var copyRefusedMessage = "Copie refusée par le navigateur : le texte est sélectionné, Ctrl+C.";
+  var stamp = "AUDIT — inventaire contre planches — Écarts entre l&#x27;inventaire et les six planches de référence";
+
+  function chosenInput(item){
+    return item.querySelector('input:checked');
+  }
+  function noteOf(item){
+    var zone = item.querySelector('textarea[data-note]');
+    return zone ? zone.value.trim() : '';
+  }
+  function refText(item){
+    var ref = item.querySelector('.ref');
+    return ref ? ref.textContent.replace(/\s+/g, ' ').trim() : item.dataset.code;
+  }
+
+  // Every bulk button ticks every item inside the same <section class="cat-block"> that
+  // declares the matching data-value — no need to know the category's items in advance,
+  // the DOM already groups them.
+  Array.prototype.forEach.call(document.querySelectorAll('.bulk-btn'), function(button){
+    button.addEventListener('click', function(){
+      var block = button.closest('.cat-block');
+      if(!block){ return; }
+      Array.prototype.forEach.call(block.querySelectorAll('.item'), function(item){
+        var input = item.querySelector('input[value="' + CSS.escape(button.dataset.value) + '"]');
+        if(input){ input.checked = true; }
+      });
+      refresh(); save();
+    });
+  });
+
+  function refresh(){
+    var lines = [stamp, ''];
+    var answered = 0;
+    var currentSection = null, currentCat = null, block = [];
+
+    function flushCategory(){
+      if(currentCat && block.length){
+        lines.push(currentCat);
+        lines.push.apply(lines, block);
+      }
+      block = [];
+    }
+
+    items.forEach(function(item){
+      // The item carries its own section name (data-section, written by build.py) — it is not
+      // a descendant of ".section-intro", which is only a preceding sibling of its ".cat-block",
+      // so there is nothing to walk up to. The category, by contrast, IS an ancestor.
+      var catBlock = item.closest('.cat-block');
+      var sectionTitle = item.dataset.section || '';
+      var catCode = catBlock ? catBlock.querySelector('.code').textContent : '';
+      var catName = catBlock ? catBlock.querySelector('h3').textContent : '';
+
+      if(sectionTitle !== currentSection){
+        flushCategory();
+        currentSection = sectionTitle; currentCat = null;
+        lines.push(sectionTitle);
+      }
+      var thisCat = catCode + ' ' + catName;
+      if(thisCat !== currentCat){
+        flushCategory();
+        currentCat = thisCat;
+      }
+
+      var input = chosenInput(item);
+      var note = noteOf(item);
+      if(input){ answered += 1; }
+      if(!input && !note){ return; }
+      var label = input ? input.parentElement.querySelector('span').textContent.toUpperCase()
+        : '(commentaire seul)';
+      block.push('  ' + item.dataset.code + ' ' + label + ' — ' + refText(item));
+      if(note){ block.push('    ' + note); }
+    });
+    flushCategory();
+
+    recap.value = lines.join('\n');
+    document.getElementById('n-total').textContent = items.length;
+    document.getElementById('n-open').textContent = items.length - answered;
+    state.textContent = answered + ' / ' + items.length + ' tranchés.';
+  }
+
+  function save(){
+    var out = {};
+    items.forEach(function(item){
+      var input = chosenInput(item);
+      out[item.dataset.code] = {v: input ? input.value : '', n: noteOf(item)};
+    });
+    try{ localStorage.setItem(STORE, JSON.stringify(out)); }catch(e){}
+  }
+
+  function restore(){
+    var raw = null;
+    try{ raw = JSON.parse(localStorage.getItem(STORE) || 'null'); }catch(e){ return; }
+    if(!raw){ return; }
+    items.forEach(function(item){
+      var kept = raw[item.dataset.code];
+      if(!kept){ return; }
+      if(kept.v){
+        var input = item.querySelector('input[value="' + CSS.escape(kept.v) + '"]');
+        if(input){ input.checked = true; }
+      }
+      var zone = item.querySelector('textarea[data-note]');
+      if(zone && kept.n){ zone.value = kept.n; }
+    });
+  }
+
+  document.addEventListener('change', function(){ refresh(); save(); });
+  document.addEventListener('input', function(){ refresh(); save(); });
+
+  document.getElementById('copy').addEventListener('click', function(){
+    recap.removeAttribute('readonly');
+    recap.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+    recap.setAttribute('readonly', 'readonly');
+    state.textContent = ok ? copiedMessage : copyRefusedMessage;
+  });
+
+  restore();
+  refresh();
+} // end of run()
+})();
+</script>

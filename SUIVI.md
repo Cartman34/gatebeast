@@ -55,7 +55,83 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 ## Ce qui reste en défaut
 
-- **Le portillon** `OB-010_shape-ew-avec-portillon.png` n'est déclaré par aucune variante du référentiel : à ajouter ou à écarter.
+**Relevé par l'opérateur en fin de journée du 2026-08-04, tout est en cours de traitement :**
+
+- **Régression sur la page de suivi** : les sprites s'affichent à la taille de leur fichier au lieu de **24 pixels par case d'emprise en largeur**, la hauteur suivant librement l'image. Le bouton œil vit **dans l'encart de la variante**, jamais sur l'image ; l'image s'ouvre en grand au clic sur elle ou sur l'œil. *Confié à l'assistant « page de suivi ».*
+- **Une variante n'a qu'une version active** : la dernière. Les antérieures (trois au plus) ne s'affichent plus dans le flux, elles s'atteignent par une **popin de comparaison**, sur le modèle de celle des planches de référence. Constaté sur la clôture nord-sud et est-ouest. *Même assistant.*
+- **La parallélisation est fausse** : un script qui enchaîne plusieurs générations n'est pas parallèle. **Un processus système par génération**, et la file les mène de front. `run-fence-campaign.py` groupait ses travaux : c'est la faute. *Confié au codeur Python.*
+- **Le pommier n'avait pas de pomme** : la fiche ne les demandait pas. Fiche entièrement réécrite le 2026-08-04, le fruit y est explicite et visible. **À regénérer.**
+- **Le bosquet de sapins est mal décrit** : ce n'est pas une multitude de petits arbres, mais **deux à quatre arbres à la proportion juste** qui forment ensemble une masse infranchissable. Et une case infranchissable de ce genre **se remplit et se joint à ses voisines de même nature** — la géométrie exacte attend une réponse de l'opérateur avant réécriture.
+- **Les plans de composition n'étaient visibles nulle part** : celui du chemin `CH-019` existe depuis le 2026-08-04 et n'était jamais remonté à l'opérateur. Un artefact dédié leur est ouvert. *Confié à un assistant.*
+- **Le reste des variantes de clôture est à produire.**
+
+## Leçon de la nuit : ne pas paralléliser ce qui ne se découpe pas
+
+Six assistants ont travaillé en parallèle sur un même sujet — le portillon touchait l'inventaire, le référentiel, deux outils et la page. Chaque décision devait traverser quatre propriétaires dans le bon ordre, par messages. **Un sujet qu'un seul agent aurait réglé en une passe a coûté vingt allers-retours.**
+
+Ce qui marche : **la génération d'images en parallèle**, parce qu'aucune image ne dépend d'une autre. Ce qui ne marche pas : découper un travail qui se tient, par fichier plutôt que par sujet.
+
+Deux façons de faire qui ont coûté cher, et qu'il faut abandonner :
+- **Les clauses d'exploration** — « vérifie que rien d'autre n'a le même défaut », « signale-moi ce que tu croises » — transforment une demande de trois lignes en inspection du dépôt.
+- **Corriger un assistant quinze fois** : tout s'empile dans sa mémoire. Celui du référentiel a vécu la conception du portillon quatre fois. Mieux vaut l'arrêter au deuxième revirement et en relancer un avec la décision arrêtée.
+
+**Pour la suite : un sujet, un agent, du début à la fin. La parallélisation réservée à la production d'images. Et rien de délégué dont la définition n'est pas arrêtée.**
+
+## Où on en est vraiment, fin de la nuit du 2026-08-04
+
+**Produit et exporté depuis la reprise** : le pommier, le bosquet, les trois angles de clôture, la ligne est-ouest à un puis à deux poteaux, le centre de soin refait vu de dessus, le sapin isolé, l'herbe clairsemée, et les sprites principaux du chemin et du cours d'eau. Les deux exemples d'usage du chemin et du cours d'eau sont produits mais **ratés** — rendus à plat, sans la caméra du projet ; leur consigne est corrigée depuis, ils sont à refaire.
+
+**Les quatre portillons attendent** : leur outil insère encore d'office une phrase sur le poteau unique, qui n'a aucun sens pour un portillon. Les quatre premières images ont été gâchées pour cette raison et sont écartées.
+
+**Le rendement de la nuit est mauvais, et il faut en tirer la leçon.** Beaucoup de temps est parti dans des allers-retours sur des détails de modèle — le portillon devenu forme puis axe, la composition, les libellés — alors que la production, elle, avançait peu. Ce qui a réellement coûté : des chantiers ouverts sans qu'on les demande, des correctifs lancés avant tout diagnostic, et des questions reposées alors que la réponse était déjà donnée. Les règles écrites cette nuit dans la méthode visent exactement ça.
+
+**Le référentiel est sain et son contrôleur passe au vert** : douze sujets déclarés, aucun fichier orphelin, aucun maître manquant. Le modèle porte désormais le statut de version, le **verdict de l'opérateur** qui ne s'y confond pas, le maître, le numéro d'image et une place pour les mesures — encore vide, l'outil de mesure n'y écrit pas. Deux règles nouvelles y vivent avec leurs raisons : un axe peut **définir la nature** d'une pièce, et un axe peut en **rendre un autre inapplicable**.
+
+**Attendent ton verdict** : la reprise de la ligne est-ouest à deux poteaux, le chemin, le ruisseau, le centre de soin refait, le sapin isolé et l'herbe clairsemée.
+
+**La destination d'une image ne se déduit plus de sa référence.** C'était la cause de deux sprites allés se ranger dans les planches de référence — remis en place à la main. Un seul outil portait le défaut, il est corrigé et éprouvé : la destination ne dépend que du code du sujet, et la référence peut vivre n'importe où. Les trois outils qui acceptent une référence sont éprouvés : la destination est identique avec une référence lointaine et sans référence.
+
+**Trois pièges à connaître avant de toucher à la chaîne** : le référentiel des sujets est édité en direct par plusieurs mains, une lecture peut tomber pendant une écriture ; une clause qui a l'air générale peut cacher un mot valable pour un seul type — on ne les trouve qu'en lisant la consigne produite en entier, jamais en survolant le code ; et les chemins d'images du référentiel sont relatifs au dossier des images, jamais à la racine du dépôt.
+
+**Le catalogue gelé est débranché** : les deux outils vivants lisent désormais le référentiel des sujets, et l'enregistrement d'une image **ajoute une version** au lieu d'écraser. Les deux modules du catalogue n'ont plus aucun lecteur ; ils ne sont pas supprimés.
+
+**Ce qui reste en vol, à reprendre :**
+
+1. **La page de suivi n'affiche pas le centre de soin.** Elle embarque chaque sprite en pleine définition alors qu'elle ne les montre qu'à vingt-quatre pixels par case : un livrable de seize cases pèse 1,7 Mo pour 384 pixels affichés. Un plafond de 500 ko a été posé en garde-fou, il montre « image trop volumineuse » au lieu d'un cadre vide — mais **la vraie réponse est de fabriquer une vignette à la taille d'affichage**, ce qui fait tomber le poids pour toutes les images et rend le plafond inatteignable. Le bouton œil doit continuer d'ouvrir l'image entière.
+2. **Le constructeur de la page échoue en fin de course** : `NameError: name 'UNREADABLE_IMAGES' is not defined`, dans l'étape même qui devait signaler les anomalies au lanceur. La page est pourtant écrite avant l'échec.
+3. **Le libellé d'une variante de portillon doit commencer par le portillon**, pas par « Ligne » : ce qui change la nature de la pièce mène le libellé. Un poteau de plus ou de moins, non — une ligne reste une ligne. La règle générale reste à écrire.
+4. **Quatre reprises ne sont pas déclarées au référentiel** : `TR-063-v3`, `TR-061-v3`, `OB-010_shape-nw_posts-1-v2`, `OB-010_shape-ew_posts-1-v2`. Chacune devient courante, celle qu'elle remplace passe en antérieure, **et repart sans verdict**. Le pommier et le bosquet atteignent la troisième version : le plafond de trois antérieures se pose, et rien ne se supprime du disque.
+5. **Les lots des tracés sont complétés** : cinq dessins à produire — extrémité, ligne, angle, trois branches, croisement —, quinze configurations couvertes par rotation. La distinction est écrite dans le type : ce qu'il faut **dessiner** n'est pas ce qu'une case doit **savoir accepter**. La clôture, qui ne pivote pas, garde ses six formes, plus les quatre variantes de portillon qui sont à produire elles aussi.
+   **Le cours d'eau `CH-020` n'est pas sur la maquette du parc, mais son exemple d'usage se produit quand même** (opérateur, 2026-08-04) : le sujet est déjà dessiné dans les références de direction artistique, il n'y a donc rien à inventer. Ne pas confondre « absent de la maquette » et « à ne pas produire ».
+6. **Le catalogue gelé n'est pas débranché.** La correspondance ligne à ligne est faite et le feu vert donné : `check-asset.py` et `record-asset.py` doivent lire le référentiel des sujets. Deux changements assumés au passage — l'enregistrement **ajoute une version** au lieu d'écraser, et le type se valide contre les types déclarés par le référentiel. `asset_catalog.py` et `check-catalog.py` ne se suppriment pas sans ordre.
+7. **La chaumière de l'ébauche est devenue `BT-002` maison de ferme** (toit de tuiles orange, pas de chaume). **La tour de guet reste hors inventaire** — décision de l'opérateur, elle n'appartient pas au parc du POC ; elle est dessinée dans l'ébauche et pourra être inventoriée le jour où une scène en aura besoin. Le potager clôturé et ses cultures, également dessinés, attendent la même décision.
+8. **Écart constaté sur `CH-001`** : l'ébauche montre un sol semé de petites fleurs blanches, roses et violettes, alors que la fiche — validée par l'opérateur — décrit une étendue uniquement herbeuse. À trancher : texture de la tuile, ou sujets posés par-dessus ?
+
+## L'inventaire ne couvre pas les planches de référence (audit du 2026-08-04)
+
+Les six planches sont des références **documentées** : chacune a sa fiche, et le texte de production de chacune donne les coordonnées et les emprises exactes. Confronté à l'inventaire, l'écart est massif — il ne se comble pas au coup par coup.
+
+**Dix fiches se contredisent avec leur planche sur l'emprise ou la hauteur** : le grand chêne (2×2 contre 3×3), la bergerie (8×5 contre 8×8), l'entrée de mine (5×3 contre 8×7), la tour en ruine (5×5 contre 4×4), la hutte sur pilotis (5×4 contre 12×10), le phare (5×5 hauteur 10 contre 4×4 hauteur d'environ 24), le cabanon de pêcheur (4×3 contre 8×8), la cabane de plage (5×4 contre 8×8), la barque échouée (4×2 contre 2 cases), et l'appontement, dont la fiche décrit une jetée sur pilotis là où la planche montre un tablier plat posé sur la plage.
+
+**Une fiche contredit une règle déjà écrite** : le séchoir `BT-031` nomme et décrit des poissons, alors que les planches posent qu'un monde sans poissons n'en sèche pas — c'est un séchoir à récoltes du marais.
+
+**Des pans entiers du monde n'ont aucun code** : les **cultures** (champ de blé, potager, verger) n'existent nulle part ; la planche du bourg n'a **aucun** de ses bâtiments inventorié (halle, lavoir, boulangerie, forge, auberge, maisons, atelier) ; manquent aussi le moulin, la grange, la chaumière de chaume, plusieurs essences (bouleau, arbres fruitiers, mangrove, nénuphar, bruyère, palmier), des reliefs que le format distingue explicitement (crevasse, enclos, dunes), une dizaine d'objets (puits, charrette, meules, tonneaux, fontaine, étals, murets de pierre sèche, coquillages) et au moins un humain.
+
+**Ce que ça change** : l'inventaire a été écrit avant les planches et n'a jamais été confronté à elles. Rien n'est urgent pour le POC — le parc n'emploie qu'une poignée de sujets — mais **toute production hors du parc partira de fiches fausses** tant que ce n'est pas repris. Et **aucun sujet ne se crée sans l'opérateur** : la liste est une proposition, pas un chantier lancé.
+
+**Contradiction en attente d'arbitrage** : le sapin isolé. L'opérateur le veut « nettement plus petit que les six cases du bosquet », mais la fiche du bosquet dit que chacun de ses sapins est « à la taille d'un sapin isolé ». Les deux ne peuvent être vrais. Sa fiche n'est pas écrite tant que ce n'est pas tranché.
+
+**Chantiers ouverts en fin de journée du 2026-08-04 :**
+
+- **Les clés de données passent en anglais.** La règle est écrite dans `AGENTS.md` pour que le français cesse de s'étendre ; la migration elle-même est **à faire**, l'opérateur l'a repoussée. Relevé complet : dans le référentiel des sujets — `sujets`, `variantes`, `emprise`, `hauteur`, `passage`, `passage_default`, `profil`, `statut`, `composition`/`compositions` ; dans les jugements — `jugements`, `nom`, `criteres`, `tenu`, `sur`, `rapport`. **Deux points à trancher** : les identifiants de type, employés comme clés (`sol`, `chemin`, `cloture`, `arbre`, `bosquet-arbres`, `herbe`, `batiment`, `humain`), et le mot `note`, identique dans les deux langues mais employé ici au sens français de remarque.
+- **Les descriptions d'inventaire passent en français.** Ordre de l'opérateur : toute consigne envoyée au générateur est en français, or la description du sujet y était citée en anglais — le seul fragment qui restait. La règle du README est déjà retournée ; la réécriture d'une centaine de fiches est en cours. Ce n'est pas une traduction mot à mot : le texte doit être aussi concret en français, sans rien perdre ni rien ajouter, en prescription positive.
+- **Le catalogue gelé doit être débranché**, pas seulement cessé d'être écrit. Il porte encore tout l'adressage dont dépendent deux outils vivants — `check-asset.py` et `record-asset.py`. Le débranchement ne se fait **qu'après** une correspondance ligne à ligne prouvant que le référentiel des sujets fournit tout ce qu'ils y prennent ; s'il manque quoi que ce soit, c'est le référentiel qui est incomplet, et le compléter est une décision de conception.
+- **Le vocabulaire des formes est recopié en dur dans cinq outils**, et cette copie vit dans le module du catalogue gelé. Un détenteur unique le remplace, les autres l'importent — comme les tailles en pixels, qui n'ont plus jamais divergé depuis qu'elles en ont un.
+- **Une forme peut porter une qualification** devant ses bords — `gate-ew`, `gate-ns` — parce que deux pièces peuvent relier les mêmes bords sans être le même dessin. Règle écrite dans la conception et au lexique.
+- **La toile demandée au générateur épouse la forme réelle du sujet.** Elle se calculait sur le seul sol : un pommier haut de trois cases recevait un carré et s'écrasait. La profondeur au sol se projette presque en vraie grandeur, la hauteur s'écrase au tiers — la caméra est à soixante-dix degrés **sous l'horizontale**, donc près de la verticale. Cette convention est la source d'une erreur commise et corrigée aujourd'hui : elle est désormais écrite noir sur blanc dans le service qui détient les tailles.
+
+- **Le portillon** `OB-010_shape-ew-avec-portillon.png` est **rattaché** au référentiel le 2026-08-04, sur un axe `ouverture` proposé. Deux points attendent l'opérateur : le nom de l'axe, et **le passage** — un portillon se traverse, ce qui renverse la fermeture du type sur les deux côtés reliés.
+- **`check-sujets.py` a deux défauts** : il réclame qu'une variante revendique aussi les **maîtres** de `assets/poc/`, alors qu'une variante ne pointe que le livrable de `assets/cutout/` ; et il compte en faute les sondes pourtant déclarées `_hors_referentiel`. Il sort donc en erreur alors que le référentiel est sain.
 - **`reference-OB-010.png`** est une copie de la clôture est-ouest, déposée par l'ancien mécanisme de cascade. Elle traîne au recensement ; proposé de l'exclure comme les `usage-*`.
 - **Le bouton œil a disparu** de la page au lieu d'être déplacé hors de l'image ; tout l'encart est devenu la cible. À confirmer ou à rétablir.
 - **`cut-asset.py`** existe encore mais n'est plus appelé — le rognage est abandonné.
@@ -168,14 +244,19 @@ Décidées avec l'opérateur ; elles remplacent les comptes rendus en conversati
 
 ## Les revues publiées
 
+**Quatre états, et seuls ces quatre-là.** **Vivant** : on s'en sert, il se republie. **Archivé** : il n'est plus actif, mais il reste consultable et son adresse reste valable — archiver n'est pas supprimer. **Clos** : son sujet est tranché, il ne bougera plus. **À ne pas rouvrir** : un doublon créé par erreur, sur lequel on ne republie jamais.
+
 **Règle absolue : on ne crée jamais un artefact nouveau quand un artefact dédié existe déjà.** On republie sur son adresse. Cet inventaire est **exhaustif** et se tient à jour dans le même geste que toute publication — une adresse non consignée est une adresse perdue, et le suivant crée un doublon. Avant toute publication : lire cet inventaire, puis lister les artefacts existants pour vérifier qu'il n'en manque aucun.
 
 | Artefact | Adresse | État |
 |---|---|---|
+| **Index des artefacts** — la porte d'entrée vers tous les autres, bâtie sur ce tableau même (`artefacts/index/`) | https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949 | vivant, ouvert le 2026-08-04 |
+| **Audit de l'inventaire** — les écarts avec les six planches, à arbitrer ligne par ligne (`artefacts/audit-inventaire/`) | https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa | vivant, en attente d'arbitrage |
 | **Suivi des sprites** — l'unique endroit où se lit l'état de la production | https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c | vivant, republié le 2026-08-04 |
-| **Tour de nettoyage** — 31 éléments relevés, un verdict par ligne (`artefacts/nettoyage/`) | https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c | en cours d'arbitrage |
-| **Planches de référence** (avec rapports par planche) | https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413 | vivant |
-| **Calibration de l'échelle humaine** | https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40 | vivant |
+| **Plans de composition** — tout plan déclaré sous `assets/poc/`, découverte automatique (`artefacts/plans-de-composition/`) | https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9 | vivant, ouvert le 2026-08-04 |
+| **Tour de nettoyage** — 31 éléments relevés, un verdict par ligne (`artefacts/nettoyage/`) | https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c | archivé |
+| **Planches de référence** — chaque planche avec son rapport noté | https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413 | archivé |
+| **Calibration de l'échelle humaine** | https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40 | archivé |
 | **Direction artistique** (historique de la revue) | https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5 | clos — DA validée |
 | **Son** (essais, plafond constaté) | https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8 | clos — synthèse abandonnée |
 | *Suivi des sprites — doublon créé par erreur* | https://claude.ai/code/artifact/ddefc8b7-0f50-45ef-ad51-68c64b5ef1bd | **à supprimer par l'opérateur — ne jamais republier dessus** |
@@ -184,5 +265,4 @@ Décidées avec l'opérateur ; elles remplacent les comptes rendus en conversati
 ## Ce qui attend l'opérateur
 
 - L'arbitrage du **lot v0** de la maquette B0.
-- L'**envoi du dépôt vers GitHub** : l'enregistrement initial est fait en local, rien n'a été poussé.
 - À terme : l'arbitrage de la contradiction lumière référence/bande, et le sort des fiches créatures dérivantes — tous deux hors chemin du POC.

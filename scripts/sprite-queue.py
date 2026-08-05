@@ -32,11 +32,21 @@ WHAT "run" ACTUALLY CHAINS, PER REQUEST
   Steps 2 and 3 run right after step 1 lands for THAT request, not once the whole queue is empty.
   Step 3 touches one shared page, so it is the one step this script serializes across workers — step
   1 and step 2 stay fully parallel.
+
+  Each request's step 1 is its own OS subprocess (see _generate_command / _run_entry): "run" spawns up
+  to --workers of them at once, one thread per in-flight request driving one subprocess.run each, so a
+  slow or crashing generation never blocks or brings down its neighbours.
+
+TESTING WITHOUT SPENDING A REAL GENERATION
+  Set SPRITE_QUEUE_TEST_GENERATOR to the path of a stand-in script before calling "run", and step 1
+  invokes that script instead of the real generator (see _generate_command). Production never sets
+  this variable.
 """
 from __future__ import annotations
 
 import fcntl
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -159,8 +169,19 @@ def _find_image_path(stdout: str) -> str | None:
 
 
 def _generate_command(entry: dict) -> list[str]:
+    """The subprocess command for one entry's generation step.
+
+    SPRITE_QUEUE_TEST_GENERATOR, when set, names an executable substituted for the real generator —
+    invoked with (kind, code) instead of the real tool's own arguments. This exists solely to prove
+    this queue's process-level parallelism (a real, distinct OS process per request, several running
+    at once) without spending a real, costly generation on every proof run; production runs never set
+    the variable, so this branch never fires for them.
+    """
     reference = entry.get("reference")
     ref_args = ["--ref", str(REPO / reference)] if reference else []
+    test_generator = os.environ.get("SPRITE_QUEUE_TEST_GENERATOR")
+    if test_generator:
+        return ["python3", test_generator, entry["kind"], entry["code"]]
     if entry["kind"] == "subject":
         return ["python3", str(REPO / "scripts" / "generate-sprite-subject.py"), entry["code"],
                 *ref_args, "--generate"]

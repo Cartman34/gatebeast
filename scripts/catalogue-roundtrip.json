@@ -1,0 +1,105 @@
+{
+  "format": "gatebeast-asset-catalog",
+  "version": 1,
+  "profiles": [
+    {
+      "code": "CH-019",
+      "name": null,
+      "type": "chemin",
+      "layer": "decor-au-sol",
+      "footprint": {
+        "columns": 1,
+        "rows": 1
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": []
+    },
+    {
+      "code": "OB-011",
+      "name": null,
+      "type": "cloture-et-mur",
+      "layer": "monde",
+      "footprint": {
+        "columns": 1,
+        "rows": 1
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-north_action-idle_shape-ns_frame-01",
+          "path": "line-north.png"
+        },
+        {
+          "address": "orientation-east_action-idle_shape-ne_frame-01",
+          "path": "angle-east.png"
+        }
+      ]
+    },
+    {
+      "code": "PR-001",
+      "name": null,
+      "type": "humain",
+      "layer": "monde",
+      "footprint": {
+        "columns": 1,
+        "rows": 1
+      },
+      "height": 2,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "x.png"
+        }
+      ]
+    },
+    {
+      "code": "TR-001",
+      "name": null,
+      "type": "vegetation",
+      "layer": "monde",
+      "footprint": {
+        "columns": 1,
+        "rows": 1
+      },
+      "height": null,
+      "anchor": {
+        "x": 0.5,
+        "y": 1.0
+      },
+      "split": null,
+      "images": [
+        {
+          "address": "orientation-south_action-idle_frame-01",
+          "path": "a.png"
+        },
+        {
+          "address": "orientation-south_action-walk_frame-01",
+          "path": "b.png"
+        },
+        {
+          "address": "orientation-south_action-walk_frame-02",
+          "path": "c.png"
+        },
+        {
+          "address": "orientation-west_action-idle_frame-01",
+          "path": "d.png"
+        }
+      ]
+    }
+  ]
+}

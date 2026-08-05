@@ -3,8 +3,8 @@
   "version": 1,
   "title": "CH-019 — plan de composition de l'exemple d'usage",
   "grid": {
-    "columns": 5,
-    "rows": 5
+    "columns": 7,
+    "rows": 7
   },
   "default_cell": "transparent",
   "notes": [
@@ -12,21 +12,36 @@
     "Un chemin est plat : le moteur peut pivoter ses formes, donc cinq dessins suffisent — extrémité, ligne, angle, trois branches, croisement. Cette composition les exerce tous les cinq."
   ],
   "cells": [
-    {"column": 3, "row": 1, "subject": "CH-019", "joins": ["s"]},
+    {"column": 2, "row": 2, "subject": "CH-019", "joins": ["e", "s"]},
+    {"column": 3, "row": 2, "subject": "CH-019", "joins": ["e", "w"]},
+    {"column": 4, "row": 2, "subject": "CH-019", "joins": ["e", "s", "w"]},
+    {"column": 5, "row": 2, "subject": "CH-019", "joins": ["n", "e", "w"]},
+    {"column": 6, "row": 2, "subject": "CH-019", "joins": ["s", "w"]},
 
-    {"column": 3, "row": 2, "subject": "CH-019", "joins": ["n", "s"]},
-    {"column": 5, "row": 2, "subject": "CH-019", "joins": ["s"]},
+    {"column": 5, "row": 1, "subject": "CH-019", "joins": ["s"]},
 
     {"column": 1, "row": 3, "subject": "CH-019", "joins": ["e"]},
-    {"column": 2, "row": 3, "subject": "CH-019", "joins": ["e", "w"]},
-    {"column": 3, "row": 3, "subject": "CH-019", "joins": ["n", "e", "s", "w"]},
-    {"column": 4, "row": 3, "subject": "CH-019", "joins": ["e", "s", "w"]},
-    {"column": 5, "row": 3, "subject": "CH-019", "joins": ["n", "w"]},
+    {"column": 2, "row": 3, "subject": "CH-019", "joins": ["n", "s", "w"]},
+    {"column": 4, "row": 3, "subject": "CH-019", "joins": ["n", "s"]},
+    {"column": 6, "row": 3, "subject": "CH-019", "joins": ["n", "s"]},
 
-    {"column": 3, "row": 4, "subject": "CH-019", "joins": ["n", "s"]},
-    {"column": 4, "row": 4, "subject": "CH-019", "joins": ["n", "s"]},
+    {"column": 2, "row": 4, "subject": "CH-019", "joins": ["n", "e", "s"]},
+    {"column": 3, "row": 4, "subject": "CH-019", "joins": ["e", "w"]},
+    {"column": 4, "row": 4, "subject": "CH-019", "joins": ["n", "e", "s", "w"]},
+    {"column": 5, "row": 4, "subject": "CH-019", "joins": ["e", "w"]},
+    {"column": 6, "row": 4, "subject": "CH-019", "joins": ["n", "s", "w"]},
 
-    {"column": 3, "row": 5, "subject": "CH-019", "joins": ["n"]},
-    {"column": 4, "row": 5, "subject": "CH-019", "joins": ["n"]}
+    {"column": 2, "row": 5, "subject": "CH-019", "joins": ["n", "s"]},
+    {"column": 4, "row": 5, "subject": "CH-019", "joins": ["n", "s"]},
+    {"column": 6, "row": 5, "subject": "CH-019", "joins": ["n", "e", "s"]},
+    {"column": 7, "row": 5, "subject": "CH-019", "joins": ["w"]},
+
+    {"column": 2, "row": 6, "subject": "CH-019", "joins": ["n", "e"]},
+    {"column": 3, "row": 6, "subject": "CH-019", "joins": ["e", "s", "w"]},
+    {"column": 4, "row": 6, "subject": "CH-019", "joins": ["n", "e", "w"]},
+    {"column": 5, "row": 6, "subject": "CH-019", "joins": ["e", "w"]},
+    {"column": 6, "row": 6, "subject": "CH-019", "joins": ["n", "w"]},
+
+    {"column": 3, "row": 7, "subject": "CH-019", "joins": ["n"]}
   ]
 }

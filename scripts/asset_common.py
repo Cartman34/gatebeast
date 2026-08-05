@@ -5,13 +5,18 @@ image, meant to be cut out and placed as a sprite. Everything the two have in co
 direction, the camera, the ban on free-described inhabitants, the ban on pixel sizes — is shared with
 plate_common so the two can never drift apart.
 
-Two families, because they need opposite backgrounds:
-- CUTOUT assets (building, vegetation, human, creature): the subject sits alone on a plain background
-  that exists only to be removed. Codex is not asked for transparency (it writes PNG through a text
-  agent and transparency has never been verified) — it is asked for a flat, pure magenta field, a
-  colour no asset of this world contains, which any tool can key out.
-- TILE assets (ground): there is no background at all. The material fills the frame edge to edge.
+Two families, because one has a subject to lift out of the image and the other does not:
+- CUTOUT (and TRACE) assets (building, vegetation, human, creature, fence, path): a subject that must
+  come out of the image whole, to be placed as a sprite. The generator is asked directly for a
+  transparent PNG — a real alpha channel, constated on our own generator, that reaches even the
+  enclosed voids of an openwork subject (between rondins, under a rail, between leaves). See FOND
+  below. A magenta key was tried first and abandoned: it left the background inside those voids and
+  forbade the colour to any subject that might wear it.
+- TILE assets (ground): there is no subject and nothing to lift out. The material fills the frame edge
+  to edge and is asked to repeat seamlessly with itself.
 """
+import contextlib
+import re
 import shutil
 import subprocess
 import sys
@@ -25,6 +30,74 @@ PROJECT = Path(__file__).resolve().parents[2]
 TOOL = "gatebeast/scripts/generate-image.php"
 TARGET = "gatebeast/assets/poc"
 ASSETS = Path(__file__).resolve().parents[1] / "assets" / "poc"
+
+# Where a produced image lands under assets/poc/, by the family its own code belongs to — read from
+# the CODE, never from a reference image. A reference is an input the generator reads, not a
+# destination: deriving where to WRITE from where a reference happens to sit is what once sent two
+# produced tracés into assets/revue-da/, among the reference plates, because the reference given for
+# them lived there. The destination depends on the sujet, full stop.
+CODE_FOLDER = {"TR": "vegetation", "BT": "batiment", "CH": "sol", "OB": "cloture",
+               "HU": "personnage", "SP": "creature"}
+
+# A single, lone asterisk on each side — never a pair. Markdown bold ("**word**") is built from pairs
+# of this same character, so a naive split on "*" tears bold spans into empty fragments and can no
+# longer tell a sujet's description from its own emphasis. The lookarounds below refuse to open or
+# close on a star that has another star touching it, which is exactly what keeps bold and italics
+# apart.
+DESCRIPTION_PATTERN = re.compile(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)")
+
+# The fixed phrase that introduces a description proper to one particular value or form — a marker of
+# the FICHE FORMAT, written once for all, never a word the description itself chooses. Finding it is
+# exactly the same kind of structural read as finding the italics: form and place, never content.
+QUALIFIED_DESCRIPTION_PATTERN = "Description propre à la {kind} `{qualifier}`"
+
+
+def sheet_description(text: str, code: str, qualifier: str = None) -> tuple:
+    """The sheet's own description in `text`, found by its FORM and its PLACE — never by the words it
+    happens to start with.
+
+    A heuristic on first words ("A ", "An ", "The ") is exactly what broke the day descriptions moved
+    from English to French: every fiche still carries its description in italics, in the same place,
+    right after the label/profile/type/emprise/hauteur preamble and before any "Description propre à
+    ..." that may follow for one particular form or value — only the language of the words changed,
+    and a heuristic on words is blind to a fiche it has never seen written that way. Nothing here reads
+    a single word of the description: it reads structure only, so the next language change costs it
+    nothing.
+
+    Without `qualifier`, the description is the first italic span on the line — the base description,
+    used by default.
+
+    With `qualifier` (a value like "gate-closed", or a form), the description PROPER TO that qualifier
+    is sought instead: introduced by the fixed phrase "Description propre à la valeur `X`" or "...à la
+    forme `X`", followed by its own italic span — never the base description, and never guessed from
+    the qualifier's own words either. A qualifier that is asked for and finds no such phrase is a
+    FAULT, not a silent fall back to the base description: producing the wrong thing quietly (the
+    plain fence's description for a gate, say) is worse than refusing outright.
+
+    Returns (description, start) so a caller can also cut everything before the description off for
+    its own use — the sujet's precisions never include a description, qualified or not.
+
+    Raises loudly when the description sought is not found: a consigne without a description, or with
+    the wrong one, must never reach the generator silently.
+    """
+    if qualifier:
+        for kind in ("valeur", "forme"):
+            phrase = QUALIFIED_DESCRIPTION_PATTERN.format(kind=kind, qualifier=qualifier)
+            introduced = text.find(phrase)
+            if introduced == -1:
+                continue
+            match = DESCRIPTION_PATTERN.search(text, introduced + len(phrase))
+            if match:
+                return match.group(1).strip(), match.start()
+        raise SystemExit(f"FAULT {code} n'a pas de description propre à {qualifier!r} — elle est "
+                         f"obligatoire pour ce qualificatif, la description de base ne s'y substitue "
+                         f"jamais.")
+
+    match = DESCRIPTION_PATTERN.search(text)
+    if not match:
+        raise SystemExit(f"FAULT {code} n'a pas de description écrite — elle est obligatoire.")
+
+    return match.group(1).strip(), match.start()
 
 # Transparency is asked for directly. Constated on our own generator: it returns a real alpha channel,
 # including inside the enclosed holes of an openwork subject. The former magenta key left the background
@@ -53,9 +126,14 @@ bordure, aucun texte.
 
 {FOND}
 
-CADRAGE : le sujet est CENTRÉ et il REMPLIT LE CADRE — sa plus grande dimension occupe environ QUATRE
-CINQUIÈMES de la hauteur de l'image, et il reste une marge transparente tout autour. Rien du sujet n'est
-coupé par un bord."""
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour."""
+# Une proportion de hauteur imposée contredisait la caméra : pour occuper les quatre cinquièmes de la
+# hauteur, un sujet doit être dressé et vu de face, alors que la plongée l'écrase. Le générateur suivait
+# la plus concrète des deux consignes et rendait des vues frontales. On dit désormais ce qu'on veut — la
+# largeur pleine, la hauteur laissée à la caméra — au lieu d'imposer deux règles qui se contredisent.
 
 CADRAGE_TRACE = f"""\
 UN SEUL SUJET, ET RIEN D'AUTRE : la pièce d'assemblage décrite ci-dessous, et absolument rien de plus —
@@ -231,6 +309,28 @@ def emprise_clause(footprint: tuple, trace: bool = False) -> str:
             f"librement dans l'image ; seule sa largeur est contrainte.")
 
 
+def taille_clause(footprint: tuple, height: float) -> str:
+    """The subject's real height, quoted from its own inventory sheet, in tiles and as a ratio.
+
+    Framing height used to be forced to four fifths of the image (see the note above CADRAGE_CUTOUT):
+    that fought the camera's steep top-down angle and made the generator draw the subject standing
+    upright and face-on instead of seen from above. What replaces it is the subject's OWN height
+    against its OWN footprint — a fir six tiles tall on two tiles wide, a fence not even one tile
+    tall — so the camera derives the right proportion itself instead of being told one that fights it.
+
+    ALWAYS IN TILES AND IN A RATIO, NEVER IN PIXELS: a pixel count says nothing once the master
+    definition changes size, while a tile count and a ratio hold regardless of scale.
+    """
+    columns, rows = footprint
+    hauteur_txt = f"{height:g}".replace(".", ",")
+    rapport = height / columns if columns else height
+    rapport_txt = f"{rapport:g}".replace(".", ",")
+    return (f"TAILLE RÉELLE DU SUJET — il mesure {hauteur_txt} case(s) de haut, pour une emprise de "
+            f"{columns} sur {rows} : un rapport hauteur/largeur de {rapport_txt}. C'est cette "
+            f"proportion réelle, jamais une fraction du cadre ni une mesure en pixels, qui doit se "
+            f"lire dans l'image une fois la caméra appliquée.")
+
+
 def reference_clause(reference_name: str) -> str:
     """Point the generator at the main view, which sits in its working directory.
 
@@ -245,6 +345,40 @@ def reference_clause(reference_name: str) -> str:
             f"reproduis-le à l'identique et ne change QUE ce que la clause de variante demande "
             f"ci-dessous. En cas de désaccord entre l'image de référence et le texte, l'image fait "
             f"foi pour l'apparence, le texte pour la posture demandée.")
+
+
+@contextlib.contextmanager
+def working_reference(reference: Path, target_dir: Path):
+    """Place `reference` in `target_dir` for the generator to read, and remove exactly that working
+    copy afterwards — success or failure alike.
+
+    A copy made so the generator can read a reference is working material, not a deliverable: three
+    tools placed one beside the image they were producing and never removed it, which is how
+    multi-megabyte reference plates ended up in assets/poc/, mistaken for sprites by anything that
+    scans that tree. A working copy that outlives the generation it served is exactly the defect this
+    function exists to rule out.
+
+    Never touches the ORIGINAL: only the copy this function itself created. If `target_dir` already
+    holds a file of that name before the copy — including when `reference` already lives there, its
+    own working directory — nothing is copied and nothing is later removed: that file is not this
+    function's to touch, deliverable or not.
+
+    Use as `with working_reference(reference, target_dir): ...` around the generation call. A no-op
+    when `reference` is None.
+    """
+    if not reference or reference.parent == target_dir:
+        yield
+        return
+    destination = target_dir / reference.name
+    if destination.exists():
+        print(f"NOTE référence non copiée : {destination} existe déjà, laissé tel quel")
+        yield
+        return
+    shutil.copy(reference, destination)
+    try:
+        yield
+    finally:
+        destination.unlink()
 
 
 def fiche(code: str) -> tuple:

@@ -12,7 +12,12 @@ quoted WORD FOR WORD.
 The draft is written to local/ — never beside the image. A prompt only lands in assets/ at the moment
 its image is produced, and it is frozen from then on.
 
-Usage: python3 scripts/build-usage-sample-prompt.py <plan.json>
+Usage: python3 scripts/generate-usage-sample.py <plan.json> [--ref <image>] [--generate]
+
+  --ref   a style reference already validated (e.g. a reference plate). Same mechanism as
+          generate-sprite-trace.py's own --ref: the file is dropped in the generator's working
+          directory, and the consigne says it gives the TREATMENT, the MATERIAL and the LIGHT —
+          never the subject, which stays the fiche's alone.
 """
 import json
 import subprocess
@@ -29,7 +34,7 @@ SHEETS = REPO / "doc" / "conception" / "referentiels" / "visuel" / "inventaire"
 
 
 def sheet_of(code: str) -> tuple:
-    """The label and the English description of a subject, read from the inventory it lives in.
+    """The label and the description of a subject, read from the inventory it lives in.
 
     The inventory is the master: nothing here paraphrases it, the description travels verbatim.
     """
@@ -38,24 +43,20 @@ def sheet_of(code: str) -> tuple:
             if not line.startswith(f"- **{code} "):
                 continue
             label = line.split("**")[1].replace(code, "").strip()
-            parts = line.split("*")
-            english = next((part.strip() for part in reversed(parts)
-                            if part.strip().startswith(("A ", "An ", "The "))), "")
-            # What the sheet says in French around the description — footprint, passage, garnitures.
-            # It carries decisions the generator must honour, so it travels too. Everything after the
-            # label is kept except the English description itself, and the emphasis is dropped: the
-            # sheet uses bold freely, and a naive split on it loses half the sentence.
+            # What the sheet says around the description — footprint, passage, composition. It carries
+            # decisions the generator must honour, so it travels too, up to (never past) the
+            # description itself: a sheet may carry a description proper to one form, and a usage
+            # sample shows a whole assembly, not that form — quoting it here would invite the generator
+            # to draw it.
             after = line.split("** — ", 1)[-1]
-            detail = after.replace(f"*{english}*", "").replace("**", "").replace("`", "")
-            # A sheet may carry a description proper to one form. A usage sample shows a whole
-            # assembly, not that form: quoting it here would invite the generator to draw it.
-            detail = detail.split("Description propre")[0]
+            description, start = asset_common.sheet_description(after, code)
+            detail = after[:start].replace("**", "").replace("`", "")
 
-            return label, english, " ".join(detail.split()).strip(" .—,")
+            return label, description, " ".join(detail.split()).strip(" .—,")
     raise SystemExit(f"FAULT {code} n'est pas à l'inventaire — rien ne se produit sans fiche.")
 
 
-def build(source: Path, generate: bool = False) -> int:
+def build(source: Path, generate: bool = False, reference: Path = None) -> int:
     source = source.resolve()  # the caller may pass a relative path; every path below is absolute
     plan = json.loads(source.read_text(encoding="utf-8"))
     columns, rows = plan["grid"]["columns"], plan["grid"]["rows"]
@@ -64,7 +65,7 @@ def build(source: Path, generate: bool = False) -> int:
         raise SystemExit("FAULT un exemple d'usage ne porte qu'un sujet ; ce plan en porte "
                          f"{len(subjects)}.")
     code = subjects[0]
-    label, english, detail = sheet_of(code)
+    label, description, detail = sheet_of(code)
 
     # The definition is calculated, never chosen: the conversion service owns the tile, and the
     # sample is delivered at twice the display size, capped as every other asset is.
@@ -79,7 +80,7 @@ def build(source: Path, generate: bool = False) -> int:
     for cell in sorted(plan["cells"], key=lambda item: (item["row"], item["column"])):
         joins = [side[edge] for edge in ("n", "e", "s", "w") if edge in cell["joins"]]
         reach = " et ".join(", ".join(joins).rsplit(", ", 1))
-        listing.append(f"— colonne {cell['column']}, rangée {cell['row']} : la clôture y passe et "
+        listing.append(f"— colonne {cell['column']}, rangée {cell['row']} : le tracé y passe et "
                        f"rejoint le bord {reach} de cette case.")
     listing = "\n".join(listing)
     occupied = {(cell["column"], cell["row"]) for cell in plan["cells"]}
@@ -87,6 +88,14 @@ def build(source: Path, generate: bool = False) -> int:
     # The plan travels as a file too. The generator reads an SVG as well as a PNG, so the drawing and
     # the written list say the same thing twice, by two routes.
     plan_name = f"plan-{code}.svg"
+
+    clause = ""
+    if reference:
+        clause = f"""
+RÉFÉRENCE — le fichier ./{reference.name} est présent dans ton répertoire de travail. Il montre le
+style, la matière et la lumière à reprendre. Le sujet demandé est celui décrit ci-dessous, pas celui
+de l'image : la référence donne le traitement, la fiche donne le sujet.
+"""
 
     prompt = f"""{plate_common.STYLE_FR}
 
@@ -110,21 +119,25 @@ bord rejoint. Lis-le, il fait foi avec la liste ci-dessus.
 DÉFINITION ATTENDUE : {width} × {height} pixels, soit exactement {columns} × {rows} cases carrées.
 Chaque case fait la même taille, où qu'elle soit dans l'image. N'écris aucune dimension dans l'image.
 
-AUCUNE CONVERGENCE DE PERSPECTIVE : la grille du sol est vue sous le même angle partout, les cases ne
-rétrécissent pas vers le haut. Deux cases de même contenu sont superposables au décalage près — c'est
-ce qui permet d'y découper des pièces réutilisables.
+PROJECTION RÉGULIÈRE, SOUS LA MÊME CAMÉRA QUE CI-DESSUS, JAMAIS À PLAT : chaque case de la grille est
+vue sous EXACTEMENT la même plongée que celle décrite plus haut — aucune ne se dresse plus de face,
+aucune ne s'aplatit plus de dessus qu'une autre. Ce qui est banni, c'est la fuyante d'une vraie
+perspective, où les cases du fond rétréciraient vers un point de fuite : ici toutes les cases restent
+à la même taille et au même angle, du premier au dernier rang. Deux cases de même contenu sont donc
+superposables au décalage près — c'est ce qui permet d'y découper des pièces réutilisables — sans que
+rien n'y perde le volume et l'inclinaison de la caméra du projet.
 
 {asset_common.FOND}
 
 {asset_common.TRACE_FR}
-
+{clause}
 {asset_common.REGLES_FR}
 
 CE QUE SA FICHE PRÉCISE, et qui s'applique à chaque case de l'image :
 {detail}
 
 LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
-{code} : {english}
+{code} : {description}
 """
 
     draft = REPO / "local" / f"prompt-usage-{code}.txt"
@@ -155,8 +168,9 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 
     print(f"consigne figée : {frozen.relative_to(REPO)}")
     print(f"génération lancée vers {image.relative_to(REPO)}")
-    result = subprocess.run(["php", str(REPO / "scripts" / "generate-image.php"),
-                             str(image), prompt], cwd=REPO.parent)
+    with asset_common.working_reference(reference, source.parent):
+        result = subprocess.run(["php", str(REPO / "scripts" / "generate-image.php"),
+                                 str(image), prompt], cwd=REPO.parent)
 
     return result.returncode
 
@@ -165,4 +179,6 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(__doc__)
         raise SystemExit(2)
-    raise SystemExit(build(Path(sys.argv[1]), "--generate" in sys.argv))
+    argv = sys.argv[1:]
+    ref = Path(argv[argv.index("--ref") + 1]).resolve() if "--ref" in argv else None
+    raise SystemExit(build(Path(argv[0]), "--generate" in argv, ref))

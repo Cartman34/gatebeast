@@ -14,7 +14,7 @@ WHAT IS MEASURED
   SUBJECT         the bounding box of what is not background, against the frame.
   TRANSPARENCY    after the cutout: the share of fully transparent pixels, of partial pixels, and
                   whether any fully opaque magenta survives — the proof that keying really happened.
-  FOOTPRINT       the apparent ground extent, confronted with the footprint the catalogue declares.
+  FOOTPRINT       the apparent ground extent, confronted with the footprint the referentiel declares.
                   It is read off the SILHOUETTE WIDTH, not off the ground contact: the footprint is the
                   cell a subject occupies, and a standing human occupies its tile with its body, not
                   with the span of its two boots. The contact span is measured all the same, because
@@ -32,21 +32,39 @@ WHAT IS MEASURED
 
 Usage:
   python3 check-asset.py <path> [...]         paths relative to assets/, or absolute
-  python3 check-asset.py --code CH-010 <path> force the catalogue profile instead of guessing it
+  python3 check-asset.py --code CH-010 <path> force the referentiel's sujet instead of guessing it
 """
+import importlib.util
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import asset_catalog
 import key_color
 from plate_metrics import DARK_MAX, LUMINANCE_MAX, LUMINANCE_MIN
 
+# check-sujets.py is hyphenated, so it is loaded by path rather than imported by name (the same
+# mechanism record-asset.py already uses for cut-asset.py).
+CHECK_SUJETS = Path(__file__).resolve().parent / "check-sujets.py"
+spec = importlib.util.spec_from_file_location("check_sujets", CHECK_SUJETS)
+check_sujets = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(check_sujets)
+
 REPOSITORY = Path(__file__).resolve().parents[1]
 ASSETS = REPOSITORY / "assets"
+
+
+@dataclass
+class Profile:
+    """Just what this checker needs of a sujet, read from the referentiel — its type, footprint and
+    height, never the whole sujet."""
+    code: str
+    type: str
+    footprint: dict
+    height: float
 
 BORDER = 0.04        # share of the image width taken as the border strip
 DARK_LEVEL = 60      # luminance under which a pixel counts as a dark zone
@@ -120,7 +138,7 @@ def transparency_block(rgb, alpha):
 
 
 def footprint_block(mask, profile):
-    """The apparent ground contact, confronted with the catalogue's declared footprint."""
+    """The apparent ground contact, confronted with the referentiel's declared footprint."""
     height, width = mask.shape
     rows = numpy.flatnonzero(mask.any(axis=1))
     columns = numpy.flatnonzero(mask.any(axis=0))
@@ -202,20 +220,33 @@ def light_block(rgb, mask):
     return {"luminance": mean, "dark": dark, "gaps": gaps, "within": not gaps}
 
 
-def find_profile(catalog, path, forced=None):
-    """The catalogue profile for a file: forced code, a code recorded against that file, or the stem."""
+def find_profile(data, path, forced=None):
+    """The referentiel's sujet for a file: forced code, a code whose representation claims that file,
+    or a code equal to the file's stem."""
+    sujets = data["sujets"]
     if forced:
-        return catalog.profile(forced)
+        if forced not in sujets:
+            raise KeyError(f"unknown profile: {forced}")
+        return _profile_of(forced, sujets[forced])
     try:
-        relative = str(path.resolve().relative_to(ASSETS))
+        relative = path.resolve().relative_to(ASSETS).as_posix()
     except ValueError:
         relative = None
-    for profile in catalog:
-        for image in profile.images:
-            if relative and image.path.endswith(relative):
-                return profile
+    if relative:
+        for code, sujet in sujets.items():
+            for variant in sujet["variantes"]:
+                for representation in variant.get("representations", []):
+                    if representation["path"] == relative:
+                        return _profile_of(code, sujet)
     stem = path.stem
-    return catalog.profiles.get(stem)
+    if stem in sujets:
+        return _profile_of(stem, sujets[stem])
+
+    return None
+
+
+def _profile_of(code, sujet):
+    return Profile(code, sujet["type"], sujet["emprise"], sujet.get("hauteur"))
 
 
 def report(path, profile):
@@ -232,7 +263,7 @@ def report(path, profile):
     print(f"\n{path.name}  {width}x{height}  "
           f"{'square' if width == height else f'ratio {width / height:.2f}'}  "
           f"alpha: {'yes' if alpha is not None else 'no'}  "
-          f"profile: {profile.code if profile else 'NOT IN CATALOGUE'}")
+          f"profile: {profile.code if profile else 'NOT IN REFERENTIEL'}")
 
     if alpha is None and not is_ground:
         block = background_block(rgb)
@@ -273,7 +304,7 @@ def report(path, profile):
                          f"height {footprint['declared']['height']}) — gap {100 * footprint['gap']:.0f} % "
                          f"({'CONSISTENT' if footprint['consistent'] else 'INCONSISTENT'})")
             elif profile is None:
-                line += "  — no declared footprint to compare with (profile absent from the catalogue)"
+                line += "  — no declared footprint to compare with (sujet absent from the referentiel)"
             else:
                 line += "  — the profile declares no height, so no comparison is possible"
             print(line)
@@ -305,7 +336,11 @@ def main(arguments):
         print(__doc__)
         return 2
 
-    catalog = asset_catalog.load()
+    try:
+        data = check_sujets.load()
+    except check_sujets.Fault as fault:
+        print(f"FAULT {fault}")
+        return 1
     missing = 0
     for argument in arguments:
         path = Path(argument)
@@ -315,7 +350,7 @@ def main(arguments):
             print(f"ABSENT {path}")
             missing += 1
             continue
-        report(path, find_profile(catalog, path, forced))
+        report(path, find_profile(data, path, forced))
 
     print("\nNote — the footprint is confronted on the shape ratio, not on an absolute count of tiles. "
           "The world is seen under a 70° camera, which foreshortens the vertical; turning a horizontal "

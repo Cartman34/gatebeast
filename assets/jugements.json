@@ -1,94 +1,266 @@
 {
-  "format": "gatebeast-sprite-judgements",
-  "version": 1,
-  "jugements": [
+  "format": "gatebeast-sprite-judgments",
+  "version": 2,
+  "judgments": [
     {
       "image": "assets/poc/cloture/OB-010_shape-ew_posts-1.png",
       "score": 8,
-      "sur": 9,
+      "total": 9,
       "verdict": "retenue",
-      "criteres": [
-        {"nom": "sujet de la fiche", "tenu": true, "note": "Correspond à OB-010 variante Est-Ouest : un seul poteau au centre, deux lisses horizontales."},
-        {"nom": "un seul sujet", "tenu": true, "note": "Rien que la barrière et la touffe d'herbe/mousse prévue par la fiche."},
-        {"nom": "fond transparent sans halo", "tenu": true, "note": "Fond alpha propre, pas de liseré clair visible autour du bois."},
-        {"nom": "angle de caméra", "tenu": true, "note": "Plongée cohérente avec la référence, dessus du poteau visible."},
-        {"nom": "traitement DA", "tenu": true, "note": "Cel-shading en deux bandes claires, aucun contour dessiné."},
-        {"nom": "lumière haut-gauche", "tenu": true, "note": "Éclairage plausible venant du haut-gauche sur le poteau."},
-        {"nom": "aucun animal réel", "tenu": true, "note": "Non concerné, aucun être vivant représenté."},
-        {"nom": "consigne propre (bords/poteaux)", "tenu": true, "note": "Rejoint bien Est et Ouest, Nord et Sud restent libres, un seul poteau planté au centre."},
-        {"nom": "cohérence avec la référence", "tenu": false, "note": "Bois plus orangé et plus lisse que la référence, qui est plus grise/argentée et plus texturée — écart de matière et de couleur."}
+      "criteria": [
+        {
+          "name": "sujet de la fiche",
+          "passed": true,
+          "comment": "Correspond à OB-010 variante Est-Ouest : un seul poteau au centre, deux lisses horizontales."
+        },
+        {
+          "name": "un seul sujet",
+          "passed": true,
+          "comment": "Rien que la barrière et la touffe d'herbe/mousse prévue par la fiche."
+        },
+        {
+          "name": "fond transparent sans halo",
+          "passed": true,
+          "comment": "Fond alpha propre, pas de liseré clair visible autour du bois."
+        },
+        {
+          "name": "angle de caméra",
+          "passed": true,
+          "comment": "Plongée cohérente avec la référence, dessus du poteau visible."
+        },
+        {
+          "name": "traitement DA",
+          "passed": true,
+          "comment": "Cel-shading en deux bandes claires, aucun contour dessiné."
+        },
+        {
+          "name": "lumière haut-gauche",
+          "passed": true,
+          "comment": "Éclairage plausible venant du haut-gauche sur le poteau."
+        },
+        {
+          "name": "aucun animal réel",
+          "passed": true,
+          "comment": "Non concerné, aucun être vivant représenté."
+        },
+        {
+          "name": "consigne propre (bords/poteaux)",
+          "passed": true,
+          "comment": "Rejoint bien Est et Ouest, Nord et Sud restent libres, un seul poteau planté au centre."
+        },
+        {
+          "name": "cohérence avec la référence",
+          "passed": false,
+          "comment": "Bois plus orangé et plus lisse que la référence, qui est plus grise/argentée et plus texturée — écart de matière et de couleur."
+        }
       ],
-      "rapport": "Le bois est trop orangé et lisse par rapport à la référence, argentée et texturée. Pour le reste — sujet, cadrage, transparence, angle, lumière — c'est conforme."
+      "report": "Le bois est trop orangé et lisse par rapport à la référence, argentée et texturée. Pour le reste — sujet, cadrage, transparence, angle, lumière — c'est conforme."
     },
     {
       "image": "assets/poc/cloture/OB-010_shape-ns_posts-1-v2.png",
       "score": 7,
-      "sur": 9,
+      "total": 9,
       "verdict": "à refaire",
-      "criteres": [
-        {"nom": "sujet de la fiche", "tenu": true, "note": "Reconnaissable comme pièce de clôture, variante Nord-Sud."},
-        {"nom": "un seul sujet", "tenu": true, "note": "Rien que le poteau, le rondin et la mousse/herbe."},
-        {"nom": "fond transparent sans halo", "tenu": true, "note": "Fond transparent, pas de halo visible."},
-        {"nom": "angle de caméra", "tenu": true, "note": "Angle de plongée cohérent avec le style attendu."},
-        {"nom": "traitement DA", "tenu": true, "note": "Ombrage deux bandes, aucun contour dessiné."},
-        {"nom": "lumière haut-gauche", "tenu": true, "note": "Lumière plausible venant du haut-gauche."},
-        {"nom": "aucun animal réel", "tenu": true, "note": "Non concerné."},
-        {"nom": "consigne propre (bords/poteaux)", "tenu": false, "note": "Un seul rondin visible du haut en bas au lieu des deux lisses distinctes attendues, et le poteau n'est pas planté au centre de la case mais décalé vers le haut."},
-        {"nom": "cohérence avec la référence", "tenu": true, "note": "Matière et couleur du bois cohérentes avec la référence."}
+      "criteria": [
+        {
+          "name": "sujet de la fiche",
+          "passed": true,
+          "comment": "Reconnaissable comme pièce de clôture, variante Nord-Sud."
+        },
+        {
+          "name": "un seul sujet",
+          "passed": true,
+          "comment": "Rien que le poteau, le rondin et la mousse/herbe."
+        },
+        {
+          "name": "fond transparent sans halo",
+          "passed": true,
+          "comment": "Fond transparent, pas de halo visible."
+        },
+        {
+          "name": "angle de caméra",
+          "passed": true,
+          "comment": "Angle de plongée cohérent avec le style attendu."
+        },
+        {
+          "name": "traitement DA",
+          "passed": true,
+          "comment": "Ombrage deux bandes, aucun contour dessiné."
+        },
+        {
+          "name": "lumière haut-gauche",
+          "passed": true,
+          "comment": "Lumière plausible venant du haut-gauche."
+        },
+        {
+          "name": "aucun animal réel",
+          "passed": true,
+          "comment": "Non concerné."
+        },
+        {
+          "name": "consigne propre (bords/poteaux)",
+          "passed": false,
+          "comment": "Un seul rondin visible du haut en bas au lieu des deux lisses distinctes attendues, et le poteau n'est pas planté au centre de la case mais décalé vers le haut."
+        },
+        {
+          "name": "cohérence avec la référence",
+          "passed": true,
+          "comment": "Matière et couleur du bois cohérentes avec la référence."
+        }
       ],
-      "rapport": "Défaut structurel : il manque une des deux lisses attendues et le poteau n'est pas au centre de la case, ce qui compromet le raccordement bord à bord avec les cases voisines. Le style, la lumière et la transparence sont corrects."
+      "report": "Défaut structurel : il manque une des deux lisses attendues et le poteau n'est pas au centre de la case, ce qui compromet le raccordement bord à bord avec les cases voisines. Le style, la lumière et la transparence sont corrects."
     },
     {
       "image": "assets/poc/cloture/OB-010_shape-es_posts-1.png",
       "score": 7,
-      "sur": 9,
+      "total": 9,
       "verdict": "à refaire",
-      "criteres": [
-        {"nom": "sujet de la fiche", "tenu": true, "note": "Reconnaissable comme pièce de clôture en angle."},
-        {"nom": "un seul sujet", "tenu": true, "note": "Rien que la barrière et sa mousse/herbe."},
-        {"nom": "fond transparent sans halo", "tenu": true, "note": "Fond transparent, pas de halo visible."},
-        {"nom": "angle de caméra", "tenu": true, "note": "Plongée cohérente, dessus du poteau visible."},
-        {"nom": "traitement DA", "tenu": true, "note": "Cel-shading deux bandes, aucun contour dessiné."},
-        {"nom": "lumière haut-gauche", "tenu": true, "note": "Lumière plausible venant du haut-gauche."},
-        {"nom": "aucun animal réel", "tenu": true, "note": "Non concerné."},
-        {"nom": "consigne propre (bords/poteaux)", "tenu": false, "note": "Un des deux rails semble rejoindre le bord Ouest au lieu du bord Est demandé, et le poteau n'est pas centré dans la case — la variante Est-Sud n'est pas respectée telle quelle."},
-        {"nom": "cohérence avec la référence", "tenu": true, "note": "Texture et couleur du bois proches de la référence."}
+      "criteria": [
+        {
+          "name": "sujet de la fiche",
+          "passed": true,
+          "comment": "Reconnaissable comme pièce de clôture en angle."
+        },
+        {
+          "name": "un seul sujet",
+          "passed": true,
+          "comment": "Rien que la barrière et sa mousse/herbe."
+        },
+        {
+          "name": "fond transparent sans halo",
+          "passed": true,
+          "comment": "Fond transparent, pas de halo visible."
+        },
+        {
+          "name": "angle de caméra",
+          "passed": true,
+          "comment": "Plongée cohérente, dessus du poteau visible."
+        },
+        {
+          "name": "traitement DA",
+          "passed": true,
+          "comment": "Cel-shading deux bandes, aucun contour dessiné."
+        },
+        {
+          "name": "lumière haut-gauche",
+          "passed": true,
+          "comment": "Lumière plausible venant du haut-gauche."
+        },
+        {
+          "name": "aucun animal réel",
+          "passed": true,
+          "comment": "Non concerné."
+        },
+        {
+          "name": "consigne propre (bords/poteaux)",
+          "passed": false,
+          "comment": "Un des deux rails semble rejoindre le bord Ouest au lieu du bord Est demandé, et le poteau n'est pas centré dans la case — la variante Est-Sud n'est pas respectée telle quelle."
+        },
+        {
+          "name": "cohérence avec la référence",
+          "passed": true,
+          "comment": "Texture et couleur du bois proches de la référence."
+        }
       ],
-      "rapport": "Le rail horizontal paraît toucher le bord Ouest plutôt que le bord Est requis par la variante Est-Sud, et le poteau est décalé du centre de la case — à corriger avant assemblage. Style, transparence et lumière sont conformes."
+      "report": "Le rail horizontal paraît toucher le bord Ouest plutôt que le bord Est requis par la variante Est-Sud, et le poteau est décalé du centre de la case — à corriger avant assemblage. Style, transparence et lumière sont conformes."
     },
     {
       "image": "assets/poc/vegetation/TR-063.png",
       "score": 7,
-      "sur": 8,
+      "total": 8,
       "verdict": "à refaire",
-      "criteres": [
-        {"nom": "sujet de la fiche", "tenu": true, "note": "Pommier jeune reconnaissable : tronc court se divisant bas, couronne compacte, touffe d'herbe au pied."},
-        {"nom": "un seul sujet", "tenu": true, "note": "Rien d'autre que l'arbre et sa touffe d'herbe décrite par la fiche."},
-        {"nom": "fond transparent sans halo", "tenu": true, "note": "Fond transparent, pas de halo visible."},
-        {"nom": "angle de caméra", "tenu": false, "note": "Rendu trop frontal / à hauteur d'œil : on voit tronc et ramure de côté comme une illustration classique, pas la forte plongée à 70° qui écraserait la vue vers la couronne dominante."},
-        {"nom": "traitement DA", "tenu": true, "note": "Cel-shading deux bandes, couleurs saturées, aucun contour dessiné."},
-        {"nom": "lumière haut-gauche", "tenu": true, "note": "Lumière plausible venant du haut-gauche sur la couronne."},
-        {"nom": "aucun animal réel", "tenu": true, "note": "Non concerné."},
-        {"nom": "consigne propre (emprise/cadrage)", "tenu": true, "note": "La couronne remplit le cadre et reste centrée, conforme à l'emprise demandée."}
+      "criteria": [
+        {
+          "name": "sujet de la fiche",
+          "passed": true,
+          "comment": "Pommier jeune reconnaissable : tronc court se divisant bas, couronne compacte, touffe d'herbe au pied."
+        },
+        {
+          "name": "un seul sujet",
+          "passed": true,
+          "comment": "Rien d'autre que l'arbre et sa touffe d'herbe décrite par la fiche."
+        },
+        {
+          "name": "fond transparent sans halo",
+          "passed": true,
+          "comment": "Fond transparent, pas de halo visible."
+        },
+        {
+          "name": "angle de caméra",
+          "passed": false,
+          "comment": "Rendu trop frontal / à hauteur d'œil : on voit tronc et ramure de côté comme une illustration classique, pas la forte plongée à 70° qui écraserait la vue vers la couronne dominante."
+        },
+        {
+          "name": "traitement DA",
+          "passed": true,
+          "comment": "Cel-shading deux bandes, couleurs saturées, aucun contour dessiné."
+        },
+        {
+          "name": "lumière haut-gauche",
+          "passed": true,
+          "comment": "Lumière plausible venant du haut-gauche sur la couronne."
+        },
+        {
+          "name": "aucun animal réel",
+          "passed": true,
+          "comment": "Non concerné."
+        },
+        {
+          "name": "consigne propre (emprise/cadrage)",
+          "passed": true,
+          "comment": "La couronne remplit le cadre et reste centrée, conforme à l'emprise demandée."
+        }
       ],
-      "rapport": "L'angle de caméra est trop proche d'une vue de face/à hauteur d'œil, pas de la forte plongée à 70° exigée par la direction artistique — l'arbre ressemble à une illustration classique plutôt qu'à un sprite vu du dessus. Le sujet, le cadrage et le style sont corrects."
+      "report": "L'angle de caméra est trop proche d'une vue de face/à hauteur d'œil, pas de la forte plongée à 70° exigée par la direction artistique — l'arbre ressemble à une illustration classique plutôt qu'à un sprite vu du dessus. Le sujet, le cadrage et le style sont corrects."
     },
     {
       "image": "assets/poc/vegetation/TR-061.png",
       "score": 7,
-      "sur": 8,
+      "total": 8,
       "verdict": "à refaire",
-      "criteres": [
-        {"nom": "sujet de la fiche", "tenu": true, "note": "Bosquet de sapins serrés avec litière au sol, comme décrit."},
-        {"nom": "un seul sujet", "tenu": true, "note": "Rien d'autre que le bosquet et sa litière prévue par la fiche."},
-        {"nom": "fond transparent sans halo", "tenu": true, "note": "Fond transparent, pas de halo visible."},
-        {"nom": "angle de caméra", "tenu": false, "note": "Même défaut que le pommier : rendu trop frontal, pas la forte plongée à 70° attendue."},
-        {"nom": "traitement DA", "tenu": true, "note": "Ombrage deux bandes, couleurs saturées, aucun contour dessiné."},
-        {"nom": "lumière haut-gauche", "tenu": true, "note": "Lumière plausible venant du haut-gauche."},
-        {"nom": "aucun animal réel", "tenu": true, "note": "Non concerné."},
-        {"nom": "consigne propre (emprise/cadrage)", "tenu": true, "note": "Le bosquet remplit le cadre et reste centré."}
+      "criteria": [
+        {
+          "name": "sujet de la fiche",
+          "passed": true,
+          "comment": "Bosquet de sapins serrés avec litière au sol, comme décrit."
+        },
+        {
+          "name": "un seul sujet",
+          "passed": true,
+          "comment": "Rien d'autre que le bosquet et sa litière prévue par la fiche."
+        },
+        {
+          "name": "fond transparent sans halo",
+          "passed": true,
+          "comment": "Fond transparent, pas de halo visible."
+        },
+        {
+          "name": "angle de caméra",
+          "passed": false,
+          "comment": "Même défaut que le pommier : rendu trop frontal, pas la forte plongée à 70° attendue."
+        },
+        {
+          "name": "traitement DA",
+          "passed": true,
+          "comment": "Ombrage deux bandes, couleurs saturées, aucun contour dessiné."
+        },
+        {
+          "name": "lumière haut-gauche",
+          "passed": true,
+          "comment": "Lumière plausible venant du haut-gauche."
+        },
+        {
+          "name": "aucun animal réel",
+          "passed": true,
+          "comment": "Non concerné."
+        },
+        {
+          "name": "consigne propre (emprise/cadrage)",
+          "passed": true,
+          "comment": "Le bosquet remplit le cadre et reste centré."
+        }
       ],
-      "rapport": "Même défaut de caméra que le pommier : vue trop frontale au lieu de la forte plongée à 70° demandée. Le sujet, le cadrage et le style sont conformes."
+      "report": "Même défaut de caméra que le pommier : vue trop frontale au lieu de la forte plongée à 70° demandée. Le sujet, le cadrage et le style sont conformes."
     }
   ]
 }

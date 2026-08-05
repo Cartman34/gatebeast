@@ -4,17 +4,18 @@ Voir les [règles de l'inventaire](README.md). Un chemin se décrit par son rev�
 
 ## Campagne et parc — BI-001
 
-- **CH-001 herbe rase** — `short-grass-01`, type sol, 1 × 1, répétable bord à bord. *Close-cropped lawn seen from straight above, a dense mat of short blades in a bright fresh green, unevenly lighter in a few soft patches, with a scattering of small clover leaves and a handful of paler dried blades; no flower, no stone, no bare earth, no tall tuft. Fine even texture, almost flat relief. The grass is cropped short and stops cleanly at the edge of the image, no blade crossing it; the texture at each edge matches the opposite edge, so that copies laid side by side show no seam.*
-- **CH-019 chemin de terre battue** — `dirt-path-01`, type chemin, 1 × 1. *Bare earth trodden smooth and firm, warm brown flecked with small embedded pebbles, faintly rutted along the direction of travel, dry and dusty at its centre, fringed with short trampled grass where it meets the lawn.*
+- **CH-001 herbe rase** — `short-grass-01`, type sol, 1 × 1, hauteur 0 case, répétable bord à bord. *Une pelouse tondue ras vue à la verticale, un tapis dense de brins courts d'un vert frais et lumineux, légèrement plus clair par endroits en douces variations, avec une poignée de petites feuilles de trèfle éparses et quelques brins plus pâles et desséchés ; une étendue uniquement herbeuse et homogène d'un bout à l'autre. Texture fine et régulière, relief presque plat. L'herbe est tondue court et s'arrête net au bord de l'image, chaque brin restant contenu à l'intérieur ; la texture de chaque bord correspond au bord opposé, de sorte que des copies posées côte à côte se raccordent parfaitement, bord à bord.*
+- **CH-019 chemin de terre battue** — `dirt-path-01`, type chemin, 1 × 1, hauteur 0 case. *Un chemin de terre large et plan, sable clair et uniforme du bord au centre, sans bordure marquée ; il rejoint d'autres chemins identiques en un carrefour net, et son bord se fond progressivement dans l'herbe environnante.*
+- **CH-020 ruisseau** — `stream-01`, type cours d'eau, 1 × 1, hauteur -0,3 case : il ne se dresse pas, il creuse — son lit reste en retrait du terrain environnant sur cette profondeur, l'eau remplissant le creux jusqu'à un doigt du bord des rives. *Une eau bleue franche et lumineuse, sa surface ridée de petites vagues claires qui accrochent la lumière sur toute sa longueur ; un liseré continu de galets gris borde chacune de ses rives ; l'eau atteint exactement les bords que la pièce relie, sans herbe ni autre matière interposée, de sorte que deux pièces voisines prolongent le même courant sans marche visible.*
 
 ## Contreforts, marais et littoral
 
-- **CH-010 sentier de pierres** — *A mountain path of loose flat stones pressed into the ground, edged by larger rocks, winding rather than straight.*
-- **CH-011 lacet taillé** — *A track cut into a slope, its uphill side a low rock wall, its downhill side dropping away, switching back on itself.*
-- **CH-012 passerelle de planches** — *A walkway of weathered planks laid over soft ground, some boards sunken, water showing between them.*
-- **CH-013 sable damé** — *A firm path of packed damp sand, its edges blurred where loose dry sand drifts over it.*
-- **CH-014 sable meuble** — *Loose dry beach sand, rippled by wind, holding deep footprints.*
-- **CH-015 galets** — *A shore of rounded grey pebbles of mixed sizes, wet and shining near the water.*
-- **CH-016 dalle de roche** — *Bare exposed bedrock, fissured and streaked, worn smooth where people walk.*
-- **CH-017 éboulis** — *A slope of loose broken scree, unstable, no path across it.*
-- **CH-018 vase** — *Soft grey marsh mud at the water's edge, cracked where it has dried, keeping every print.*
+- **CH-010 sentier de pierres** — hauteur 0 case. *Un sentier de montagne fait de pierres plates disjointes enfoncées dans le sol, bordé de rochers plus gros, sinueux plutôt que rectiligne.*
+- **CH-011 lacet taillé** — hauteur 0 case. *Une piste taillée dans une pente, son côté amont formant un muret de roche, son côté aval tombant à pic, revenant sur elle-même en lacet.*
+- **CH-012 passerelle de planches** — hauteur 0 case. *Un cheminement de planches patinées posées sur un sol meuble, certaines planches affaissées, de l'eau apparaissant entre elles.*
+- **CH-013 sable damé** — hauteur 0 case. *Un chemin ferme de sable humide tassé, ses bords se fondant là où du sable sec et meuble vient le recouvrir.*
+- **CH-014 sable meuble** — hauteur 0 case. *Du sable de plage sec et meuble, ridé par le vent, conservant des empreintes de pas profondes.*
+- **CH-015 galets** — hauteur 0 case. *Un rivage de galets gris arrondis de tailles variées, mouillés et luisants près de l'eau.*
+- **CH-016 dalle de roche** — hauteur 0 case. *Une roche mère nue et à découvert, fissurée et striée, polie là où l'on marche.*
+- **CH-017 éboulis** — hauteur 0 case. *Une pente d'éboulis meubles et instables, entièrement occupée par des pierres qui roulent au moindre pas.*
+- **CH-018 vase** — hauteur 0 case. *Une vase grise et molle de marais au bord de l'eau, craquelée là où elle a séché, gardant la trace de chaque empreinte.*

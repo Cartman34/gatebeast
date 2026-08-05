@@ -1,0 +1,142 @@
+{
+  "screen": "AUDIT — inventaire contre planches",
+  "title": "Écarts entre l'inventaire et les six planches de référence",
+  "notice": [
+    "Rien de tout ça n'est urgent pour la maquette du parc, qui n'emploie qu'une poignée de sujets.",
+    "Mais toute production hors du parc partira de fiches fausses tant que ce n'est pas repris.",
+    "Créer un sujet est ta décision, jamais la nôtre : cette page est une proposition, pas un inventaire déjà décidé."
+  ],
+  "lede": "Rien n'a été changé dans le référentiel ni dans l'inventaire. Chaque ligne attend un verdict ; un bouton par catégorie tranche tout d'un coup. Le récapitulatif se copie et se colle en conversation.",
+  "stamp": "audit du 2026-08-04, avant tout arbitrage",
+  "placeholder": "Dire pourquoi, ou ce qu'il faut en faire.",
+  "copied": "Récapitulatif copié — collez-le en conversation.",
+  "copyRefused": "Copie refusée par le navigateur : le texte est sélectionné, Ctrl+C.",
+  "sections": [
+    {
+      "code": "CONTRA",
+      "name": "Contradictions — la fiche et la planche ne disent pas la même chose",
+      "verdicts": [
+        {"value": "fiche", "label": "La fiche cède"},
+        {"value": "planche", "label": "La planche cède"},
+        {"value": "plus-tard", "label": "À revoir plus tard"}
+      ],
+      "categories": [
+        {
+          "code": "CONTRA",
+          "name": "Contradictions",
+          "items": [
+            {"code": "TR-060", "ref": "Grand chêne",
+             "say": "Fiche : emprise 2 × 2. Planche : un arbre dessiné à l'emprise de 3 × 3."},
+            {"code": "BT-020", "ref": "Bergerie",
+             "say": "Fiche : emprise 8 × 5. Planche : 8 × 8."},
+            {"code": "BT-021", "ref": "Entrée de mine",
+             "say": "Fiche : emprise 5 × 3. Planche : 8 × 7."},
+            {"code": "BT-023", "ref": "Tour en ruine",
+             "say": "Fiche : emprise 5 × 5. Planche : 4 × 4."},
+            {"code": "BT-030", "ref": "Hutte sur pilotis",
+             "say": "Fiche : emprise 5 × 4. Planche : 12 × 10."},
+            {"code": "BT-040", "ref": "Phare",
+             "say": "Fiche : emprise 5 × 5, hauteur 10 cases. Planche : emprise 4 × 4, hauteur d'environ 24 cases."},
+            {"code": "BT-041", "ref": "Cabanon de pêcheur",
+             "say": "Fiche : emprise 4 × 3. Planche : 8 × 8."},
+            {"code": "BT-051", "ref": "Cabane de plage",
+             "say": "Fiche : emprise 5 × 4. Planche : 8 × 8."},
+            {"code": "OB-042", "ref": "Barque échouée",
+             "say": "Fiche : emprise 4 × 2. Planche : 2 cases."},
+            {"code": "BT-050", "ref": "Appontement",
+             "say": "Fiche : une jetée de bois sur pilotis. Planche : un tablier plat posé à même le sable, sans pilotis.",
+             "why": "Ce n'est pas qu'une différence de mesure : les deux planches ne décrivent pas le même objet."},
+            {"code": "BT-031", "ref": "Séchoir à poissons",
+             "say": "Fiche : une charpente où sèchent des poissons et des nasses à anguilles.",
+             "why": "Une règle écrite dit qu'un monde sans poissons n'en sèche pas — la fiche se contredit elle-même, indépendamment de toute planche."}
+          ]
+        }
+      ]
+    },
+    {
+      "code": "ABSENT",
+      "name": "Sujets absents — dessinés sur une planche, sans aucune fiche",
+      "verdicts": [
+        {"value": "inventorier", "label": "À inventorier"},
+        {"value": "hors", "label": "Hors périmètre"}
+      ],
+      "categories": [
+        {
+          "code": "VEG",
+          "name": "Végétation",
+          "items": [
+            {"code": "VEG-1", "ref": "Bouleau"},
+            {"code": "VEG-2", "ref": "Poirier"},
+            {"code": "VEG-3", "ref": "Prunier"},
+            {"code": "VEG-4", "ref": "Cerisier"},
+            {"code": "VEG-5", "ref": "Cognassier"},
+            {"code": "VEG-6", "ref": "Mangrove"},
+            {"code": "VEG-7", "ref": "Nénuphar"},
+            {"code": "VEG-8", "ref": "Bruyère"},
+            {"code": "VEG-9", "ref": "Palmier"},
+            {"code": "VEG-10", "ref": "Malcolmie"}
+          ]
+        },
+        {
+          "code": "CULT",
+          "name": "Cultures",
+          "note": "Aucune des quatre n'existe aujourd'hui : une famille entière manque, pas des cas isolés.",
+          "items": [
+            {"code": "CULT-1", "ref": "Champ de blé"},
+            {"code": "CULT-2", "ref": "Champ de légumes"},
+            {"code": "CULT-3", "ref": "Potager"},
+            {"code": "CULT-4", "ref": "Verger"}
+          ]
+        },
+        {
+          "code": "TERRAIN",
+          "name": "Terrain",
+          "items": [
+            {"code": "TER-1", "ref": "Crevasse"},
+            {"code": "TER-2", "ref": "Enclos"},
+            {"code": "TER-3", "ref": "Dunes"}
+          ]
+        },
+        {
+          "code": "BAT",
+          "name": "Bâtiments",
+          "note": "Comprend tout le bourg : halle, lavoir, boulangerie, forge, auberge, maisons mitoyennes, maison et atelier du potier.",
+          "items": [
+            {"code": "BAT-1", "ref": "Moulin"},
+            {"code": "BAT-2", "ref": "Grange"},
+            {"code": "BAT-3", "ref": "Chaumière de chaume"},
+            {"code": "BAT-4", "ref": "Halle"},
+            {"code": "BAT-5", "ref": "Lavoir"},
+            {"code": "BAT-6", "ref": "Boulangerie"},
+            {"code": "BAT-7", "ref": "Forge"},
+            {"code": "BAT-8", "ref": "Auberge"},
+            {"code": "BAT-9", "ref": "Maisons mitoyennes"},
+            {"code": "BAT-10", "ref": "Maison et atelier du potier"}
+          ]
+        },
+        {
+          "code": "OBJ",
+          "name": "Objets",
+          "items": [
+            {"code": "OBJ-1", "ref": "Puits"},
+            {"code": "OBJ-2", "ref": "Charrette"},
+            {"code": "OBJ-3", "ref": "Meules de foin"},
+            {"code": "OBJ-4", "ref": "Caisses"},
+            {"code": "OBJ-5", "ref": "Tonneaux"},
+            {"code": "OBJ-6", "ref": "Fontaine"},
+            {"code": "OBJ-7", "ref": "Étals"},
+            {"code": "OBJ-8", "ref": "Murets de pierre sèche"},
+            {"code": "OBJ-9", "ref": "Coquillages"}
+          ]
+        },
+        {
+          "code": "HUM",
+          "name": "Humains",
+          "items": [
+            {"code": "HUM-1", "ref": "Vendeur de légumes du bourg"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -31,13 +31,82 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import plan_svg as composition_plan
+import shape_vocab
 
 REPO = Path(__file__).resolve().parent.parent
+SUJETS = REPO / "assets" / "sujets.json"
 
-# The fifteen shapes the design defines, in its own order. Reported so a plan says out loud which
-# shapes it exercises and which it leaves out — a missing shape is a missing sprite.
-EVERY_SHAPE = ["n", "e", "s", "w", "ns", "ew", "ne", "es", "sw", "nw",
-               "nes", "esw", "nsw", "new", "nesw"]
+# The fifteen shapes the design defines, in its own order — shape_vocab's, not a copy of its own:
+# reported so a plan says out loud which shapes it exercises and which it leaves out (a missing shape
+# is a missing sprite), on the same list every other tool that knows about shapes uses.
+EVERY_SHAPE = shape_vocab.edge_combinations()
+
+# A quarter turn, applied to one edge: n becomes e, e becomes s, and so on. Used only to tell whether
+# two SHAPES are the same drawing seen at a different rotation — nothing here decides whether a given
+# subject is actually allowed to rotate, that is assets/sujets.json's call (see rotates_of below).
+_QUARTER_TURN = {"n": "e", "e": "s", "s": "w", "w": "n"}
+
+
+def _rotate(shape: str) -> str:
+    """One shape, turned a quarter turn — edges re-sorted to the canonical n, e, s, w order so the
+    result is itself a well-formed shape name, comparable to any other."""
+    return "".join(sorted((_QUARTER_TURN[edge] for edge in shape), key=shape_vocab.EDGES.index))
+
+
+def rotation_class(shape: str) -> str:
+    """The one name shared by a shape and every shape a quarter, half or three-quarter turn of it
+    reaches — e.g. "n", "e", "s" and "w" all return to the same class, because a single drawing of a
+    dead end, turned by the engine, is every one of the four. Picked as the smallest of the four names
+    so two equivalent shapes always resolve to the exact same class, regardless of which one came first
+    in a given plan.
+    """
+    turned = shape
+    seen = {shape}
+    for _ in range(3):
+        turned = _rotate(turned)
+        seen.add(turned)
+
+    return min(seen)
+
+
+def rotates_of(sujets: dict, code: str) -> bool:
+    """Whether CODE's type is drawn once and rotated by the engine, or drawn separately per shape.
+
+    Never guessed from the code's own letters — assets/sujets.json is the one place that knows, and a
+    plan that cannot ask it FAILS LOUDLY rather than assume either answer: a wrong guess here would
+    either short the piece count for a volumed subject (fence, wall) or double-produce a flat one
+    (path, water) for nothing.
+    """
+    sujet = sujets.get("sujets", {}).get(code)
+    if sujet is None:
+        raise SystemExit(f"FAULT {code} absent de {SUJETS.relative_to(REPO)} — rien ne se compte "
+                          f"sans fiche")
+    type_name = sujet["type"]
+    type_entry = sujets.get("types", {}).get(type_name)
+    if type_entry is None:
+        raise SystemExit(f"FAULT type {type_name} (sujet {code}) absent de "
+                          f"{SUJETS.relative_to(REPO)}")
+    if "rotates" not in type_entry:
+        raise SystemExit(f"FAULT le type {type_name} (sujet {code}) ne déclare pas s'il pivote "
+                          f"(clé 'rotates' absente) — {SUJETS.relative_to(REPO)}")
+
+    return type_entry["rotates"]
+
+
+def _load_sujets() -> dict:
+    """The subjects referentiel, read once per run — the one place that knows whether a type pivots.
+
+    Absent or unreadable is a briefing fault like any other missing sheet in this codebase: it FAILS
+    LOUDLY here rather than falling back on a guess (a name ending in a shape-bearing family, say),
+    which is exactly the shortcut that would make the count wrong for the one subject where it matters.
+    """
+    if not SUJETS.is_file():
+        raise SystemExit(f"FAULT référentiel des sujets introuvable : {SUJETS.relative_to(REPO)}")
+    try:
+        return json.loads(SUJETS.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise SystemExit(f"FAULT référentiel des sujets illisible ({SUJETS.relative_to(REPO)}) : "
+                          f"{error}")
 
 
 def build(source: Path) -> int:
@@ -74,6 +143,11 @@ def build(source: Path) -> int:
                 print(f"FAULT {subject} at ({column},{row}) spans several cells and declares "
                       f"connections: a trace piece is one cell")
                 return 1
+            unknown = [edge for edge in cell["joins"] if edge not in shape_vocab.EDGES]
+            if unknown:
+                print(f"FAULT {subject} at ({column},{row}) joins unknown edge(s) {unknown} — "
+                      f"expected among {list(shape_vocab.EDGES)}")
+                return 1
             traces[(column, row)] = set(cell["joins"])
 
     faults = composition_plan.check_traces(traces, columns, rows)
@@ -97,11 +171,29 @@ def build(source: Path) -> int:
             composition_plan.shape_of(joined).replace("shape-", ""), 0) + 1
     missing = [shape for shape in EVERY_SHAPE if shape not in tally]
 
+    # WHAT THE COMPOSITION EXERCISES is not what has to be DRAWN: a flat type (path, water) is drawn
+    # once per rotation class and turned by the engine for the rest, while a volumed type (fence, wall)
+    # needs one drawing per shape — rotating it would put the sun on the wrong side. Asking
+    # assets/sujets.json is the only way to tell the two apart; guessing from the subject's own name
+    # would be exactly the shortcut the operator flagged.
+    sujets = _load_sujets() if traces else {}
+    shapes_by_subject = {}
+    for key, joined in traces.items():
+        shape = composition_plan.shape_of(joined).replace("shape-", "")
+        shapes_by_subject.setdefault(subjects[key], set()).add(shape)
+    drawings_by_subject = {
+        subject: (len({rotation_class(shape) for shape in shapes}) if rotates_of(sujets, subject)
+                  else len(shapes))
+        for subject, shapes in shapes_by_subject.items()
+    }
+    drawings_needed = sum(drawings_by_subject.values())
+
     elements = [(subject, c1, r1, c2, r2, "") for subject, c1, r1, c2, r2 in placed]
 
-    # A short key per DISTINCT piece — same subject, same shape, same garniture. The same key is
-    # reused wherever that piece is laid, so the plan says at a glance which cells carry the same
-    # sprite, and doubles as the cutting map. Letters follow the reading order of first appearance.
+    # A short key per DISTINCT piece — same subject, same shape, same subject composition (e.g. same
+    # posts variant). The same key is reused wherever that piece is laid, so the plan says at a
+    # glance which cells carry the same sprite, and doubles as the cutting map. Letters follow the
+    # reading order of first appearance.
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     pieces, keys = {}, {}
     for key in sorted(traces, key=lambda item: (item[1], item[0])):
@@ -120,6 +212,11 @@ def build(source: Path) -> int:
     notes.append(f"Cellule par défaut : {default_cell}.")
     notes.append(f"{len(traces)} cases déclarées, {len(tally)} formes distinctes sur "
                  f"{len(EVERY_SHAPE)}. Absentes : " + (", ".join(missing) or "aucune") + ".")
+    if drawings_by_subject:
+        detail = ", ".join(f"{subject} : {count}" for subject, count in drawings_by_subject.items())
+        notes.append(f"{drawings_needed} dessin(s) réellement à produire compte tenu de la rotation "
+                     f"({detail}) — un sujet plat pivote un seul dessin par forme équivalente, un "
+                     f"sujet à volume en dessine une par forme.")
 
     svg = composition_plan.render(
         columns, rows,
@@ -137,6 +234,13 @@ def build(source: Path) -> int:
           f"cellule par défaut {default_cell}")
     for shape in EVERY_SHAPE:
         print(f"  shape-{shape:<6} {f'x{tally[shape]}' if shape in tally else 'ABSENTE'}")
+    print(f"formes exercées : {len(tally)}/{len(EVERY_SHAPE)}")
+    for subject, count in drawings_by_subject.items():
+        pivote = "pivote" if rotates_of(sujets, subject) else "ne pivote pas"
+        print(f"  {subject} ({pivote}) : {count} dessin(s) réellement à produire, pour "
+              f"{len(shapes_by_subject[subject])} forme(s) exercée(s)")
+    if drawings_by_subject:
+        print(f"total : {drawings_needed} dessin(s) réellement à produire compte tenu de la rotation")
     print("COHERENCE OK: chaque connexion est déclarée des deux côtés")
     try:
         print(f"plan écrit : {out.relative_to(REPO)}")
