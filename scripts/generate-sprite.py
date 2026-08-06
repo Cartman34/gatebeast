@@ -68,31 +68,37 @@ POSTS_TEXT = {
 }
 
 
-def sheet_of(code: str, candidates: tuple = (), required: tuple = ()) -> tuple:
+def sheet_of(code: str, candidates: tuple = (), replacing: tuple = ()) -> tuple:
     """The label and the description of a subject, read verbatim from its inventory entry.
 
-    `candidates` are everything this variant asks for that a fiche may describe on its own — its
-    density, its proposition, its gate, its form. The fiche decides: whichever of them it writes a
-    description for is the description to quote, and a value it says nothing about leaves the base one
-    in place (a number of posts is a finish, rendered by a clause of the consigne instead).
+    `candidates` are everything this variant asks for that the entry may describe on its own — its density, its proposition, its gate, its form. Whichever of
+    them the entry describes apart is quoted; a value it says nothing about adds nothing (a number of posts is a finish, rendered by a clause of the consigne).
 
-    `required` are the values whose field declares `defines_kind` — another piece, not the same one
-    finished differently. Their own description is mandatory: missing, sheet_description faults rather
-    than letting the consigne carry the plain fence's description for a gate.
+    A described value COMPLETES the subject's own description by default, and REPLACES it only when its field is in `replacing` — the fields declaring
+    `defines_kind`, which say the variant is another piece rather than the same one finished differently. That default is the operator's (2026-08-06): three
+    densities of the same grass differ by a count of tufts and nothing else, so the subject is described ONCE and each density writes only its quantity. Making
+    every value replace the description forced the whole grass to be rewritten three times over — three texts to keep in step for one number that changed, and
+    the two that were not being read came out identical to the third. A gate stays a replacement: it is not a fence with an option.
 
-    Two candidates described at once is a fault too: which one the consigne quotes is a decision of the
-    fiche, and nothing here is entitled to pick.
+    A replacing value's own description is mandatory: missing, sheet_description faults rather than letting the consigne carry the plain fence's description for
+    a gate. Two values replacing at once is a fault too — which one the consigne quotes belongs to the entry, and nothing here is entitled to pick. Several
+    values COMPLETING is not a fault: they add up, in the order the variant declares them.
     """
     for path in sorted(SHEETS.glob("*.md")):
         for line in path.read_text(encoding="utf-8").splitlines():
             if not line.startswith(f"- **{code} "):
                 continue
             label = line.split("**")[1].replace(code, "").strip()
-            written = [value for value in candidates if value in required or asset_common.declares_qualified_description(line, value)]
-            if len(written) > 1:
-                raise SystemExit(f"FAULT {code} décrit à part plusieurs des valeurs demandées ensemble ({', '.join(written)}) — laquelle citer appartient à la fiche, rien ici ne la choisit.")
-            description, _ = asset_common.sheet_description(line, code, written[0] if written else None)
-            return label, description
+            described = [value for value in candidates if value in replacing or asset_common.declares_qualified_description(line, value)]
+            replaced = [value for value in described if value in replacing]
+            if len(replaced) > 1:
+                raise SystemExit(f"FAULT {code} : {', '.join(replaced)} remplacent tous la description du sujet et sont demandés ensemble — laquelle citer appartient à l'inventaire, pas à cet outil.")
+            if replaced:
+                description, _ = asset_common.sheet_description(line, code, replaced[0])
+                return label, description
+            base, _ = asset_common.sheet_description(line, code)
+            parts = [asset_common.sheet_description(line, code, value)[0] for value in described]
+            return label, "\n".join([base] + parts)
     raise SystemExit(f"FAULT {code} n'est pas à l'inventaire — rien ne se produit sans fiche.")
 
 
@@ -192,18 +198,25 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
         # asked for without a composition came out different depending on which of the two you believed.
         posts = int(type_["compositions"]["default"].rsplit("-", 1)[1])
 
-    # Which asked value the sheet is quoted for — THE FICHE DECIDES, and it decides for every field alike: a description proper to a value or a form is an
-    # optional mark of the fiche format (inventaire/README.md), written where the sujet changes with that value. Keyed on `defines_kind` before, the clause
-    # only ever reached the gates: the three grass densities and the two building propositions all carry their own descriptions, none of their fields
-    # declares `defines_kind`, and every one of those variants was therefore produced with the base description — a variant that is in fact the main view.
-    # `defines_kind` says which variant LEADS a label (sujets-et-variantes.md); it never said which description gets quoted, and reading it that way is what
-    # made a whole family of variants unproducible in silence. What it does keep is its own guarantee: such a value MUST be described, never quietly served
-    # the base text.
-    required = [value for name, value in asked.items() if (type_.get(f"{name}s") or {}).get("defines_kind")]
-    candidates = [value for _, value in sorted(asked.items())]
+    # Which values the entry is quoted for — THE ENTRY DECIDES, for every field alike: a description proper to a value or a form is an optional mark of the
+    # entry's format (inventaire/README.md), written where the subject changes with that value. Keyed on `defines_kind` before, the clause only ever reached the
+    # gates: the three grass densities and the two building propositions all carry their own descriptions, none of their fields declares `defines_kind`, and
+    # every one of those variants was therefore produced with the base description — a variant that was in fact the main view.
+    # `defines_kind` keeps a job here, but a narrower one: it says whether a described value REPLACES the subject's description or COMPLETES it. Replacing is
+    # for another piece — a gate is not a fence with an option. Completing is the default and the ordinary case: a density is the same grass in a different
+    # quantity, so the grass is described once and the density adds its count.
+    # A VALUE THE VARIANT DOES NOT CARRY FALLS BACK TO ITS FIELD'S DEFAULT, exactly as a composition does (sujets-et-variantes.md, decision 18): the main view
+    # of the grass declares no density and must still be the sparse one, whose count lives in that value's own description.
+    replacing = [value for name, value in asked.items() if (type_.get(f"{name}s") or {}).get("defines_kind")]
+    resolved = dict(asked)
+    for name, declaration in type_.items():
+        field = name[:-1]
+        if isinstance(declaration, dict) and declaration.get("default") and field not in resolved and name not in inapplicable:
+            resolved[field] = declaration["default"]
+    candidates = [value for _, value in sorted(resolved.items())]
     if shape != shape_vocab.DEFAULT_SHAPE:
         candidates.append(shape)
-    label, description = sheet_of(code, candidates, required)
+    label, description = sheet_of(code, candidates, replacing)
     edges = shape_vocab.edges_of(shape)
     joined = [SIDE[edge] for edge in edges]
     reach = " et ".join(", ".join(joined).rsplit(", ", 1))
@@ -212,6 +225,16 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
     # assumed. Asking for one cell whatever the sujet is what refused a thicket of two by two at export.
     spread = sujet.get("couvert") or sujet["emprise"]
     master = tile_scale.master_definition(spread["columns"], spread["rows"], height=sujet.get("hauteur"))
+    # The height IN TILES the consigne asks for, said out loud. It was computed here and used only to check the file afterwards, never told to the generator,
+    # which was left to invent a proportion: the care centre came back at twelve tiles of height for eight declared, the thicket at 1.6 for six, and the whole
+    # mock-up looked wrongly calibrated (operator, 2026-08-06). One speaks to the generator in tiles, so it is said in tiles.
+    # The height IN TILES the consigne asks for, said as a BAND rather than a figure: no single height is right — a ridge, a chimney, a crown leaning one way
+    # move it — but there is a floor and a ceiling, and both come from the model (tile_scale.master_band). Said in tiles, because the generator is spoken to in
+    # tiles, and written with commas, because the consigne is French and a decimal point in it reads as a thousands mark.
+    per_tile = master["width"] / spread["columns"]
+    floor, ceiling = tile_scale.master_band(spread["columns"], spread["rows"], height=sujet.get("hauteur"))
+    low = f"{round(floor / per_tile, 1)}".replace(".", ",")
+    high = f"{round(ceiling / per_tile, 1)}".replace(".", ",")
     # Every sprite is laid on the grid beside others — there is no category that does not assemble. What differs is the SHAPE: it says which edges the piece
     # joins, and `plain` joins none. The clauses about reaching an edge follow the shape, and nothing else.
     joins_edges = bool(edges)
@@ -264,20 +287,30 @@ d'extraire cette pièce précise et de la dessiner seule, pas d'en inventer une 
         clause = f"""
 RÉFÉRENCE — ouvre et regarde le fichier {asset_common.reference_address(plate)}. C'est une scène du
 monde, déjà validée, où {label} apparaît PARMI D'AUTRES éléments — pas une image de ce seul sujet.
-Elle donne le style, la matière, la lumière ET L'ANGLE DE PRISE DE VUE à reprendre pour CE SUJET
-précis, repéré dans l'image ; le reste de la scène ne se copie pas et n'apparaît pas dans le résultat.
+Elle donne le style, la matière et la lumière à reprendre pour CE SUJET précis, repéré dans l'image ; le reste de la scène ne se copie pas et n'apparaît pas dans le résultat.
+ELLE NE DONNE PAS LA PRISE DE VUE. C'est une scène unique, rendue avec un point de fuite : les bâtiments y montrent la face tournée vers le centre de l'image. Une sprite se dessine une fois et se
+pose n'importe où, donc elle ne peut pas dépendre d'une position : tu reprends l'angle décrit plus haut, en projection parallèle, et tu ignores la convergence de la scène de référence.
 """
 
-    prompt = f"""{plate_common.STYLE_FR}
+    prompt = f"""{asset_common.CONTEXTE_FR}
+
+{plate_common.STYLE_FR}
 
 {asset_common.CAMERA_FR}
 
 ASSET DE JEU — {label}, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
 dessus.
 
-DIMENSIONS ATTENDUES : l'image fait {spread['columns']} case(s) de large — c'est contractuel. Sa hauteur
-suit ce que le sujet occupe réellement une fois la caméra appliquée : un sujet qui a de l'épaisseur ou
-qui se dresse monte librement au-dessus de son emprise, et l'image le suit.
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT {spread['columns']} case(s) de large, et sa hauteur tient ENTRE {low} ET {high} case(s).
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
+la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de {sujet['emprise']['columns']} case(s) de large sur
+{sujet['emprise']['rows']} case(s) de profondeur : ce rectangle occupe le BAS de l'image, sa profondeur se respecte case pour case, et la dernière rangée tolère un léger débord pour que la
+matière se raccorde à ce qui l'entoure. TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
 
 {asset_common.CADRAGE_TRACE if joins_edges else asset_common.CADRAGE_CUTOUT}
 
@@ -307,8 +340,11 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
     for other, value in sorted(asked.items()):
         if other not in ("composition", "portillon"):
             name += f"_{other}-{value}"
-    draft = REPO / "local" / f"prompt-{name}.txt"
-    draft.parent.mkdir(exist_ok=True)
+    # LE BROUILLON EST VRAIMENT TEMPORAIRE, DONC IL VA SOUS var/tmp/ (opérateur, 2026-08-06) : il se refait d'une commande, et la consigne d'une image RÉELLEMENT produite
+    # est figée à côté de cette image. Le reste de var/ garde ce qui se conserve — rapports, journaux. Jamais dans local/, qui est le répertoire de l'agent et où l'outillage
+    # n'écrit rien : trente-cinq brouillons s'y étaient accumulés sans que personne sache qui les produisait.
+    draft = REPO / "var" / "tmp" / "consignes" / f"{name}.txt"
+    draft.parent.mkdir(parents=True, exist_ok=True)
     draft.write_text(prompt, encoding="utf-8")
     print(f"{code} — {label} · forme {shape}"
           + (f" · {posts} poteau(x)" if applies_composition else "")

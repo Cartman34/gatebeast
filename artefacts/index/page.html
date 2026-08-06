@@ -85,25 +85,39 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
   }
+  /* LA CARTE ENTIÈRE EST LE LIEN : on clique la carte, pas une adresse écrite en clair qui prenait trois lignes et se coupait au milieu d'un identifiant. */
   .card {
+    display: block;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1rem 1.1rem;
     background: var(--card-bg);
+    color: inherit;
+    text-decoration: none;
+  }
+  a.card:hover {
+    border-color: var(--alive-badge-fg);
+  }
+  a.card:focus-visible {
+    outline: 2px solid var(--alive-badge-fg);
+    outline-offset: 2px;
   }
   .card-name {
     font-size: 1.05rem;
     margin: 0 0 0.4rem;
   }
+  /* La description dit ce qu'est l'artefact, pas ce qu'il contient : elle se lit d'un coup d'œil sur une carte, et une carte n'est pas un paragraphe. Plus petite
+     que le nom, et bornée en hauteur pour qu'une description longue ne fasse pas grandir sa carte au-dessus de ses voisines. */
   .card-description {
     color: var(--muted);
-    font-size: 0.92rem;
+    font-size: 0.84rem;
+    line-height: 1.45;
     margin: 0 0 0.6rem;
   }
   .card-address {
     margin: 0 0 0.35rem;
     word-break: break-all;
-    font-size: 0.88rem;
+    font-size: 0.78rem;
   }
   .card-link {
     color: inherit;
@@ -114,7 +128,7 @@
   }
   .card-state {
     color: var(--muted);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     margin: 0;
   }
 
@@ -212,119 +226,111 @@ source de vérité — rien ici n'est ajouté à la main.</p>
   <h2 class="group-title">Vivants</h2>
   <div class="group-cards">
     
-<article class="card card-alive">
+<a class="card card-alive" href="https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949" target="_blank" rel="noopener">
   <span class="card-badge card-badge-alive">Vivant</span>
   <h3 class="card-name">Index des artefacts</h3>
-  <p class="card-description">La porte d&#x27;entrée vers tous les autres, bâtie sur ce tableau même (<code>artefacts/index/</code>)</p>
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949" target="_blank" rel="noopener">https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949</a></p>
+  <p class="card-description">La porte d&#x27;entrée vers tous les autres</p>
   <p class="card-state">Vivant, ouvert le 2026-08-04</p>
   
-</article>
+</a>
 
-<article class="card card-alive">
-  <span class="card-badge card-badge-alive">Vivant</span>
-  <h3 class="card-name">Audit de l&#x27;inventaire</h3>
-  <p class="card-description">Les écarts avec les six planches, à arbitrer ligne par ligne (<code>artefacts/audit-inventaire/</code>)</p>
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa" target="_blank" rel="noopener">https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa</a></p>
-  <p class="card-state">Vivant, en attente d&#x27;arbitrage</p>
-  
-</article>
-
-<article class="card card-alive">
+<a class="card card-alive" href="https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c" target="_blank" rel="noopener">
   <span class="card-badge card-badge-alive">Vivant</span>
   <h3 class="card-name">Suivi des sprites</h3>
-  <p class="card-description">L&#x27;unique endroit où se lit l&#x27;état de la production</p>
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c" target="_blank" rel="noopener">https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c</a></p>
-  <p class="card-state">Vivant, republié le 2026-08-04</p>
+  <p class="card-description">L&#x27;état de la production, sujet par sujet</p>
+  <p class="card-state">Vivant, republié le 2026-08-06</p>
   
-</article>
+</a>
 
-<article class="card card-alive">
+<a class="card card-alive" href="https://claude.ai/code/artifact/1a5e7074-017e-40b3-9366-005ead586562" target="_blank" rel="noopener">
   <span class="card-badge card-badge-alive">Vivant</span>
-  <h3 class="card-name">Plans de composition</h3>
-  <p class="card-description">Tout plan déclaré sous <code>assets/poc/</code>, découverte automatique (<code>artefacts/plans-de-composition/</code>)</p>
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9" target="_blank" rel="noopener">https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9</a></p>
-  <p class="card-state">Vivant, ouvert le 2026-08-04</p>
+  <h3 class="card-name">La maquette du parc</h3>
+  <p class="card-description">La scène montée, à trois tailles de case</p>
+  <p class="card-state">Vivant, republié le 2026-08-06</p>
   
-</article>
+</a>
 
-<article class="card card-alive">
+<a class="card card-alive" href="https://claude.ai/code/artifact/9c6cbb31-5f72-4db7-a8dc-237550866ce8" target="_blank" rel="noopener">
   <span class="card-badge card-badge-alive">Vivant</span>
-  <h3 class="card-name">Le parc</h3>
-  <p class="card-description">Plan de composition et maquette montée, commentaire par zone</p>
-  <p class="card-address"><span class="card-no-address">pas encore ouvert</span></p>
-  <p class="card-state">À ouvrir avec la maquette B0</p>
+  <h3 class="card-name">Maquette Campagne</h3>
+  <p class="card-description">32 × 24 cases, plan et maquette</p>
+  <p class="card-state">Vivant, ouvert le 2026-08-06</p>
   
-</article>
+</a>
+
+<a class="card card-alive" href="https://claude.ai/code/artifact/5f9bb2af-9126-44e6-b953-59afb7ab4e28" target="_blank" rel="noopener">
+  <span class="card-badge card-badge-alive">Vivant</span>
+  <h3 class="card-name">Le plan de composition du parc</h3>
+  <p class="card-description">Déclaré case par case</p>
+  <p class="card-state">Vivant, ouvert le 2026-08-05</p>
+  
+</a>
   </div>
 </section>
 <section class="group group-archived">
   <h2 class="group-title">Archivés</h2>
   <div class="group-cards">
     
-<article class="card card-archived">
+<a class="card card-archived" href="https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa" target="_blank" rel="noopener">
+  <span class="card-badge card-badge-archived">Archivé</span>
+  <h3 class="card-name">Audit de l&#x27;inventaire</h3>
+  <p class="card-description">Les écarts avec les six planches</p>
+  <p class="card-state">Archivé — à reprendre plus tard</p>
+  
+</a>
+
+<a class="card card-archived" href="https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9" target="_blank" rel="noopener">
+  <span class="card-badge card-badge-archived">Archivé</span>
+  <h3 class="card-name">Plans de composition</h3>
+  <p class="card-description">Tout plan déclaré sous <code>assets/poc/</code></p>
+  <p class="card-state">Archivé</p>
+  
+</a>
+
+<a class="card card-archived" href="https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c" target="_blank" rel="noopener">
   <span class="card-badge card-badge-archived">Archivé</span>
   <h3 class="card-name">Tour de nettoyage</h3>
-  <p class="card-description">31 éléments relevés, un verdict par ligne (<code>artefacts/nettoyage/</code>)</p>
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c" target="_blank" rel="noopener">https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c</a></p>
+  <p class="card-description">31 éléments, un verdict par ligne</p>
   <p class="card-state">Archivé</p>
   
-</article>
+</a>
 
-<article class="card card-archived">
+<a class="card card-archived" href="https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413" target="_blank" rel="noopener">
   <span class="card-badge card-badge-archived">Archivé</span>
   <h3 class="card-name">Planches de référence</h3>
-  <p class="card-description">Chaque planche avec son rapport noté</p>
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413" target="_blank" rel="noopener">https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413</a></p>
+  <p class="card-description">Chaque planche et son rapport noté</p>
   <p class="card-state">Archivé</p>
   
-</article>
+</a>
 
-<article class="card card-archived">
+<a class="card card-archived" href="https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40" target="_blank" rel="noopener">
   <span class="card-badge card-badge-archived">Archivé</span>
   <h3 class="card-name">Calibration de l&#x27;échelle humaine</h3>
   
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40" target="_blank" rel="noopener">https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40</a></p>
   <p class="card-state">Archivé</p>
   
-</article>
+</a>
   </div>
 </section>
 <section class="group group-closed">
   <h2 class="group-title">Clos</h2>
   <div class="group-cards">
     
-<article class="card card-closed">
+<a class="card card-closed" href="https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5" target="_blank" rel="noopener">
   <span class="card-badge card-badge-closed">Clos</span>
-  <h3 class="card-name">Direction artistique (historique de la revue)</h3>
-  
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5" target="_blank" rel="noopener">https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5</a></p>
+  <h3 class="card-name">Direction artistique</h3>
+  <p class="card-description">L&#x27;historique de la revue</p>
   <p class="card-state">Clos — DA validée</p>
   
-</article>
+</a>
 
-<article class="card card-closed">
+<a class="card card-closed" href="https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8" target="_blank" rel="noopener">
   <span class="card-badge card-badge-closed">Clos</span>
-  <h3 class="card-name">Son (essais, plafond constaté)</h3>
-  
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8" target="_blank" rel="noopener">https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8</a></p>
+  <h3 class="card-name">Son</h3>
+  <p class="card-description">Les essais et le plafond constaté</p>
   <p class="card-state">Clos — synthèse abandonnée</p>
   
-</article>
-  </div>
-</section>
-<section class="group group-forbidden">
-  <h2 class="group-title">À ne pas rouvrir</h2>
-  <div class="group-cards">
-    
-<article class="card card-forbidden">
-  <span class="card-badge card-badge-forbidden">À ne pas rouvrir</span>
-  <h3 class="card-name">Suivi des sprites</h3>
-  <p class="card-description">Doublon créé par erreur</p>
-  <p class="card-address"><a class="card-link" href="https://claude.ai/code/artifact/ddefc8b7-0f50-45ef-ad51-68c64b5ef1bd" target="_blank" rel="noopener">https://claude.ai/code/artifact/ddefc8b7-0f50-45ef-ad51-68c64b5ef1bd</a></p>
-  <p class="card-state">À supprimer par l&#x27;opérateur — ne jamais republier dessus</p>
-  <p class="card-warning">Ne jamais republier sur cette adresse.</p>
-</article>
+</a>
   </div>
 </section>
 

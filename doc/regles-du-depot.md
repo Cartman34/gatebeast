@@ -41,6 +41,16 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
     bloc. Y vont sans qu'il ait à le redire : toute proposition, toute génération d'image, tout verdict à demander.
 - **Le mode s'annonce avant de commencer, et l'agent s'arrête sur cette annonce** — à commencer par son démarrage, où c'est le mode par défaut qui s'applique et où il doit donc l'annoncer comme les
   autres : l'opérateur confirme, et l'agent part. Une annonce sans arrêt ne sert à rien, elle passe dans le flux et l'opérateur découvre le mode au résultat.
+- **`GO` et `STOP` sont les deux seuls mots qui lancent et arrêtent le dépilement, et ils sont stricts.** Rien d'autre ne vaut reprise : aucune phrase ne s'interprète comme un feu vert, et le silence
+  encore moins. **Tout arrêt met fin au `GO`** — une question de l'opérateur, un ordre ponctuel, une interruption : dès que l'agent s'arrête, l'autorisation est consommée et ne se reprend pas d'elle-
+  même une fois la parenthèse refermée. Il en faut une neuve, donnée explicitement.
+- **Tant que le dépilement n'est pas lancé, l'agent ne modifie que le `SUIVI.md`** — aucun autre fichier, quelle qu'en soit l'évidence. Ce qui survient avant le `GO` entre dans la pile et y attend.
+- **Le suivi est le support de l'agent** : il l'écrit quand il veut, sans demander, et il doit permettre à tout moment d'être coupé et relancé de zéro **sans aucune perte**. Ce qui n'y est pas écrit
+  n'existe pas.
+- **Tout point ouvert porte un code et un numéro**, pour que l'opérateur réponde par lui seul : **Q** une question, **P** une proposition, **S** un sujet, **T** un test, **W** une alerte. Les séries
+  sont indépendantes, continues tant qu'un point reste ouvert, et repartent à 1 quand la série se vide. Un point ouvert vit dans le suivi, jamais dans la conversation.
+- **Chaque message se termine par deux lignes de récapitulatif** : ce qui attend l'opérateur, ce qui attend l'agent. Code et trois mots par point, quatre points par ligne au plus, un compteur au-delà.
+- **Toute génération d'image part en tâche de fond** — on ne l'attend jamais. Plus généralement, tout ce dont l'agent n'a pas besoin pour continuer part en tâche de fond et rend la main aussitôt.
 - **On dépile, on ne commente pas la pile.** Constater ce qui manque et le dire n'est pas un travail : ce qui manque se fait. Une tâche ne remonte à l'opérateur que si elle est finie, ou si elle est
   bloquée par une décision qui lui appartient. **Ce qui fait sortir un sujet du dépilement, et rien d'autre : une question, un inconnu, une incohérence, ou quelque chose que l'agent veut proposer.**
   Tout le reste se fait — l'ordre de la pile ne se redemande pas.
@@ -67,9 +77,17 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   ni l'autre n'est de la conception : ils décrivent le chemin, jamais la cible.
 - **`scripts/` — l'outillage de production**, **intégralement en anglais** : noms, contenu, commentaires.
 - **`assets/` — les images produites.** **Rien ne se jette** : une image écartée cesse d'être montrée, elle n'est pas supprimée.
-- **`local/` — le répertoire de travail de l'agent** : essais, mesures, brouillons, jamais commité. **Rien de ce qui s'y trouve ne se cite nulle part** : ni dans une description, ni dans une consigne
-  envoyée au générateur, ni dans le suivi, ni dans un document. Un fichier cité doit être versionné, sinon la référence est morte pour tout le monde sauf pour l'agent qui l'a écrite. Le répertoire se
-  tient rangé : les extraits de planche vivent sous `local/extraits/<planche>/<code du sujet>.png`, produits par un script versionné, donc refaisables par n'importe qui à la commande.
+- **LA RACINE DE `local/` APPARTIENT À L'OPÉRATEUR, ET À LUI SEUL.** On n'y trouve que ses fichiers, et un agent **n'y touche jamais** — il ne les modifie pas, ne les déplace pas, ne les supprime pas
+  et ne les lit pas. Tout ce qu'un agent produit descend dans un **sous-dossier** : `local/scripts/` pour ses scripts jetables, `local/extraits/` pour ses découpes d'images, et ainsi de suite. Une
+  racine où tout traîne cesse d'être utilisable : on ne distingue plus ce qui est en cours de ce qui reste d'avant-hier, et les fichiers de l'opérateur s'y noient.
+- **`local/` — le répertoire de travail de l'agent** : essais, mesures, extraits, scripts jetables, jamais commité. **L'OUTILLAGE N'Y ÉCRIT JAMAIS RIEN** : ce répertoire appartient à l'agent, et un
+  fichier qu'un script y dépose n'a plus de propriétaire — trente-cinq brouillons de consigne s'y étaient accumulés sans que personne sache qui les produisait ni s'ils servaient encore (opérateur,
+  2026-08-06). Toute trace d'exécution va sous `var/`, avec les rapports et les journaux.
+- **`var/` — ce que l'outillage produit pour lui-même**, jamais versionné : rapports de production, journaux du générateur, mesures. Ce qui s'y trouve est **local mais conservé** — on y revient pour
+  comprendre ce qui s'est passé. **`var/tmp/` fait exception : ce qui y est écrit est vraiment jetable** et se refait d'une commande — un brouillon de consigne, un fichier de passage. La distinction
+  se décide à l'écriture : ce dont personne ne redemandera jamais compte va dans `var/tmp/`, le reste ailleurs sous `var/`. **Rien de ce qui s'y trouve ne se cite nulle part** : ni dans une
+  description, ni dans une consigne envoyée au générateur, ni dans le suivi, ni dans un document. Un fichier cité doit être versionné, sinon la référence est morte pour tout le monde sauf pour
+  l'agent qui l'a écrite. Le répertoire se tient rangé : les extraits de planche vivent sous `local/extraits/`, produits par un script versionné, donc refaisables par n'importe qui à la commande.
 
 ## L'outillage
 
@@ -115,6 +133,12 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   donné ; les commits restent occasionnels, pas un par étape. Dépôt distant : `git@github.com:Cartman34/gatebeast.git` (`origin`, branche `main`). **Jamais de ligne `Co-Authored-By` nommant Claude ou
   Anthropic** : l'opérateur est l'unique auteur de ses commits.
 - **Publication** : les revues sont des artefacts Claude republiés à adresse stable (le paramètre `url` de l'outil Artifact conserve le lien). Les adresses en cours sont listées dans `SUIVI.md`.
+- **AVANT TOUTE PUBLICATION, ON LISTE LES ARTEFACTS EXISTANTS**, sans exception : l'inventaire du suivi ne suffit pas, il peut être incomplet. Publier sans lister a créé le 2026-08-06 une adresse
+  neuve pour une page qui en avait déjà une — **et les remarques que l'opérateur y avait posées ont été perdues avec l'ancienne page**, puisqu'elles vivent dans le navigateur, attachées à l'adresse
+  qui les a reçues. **Un doublon se supprime, et c'est l'opérateur qui le fait**, depuis le menu de l'artefact ; l'agent, lui, ne peut que republier par-dessus. En attendant, il y republie un avis
+  disant que la page est un doublon et où vit le bon artefact, et l'inscrit à l'inventaire comme « à ne pas rouvrir » — une adresse laissée avec son ancien contenu finit par être reprise pour la
+  bonne. Une fois la suppression faite, la ligne et l'avis disparaissent à leur tour.
+- **Une page, une adresse, et une adresse par sujet** — le plan de composition et la maquette montée sont deux sujets, donc deux adresses ; d'autres maquettes viendront, chacune avec la sienne.
 
 ## La méthode commune
 

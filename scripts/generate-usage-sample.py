@@ -171,7 +171,9 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 {code} : {description}
 """
 
-    draft = REPO / "local" / f"prompt-usage-{code}.txt"
+    # Sous var/tmp/, parce qu'un brouillon est vraiment temporaire et se refait d'une commande ; le reste de var/ garde ce qui se conserve. Jamais dans local/, qui est le
+    # répertoire de l'agent et où l'outillage n'écrit rien (opérateur, 2026-08-06).
+    draft = REPO / "var" / "tmp" / "consignes" / f"usage-{code}.txt"
     draft.parent.mkdir(exist_ok=True)
     draft.write_text(prompt, encoding="utf-8")
 

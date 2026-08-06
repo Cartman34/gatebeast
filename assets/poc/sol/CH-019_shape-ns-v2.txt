@@ -1,0 +1,95 @@
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette.
+
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — chemin de terre battue, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT 1 case(s) de large, et sa hauteur tient ENTRE 0,8 ET 1,0 case(s).
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
+la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 1 case(s) de large sur
+1 case(s) de profondeur : ce rectangle occupe le BAS de l'image, sa profondeur se respecte case pour case, et la dernière rangée tolère un léger débord pour que la
+matière se raccorde à ce qui l'entoure. TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+
+UN SEUL SUJET, ET RIEN D'AUTRE : la pièce d'assemblage décrite ci-dessous, et absolument rien de plus —
+aucun décor, aucun sol, aucun accessoire, aucun être vivant, aucun cadre, aucune bordure, aucun texte.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet TOUCHE les bords que le tracé rejoint — il y est coupé net, c'est voulu, c'est ce qui
+permet le raccordement. Sur les bords qu'il ne rejoint pas, il reste une marge transparente et rien ne
+dépasse.
+
+CE SUJET EST UNE PIÈCE D'ASSEMBLAGE, PAS UN OBJET ISOLÉ. Des cases voisines porteront la même pièce, et
+l'ensemble doit former une ligne continue, sans décrochement ni interruption.
+
+Le tracé PASSE PAR LE CENTRE de la case et REJOINT LES BORDS indiqués par la variante demandée. Ce qui
+le constitue — la matière décrite par sa fiche, et elle seule — ATTEINT EXACTEMENT ces bords : il y est
+coupé net, à la MÊME HAUTEUR et à la MÊME ÉPAISSEUR de chaque côté, de sorte qu'en posant deux images
+identiques côte à côte, la matière se prolonge d'une case à l'autre sans marche ni trou.
+
+Les bords que le tracé ne rejoint PAS restent libres : rien ne les touche.
+
+LA PIÈCE DEMANDÉE : le sujet passe par le CENTRE de la case et rejoint le bord NORD et SUD, et eux seuls.
+Les bords EST et OUEST restent libres : rien ne les touche.
+
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/revue-da/planche-p1-campagne-v8.png. C'est une scène du
+monde, déjà validée, où chemin de terre battue apparaît PARMI D'AUTRES éléments — pas une image de ce seul sujet.
+Elle donne le style, la matière et la lumière à reprendre pour CE SUJET précis, repéré dans l'image ; le reste de la scène ne se copie pas et n'apparaît pas dans le résultat.
+ELLE NE DONNE PAS LA PRISE DE VUE. C'est une scène unique, rendue avec un point de fuite : les bâtiments y montrent la face tournée vers le centre de l'image. Une sprite se dessine une fois et se
+pose n'importe où, donc elle ne peut pas dépendre d'une position : tu reprends l'angle décrit plus haut, en projection parallèle, et tu ignores la convergence de la scène de référence.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et 96 PIXELS
+dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
+cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
+l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+CH-019 : UN CHEMIN de TERRE BATTUE, et sa couleur est CELLE QU'IL A SUR LA PLANCHE DE CAMPAGNE, qu'on ne quitte pas d'un ton : un BEIGE SABLE CLAIR ET CHAUD, légèrement grisé, à peine plus foncé dans les traces de passage — ni le jaune vif d'un sable de plage, ni un doré lumineux, ni le brun soutenu d'une terre retournée. C'est une terre sèche et tassée par les pas, éclaircie par le soleil. Il traverse sa case EN SON MILIEU sans jamais l'occuper entièrement : il couvre environ les deux tiers de la largeur de la case, et il reste de chaque côté une marge libre où le chemin n'est pas. C'est un chemin, un passage qu'on emprunte, jamais une bande de matière : ce mot-là se dessine comme un ruban posé et donne une brioche au lieu d'un chemin. IL NE SE SOULÈVE PAS DU SOL : sa surface est celle du terrain lui-même, sans épaisseur, sans tranche visible, sans talus, sans bourrelet, sans ombre portée sous lui. Cela ne dit rien de l'angle de prise de vue, qui reste ENTIÈREMENT celui du monde : le chemin est vu sous la même caméra en plongée que tout le reste, et se creuse dans le sol de la même façon que le sol des planches de référence — jamais redressé à la verticale, jamais vu en plan comme une carte. Toute sa matière tient dans sa couleur : des nuances de terre, les unes plus claires et les autres plus soutenues, de longues traces douces dans le sens de la marche, quelques petits cailloux à peine plus sombres affleurant au niveau de la surface. Ses bords longs sont irréguliers et légèrement rongés, jamais tracés au cordeau. Il rejoint d'autres chemins identiques en un carrefour net.
+
+CONSIGNE SUPPLÉMENTAIRE POUR CE SUJET — elle s'ajoute à tout ce qui précède et ne l'annule pas :
+CE SUJET N'A AUCUN VOLUME : il est DANS le sol, pas posé dessus. Aucune épaisseur, aucun bombé, aucun arrondi, aucun bord relevé, aucune ombre portée — sa surface est exactement celle du terrain autour de lui. La clause de style qui demande des volumes sculptés et arrondis comme de petites figurines NE S'APPLIQUE PAS à lui : elle vaut pour ce qui se dresse, et rien ne se dresse ici. Sa couleur reste DOUCE et TERREUSE : la clause qui demande des couleurs franches et saturées ne doit pas le pousser vers un jaune vif ou un doré — une terre foulée est claire et un peu grisée, jamais éclatante.
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à environ SOIXANTE-DIX DEGRÉS sous l'horizontale. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

@@ -1,0 +1,87 @@
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette.
+
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — bosquet de sapins, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT 2 case(s) de large, et sa hauteur tient ENTRE 3,4 ET 4,4 case(s).
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
+la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 2 case(s) de large sur
+2 case(s) de profondeur : ce rectangle occupe le BAS de l'image, sa profondeur se respecte case pour case, et la dernière rangée tolère un léger débord pour que la
+matière se raccorde à ce qui l'entoure. TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
+ce que la description demande appartient au sujet et se dessine, quelle que soit la matière dont il est fait.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+
+
+LE SUJET EST SEUL DANS SA CASE : il ne rejoint aucun bord, rien ne se prolonge hors de lui, et il ne s'assemble avec rien.
+
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/revue-da/planche-p1-campagne-v8.png. C'est une scène du
+monde, déjà validée, où bosquet de sapins apparaît PARMI D'AUTRES éléments — pas une image de ce seul sujet.
+Elle donne le style, la matière et la lumière à reprendre pour CE SUJET précis, repéré dans l'image ; le reste de la scène ne se copie pas et n'apparaît pas dans le résultat.
+ELLE NE DONNE PAS LA PRISE DE VUE. C'est une scène unique, rendue avec un point de fuite : les bâtiments y montrent la face tournée vers le centre de l'image. Une sprite se dessine une fois et se
+pose n'importe où, donc elle ne peut pas dépendre d'une position : tu reprends l'angle décrit plus haut, en projection parallèle, et tu ignores la convergence de la scène de référence.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et 96 PIXELS
+dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
+cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
+l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+TR-061 : Trois ou quatre jeunes sapins, chacun à la taille pleine d'un sapin isolé, poussés si serrés que leurs couronnes se chevauchent en une masse dense et vert profond ; le feuillage atteint franchement le bord gauche et le bord droit de l'image, et couvre le bas de l'image d'un bord à l'autre en continu, ainsi deux bosquets posés côte à côte se rejoignent en un mur continu de vert. LES TRONCS SONT VISIBLES, MAIS COURTS : sous la masse des couronnes, les branches basses s'arrêtent au-dessus du sol et laissent voir les fûts bruns et droits de chaque sapin, alignés dans l'ombre du feuillage. CETTE BANDE DE TRONCS NUS VAUT ENVIRON UN DIXIÈME DE LA HAUTEUR DU BOSQUET, pas davantage : on doit voir les fûts sans que le bosquet paraisse monté sur pilotis, et le sous-bois en occupe déjà le bas. ET UN BOSQUET N'EST PAS QUE DES ARBRES : entre les troncs et tout autour d'eux pousse un SOUS-BOIS DE VRAIE FORÊT, dans l'ombre des sapins. CE SONT DES BUISSONS, ET ILS SE RECONNAISSENT : des FOUGÈRES aux frondes découpées et retombantes, des RONCES aux tiges épineuses qui s'emmêlent et s'accrochent, des buissons bas aux branchages visibles et aux petites feuilles serrées — chaque plante se distingue de sa voisine, on voit ses tiges et la forme de ses feuilles. JAMAIS UNE MASSE INVENTÉE de gros trèfles et de grosses herbes indistinctes : c'est ce qui a été rendu deux fois et c'est ce qu'il ne faut pas. Ce sous-bois est dans des VERTS NETTEMENT PLUS SOMBRES ET PLUS PROFONDS que le feuillage éclairé au-dessus, parce que les arbres leur font de l'ombre. IL RESTE AÉRÉ, ET C'EST CE QUI LE REND INQUIÉTANT : les buissons sont espacés, on aperçoit entre eux des trouées d'ombre noire au pied des troncs, et ce sont ces trous sombres qu'on regarde — pas un tapis plein qui bouche tout, qui rassure au lieu d'inquiéter. Quelques ronces s'avancent seules, en tiges nues et épineuses, hors des touffes. Ce sous-bois ferme le bas du bosquet d'un bord à l'autre. LES SAPINS SONT DE LA MÊME COULEUR QUE LE SAPIN ISOLÉ : vert de sapin moyen, franc et légèrement bleuté, éclairé en deux tons — dessus des étages nettement plus clair, dessous plus soutenu. LA MASSE ATTEINT CARRÉMENT LES BORDS de son emprise, sans jamais arrondir ses coins : c'est un massif continu, et deux bosquets voisins doivent se rejoindre sans laisser le moindre vide entre eux.
+
+CONSIGNE SUPPLÉMENTAIRE POUR CE SUJET — elle s'ajoute à tout ce qui précède et ne l'annule pas :
+Le bosquet est seul dans l'image : aucun sol n'est dessiné sous lui, et rien ne pousse autour de lui qui ne fasse partie du sous-bois décrit. Le sol du monde est posé par la carte, jamais par la sprite.
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à environ SOIXANTE-DIX DEGRÉS sous l'horizontale. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

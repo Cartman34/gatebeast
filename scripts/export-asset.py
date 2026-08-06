@@ -111,10 +111,10 @@ def profile_of(code):
     spread = sujet.get("couvert") or sujet["emprise"]
     footprint = int(spread["columns"]), int(spread["rows"])
 
-    return sujet["type"], footprint
+    return sujet["type"], footprint, sujet.get("hauteur")
 
 
-def briefing_fault(kind, footprint, master_size):
+def briefing_fault(kind, footprint, master_size, declared_height=None):
     """None if the master matches what its own consigne should have asked tile_scale for; otherwise
     the sentence explaining the mismatch, for the caller to report rather than resample around.
     """
@@ -126,12 +126,32 @@ def briefing_fault(kind, footprint, master_size):
             return (f"master is {width}x{height}px, tile_scale expects exactly "
                     f"{expected['width']}x{expected['height']}px for a {columns}x{rows} tile")
         return None
-    # A sprite's master is contractual on width only; its height follows the subject's own proportions
-    # and was never fixed, so only the width is checked against tile_scale's figure.
     if width != expected["width"]:
         return (f"master is {width}px wide, tile_scale expects exactly {expected['width']}px for a "
-                f"{columns}x{rows} footprint (height is free, it follows the subject)")
+                f"{columns}x{rows} footprint")
     return None
+
+
+def height_verdict(footprint, master_size, declared_height=None):
+    """Whether the master's height sits in the band its declared height implies — a VERDICT, never a refusal.
+
+    A validator measures and says whether a criterion holds; it refuses nothing and corrects nothing (operator, 2026-08-06, doc/glossaire.md). This one was
+    written as a fatal fault first, and it blocked a path that was perfectly good — exactly the confusion the rule exists to prevent.
+
+    The band matters because nothing else watched the height: a care centre came out twelve tiles tall for eight declared, a thicket at 1.6 for six, and the
+    whole mock-up looked wrongly calibrated with no measure to say why. No single height is right — a ridge, a chimney, a leaning crown move it — but there is
+    a floor and a ceiling, and tile_scale owns both.
+
+    Returns (kept, sentence): kept says whether the criterion holds, the sentence says what was measured against what.
+    """
+    columns, rows = footprint
+    low, high = tile_scale.master_band(columns, rows, declared_height)
+    per_tile = tile_scale.master_definition(columns, rows)["width"] / columns
+    drawn = master_size[1]
+    sentence = (f"hauteur {round(drawn / per_tile, 1)} case(s) pour une fourchette de "
+                f"{round(low / per_tile, 1)} à {round(high / per_tile, 1)} (hauteur déclarée {declared_height})")
+
+    return low <= drawn <= high, sentence
 
 
 def measure(alpha):
@@ -171,13 +191,18 @@ def export(path, force=False):
     the fault still gets INTO the measures, it is just not fatal.
     """
     code = code_of(path)
-    type_name, footprint = profile_of(code)
+    type_name, footprint, height = profile_of(code)
     kind = "tile" if type_name == TILE_TYPE else "sprite"
 
     source = Image.open(path).convert("RGBA")
-    fault = briefing_fault(kind, footprint, source.size)
+    fault = briefing_fault(kind, footprint, source.size, height)
     if fault and not force:
         raise ValueError(f"FAULT {path.name}: {fault}")
+    # LA HAUTEUR EST UN VERDICT, PAS UN REFUS : elle se mesure, elle se dit, et elle laisse passer. Un validateur constate qu'un critère est tenu ou non ; il ne
+    # refuse rien (opérateur, 2026-08-06). Rapportée au lanceur dans sa sortie à lui, et écrite dans les mesures pour que la page de suivi puisse la montrer.
+    kept, sentence = height_verdict(footprint, source.size, height)
+    if not kept:
+        print(f"HORS FOURCHETTE {path.name} : {sentence}")
 
     if kind == "tile":
         delivered = tile_scale.delivery_size(*footprint)
@@ -193,6 +218,7 @@ def export(path, force=False):
     measures["master_size_px"] = {"width": source.size[0], "height": source.size[1]}
     measures["kind"] = kind
     measures["footprint"] = {"columns": footprint[0], "rows": footprint[1]}
+    measures["hauteur"] = {"tenue": kept, "constat": sentence}
     if fault:
         measures["briefing_fault_overridden"] = fault
 

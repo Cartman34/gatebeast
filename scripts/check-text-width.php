@@ -57,9 +57,10 @@ foreach ($paths as $path) {
     foreach ($lines as $index => $line) {
         $number = $index + 1;
         $width = mb_strlen($line);
-        // A Markdown table row CANNOT be folded: a line break inside it ends the row and breaks the table. Nothing can be done about its width, so reporting
-        // it is pure noise — the answer is a shorter cell, which is an editorial choice, never a wrap. Exempt from the ceiling, and from it alone.
-        $unbreakable = (bool) preg_match('/^\s*\|/u', $line);
+        // Two kinds of line CANNOT be folded, and reporting them is pure noise — the only answer would be a shorter text, an editorial choice, never a wrap:
+        // a Markdown table row, whose row ends at the line break, and an inventory entry, which the tooling reads whole by its « - **CODE » opening. Exempt
+        // from the ceiling, and from it alone.
+        $unbreakable = (bool) preg_match('/^\s*\||^- \*\*[A-Z]{2,3}-\d{3} /u', $line);
         if ($width > CEILING && !$unbreakable) {
             echo "{$path}:{$number} : {$width} caractères, plafond " . CEILING . "\n";
             $faults++;

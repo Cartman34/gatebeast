@@ -75,6 +75,9 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 | point de pose | anchor | Le point par lequel le sujet est posé dans le monde : le milieu du bord bas de son emprise. |
 | calque | layer | L'une des cinq familles d'empilement à l'écran : sol, décor au sol, monde, dessus, interface. |
 | élévation | elevation | Le niveau auquel un sujet se tient : le sol, une passerelle, un étage. |
+| port | harbour | Le lieu où les bateaux s'amarrent, dans le monde du jeu. **Ne s'emploie jamais pour un changement de langage d'outil** : on dit alors une *migration*. |
+| grille | grid | La liste de tous les sujets sur la page des sprites : une vignette par sujet, le minimum d'information, rien d'autre. |
+| FSP | full screen popin | La popin plein écran : ce qui s'ouvre par-dessus la page au clic sur une vignette, occupe tout l'écran, et se ferme par une croix en haut à droite. Sur la page des sprites, la FSP d'un sujet porte ses variants, leurs versions, la comparaison et les actions. |
 | inventaire des sujets | subject inventory | Le fichier `assets/sujets.json`, qui déclare types, sujets, variants et images produites ; il fait foi, tous les outils y lisent. |
 | HDC | — | Abréviation d'usage, en conversation seulement, pour l'herbe de clairière (`TR-064`). |
 | HH | — | Abréviation d'usage, en conversation seulement, pour les herbes hautes (`TR-062` et les sujets à venir). |

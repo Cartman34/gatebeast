@@ -79,12 +79,14 @@ def sheet_description(text: str, code: str, qualifier: str = None) -> tuple:
     Without `qualifier`, the description is the first italic span on the line — the base description,
     used by default.
 
-    With `qualifier` (a value like "gate-closed", or a form), the description PROPER TO that qualifier
-    is sought instead: introduced by the fixed phrase "Description propre à la valeur `X`" or "...à la
-    forme `X`", followed by its own italic span — never the base description, and never guessed from
-    the qualifier's own words either. A qualifier that is asked for and finds no such phrase is a
-    FAULT, not a silent fall back to the base description: producing the wrong thing quietly (the
-    plain fence's description for a gate, say) is worse than refusing outright.
+    With `qualifier` (a value like "gate-closed", or a form), the description PROPER TO that qualifier is returned instead: introduced by the fixed phrase
+    "Description propre à la valeur `X`" or "...à la forme `X`", followed by its own italic span — never guessed from the qualifier's own words. A qualifier
+    that is asked for and finds no such phrase is a FAULT, not a silent fall back to the base description: producing the wrong thing quietly (the plain
+    fence's description for a gate, say) is worse than refusing outright.
+
+    Whether that text REPLACES the base description or is ADDED to it is not decided here: this returns
+    one span, its caller assembles the consigne (see generate-sprite.sheet_of, where a value completes
+    by default and replaces only when its field declares defines_kind).
 
     Returns (description, start) so a caller can also cut everything before the description off for
     its own use — the sujet's precisions never include a description, qualified or not.
@@ -123,6 +125,20 @@ sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
 AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
 sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
 demande une lueur, auquel cas sa fiche le dit."""
+
+# WHAT THE IMAGE IS FOR, said before anything else. Without it the generator draws an illustration and reasons like an illustrator: it composes a little scene, sets its
+# subject on a patch of ground, adds what would look good around it. It is not making a picture — it is making ONE PIECE of a map that a renderer will assemble. Told this,
+# every clause that follows stops being arbitrary: the transparent background, the exact width, the ground that is not its business, the light that never varies. Constated
+# on the clearing grass, which came back sitting on a round patch of brown earth because its description mentioned bare soil (operator, 2026-08-06).
+CONTEXTE_FR = """\
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette."""
 
 CAMERA_FR = """\
 Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
@@ -358,8 +374,8 @@ def extra_instructions(code: str, sujet: dict = None, type_: dict = None) -> dic
 
     - the TYPE, under its own "consigne_supplementaire" key: what every subject of that family needs said, and what the common base must NOT say. The base is used by every generation there is, so a
       need proper to one family put there contaminates all the others — a clause forbidding grass in the image, written for a tree that kept sprouting some at its foot, made every grass subject
-      contradict its own description (operator, 2026-08-06). A type is exactly the level where such a clause belongs, and it is also where two families can want opposite things: a tree wants nothing at
-      its foot, a fence wants grass at the foot of its posts.
+      contradict its own description (operator, 2026-08-06). A type is exactly the level where such a clause belongs, and it is also where two families can
+      want opposite things: a tree wants nothing at its foot, a fence wants grass at the foot of its posts.
     - the INVENTORY ENTRY, after the marker above, in italics like every other quoted text there;
     - the subject's own "consigne_supplementaire" key in the inventory of subjects.
 

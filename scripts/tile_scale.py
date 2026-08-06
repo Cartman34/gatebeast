@@ -186,6 +186,39 @@ def master_definition(columns, rows, height=None):
     return {"width": round(box["width"] * factor), "height": round(box["height"] * factor)}
 
 
+# How far a drawing may stray from the height the model computes, ON THE STANDING PART ONLY. There is no single right height and there never will be: a roof
+# ridge, a chimney, a crown leaning one way rather than another all move it, and asking a draughtsman for one exact figure asks him to stop drawing. But there
+# IS a floor and there IS a ceiling, and both come from the model rather than from taste. The GROUND part is not negotiable — it is geometry, the projection of
+# a footprint whose depth the plan relies on to place the subject — so the tolerance never applies to it. What varies is what rises: a quarter either way.
+STANDING_TOLERANCE_LOW = 0.75
+STANDING_TOLERANCE_HIGH = 1.25
+
+
+def master_band(columns, rows, height=None):
+    """The band of acceptable image heights for a subject, in PIXELS, around what master_definition computes.
+
+    Why a band and not a figure (operator, 2026-08-06): a height depends on too many things to be demanded to the pixel, but a drawing that falls below the
+    floor is a subject crushed into its own footprint — nothing rises, and the mock-up has nothing to overlap its neighbours with — while one above the ceiling
+    towers over everything around it. Both are what made the park look wrongly calibrated: a care centre at twelve tiles for eight declared, a thicket at 1.6
+    for six.
+
+    Returns (floor, ceiling). A subject with no declared height, or one that is dug in rather than standing, has no room to vary: its canvas is its footprint,
+    and floor and ceiling meet on it.
+    """
+    box = master_definition(columns, rows, height)
+    flat = master_definition(columns, rows, 0)["height"]
+    # A FLAT SUBJECT HAS A BAND TOO, and refusing to give it one is what broke the path: declared height zero produced floor and ceiling on the same pixel, so a drawing four
+    # pixels short was rejected although it was right. Nothing is drawn to the exact pixel — only a ground TILE is, and that one is checked elsewhere, as a tile.
+    standing = max(box["height"] - flat, 0)
+    play = standing * (STANDING_TOLERANCE_HIGH - 1)
+    # A FLOOR UNDER THE PLAY, or the band closes on the subjects that barely rise. A quarter of a very small standing part is a very small number: a tuft of grass three
+    # tenths of a tile high got a band three pixels wide, which no drawing can hit and which would have refused a perfectly good image. The play is therefore never less
+    # than a tenth of the whole expected height — tight on what stands tall, breathable on what barely stands.
+    play = max(play, box["height"] * 0.1)
+
+    return round(box["height"] - play), round(box["height"] + play)
+
+
 def place(column, row):
     """A pose point expressed in tiles, turned into its pixel position on screen."""
     return {"x": tiles_to_pixels(column), "y": tiles_to_pixels(row)}

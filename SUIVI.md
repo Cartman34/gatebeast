@@ -106,11 +106,25 @@ test, **W** une alerte. Les séries sont indépendantes, continues tant qu'un po
 **`GO` et `STOP` sont les deux seuls mots de reprise et d'arrêt du dépilement**, et ils sont stricts : rien d'autre ne vaut reprise, aucune phrase ne s'interprète comme un feu vert, et le silence
 encore moins. Tant qu'aucun `GO` n'est donné, l'agent n'écrit que ce document.
 
+**TOUT ARRÊT MET FIN AU `GO`.** Une question de l'opérateur, un ordre ponctuel, une interruption : dès que l'agent s'arrête, l'autorisation est consommée. Elle ne se reprend pas d'elle-même une fois
+la parenthèse refermée — il en faut une neuve, donnée explicitement. **À porter aux règles du dépôt**, avec les deux modes, au prochain `GO`.
+
+**Le compteur de chaque série vit ici**, pour survivre au résumé du contexte : la numérotation est **continue tant qu'un seul point de la série reste ouvert**, et ne repart à 1 que lorsque la série est
+entièrement répondue. Dernier numéro attribué — **Q4**, **P3**, **S2**, **T1**, **W1**.
+
 | Code | Point | Attend | État |
 |---|---|---|---|
-| Q2 | Verdict sur les deux densités de l'herbe de clairière, produites le 2026-08-06 | l'opérateur | ouvert |
+| Q1 | **Basculer la revue sur un serveur local** (`php -S` depuis le dépôt) au lieu des artefacts : plus de publication, plus d'adresses à tenir, plus de limite de poids, et surtout les remarques écrites dans un fichier versionné au lieu du navigateur. Décidé « à faire », non engagé | l'agent, au prochain `GO` | à faire |
+| P10 | Migrer `artefacts/suivi-sprites/build.py` vers PHP **et le mettre au propre** — **fait le 2026-08-06** : `build.php` produit la page publiée, bâti sur `artefacts/lib/` (Inventaire, Vignette, Releve, Theme). Le Python reste en place, non supprimé | — | fait |
+| S4 | Le bouton fixe de copie du relevé doit exister sur **toutes** les pages qui portent un relevé, et ce morceau est à factoriser au lieu d'être recopié | l'agent | à faire |
+| S5 | La comparaison de variants sélectionnés, à 48 px par case, dans la FSP du sujet | l'agent | à faire |
+| S6 | L'index des artefacts ne montre pas la scène de référence : il lit encore le tableau du suivi, alors que le registre est désormais `doc/artefacts.md` | l'agent | à faire |
+| ~~Q4~~ | ~~La position des deux poteaux du portillon~~ | — | **résolu** — l'image validée le dit : au tiers et aux deux tiers, les lisses jusqu'aux deux bords |
+| ~~S3~~ | ~~Refonte de la page des sprites en grille et FSP~~ | — | **fait le 2026-08-06** — grille, FSP plein écran, visionneuse désactivée dedans, relevé replié, vignettes alignées par le bas |
 | P3 | Déplacer vers la méthode commune les règles qui ne sont pas propres à GateBeast — les deux modes, le dépilement, les lots, la pile | l'opérateur | à proposer |
 | S2 | L'angle de vue des touffes d'herbe : elles sortent vues de face, la caméra du projet plonge à soixante-dix degrés | l'agent | à corriger |
+| ~~Q2~~ | ~~Verdict sur les deux densités de l'herbe de clairière~~ | — | **caduque** — les deux descriptions ont été refaites depuis, les images sont à reproduire |
+| ~~Q3~~ | ~~Comparaison, actions et refonte de la page des sprites~~ | — | **résolu** — variants sélectionnés à 48 px par case, la grille ne fait que lister, la vue de sujet porte le reste |
 | ~~Q1~~ | ~~Le nom du sujet `TR-064`~~ | — | **résolu** — « herbe de clairière », HDC entre nous |
 | ~~S1~~ | ~~Restructurer `AGENTS.md`~~ | — | **résolu** — devenu un aiguilleur sans contenu, les règles vivent dans `doc/regles-du-depot.md`, structuré en sections |
 | ~~P1~~ | ~~Empêcher le générateur d'images de lire les règles du dépôt~~ | — | **résolu** — lecture automatique coupée à l'appel, plus l'aiguilleur, plus la consigne : trois barrières |
@@ -218,6 +232,11 @@ la restructuration faite, jamais dans le même geste.
 
 Le dépôt de la méthode commune portait déjà deux fichiers modifiés à l'arrivée — `execution.md` et `revue-visuelle.md` : ils ne sont pas de moi, et je n'en gère pas l'historique.
 
+**Fin de séance du 2026-08-06.** Tout est enregistré. Ce qui reste dû, dans l'ordre : la bascule sur un serveur local (Q1) ; les quatre points d'herbe du relevé du parc — berges aléatoires avec HDC
+et herbes hautes, herbes à retirer en (56,34), bandes vides du nord ; le verdict de l'opérateur sur les portillons horizontaux, qui bloque les verticaux ; les deux sujets d'herbe haute à créer, qui
+sont sa décision ; les propositions `p3` du centre de soin et de la maison de ferme, hors fourchette de hauteur ; et la migration des pages du parc et de la scène vers les modules partagés, qui
+portent encore leurs propres copies du relevé et de la lecture d'inventaire.
+
 **Mode en cours** : aucun, et le dépilement attend une confirmation explicite. Un ordre reçu le 2026-08-06 est **exécuté aux trois quarts** : les définitions sont passées au glossaire (inventaire des
 sujets, référentiel toujours qualifié), la façon d'écrire une description au mode d'emploi de l'inventaire, l'entête de `AGENTS.md` et la règle générale des entêtes à la méthode. **Reste à faire de
 cet ordre : relancer les deux densités d'herbe** — la moyenne et la dense, l'une après l'autre et jamais en parallèle tant qu'aucun verrou ne protège l'inventaire, avec la planche de campagne en
@@ -234,7 +253,174 @@ référence. La clairsemée n'est pas concernée : sa description est la descrip
 7. **`CH-019` chemin** — couleur encore trop jaune ; sa fiche dit « terre battue » et décrit du sable clair, à trancher.
 8. **`CH-020` cours d'eau** — angle de caméra à reprendre, fiche pas encore revue.
 
-### Page du parc — deux défauts relevés le 2026-08-06
+### Les portillons — ce qui est constaté le 2026-08-06
+
+**Capture de l'opérateur** : le portillon est-ouest fermé, en petit. « J'ai l'impression que ça ne respecte pas le style des barrières. » **Constat vérifié en comparant les deux images agrandies** : la
+clôture validée montre des lisses **fines et d'un brun sombre** et des poteaux **étroits** à dessus scié pâle ; le portillon est sorti avec des rondins **beaucoup plus épais et bien plus clairs**,
+presque rosés — c'est un autre bois. La construction, elle, est bonne : deux poteaux au tiers et aux deux tiers, les lisses jusqu'aux deux bords, le battant entre les poteaux.
+
+**La cause mécanique du portillon nord-sud raté est trouvée** : l'inventaire ne déclarait pas que le portillon rend la composition inapplicable, alors que le code et la conception le supposaient. Sa
+consigne recevait donc « DEUX poteaux verticaux » et « les lisses courent d'un bord à l'autre » par-dessus sa propre description. Déclaration ajoutée le 2026-08-06.
+
+**Ordre de l'opérateur** : ne rien lancer sur les portillons **verticaux** tant que les horizontaux ne sont pas corrigés.
+
+### Relevé de l'opérateur sur le plan du parc — 2026-08-06, plan A « le semis clairsemé »
+
+Reçu tel quel, case par case, avant tout traitement.
+
+| Case | Ce que dit l'opérateur |
+|---|---|
+| (35,11) à (64,7) | Cours d'eau, points 4 à 11 : (35,11), (40,11), (40,10), (45,10), (45,9), (55,9), (55,7), (64,7). « cette barrière et celles au dessus sautent » |
+| (24,46) | « Ajouter pommier ici » |
+| (21,45) | « La zone de herbes hautes est coupée par la barrière, c'est ok mais en dessous de la barrière, il faut enlever cette partie de zone d'herbes hautes et revenir à un pattern normal » |
+| (8,41) | « Les deux barrières ici devrait être en 10,43 » |
+| (56,34) | « Il faut enlever quelques herbes par ici, en dehors de la zone herbes denses » |
+| (45,43) | « La barrière a été décalée au lieu de décaler l'arbre, c'est très con. ça casse le level design. » |
+| (46,42) | « La barrière a été décalée au lieu de décaler l'arbre, c'est très con. ça casse le level design. » |
+| (56,48) | « Sur cette bande, les herbe doit respecté un patern aléatoire et pas systématiquement. Tu dois appliquer le pattern classique. Je ne sais pas pourquoi tu à créer une bande complète d'herbe » |
+| (28,7) | « Règle générale : de l'herbe autour des cours d'eau, avec de l'aléatoire, plus HDC et parfois des HH » |
+| (42,2) | « Bande blanche de hauteur 4 sans herbe ni arbre, pas normal » |
+| (24,2) | « De 1,1 à ici, ça reste vide » |
+
+**Ce que j'en retiens de transverse, au-delà des cases** : le semis d'herbe ne doit **jamais** produire de bande pleine ni de rangée régulière — le tirage aléatoire est la règle partout, et là où j'ai
+posé des bandes continues, c'est une faute. **Le tracé du cours d'eau prime sur la clôture** : une barrière qu'il traverse saute, et celles au-dessus avec. Et surtout : **on ne décale jamais une
+barrière pour éviter un arbre, on décale l'arbre** — la clôture porte le dessin du niveau, l'arbre est ce qui s'adapte.
+
+### Ce qui délimite le parc — précisé par l'opérateur le 2026-08-06
+
+**Le parc est fermé, mais la clôture n'est pas seule à le fermer** : les bosquets, le cours d'eau et le bâtiment délimitent aussi. Une enceinte qui ferait le tour complet serait donc fausse.
+
+**Et une barrière ne longe jamais un bâtiment** : « comme dans la réalité, on ne met pas une barrière le long d'un bâtiment alors que le bâtiment est un mur ». Toute case de clôture collée au centre
+de soin est à retirer — le mur du bâtiment fait la limite.
+
+### P10 — migrer la page des sprites de Python vers PHP et la mettre au propre — plan écrit, chantier non engagé
+
+**On dit MIGRATION, jamais « port »** (opérateur, 2026-08-06) : dans ce monde-là, **un port est un lieu, celui où les bateaux s'amarrent** — une ville portuaire en aura un, et le mot appartient au
+jeu avant d'appartenir à l'outillage. Une migration change le langage d'un outil ; elle n'a rien à voir avec un quai.
+
+**Décidé par l'opérateur le 2026-08-06**, avec une mise au propre dans le même geste : « j'ai l'impression que tu te traînes du vieux code ». Le constructeur actuel,
+`artefacts/suivi-sprites/build.py`, fait **trois mille deux cents lignes**. La migration demande de le lire en entier, et elle se mène **à côté** du Python, qui reste en place et continue de produire
+la page : rien ne casse tant que les deux sorties ne concordent pas.
+
+**Ce qui se garde, et qui marche** : la lecture de l'inventaire des sujets, les vignettes redimensionnées à la taille d'affichage, les actions par variant et leur récapitulatif copiable, les filtres
+par état, les mesures et le rapport par image, la comparaison des versions antérieures, la grille et la FSP écrites le 2026-08-06.
+
+**Ce qui est à jeter ou à vérifier avant de migrer** : tout ce qui lit le catalogue gelé, les jugements automatiques (l'agent qui notait est débranché depuis le 2026-08-04), les chemins et noms
+hérités du déménagement de `conceptions/`, et les aides qui n'ont plus d'appelant. **Rien ne se migre sans appelant vérifié** : sans ce tri, on recopie le mort avec le vif.
+
+**L'ordre des étapes** : lire et inventorier ce qui est appelé ; écrire le constructeur PHP **à côté** du Python, qui reste en place et continue de produire la page ; comparer les deux sorties
+**fichier contre fichier** ; basculer quand elles concordent. **Le Python ne se supprime pas** — personne ne l'a demandé, et le garder est ce qui fait que cette migration ne peut rien casser
+(opérateur, 2026-08-06). La page ne change pas de forme pendant la migration — ce qui reste à lui ajouter, la comparaison de variants sélectionnés à 48 pixels par case,
+s'écrit après, dans le neuf.
+
+**Engagé le 2026-08-06, trois modules écrits et éprouvés sous `artefacts/lib/`** : `Inventaire.php`, le lecteur unique de l'inventaire des sujets — types, sujets, noms lus dans la documentation,
+champs de variants trouvés d'eux-mêmes, version courante et antérieures ; `Vignette.php`, la fabrique de vignettes en `gd`, qui réduit une image à sa taille d'affichage en gardant la transparence et
+met en cache sous `var/tmp/` — mesuré sur les douze sujets, **3 246 ko ramenés à 278** ; `Releve.php`, le relevé copiable avec son **bouton fixe en bas à droite**, son texte replié et sa copie qui
+passe par un champ caché, la seule qui fonctionne dans le cadre d'un artefact. La page dit **quoi** copier, le module dit **comment**.
+
+**LA MIGRATION DÉCOUPE, ELLE NE RECOPIE PAS UN GROS FICHIER EN UN AUTRE** (opérateur, 2026-08-06). La version PHP se range en fichiers séparés, chacun d'un seul métier et **réutilisable par les autres
+pages** : la lecture de l'inventaire, la fabrique de vignettes, le rendu d'une image, la barre d'actions et son relevé copiable, les filtres, la mise en page. Les pages du parc et de la scène portent
+déjà des copies de plusieurs de ces morceaux — c'est ce découpage qui les fera cesser d'exister en trois exemplaires.
+
+**Ce qui reste dû sur cette page, en plus du port** : la comparaison de variants ; le bouton fixe de copie du relevé, à **factoriser** parce qu'il est recopié dans chaque page qui porte un relevé.
+
+### Nettoyage de `local/` — fait le 2026-08-06
+
+**L'opérateur** : « qui a créé les fichiers `local/prompt-*.txt` ? Est-ce encore utile ? ça ressemble à des fichiers de l'appli mais l'appli ne doit JAMAIS générer de fichier dans `local/` ». **Réponse
+: c'est la commande de sprite**, qui y écrivait son brouillon de consigne à chaque appel sans génération — trente-cinq s'y étaient accumulés. Corrigé : les brouillons vont sous
+`var/generations/brouillons/`, avec les autres traces d'exécution, et la règle est écrite. Rien n'est perdu — un brouillon se refait en relançant la commande, et la consigne d'une image produite est
+figée à côté de cette image.
+
+### État du relevé du 2026-08-06 sur le plan — cinq points étaient déjà faits
+
+Vérifié case par case avant de toucher au plan : **le cours d'eau va bien jusqu'en (64,7)**, points 4 à 11 posés ; **aucune barrière ne se trouve sur ou au-dessus du cours d'eau** ; **le pommier est
+en (24,46)**. Ces cinq points datent du relevé du 2026-08-05, ils ont été appliqués, mais **rien ne les marquait résolus** — ils sont donc revenus dans le relevé suivant. C'est exactement le défaut
+que l'opérateur a signalé, et la démonstration qu'il coûte cher : il a redit cinq choses déjà faites.
+
+**Restent à traiter** : les barrières de (8,41) à porter en (10,43) ; l'arbre à décaler en (45,43) et (46,42) au lieu de la barrière ; la nappe d'herbes hautes sous la barrière en (21,45) ; quelques
+herbes à retirer en (56,34) ; la bande pleine d'herbe en (56,48) à casser en semis ; l'herbe des berges à rendre aléatoire avec HDC et parfois HH ; la bande vide de (42,2) ; le vide de (1,1) à (24,2) ;
+et les trois cases de clôture qui portent la mauvaise forme — (1,43), (1,5), (64,8).
+
+### T2 — l'épreuve de projection, passée le 2026-08-06
+
+**La question** : le générateur sait-il dessiner en projection parallèle, où un sujet a le même aspect où qu'il soit, ou reste-t-il en perspective centrale, où chaque copie se tourne vers un point de
+fuite ? Une sprite se dessine une fois et se pose partout : la perspective centrale la rend fausse dès qu'elle bouge.
+
+**L'épreuve** : une seule image, cinq cases sur deux — le même cabanon **cubique** répété cinq fois sur une rangée. Le cube est le témoin qui trahit une projection, parce qu'il ne montre que deux
+faces : sous une projection parallèle, les cinq copies montrent les deux mêmes ; sous une centrale, celle de gauche montre sa face droite et celle de droite sa face gauche.
+
+**Le verdict, pris à la mesure** : les cinq copies montrent **les deux mêmes faces au même angle**, arêtes verticales parallèles, faîtage dans le même sens. Silhouettes mesurées : 84, 84, 85, 96 et
+84 pixels de large pour 90 à 91 de haut. **Le générateur tient une projection parallèle dès qu'on la lui demande explicitement.** L'épreuve vit dans `local/extraits/`, le script qui l'a commandée et
+celui qui la mesure aussi.
+
+**Un second constat, qui n'était pas la question** : entre deux copies, 20 à 27 % des pixels diffèrent. Ce n'est pas de la perspective — les silhouettes sont de même taille et les faces les mêmes —
+c'est la variation ordinaire entre deux dessins d'une même chose. Le générateur **ne se répète pas à l'identique**, ce qui confirme par la mesure ce que la cascade avait montré à l'œil.
+
+### Le chemin — la cause de trois échecs, trouvée le 2026-08-06
+
+Le chemin est sorti une troisième fois faux : un **ruban jaune d'or, bombé**, exactement la « brioche » que l'opérateur avait nommée. Sa description ne ment pourtant plus — elle dit le beige sable
+clair de la planche. **La cause est dans le SOCLE**, et elle vaut pour toute matière de sol : le style commun demande des « volumes sculptés et arrondis, comme de petites figurines modelées » et des
+« couleurs franches, riches et saturées ». Appliquées à un chemin, ces deux clauses le **soulèvent** et l'**éclairent** — elles fabriquent le bourrelet et le jaune vif.
+
+**Corrigé au bon niveau** : le type `chemin` porte désormais sa propre consigne, qui désamorce les deux clauses pour lui seul — aucun volume, la surface est celle du terrain ; couleur douce et
+terreuse, jamais éclatante. Le socle reste vrai pour tout ce qui se dresse. **À faire de même pour les types `sol` et `cours-d-eau`**, qui sont dans le même cas et n'ont pas encore été éprouvés.
+
+### Le défaut de hauteur, mesuré sujet par sujet — 2026-08-06
+
+Le validateur contrôle désormais la hauteur contre une fourchette, et voici où en est chaque sprite courante, **en cases de haut** (la mesure ne dépend donc pas de la finesse du maître, qui a changé
+en cours de route) :
+
+| Sujet | Dessiné | Fourchette | Verdict |
+|---|---|---|---|
+| Bosquet de sapins | 1,6 | 3,4 à 4,4 | **beaucoup trop bas** |
+| Pommier | 2,7 | 3,5 à 4,2 | trop bas |
+| Sapin | 4,8 | 3,4 à 4,4 | trop haut |
+| Barrière, toutes pièces | 1,0 | 1,1 à 1,4 | trop bas, de peu |
+| Chemin | 0,5 | 0,9 | trop bas |
+| Grand chêne, herbe haute, les trois herbes de clairière, centre de soin, maison de ferme | — | — | **dans la fourchette** |
+
+**Ce que ça dit** : le défaut que l'opérateur voyait à l'œil est réel et il touche quatre sujets, pas tous. Le bosquet est le plus fautif — il fait moitié moins que son plancher. Ces quatre-là sont à
+regénérer avec la consigne qui dit maintenant la fourchette ; les autres n'ont rien à refaire.
+
+### Relevé de l'opérateur sur la maquette montée — 2026-08-06
+
+| Case | Ce que dit l'opérateur |
+|---|---|
+| (1,43) | « ça devrait être un variant NW ici » |
+| (1,5) | « ça doit être un variant NS ici » |
+| (64,8) | « ça doit être un variant NS ici » |
+| (26,4) | « La hauteur des bosquets n'est pas respecté, ils dépassent normalement les 2 de hauteurs, ils doivent être à 4 ou 6 je crois. » |
+| (56,41) | « On voit qu'il y a un vrai probleme de hauteur » |
+
+**Ce que j'en retiens** : trois cases de clôture portent la mauvaise forme — le plan pose une pièce qui ne relie pas les bons bords. Et le défaut de hauteur est confirmé à l'œil sur la maquette, en
+plus de la mesure : le bosquet occupe 1,6 case de haut là où sa hauteur déclarée en demande six.
+
+### Ce qu'une emprise veut dire, redit par l'opérateur le 2026-08-06
+
+**Captures** : le plan, où le centre de soin occupe un bloc plein de seize cases sur dix ; et la maquette, où le bâtiment tient **entièrement dans ce bloc** sans rien dépasser. **L'opérateur** :
+« la surface d'emprise, c'est censé être la surface au sol avec une tolérance sur la dernière case pour faire les transitions mais, en profondeur, c'est à respecter et ça doit dépasser en hauteur ;
+là, actuellement l'image ne dépasse pas des cases et le rendu n'est pas du tout celui attendu. »
+
+**Ce que ça veut dire pour la chaîne** : l'emprise est ce que le sujet pose **au sol**, et rien d'autre. Sa profondeur se respecte case pour case, la dernière rangée tolérant un débord pour la
+transition. **Ce qui se dresse doit MONTER AU-DESSUS de ce bloc** : le bâtiment occupe le bas de l'image sur son emprise projetée, et sa hauteur déborde vers le haut. Aujourd'hui l'image reçue est
+remplie de bout en bout par le sujet, sans distinction entre ce qui touche le sol et ce qui s'élève, et la maquette n'a donc rien à faire dépasser.
+
+### Maquette du parc — deux défauts relevés le 2026-08-06
+
+**Capture de l'opérateur** : un pied d'arbre, et juste devant lui, en bas, une touffe d'herbe **recouverte par le tronc** au lieu de passer devant. « Sur la maquette une herbe devant doit passer
+devant. » L'ordre d'empilement ne suit donc pas la profondeur : un sujet posé sur une rangée plus proche de la caméra doit se dessiner **par-dessus** ceux des rangées plus lointaines, quel que soit
+son type.
+
+### Maquette du parc — un défaut de calibrage relevé le 2026-08-06
+
+**L'opérateur, sur la maquette montée** : les pommiers paraissent **tout petits**, le centre de soin aussi, **alors que les sapins sont énormes**. Les tailles à l'écran ne sont donc pas cohérentes
+entre sujets — un bâtiment de seize cases ne peut pas paraître plus petit qu'un arbre. À diagnostiquer sur ce que la maquette applique à chaque sprite : l'emprise, le couvert, ou la définition du
+fichier.
+
+### Page du parc — trois défauts relevés le 2026-08-06
+
+**Capture du 2026-08-06 — le bouton « Copier le récapitulatif » ne marche plus.** Il est bien affiché, sous la ligne « 1345 cases déclarées », et **il fonctionnait avant** : c'est une régression.
+L'opérateur clique, rien ne se passe. À reproduire, à trouver en console, à corriger.
 
 **Une remarque traitée n'est jamais marquée résolue, donc elle revient.** L'opérateur relit le plan, retrouve ses anciennes remarques mêlées aux neuves, et redit ce qui est déjà fait. **Ce qui est
 traité doit se marquer comme résolu** sur le plan lui-même, pour que la lecture suivante ne montre que ce qui reste dû.
@@ -681,16 +867,18 @@ Décidées avec l'opérateur ; elles remplacent les comptes rendus en conversati
 
 | Artefact | Adresse | État |
 |---|---|---|
-| **Index des artefacts** — la porte d'entrée vers tous les autres, bâtie sur ce tableau même (`artefacts/index/`) | https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949 | vivant, ouvert le 2026-08-04 |
-| **Audit de l'inventaire** — les écarts avec les six planches, à arbitrer ligne par ligne (`artefacts/audit-inventaire/`) | https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa | vivant, en attente d'arbitrage |
-| **Suivi des sprites** — l'unique endroit où se lit l'état de la production | https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c | vivant, republié le 2026-08-04 |
-| **Plans de composition** — tout plan déclaré sous `assets/poc/`, découverte automatique (`artefacts/plans-de-composition/`) | https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9 | vivant, ouvert le 2026-08-04 |
-| **Tour de nettoyage** — 31 éléments relevés, un verdict par ligne (`artefacts/nettoyage/`) | https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c | archivé |
-| **Planches de référence** — chaque planche avec son rapport noté | https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413 | archivé |
+| **Index des artefacts** — la porte d'entrée vers tous les autres | https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949 | vivant, ouvert le 2026-08-04 |
+| **Audit de l'inventaire** — les écarts avec les six planches | https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa | archivé — à reprendre plus tard |
+| **Suivi des sprites** — l'état de la production, sujet par sujet | https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c | vivant, republié le 2026-08-06 |
+| **Plans de composition** — tout plan déclaré sous `assets/poc/` | https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9 | archivé |
+| **Tour de nettoyage** — 31 éléments, un verdict par ligne | https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c | archivé |
+| **Planches de référence** — chaque planche et son rapport noté | https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413 | archivé |
 | **Calibration de l'échelle humaine** | https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40 | archivé |
-| **Direction artistique** (historique de la revue) | https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5 | clos — DA validée |
-| **Son** (essais, plafond constaté) | https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8 | clos — synthèse abandonnée |
-| **Le parc** — plans de composition, maquette montée, commentaire par zone (`artefacts/parc/`) | https://claude.ai/code/artifact/5f9bb2af-9126-44e6-b953-59afb7ab4e28 | vivant, ouvert le 2026-08-05 avec les trois plans ; la maquette montée et le commentaire par zone restent à ajouter |
+| **Direction artistique** — l'historique de la revue | https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5 | clos — DA validée |
+| **Son** — les essais et le plafond constaté | https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8 | clos — synthèse abandonnée |
+| **La maquette du parc** — la scène montée, à trois tailles de case | https://claude.ai/code/artifact/1a5e7074-017e-40b3-9366-005ead586562 | vivant, republié le 2026-08-06 |
+| **Maquette Campagne** — 32 × 24 cases, plan et maquette | https://claude.ai/code/artifact/9c6cbb31-5f72-4db7-a8dc-237550866ce8 | vivant, ouvert le 2026-08-06 |
+| **Le plan de composition du parc** — déclaré case par case | https://claude.ai/code/artifact/5f9bb2af-9126-44e6-b953-59afb7ab4e28 | vivant, ouvert le 2026-08-05 |
 
 ## Ce qui attend l'opérateur
 

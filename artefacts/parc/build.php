@@ -18,7 +18,10 @@
  */
 
 $root = __DIR__ . '/../..';
-$declarations = glob("$root/assets/maquette/plan-*.json");
+// LE PLAN ET LA SORTIE SE DONNENT EN ARGUMENT, le parc n'étant que la valeur par défaut : il y a d'autres plans à présenter — la scène de référence de 32 × 24 d'abord —, et
+// un constructeur qui ne sait bâtir qu'une page oblige à le recopier pour la suivante. Sans argument, il découvre les plans du parc comme avant.
+$declarations = isset($argv[1]) ? [$argv[1]] : glob("$root/assets/maquette/plan-*.json");
+$outputPath = $argv[2] ?? __DIR__ . '/page.html';
 sort($declarations);
 if ($declarations === []) {
     fwrite(STDERR, "FAULT aucun plan déclaré sous assets/maquette/\n");
@@ -107,7 +110,14 @@ foreach ($declarations as $file) {
 
   <div class="barre">
     <p class="mode">Clique une case du plan pour lui attacher une remarque. Les cases commentées se marquent en rouge.</p>
-    <button type="button" class="taille">Taille réelle</button>
+    <?php // LES TROIS TAILLES DE CASE, comme sur la maquette montée : le plan se lit à la même échelle que la scène, et la comparaison entre les deux cesse d'être un
+          // exercice de mémoire. La taille est FIXE, elle ne s'ajuste pas à la fenêtre — ce qui dépasse se parcourt, le cadre défile et se tire à la souris. ?>
+    <span class="zooms">
+      <button type="button" class="zoom" data-zoom="24" aria-pressed="true">24 px</button>
+      <button type="button" class="zoom" data-zoom="32" aria-pressed="false">32 px</button>
+      <button type="button" class="zoom" data-zoom="48" aria-pressed="false">48 px</button>
+    </span>
+    <button type="button" class="taille">Ajuster à la fenêtre</button>
     <?php // Le récapitulatif se copie AUSSI d'ici, en tête du plan : la page vit dans un cadre qui ne défile pas de lui-même, donc un bouton posé tout en bas se cherche. ?>
     <button type="button" class="copier">Copier le récapitulatif</button>
   </div>
@@ -241,6 +251,12 @@ $page = <<<HTML
   .dessin svg { display: block; width: 100%; height: auto; }
   /* Taille réelle : le dessin reprend ses propres dimensions et la bande défile de côté — seule façon de lire une case dans un plan de soixante-quatre cases de large. */
   .dessin.reelle svg { width: auto; max-width: none; }
+  /* LES TROIS TAILLES DE CASE, et la taille est FIXE : le dessin ne s'écrase plus pour tenir dans la fenêtre, il garde ses cases à 24, 32 ou 48 pixels et ce qui
+     dépasse se parcourt — en largeur seulement, la page s'allongeant d'elle-même en hauteur. */
+  .zooms { display: inline-flex; gap: .3rem; }
+  .zoom[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .zone { overflow-x: auto; overflow-y: visible; }
+  .dessin.fixe svg { width: auto; max-width: none; }
   .source { margin: 0; font-family: var(--mono); font-size: .72rem; color: var(--muted); }
 
   .zone { position: relative; }
@@ -287,7 +303,9 @@ $page = <<<HTML
   }
   .saisie-boutons { display: flex; gap: .5rem; }
 
-  .remarques { display: flex; flex-direction: column; gap: .7rem; max-width: 78ch; }
+  /* PLEINE LARGEUR : une remarque est une phrase de l'opérateur, pas un paragraphe à lire au long — la borner à 78 caractères la repliait sur trois lignes courtes au milieu d'une page large, avec
+     des marges vides de part et d'autre. La mesure de confort de lecture vaut pour de la prose, jamais pour une liste de notes courtes qu'on parcourt. */
+  .remarques { display: flex; flex-direction: column; gap: .7rem; }
   .remarques-head { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
   .remarques-head h3 { margin: 0; font-size: 1.05rem; flex: 1 1 auto; }
   .remarques-vides { margin: 0; color: var(--muted); font-size: .9rem; }
@@ -342,7 +360,9 @@ document.querySelectorAll('.plan').forEach(function (section) {
   var rouvrir = section.querySelector('.rouvrir');
   var liste = section.querySelector('.remarques ul');
   var vide = section.querySelector('.remarques-vides');
-  var copier = section.querySelector('.copier');
+  // TOUS les boutons de copie, pas le premier venu : la page en porte deux — un en tête du plan, un sous les remarques —, et n'en câbler qu'un laissait l'autre inerte. L'opérateur a cliqué celui du
+  // bas, sous le compte des cases déclarées, et rien ne s'est produit : le bouton existait, il n'écoutait rien.
+  var copiers = Array.prototype.slice.call(section.querySelectorAll('.copier'));
   var effacer = section.querySelector('.effacer');
   var taille = section.querySelector('.taille');
 
@@ -374,7 +394,7 @@ document.querySelectorAll('.plan').forEach(function (section) {
   function resolue(remarque) {
     var cle = remarque.colonne + ',' + remarque.ligne;
 
-    return Boolean(traitees[cle]) && !rouvertes[cle];
+    return Boolean(traitees[cle]) && !rouvertes[cle] && !remarque.neuve;
   }
 
   /* La case sous un point de l'écran, dans le repère du dessin : le dessin est affiché à la largeur que la page lui laisse, donc tout passe par son échelle du moment. Rend
@@ -462,7 +482,7 @@ document.querySelectorAll('.plan').forEach(function (section) {
     });
     // Les deux commandes restent OFFERTES, même sans remarque : un bouton qui apparaît et disparaît selon l'état oblige à deviner s'il existe, et l'opérateur a constaté
     // l'écart avec la page des sprites, où ils sont toujours là. Copier un récapitulatif vide ne coûte rien ; ne pas trouver le bouton, si.
-    copier.disabled = false;
+    copiers.forEach(function (bouton) { bouton.disabled = false; });
     effacer.disabled = false;
   }
 
@@ -523,7 +543,9 @@ document.querySelectorAll('.plan').forEach(function (section) {
     remarques = remarques.filter(function (remarque) {
       return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
     });
-    remarques.push({colonne: vise.colonne, ligne: vise.ligne, texte: texte});
+    // NEUVE : écrite APRÈS la résolution que le plan déclare. Sans cette marque, une remarque posée sur une case déjà traitée naissait grise, donc lue comme réglée alors qu'elle venait d'être écrite
+    // — l'opérateur l'a constaté sur « (47,43) Herbe rase ». Ce que le plan déclare résolu, ce sont les remarques d'avant lui, jamais celles qui suivront.
+    remarques.push({colonne: vise.colonne, ligne: vise.ligne, texte: texte, neuve: true});
     retenir();
     saisie.hidden = true;
     vise = null;
@@ -571,6 +593,7 @@ document.querySelectorAll('.plan').forEach(function (section) {
     }
   });
 
+  copiers.forEach(function (copier) {
   copier.addEventListener('click', function () {
     // Le récapitulatif ne porte QUE ce qui attend encore : renvoyer une remarque déjà traitée la ferait refaire.
     var vivantes = remarques.filter(function (remarque) { return !resolue(remarque); });
@@ -608,6 +631,7 @@ document.querySelectorAll('.plan').forEach(function (section) {
     saisie.style.top = '8px';
     saisieTexte.select();
   });
+  });
 
   effacer.addEventListener('click', function () {
     remarques = [];
@@ -616,9 +640,38 @@ document.querySelectorAll('.plan').forEach(function (section) {
     afficher();
   });
 
-  taille.addEventListener('click', function () {
-    taille.textContent = dessin.classList.toggle('reelle') ? 'Ajuster' : 'Taille réelle';
+  /* LA TAILLE DE CASE COMMANDE LA LARGEUR DU DESSIN, et elle est fixe : vingt-quatre, trente-deux ou quarante-huit pixels, comme sur la maquette montée, pour que
+     le plan et la scène se lisent à la même échelle. Ce qui dépasse se parcourt en largeur ; « Ajuster à la fenêtre » rend la main à la mise en page. */
+  /* LA LARGEUR SE CALCULE SUR LE DESSIN ENTIER, PAS SUR LES SEULES CASES : le tracé porte aussi son titre, ses marges et sa légende, tous comptés dans son repère.
+     Poser la largeur à « colonnes fois la taille de case » donnait donc des cases plus grandes que demandé — le dessin entier faisait la taille de sa grille seule.
+     On passe par le rapport du repère : une case du repère vaut « cote » unités, on veut qu'elle en fasse « pixels » à l'écran, et tout le reste suit. */
+  function largeurPour(pixels) {
+    return svg.viewBox.baseVal.width / Number(dessin.dataset.cote) * pixels;
+  }
+
+  function zoomer(pixels) {
+    dessin.classList.add('fixe');
+    svg.style.width = largeurPour(pixels) + 'px';
+    taille.textContent = 'Ajuster à la fenêtre';
+    Array.prototype.forEach.call(section.querySelectorAll('.zoom'), function (bouton) {
+      bouton.setAttribute('aria-pressed', Number(bouton.dataset.zoom) === pixels ? 'true' : 'false');
+    });
+  }
+
+  Array.prototype.forEach.call(section.querySelectorAll('.zoom'), function (bouton) {
+    bouton.addEventListener('click', function () { zoomer(Number(bouton.dataset.zoom)); });
   });
+
+  taille.addEventListener('click', function () {
+    var fixe = dessin.classList.toggle('fixe');
+    svg.style.width = fixe ? largeurPour(24) + 'px' : '';
+    taille.textContent = fixe ? 'Ajuster à la fenêtre' : 'Taille par case';
+    Array.prototype.forEach.call(section.querySelectorAll('.zoom'), function (bouton) {
+      bouton.setAttribute('aria-pressed', fixe && Number(bouton.dataset.zoom) === 24 ? 'true' : 'false');
+    });
+  });
+
+  zoomer(24);
 
   document.addEventListener('keydown', function (evenement) {
     if (evenement.key === 'Escape' && !saisie.hidden) {
@@ -633,5 +686,5 @@ document.querySelectorAll('.plan').forEach(function (section) {
 </script>
 HTML;
 
-file_put_contents(__DIR__ . '/page.html', $page);
-printf("artefacts/parc/page.html — %d plan(s), %.1f Ko\n", count($declarations), strlen($page) / 1024);
+file_put_contents($outputPath, $page);
+printf("%s — %d plan(s), %.1f Ko\n", $outputPath, count($declarations), strlen($page) / 1024);

@@ -21,7 +21,11 @@ require_once "$root/scripts/Capture.php";
 const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur par défaut du projet, tenue par scripts/tile_scale.py
 const GROUND_TYPES = ['sol', 'chemin', 'herbe'];
 
-$plan = json_decode(file_get_contents("$root/assets/maquette/plan-parc-a.json"), true, 512, JSON_THROW_ON_ERROR);
+// LE PLAN ET LA SORTIE SE DONNENT EN ARGUMENT, le parc n'étant que la valeur par défaut : il y aura d'autres maquettes — la scène de référence de 32 × 24 d'abord (opérateur,
+// 2026-08-06) —, et un monteur qui ne sait monter qu'une carte oblige à le recopier pour la suivante. Un seul monteur, autant de maquettes.
+$planPath = $argv[1] ?? "$root/assets/maquette/plan-parc-a.json";
+$outputPath = $argv[2] ?? __DIR__ . '/maquette.html';
+$plan = json_decode(file_get_contents($planPath), true, 512, JSON_THROW_ON_ERROR);
 $sujets = json_decode(file_get_contents("$root/assets/sujets.json"), true, 512, JSON_THROW_ON_ERROR)['sujets'];
 
 /** The image a subject shows on THIS cell: the variant whose shape matches what the cell joins, and its current representation.
@@ -120,8 +124,14 @@ foreach (array_merge($ground, $standing) as $cell) {
     $token = preg_replace('/[^a-z0-9]+/', '-', strtolower(pathinfo($image, PATHINFO_FILENAME)));
     $atlas[$token] = $image;
     ?>
+<?php
+    // L'EMPILEMENT SUIT LA PROFONDEUR, ET RIEN D'AUTRE : ce qui est planté plus près de la caméra se dessine PAR-DESSUS ce qui est derrière, quel que soit son type. Sans ça,
+    // une touffe d'herbe posée devant un arbre passait sous son tronc (opérateur, 2026-08-06). La rangée du PIED décide — c'est là que le sujet touche le sol —, et c'est
+    // exactement ainsi que le jeu affichera sa carte. La rangée est comptée depuis 1, donc l'ordre est directement lisible.
+    $depth = (int) ($bottom / SCREEN_PIXELS_PER_TILE);
+    ?>
 <div class="pose s-<?= $token ?>" title="<?= htmlspecialchars($code, ENT_QUOTES) ?>"
-     style="left: <?= $left ?>px; top: <?= $bottom - $height ?>px; width: <?= $width ?>px; height: <?= $height ?>px"></div>
+     style="left: <?= $left ?>px; top: <?= $bottom - $height ?>px; width: <?= $width ?>px; height: <?= $height ?>px; z-index: <?= $depth ?>"></div>
     <?php
 }
 $scene = $capture->take();
@@ -178,8 +188,14 @@ $capture->start();
   .eyebrow { margin: 0; font-family: var(--mono); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
   h1 { margin: .3rem 0 0; font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 650; letter-spacing: -.02em; }
   .lede { margin: .5rem 0 0; max-width: 64ch; color: var(--muted); }
-  /* La scène est un cadre à taille fixe où chaque sprite est posée par ses coordonnées : c'est la carte, pas une mise en page. Elle défile de côté si elle dépasse. */
-  .scene-cadre { overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; }
+  /* La scène est un cadre à taille fixe où chaque sprite est posée par ses coordonnées : c'est la carte, pas une mise en page.
+     LE CADRE NE GRANDIT PAS AVEC LE ZOOM : il garde la taille de la fenêtre et fait défiler ce qui dépasse, dans les deux sens. C'est la piste, à l'intérieur, qui porte la
+     taille agrandie. Autrement, agrandir la case à 32 ou 48 pixels poussait la scène hors de la page sans rien laisser à faire défiler. */
+  /* LE DÉFILEMENT EST HORIZONTAL, ET LUI SEUL. En hauteur, la page s'allonge et la carte se lit d'un bout à l'autre en descendant ; borner la hauteur du cadre
+     ajoutait un second défilement à l'intérieur du premier, et la molette ne savait plus lequel elle poussait (opérateur, 2026-08-06). */
+  .scene-cadre { overflow-x: auto; overflow-y: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; max-width: 100%; overscroll-behavior-x: contain; }
+  .scene-cadre.tire { cursor: grabbing; }
+  .scene-piste { position: relative; }
   /* LE FOND EST LA SPRITE DE LA CELLULE PAR DÉFAUT, RÉPÉTÉE — pas une couleur inventée. Le plan déclare l'herbe rase comme sol partout où rien n'est posé : peindre un vert
      approximatif à sa place montrait un parc qui n'est celui de personne, et cachait ce que la matière validée donne réellement une fois carrelée. */
   .scene {
@@ -206,15 +222,17 @@ $capture->start();
   /* Le zoom agrandit la scène entière d'un seul geste : tout y est posé en pixels d'une case de 24, donc une mise à l'échelle suffit et rien n'est recalculé. Le cadre, lui,
      prend la taille qu'occupe la scène agrandie, sans quoi il continuerait de réserver la place de la petite. */
   .scene { cursor: crosshair; transform-origin: top left; }
+  /* AU-DESSUS DE TOUTE LA CARTE : les sprites s'empilent désormais par leur profondeur, sur des niveaux qui vont jusqu'au nombre de rangées du plan. Ce qui appartient à la
+     revue — le survol, la marque d'une remarque, la saisie — se pose donc bien plus haut, sinon une sprite de la rangée quarante passerait devant. */
   .survol {
-    position: absolute; z-index: 3; pointer-events: none; padding: .25rem .55rem;
+    position: absolute; z-index: 1001; pointer-events: none; padding: .25rem .55rem;
     font-family: var(--mono); font-size: .78rem; white-space: nowrap;
     color: var(--paper); background: var(--ink); border-radius: 3px;
   }
   .survol[hidden] { display: none; }
-  .marque { position: absolute; pointer-events: none; z-index: 2; background: rgba(194, 65, 12, .4); outline: 2px solid #c2410c; }
+  .marque { position: absolute; pointer-events: none; z-index: 1000; background: rgba(194, 65, 12, .4); outline: 2px solid #c2410c; }
   .saisie {
-    position: absolute; z-index: 4; width: min(26rem, calc(100% - 1.5rem));
+    position: absolute; z-index: 1002; width: min(26rem, calc(100% - 1.5rem));
     display: flex; flex-direction: column; gap: .55rem; padding: .9rem 1rem;
     background: var(--surface); border: 1px solid var(--accent); border-radius: 3px; box-shadow: 0 12px 28px rgba(8, 16, 10, .28);
   }
@@ -258,13 +276,17 @@ $capture->start();
   </div>
 
   <div class="zone">
+    <?php // LA PISTE PORTE LA TAILLE AGRANDIE, LE CADRE RESTE À LA TAILLE DE L'ÉCRAN. Sans elle, le zoom agrandissait le cadre lui-même : la scène débordait de la page et
+          // il n'y avait plus rien à faire défiler, donc plus moyen de naviguer (opérateur, 2026-08-06). Un agrandissement se prévoit avec son moyen de se déplacer dedans. ?>
     <div class="scene-cadre">
+      <div class="scene-piste">
       <div class="scene" id="scene" data-cote="<?= SCREEN_PIXELS_PER_TILE ?>" data-colonnes="<?= $columns ?>" data-lignes="<?= $rows ?>"
            data-defaut="<?= htmlspecialchars(NOMS[$plan['default_cell']] ?? $plan['default_cell'], ENT_QUOTES) ?>"
            data-cases="<?= htmlspecialchars(json_encode($occupancy, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>"
            data-noms="<?= htmlspecialchars(json_encode(NOMS, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>"
            style="width: <?= $columns * SCREEN_PIXELS_PER_TILE ?>px; height: <?= $rows * SCREEN_PIXELS_PER_TILE ?>px">
 <?= $scene ?>
+      </div>
       </div>
     </div>
 
@@ -320,17 +342,55 @@ $capture->start();
   var defaut = scene.dataset.defaut;
 
   var echelle = 1;
+  var piste = scene.parentNode;
 
   function zoomer(pixels) {
+    var cadre = scene.closest('.scene-cadre');
+    // Le point de la carte qui est au CENTRE de la fenêtre avant l'agrandissement, en cases : c'est lui qu'on remet au centre après, sinon un zoom envoie l'opérateur ailleurs
+    // sur la carte et il doit se retrouver à chaque fois.
+    var centreX = (cadre.scrollLeft + cadre.clientWidth / 2) / (cote * echelle);
+    var centreY = (cadre.scrollTop + cadre.clientHeight / 2) / (cote * echelle);
     echelle = pixels / cote;
     scene.style.transform = 'scale(' + echelle + ')';
-    // Le cadre réserve la place que la scène occupe RÉELLEMENT une fois agrandie : une mise à l'échelle ne change pas la place qu'un élément demande à sa mise en page.
-    scene.parentNode.style.width = (colonnes * cote * echelle) + 'px';
-    scene.parentNode.style.height = (lignes * cote * echelle) + 'px';
+    // LA PISTE réserve la place que la scène occupe RÉELLEMENT une fois agrandie — une mise à l'échelle ne change pas la place qu'un élément demande à sa mise en page. Le CADRE,
+    // lui, garde la taille de la fenêtre et fait défiler : c'est ce qui permet de se déplacer dans une carte plus grande que l'écran.
+    piste.style.width = (colonnes * cote * echelle) + 'px';
+    piste.style.height = (lignes * cote * echelle) + 'px';
+    cadre.scrollLeft = centreX * cote * echelle - cadre.clientWidth / 2;
+    cadre.scrollTop = centreY * cote * echelle - cadre.clientHeight / 2;
     Array.prototype.forEach.call(document.querySelectorAll('.zoom'), function (bouton) {
       bouton.setAttribute('aria-pressed', Number(bouton.dataset.zoom) === pixels ? 'true' : 'false');
     });
   }
+
+  // SE DÉPLACER À LA SOURIS, en tirant la carte : les barres de défilement suffisent à la rigueur, mais on lit une carte en la faisant glisser. Le clic simple continue d'attacher
+  // une remarque — seul un vrai glissement, au-delà de quelques pixels, compte comme un déplacement.
+  var tire = null;
+  var glisse = false;
+  var cadreScene = scene.closest('.scene-cadre');
+  cadreScene.addEventListener('mousedown', function (evenement) {
+    tire = {x: evenement.clientX, y: evenement.clientY, gauche: cadreScene.scrollLeft, haut: cadreScene.scrollTop};
+    glisse = false;
+  });
+  window.addEventListener('mousemove', function (evenement) {
+    if (!tire) {
+      return;
+    }
+    var dx = evenement.clientX - tire.x;
+    var dy = evenement.clientY - tire.y;
+    if (!glisse && Math.abs(dx) + Math.abs(dy) < 5) {
+      return;
+    }
+    glisse = true;
+    cadreScene.classList.add('tire');
+    cadreScene.scrollLeft = tire.gauche - dx;
+    cadreScene.scrollTop = tire.haut - dy;
+    evenement.preventDefault();
+  });
+  window.addEventListener('mouseup', function () {
+    tire = null;
+    cadreScene.classList.remove('tire');
+  });
 
   Array.prototype.forEach.call(document.querySelectorAll('.zoom'), function (bouton) {
     bouton.addEventListener('click', function () { zoomer(Number(bouton.dataset.zoom)); });
@@ -431,6 +491,11 @@ $capture->start();
   scene.addEventListener('mouseleave', function () { survol.hidden = true; });
 
   scene.addEventListener('click', function (evenement) {
+    // Un glissement de carte n'attache pas de remarque : sans ça, chaque déplacement à la souris ouvrirait la saisie sur la case où le doigt s'est levé.
+    if (glisse) {
+      glisse = false;
+      return;
+    }
     var ou = caseSous(evenement.clientX, evenement.clientY);
     if (!ou) {
       return;
@@ -531,5 +596,5 @@ $capture->start();
 })();
 </script>
 <?php
-file_put_contents(__DIR__ . '/maquette.html', $capture->take());
-printf("artefacts/parc/maquette.html — %d sprites posées, %d sujet(s) sans image\n", $placed, count($missing));
+file_put_contents($outputPath, $capture->take());
+printf("%s — %d sprites posées, %d sujet(s) sans image\n", $outputPath, $placed, count($missing));

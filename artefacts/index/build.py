@@ -381,12 +381,9 @@ def render_card(artifact: Artifact, warnings: list[str]) -> str:
     )
     state_html = render_inline_markdown(capitalize_first(artifact.state_text), location, warnings)
 
-    if artifact.address is not None:
-        address_html = (
-            f'<a class="card-link" href="{html.escape(artifact.address)}" '
-            f'target="_blank" rel="noopener">{html.escape(artifact.address)}</a>'
-        )
-    else:
+    # L'ADRESSE NE S'ÉCRIT PLUS EN CLAIR : c'est la carte entière qui mène à l'artefact. Une adresse affichée prend trois lignes, se coupe au milieu d'un
+    # identifiant, et personne ne la lit — ce qu'on veut, c'est cliquer. Une carte sans adresse reste un bloc mort et le dit.
+    if artifact.address is None:
         address_html = '<span class="card-no-address">pas encore ouvert</span>'
 
     warning_html = (
@@ -399,15 +396,23 @@ def render_card(artifact: Artifact, warnings: list[str]) -> str:
         f"{html.escape(CATEGORY_BADGES[artifact.category])}</span>"
     )
 
-    return f"""
-<article class="card card-{artifact.category}">
-  {badge_html}
+    inside = f"""  {badge_html}
   <h3 class="card-name">{name_html}</h3>
   {description_html}
-  <p class="card-address">{address_html}</p>
   <p class="card-state">{state_html}</p>
-  {warning_html}
+  {warning_html}"""
+
+    if artifact.address is None:
+        return f"""
+<article class="card card-{artifact.category}">
+{inside}
+  <p class="card-address">{address_html}</p>
 </article>"""
+
+    return f"""
+<a class="card card-{artifact.category}" href="{html.escape(artifact.address)}" target="_blank" rel="noopener">
+{inside}
+</a>"""
 
 
 def render_group(title: str, artifacts: list[Artifact], group_class: str, warnings: list[str]) -> str:
@@ -571,25 +576,39 @@ def render_page(
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
   }}
+  /* LA CARTE ENTIÈRE EST LE LIEN : on clique la carte, pas une adresse écrite en clair qui prenait trois lignes et se coupait au milieu d'un identifiant. */
   .card {{
+    display: block;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1rem 1.1rem;
     background: var(--card-bg);
+    color: inherit;
+    text-decoration: none;
+  }}
+  a.card:hover {{
+    border-color: var(--alive-badge-fg);
+  }}
+  a.card:focus-visible {{
+    outline: 2px solid var(--alive-badge-fg);
+    outline-offset: 2px;
   }}
   .card-name {{
     font-size: 1.05rem;
     margin: 0 0 0.4rem;
   }}
+  /* La description dit ce qu'est l'artefact, pas ce qu'il contient : elle se lit d'un coup d'œil sur une carte, et une carte n'est pas un paragraphe. Plus petite
+     que le nom, et bornée en hauteur pour qu'une description longue ne fasse pas grandir sa carte au-dessus de ses voisines. */
   .card-description {{
     color: var(--muted);
-    font-size: 0.92rem;
+    font-size: 0.84rem;
+    line-height: 1.45;
     margin: 0 0 0.6rem;
   }}
   .card-address {{
     margin: 0 0 0.35rem;
     word-break: break-all;
-    font-size: 0.88rem;
+    font-size: 0.78rem;
   }}
   .card-link {{
     color: inherit;
@@ -600,7 +619,7 @@ def render_page(
   }}
   .card-state {{
     color: var(--muted);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     margin: 0;
   }}
 

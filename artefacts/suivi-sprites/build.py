@@ -149,7 +149,7 @@ LABELS = {
     "unfold": "▾",
     "noteClear": "Effacer le commentaire",
     "noteRestore": "Rétablir le commentaire effacé",
-    "recapTitle": "SUIVI DES SPRITES — RELEVÉ DU PROPRIÉTAIRE",
+    "recapTitle": "SUIVI DES SPRITES — RELEVÉ OPÉRATEUR",
     "recapEmpty": "Rien de coché pour l'instant. Cochez une action ou écrivez un commentaire sur une "
                   "variante : le relevé se remplit ici, prêt à être copié.",
     "sections": {
@@ -166,7 +166,7 @@ LABELS = {
     "unfold": "Déplier",
     "reset": "Tout effacer",
     "resetConfirm": "Effacer toutes vos cases cochées et vos commentaires ?",
-    "barSummary": "relevé du propriétaire",
+    "barSummary": "relevé opérateur",
     "counted": "entrée",
     "countedPlural": "entrées",
     "filterOne": "variante affichée",
@@ -1483,8 +1483,15 @@ def type_section_markup(type_name, type_def):
     if not codes:
         return None
     anchor = slug(type_name)
-    sujets_markup = "\n".join(sujet_markup(code, type_name, type_def) for code in codes)
     variant_count = sum(len(SUJETS[code]["variants"]) for code in codes)
+    # LA GRILLE NE LISTE QUE LES SUJETS, LE DÉTAIL VIT DANS LA VUE DE SUJET. La page dépliait tout de tout : un type occupait un écran entier pour un sujet
+    # et une image, et aucune image ne pouvait être regardée sérieusement (opérateur, 2026-08-06). Une vignette par sujet, un clic, et le sujet s'ouvre en
+    # plein écran avec ses variants, ses versions et ses actions. Le détail est produit ici, replié dans la vue, et non chargé après coup : la page est un
+    # fichier unique, elle ne peut rien aller chercher.
+    tiles = "\n".join(sujet_tile_markup(code) for code in codes)
+    # LES FSP NE VIVENT PAS DANS LEUR SECTION, elles s'accumulent pour être posées en fin de page, filles directes du corps. Un élément fixé se cale sur son
+    # ancêtre transformé s'il en a un, et il cesse alors de couvrir l'écran : la FSP s'ouvrait sous l'entête, décalée, et laissait voir la page autour d'elle.
+    FSP_MARKUP.extend(sujet_view_markup(code, type_name, type_def) for code in codes)
 
     return f"""    <section class="type" aria-labelledby="type-{anchor}">
       <header class="type-head">
@@ -1493,10 +1500,58 @@ def type_section_markup(type_name, type_def):
         <p class="type-count"><span>{variant_count}</span> image{'s' if variant_count > 1 else ''}</p>
         <p class="type-rule">{escape(lead_capital(type_rule(type_def)))}</p>
       </header>
-      <div class="profiles">
-{sujets_markup}
+      <div class="grille">
+{tiles}
       </div>
     </section>"""
+
+
+# Toutes les FSP de la page, remplies au fil des sections et posées d'un bloc à la fin du corps.
+FSP_MARKUP = []
+
+
+def sujet_tile_markup(code):
+    """One subject's tile in the grid: its picture, its name, its counts. Everything else waits in its view.
+
+    What a tile must answer, and nothing more: what is this subject, what does it look like, and is there anything left to judge on it. The rest — variants,
+    versions, measurements, actions — is one click away and would only make forty tiles unreadable.
+    """
+    sujet = SUJETS[code]
+    label = SUJET_LABELS.get(code, code)
+    variants = sujet["variants"]
+    produced = sum(1 for entry in variants if entry.get("representations"))
+    principal = main_variant(sujet)
+    representation = current_representation(principal.get("representations", [])) if principal else None
+    picture = ""
+    if representation:
+        footprint = drawn_extent(sujet)
+        kind = "tile" if sujet["type"] == TILE_TYPE else "sprite"
+        picture = variant_shot(representation["path"], footprint, kind, label)
+
+    return f"""        <button type="button" class="tuile" data-sujet="{escape(code)}">
+          <span class="tuile-image">{picture}</span>
+          <span class="tuile-nom">{escape(lead_capital(label))}</span>
+          <span class="tuile-compte">{produced}/{len(variants)} variant{'s' if len(variants) > 1 else ''} produit{'s' if produced > 1 else ''}</span>
+        </button>"""
+
+
+def sujet_view_markup(code, type_name, type_def):
+    """One subject's full view: the whole card as it was, wrapped in a full-screen overlay with its own close cross.
+
+    The card itself is untouched — its variants, its versions, its measurements and its actions are the ones that were already working. Only its place
+    changes: it no longer weighs on the page, it opens when asked and closes on the cross, which returns to the grid.
+    """
+    label = SUJET_LABELS.get(code, code)
+
+    return f"""      <div class="fsp" id="fsp-{escape(code)}" hidden>
+        <div class="fsp-barre">
+          <p class="fsp-titre">{escape(lead_capital(label))} <span class="slug">{escape(code)}</span></p>
+          <button type="button" class="fsp-fermer" aria-label="Fermer et revenir à la grille">✕</button>
+        </div>
+        <div class="fsp-corps">
+{sujet_markup(code, type_name, type_def)}
+        </div>
+      </div>"""
 
 
 DISK_KIND_LABELS = {"poc": "Brute (poc)", "cutout": "Livrable"}
@@ -1584,6 +1639,8 @@ def hors_modele_markup():
 
 
 sections = "\n".join(filter(None, (type_section_markup(name, TYPES[name]) for name in TYPES)))
+# Les FSP, remplies pendant la construction des sections ci-dessus, posées d'un bloc en fin de corps : filles directes du corps, elles couvrent vraiment l'écran.
+fsp_markup = "\n".join(FSP_MARKUP)
 hors_modele = hors_modele_markup()
 
 # Every registered variant belongs to the park — the referentiel carries no "later, off the park"
@@ -1852,6 +1909,44 @@ body {
 
 /* Les sujets d'un type se rangent en grille : ceux qui restent à juger prennent la ligne entière, ceux qui sont acquis se serrent côte à côte. */
 .profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; align-items: start; }
+
+/* LA GRILLE DES SUJETS, et la vue qui s'ouvre par-dessus. La page dépliait tout de tout : un type prenait un écran entier pour un sujet et une image. Une vignette
+   par sujet, un clic, et le sujet occupe l'écran — c'est là qu'on regarde, qu'on compare et qu'on juge, et la croix ramène à la grille. */
+/* Une vignette n'occupe que ce que son image demande : elle est là pour reconnaître un sujet, pas pour l'exposer. Une hauteur imposée donnait une grande case vide
+   autour d'une tuile d'herbe de vingt-quatre pixels. */
+/* LES SUJETS SONT ALIGNÉS PAR LE BAS, comme ils le sont sur la carte : ils y sont plantés sur un sol, pas suspendus. Un chêne haut et un pommier bas alignés par le
+   haut donnaient une rangée où chaque nom flottait à une hauteur différente. */
+.grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; align-items: stretch; }
+.tuile {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; padding: 6px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; color: inherit; font: inherit; text-align: center; cursor: pointer;
+}
+.tuile:hover { border-color: var(--accent); }
+.tuile-image { display: flex; align-items: flex-end; justify-content: center; margin-top: auto; width: 100%; }
+/* L'IMAGE D'UNE VIGNETTE TIENT DANS SA VIGNETTE, quelle que soit la taille du sujet. Les images sont dimensionnées en pixels pour la page dépliée — un bâtiment de
+   seize cases y fait cinq cents pixels de large — et posées telles quelles dans une vignette de cent trente, elles débordaient sur leurs voisines. Ici la boîte
+   commande : l'image s'y inscrit entière, appuyée en bas comme le sujet l'est sur son sol. */
+.tuile-image .shot-frame,
+.tuile-image .shot { width: 100% !important; height: 88px !important; background-size: contain !important; background-position: bottom center !important; background-repeat: no-repeat !important; }
+/* L'IMAGE D'UNE VIGNETTE NE PREND AUCUN CLIC : la vignette entière ouvre la FSP, et l'image qu'elle porte est un dessin, pas un bouton. Sans ça, cliquer au milieu de la
+   vignette — c'est-à-dire sur l'image — ouvrait la visionneuse au lieu du sujet, parce que ce dessin est ailleurs un bouton à lui seul. */
+.tuile-image * { pointer-events: none; }
+.tuile-nom { font-weight: 600; font-size: .9rem; }
+.tuile-compte { font-size: .74rem; color: var(--muted); }
+
+.fsp {
+  position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column;
+  background: var(--bg); overflow: auto;
+}
+.fsp[hidden] { display: none; }
+.fsp-barre {
+  position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--line);
+}
+.fsp-titre { margin: 0; font-size: 1.1rem; font-weight: 600; }
+.fsp-fermer { padding: 4px 12px; font-size: 1rem; line-height: 1; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
+.fsp-fermer:hover { border-color: var(--accent); color: var(--accent); }
+.fsp-corps { padding: 16px; }
 .profiles > .profile:not(.profile--folded) { grid-column: 1 / -1; }
 
 /* UN SUJET REPLIÉ NE MONTRE QUE CE QU'IL EST : son image principale, son libellé, sa ref. Tout ce qui sert à décider disparaît, puisqu'il n'y a plus rien à décider — et un
@@ -2757,7 +2852,10 @@ SCRIPT = """
   // over the picture, so the button lives beside it, never on top of it.
   // The frame is a div, not a native <button>, so its own keyboard activation (Enter and Space) is
   // handled here explicitly; the eye button is a real <button> and needs none of that.
+  /* NOT INSIDE AN FSP. The FSP already shows the subject full screen; opening a second layer over it to see the same picture larger is a layer too many, and the
+     operator hit it at once. Inside the grid and everywhere else, the viewer stays what it was. */
   Array.prototype.forEach.call(document.querySelectorAll(".shot-frame"), function (node) {
+    if (node.closest && node.closest(".fsp")) { return; }
     node.addEventListener("click", function () { openViewer(node); });
     node.addEventListener("keydown", function (event) {
       if (event.key === "Enter" || event.key === " " || event.key === "Spacebar") {
@@ -2890,6 +2988,50 @@ SCRIPT = """
     });
   });
 
+  /* THE GRID AND THE SUBJECT VIEW. A tile opens its subject full screen, the cross closes it and returns to the grid, and so does the escape key, like everything
+     else that opens over this page. The body stops scrolling behind the view: without that, the wheel moves the background instead of the content. */
+  var openedView = null;
+
+  function closeView() {
+    if (!openedView) { return; }
+    openedView.hidden = true;
+    document.body.style.overflow = "";
+    openedView = null;
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".tuile"), function (tile) {
+    tile.addEventListener("click", function () {
+      var view = document.getElementById("fsp-" + tile.getAttribute("data-sujet"));
+      if (!view) { return; }
+      closeView();
+      view.hidden = false;
+      view.scrollTop = 0;
+      document.body.style.overflow = "hidden";
+      openedView = view;
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll(".fsp-fermer"), function (button) {
+    button.addEventListener("click", closeView);
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") { closeView(); }
+  });
+
+  /* THE RECAP TEXT IS FOLDED AWAY. It is long, it is read once in a while, and it took the bottom of the page for nothing — the copy button is what the operator
+     uses, not the text itself. It unfolds on demand and folds back the same way. */
+  var recapText = document.getElementById("recap-text");
+  var recapToggle = document.getElementById("deplier-recap");
+  if (recapText && recapToggle) {
+    recapToggle.addEventListener("click", function () {
+      var shown = recapText.hidden;
+      recapText.hidden = !shown;
+      recapToggle.setAttribute("aria-expanded", shown ? "true" : "false");
+      recapToggle.textContent = shown ? "Masquer le texte" : "Voir le texte";
+    });
+  }
+
   document.getElementById("reset").addEventListener("click", function () {
     // A sandboxed frame may refuse confirm(); a refusal must not make the button dead.
     var agreed = true;
@@ -2942,7 +3084,7 @@ page = f"""<title>Suivi des sprites</title>
     <ul class="track-grid">
 {status_cells}
     </ul>
-    <p class="track-foot"><em>{awaiting}</em> variante en attente d'un arbitrage du propriétaire —
+    <p class="track-foot"><em>{awaiting}</em> variante en attente d'un arbitrage de l'opérateur —
       seule une image en défaut en demande un.</p>
     <div class="filters" role="group" aria-labelledby="filter-label">
       <p class="filter-label" id="filter-label">N'afficher que</p>
@@ -2956,14 +3098,17 @@ page = f"""<title>Suivi des sprites</title>
     <div class="recap-head">
       <h2 id="recap-title">Votre relevé, à me coller en conversation</h2>
       <button type="button" class="btn" data-copy="1">{escape(LABELS['copy'])}</button>
+      <button type="button" class="btn btn--quiet" id="deplier-recap" aria-expanded="false">Voir le texte</button>
       <button type="button" class="btn btn--quiet" id="reset">{escape(LABELS['reset'])}</button>
       <p class="copy-state" id="copy-state" role="status" aria-live="polite"></p>
     </div>
-    <p class="recap-intro">Rien n'est envoyé : cochez ce qui compte, le relevé se copie ci-dessous.</p>
-    <pre class="recap-text" id="recap-text" data-empty="true" tabindex="0"></pre>
+    <p class="recap-intro">Rien n'est envoyé : cochez ce qui compte, le bouton copie tout. Le texte lui-même ne s'affiche que si vous le demandez.</p>
+    <pre class="recap-text" id="recap-text" data-empty="true" tabindex="0" hidden></pre>
   </section>
 
 {sections}
+
+{fsp_markup}
 
 {hors_modele}
 

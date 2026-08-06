@@ -1,0 +1,1911 @@
+{
+    "format": "gatebeast-composition-plan",
+    "version": 1,
+    "title": "Maquette Campagne",
+    "grid": {
+        "columns": 32,
+        "rows": 24
+    },
+    "default_cell": "CH-001",
+    "piece_keys": false,
+    "legend": false,
+    "drawing_notes": false,
+    "resolved": [],
+    "notes": [
+        "Maquette Campagne, 32 × 24 cases — le format de composition du projet. Herbe rase partout où rien n'est posé.",
+        "Elle sert à juger les pièces et leurs jonctions, pas un parc : elle tient en un écran et se rejuge en quelques secondes. Le parc de 64 × 48 reste pour plus tard.",
+        "Ce que la planche de campagne montre et que l'inventaire ne porte pas est absent : grange, moulin, puits, chaumière, champ de blé, potager, pont, animaux. Un sujet se crée par décision de l'opérateur, jamais par un agent.",
+        "Le chemin monte du bord sud jusqu'à la porte de la ferme et s'arrête au cours d'eau : sans sujet pont, un chemin qui franchirait l'eau mentirait.",
+        "La clôture ferme le pré à l'ouest du cours d'eau et laisse la case du chemin ouverte : le portillon est un variant, et un plan ne sait pas encore désigner un variant."
+    ],
+    "cells": [
+        {
+            "column": 16,
+            "row": 1,
+            "subject": "CH-020",
+            "joins": [
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 2,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 3,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 4,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 5,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 6,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 7,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 8,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 9,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 10,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 11,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 12,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 13,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 14,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 15,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 16,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 17,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 18,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 19,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 20,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 21,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 22,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 23,
+            "subject": "CH-020",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 16,
+            "row": 24,
+            "subject": "CH-020",
+            "joins": [
+                "n"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 8,
+            "subject": "CH-019",
+            "joins": [
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 9,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 10,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 11,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 12,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 13,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 14,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 15,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 16,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 17,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 18,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 19,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 20,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 21,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 22,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 23,
+            "subject": "CH-019",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 9,
+            "row": 24,
+            "subject": "CH-019",
+            "joins": [
+                "n"
+            ]
+        },
+        {
+            "column": 7,
+            "row": 3,
+            "subject": "BT-002",
+            "columns": 5,
+            "rows": 4
+        },
+        {
+            "column": 2,
+            "row": 10,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 11,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 12,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 13,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 14,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 15,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 16,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 17,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 18,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 19,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "s"
+            ]
+        },
+        {
+            "column": 2,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "e"
+            ]
+        },
+        {
+            "column": 3,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 3,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 4,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 4,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 5,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 5,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 6,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 6,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 7,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 7,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 8,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "w"
+            ]
+        },
+        {
+            "column": 8,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "w"
+            ]
+        },
+        {
+            "column": 10,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e"
+            ]
+        },
+        {
+            "column": 10,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e"
+            ]
+        },
+        {
+            "column": 11,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 11,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 12,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 12,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 13,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 13,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 14,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 14,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "e",
+                "w"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 9,
+            "subject": "OB-010",
+            "joins": [
+                "s",
+                "w"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 20,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "w"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 10,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 11,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 12,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 13,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 14,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 15,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 16,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 17,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 18,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 15,
+            "row": 19,
+            "subject": "OB-010",
+            "joins": [
+                "n",
+                "s"
+            ]
+        },
+        {
+            "column": 4,
+            "row": 15,
+            "subject": "TR-060",
+            "columns": 2,
+            "rows": 2
+        },
+        {
+            "column": 25,
+            "row": 16,
+            "subject": "TR-063"
+        },
+        {
+            "column": 28,
+            "row": 19,
+            "subject": "TR-063"
+        },
+        {
+            "column": 20,
+            "row": 3,
+            "subject": "TR-065"
+        },
+        {
+            "column": 23,
+            "row": 2,
+            "subject": "TR-065"
+        },
+        {
+            "column": 27,
+            "row": 3,
+            "subject": "TR-061",
+            "columns": 2,
+            "rows": 2
+        },
+        {
+            "column": 30,
+            "row": 6,
+            "subject": "TR-061",
+            "columns": 2,
+            "rows": 2
+        },
+        {
+            "column": 1,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 1,
+            "row": 10,
+            "subject": "TR-064"
+        },
+        {
+            "column": 1,
+            "row": 16,
+            "subject": "TR-062"
+        },
+        {
+            "column": 1,
+            "row": 21,
+            "subject": "TR-064"
+        },
+        {
+            "column": 1,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 2,
+            "row": 1,
+            "subject": "TR-064"
+        },
+        {
+            "column": 2,
+            "row": 5,
+            "subject": "TR-062"
+        },
+        {
+            "column": 2,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 2,
+            "row": 8,
+            "subject": "TR-062"
+        },
+        {
+            "column": 2,
+            "row": 21,
+            "subject": "TR-064"
+        },
+        {
+            "column": 2,
+            "row": 22,
+            "subject": "TR-062"
+        },
+        {
+            "column": 3,
+            "row": 12,
+            "subject": "TR-062"
+        },
+        {
+            "column": 3,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 3,
+            "row": 19,
+            "subject": "TR-064"
+        },
+        {
+            "column": 3,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 4,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 4,
+            "row": 3,
+            "subject": "TR-064"
+        },
+        {
+            "column": 4,
+            "row": 6,
+            "subject": "TR-064"
+        },
+        {
+            "column": 4,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 4,
+            "row": 18,
+            "subject": "TR-064"
+        },
+        {
+            "column": 4,
+            "row": 19,
+            "subject": "TR-064"
+        },
+        {
+            "column": 5,
+            "row": 14,
+            "subject": "TR-064"
+        },
+        {
+            "column": 5,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 5,
+            "row": 19,
+            "subject": "TR-064"
+        },
+        {
+            "column": 5,
+            "row": 21,
+            "subject": "TR-064"
+        },
+        {
+            "column": 5,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 6,
+            "row": 5,
+            "subject": "TR-064"
+        },
+        {
+            "column": 6,
+            "row": 8,
+            "subject": "TR-064"
+        },
+        {
+            "column": 6,
+            "row": 10,
+            "subject": "TR-064"
+        },
+        {
+            "column": 6,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 6,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 6,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 7,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 7,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 8,
+            "row": 1,
+            "subject": "TR-064"
+        },
+        {
+            "column": 8,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 8,
+            "row": 14,
+            "subject": "TR-062"
+        },
+        {
+            "column": 8,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 8,
+            "row": 18,
+            "subject": "TR-064"
+        },
+        {
+            "column": 8,
+            "row": 22,
+            "subject": "TR-062"
+        },
+        {
+            "column": 8,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 8,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 10,
+            "row": 1,
+            "subject": "TR-064"
+        },
+        {
+            "column": 10,
+            "row": 16,
+            "subject": "TR-062"
+        },
+        {
+            "column": 11,
+            "row": 1,
+            "subject": "TR-062"
+        },
+        {
+            "column": 11,
+            "row": 8,
+            "subject": "TR-064"
+        },
+        {
+            "column": 11,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 11,
+            "row": 19,
+            "subject": "TR-064"
+        },
+        {
+            "column": 11,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 12,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 12,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 12,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 12,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 12,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 12,
+            "row": 18,
+            "subject": "TR-064"
+        },
+        {
+            "column": 12,
+            "row": 21,
+            "subject": "TR-062"
+        },
+        {
+            "column": 12,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 13,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 13,
+            "row": 3,
+            "subject": "TR-064"
+        },
+        {
+            "column": 13,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 13,
+            "row": 19,
+            "subject": "TR-064"
+        },
+        {
+            "column": 13,
+            "row": 21,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 3,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 4,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 5,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 12,
+            "subject": "TR-062"
+        },
+        {
+            "column": 14,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 14,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 16,
+            "subject": "TR-062"
+        },
+        {
+            "column": 14,
+            "row": 18,
+            "subject": "TR-064"
+        },
+        {
+            "column": 14,
+            "row": 23,
+            "subject": "TR-062"
+        },
+        {
+            "column": 15,
+            "row": 4,
+            "subject": "TR-064"
+        },
+        {
+            "column": 15,
+            "row": 6,
+            "subject": "TR-062"
+        },
+        {
+            "column": 15,
+            "row": 7,
+            "subject": "TR-062"
+        },
+        {
+            "column": 15,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 5,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 8,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 9,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 11,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 14,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 18,
+            "subject": "TR-062"
+        },
+        {
+            "column": 17,
+            "row": 20,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 21,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 22,
+            "subject": "TR-064"
+        },
+        {
+            "column": 17,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 6,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 8,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 10,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 14,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 18,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 20,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 21,
+            "subject": "TR-064"
+        },
+        {
+            "column": 18,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 19,
+            "row": 1,
+            "subject": "TR-064"
+        },
+        {
+            "column": 19,
+            "row": 3,
+            "subject": "TR-062"
+        },
+        {
+            "column": 19,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 19,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 19,
+            "row": 19,
+            "subject": "TR-062"
+        },
+        {
+            "column": 19,
+            "row": 20,
+            "subject": "TR-064"
+        },
+        {
+            "column": 19,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 20,
+            "row": 5,
+            "subject": "TR-064"
+        },
+        {
+            "column": 20,
+            "row": 10,
+            "subject": "TR-064"
+        },
+        {
+            "column": 20,
+            "row": 19,
+            "subject": "TR-062"
+        },
+        {
+            "column": 20,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 3,
+            "subject": "TR-062"
+        },
+        {
+            "column": 21,
+            "row": 4,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 6,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 8,
+            "subject": "TR-062"
+        },
+        {
+            "column": 21,
+            "row": 11,
+            "subject": "TR-062"
+        },
+        {
+            "column": 21,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 18,
+            "subject": "TR-062"
+        },
+        {
+            "column": 21,
+            "row": 22,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 21,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 22,
+            "row": 1,
+            "subject": "TR-062"
+        },
+        {
+            "column": 22,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 22,
+            "row": 4,
+            "subject": "TR-062"
+        },
+        {
+            "column": 22,
+            "row": 9,
+            "subject": "TR-062"
+        },
+        {
+            "column": 22,
+            "row": 11,
+            "subject": "TR-062"
+        },
+        {
+            "column": 22,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 22,
+            "row": 16,
+            "subject": "TR-062"
+        },
+        {
+            "column": 22,
+            "row": 20,
+            "subject": "TR-064"
+        },
+        {
+            "column": 22,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 23,
+            "row": 3,
+            "subject": "TR-062"
+        },
+        {
+            "column": 23,
+            "row": 12,
+            "subject": "TR-062"
+        },
+        {
+            "column": 23,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 23,
+            "row": 14,
+            "subject": "TR-064"
+        },
+        {
+            "column": 23,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 24,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 24,
+            "row": 11,
+            "subject": "TR-064"
+        },
+        {
+            "column": 24,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 24,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 24,
+            "row": 20,
+            "subject": "TR-062"
+        },
+        {
+            "column": 25,
+            "row": 4,
+            "subject": "TR-064"
+        },
+        {
+            "column": 25,
+            "row": 6,
+            "subject": "TR-064"
+        },
+        {
+            "column": 25,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 25,
+            "row": 9,
+            "subject": "TR-064"
+        },
+        {
+            "column": 25,
+            "row": 12,
+            "subject": "TR-062"
+        },
+        {
+            "column": 25,
+            "row": 19,
+            "subject": "TR-062"
+        },
+        {
+            "column": 25,
+            "row": 23,
+            "subject": "TR-062"
+        },
+        {
+            "column": 26,
+            "row": 1,
+            "subject": "TR-064"
+        },
+        {
+            "column": 26,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 26,
+            "row": 3,
+            "subject": "TR-064"
+        },
+        {
+            "column": 26,
+            "row": 6,
+            "subject": "TR-064"
+        },
+        {
+            "column": 26,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 26,
+            "row": 16,
+            "subject": "TR-062"
+        },
+        {
+            "column": 26,
+            "row": 20,
+            "subject": "TR-064"
+        },
+        {
+            "column": 26,
+            "row": 22,
+            "subject": "TR-064"
+        },
+        {
+            "column": 27,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 27,
+            "row": 6,
+            "subject": "TR-064"
+        },
+        {
+            "column": 27,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 27,
+            "row": 11,
+            "subject": "TR-062"
+        },
+        {
+            "column": 27,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 27,
+            "row": 14,
+            "subject": "TR-064"
+        },
+        {
+            "column": 27,
+            "row": 23,
+            "subject": "TR-062"
+        },
+        {
+            "column": 28,
+            "row": 8,
+            "subject": "TR-062"
+        },
+        {
+            "column": 28,
+            "row": 11,
+            "subject": "TR-062"
+        },
+        {
+            "column": 28,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 28,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 28,
+            "row": 20,
+            "subject": "TR-064"
+        },
+        {
+            "column": 28,
+            "row": 21,
+            "subject": "TR-064"
+        },
+        {
+            "column": 28,
+            "row": 24,
+            "subject": "TR-062"
+        },
+        {
+            "column": 29,
+            "row": 1,
+            "subject": "TR-062"
+        },
+        {
+            "column": 29,
+            "row": 2,
+            "subject": "TR-062"
+        },
+        {
+            "column": 29,
+            "row": 6,
+            "subject": "TR-062"
+        },
+        {
+            "column": 29,
+            "row": 9,
+            "subject": "TR-064"
+        },
+        {
+            "column": 29,
+            "row": 10,
+            "subject": "TR-064"
+        },
+        {
+            "column": 29,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 29,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 29,
+            "row": 19,
+            "subject": "TR-064"
+        },
+        {
+            "column": 29,
+            "row": 22,
+            "subject": "TR-064"
+        },
+        {
+            "column": 29,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 29,
+            "row": 24,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 4,
+            "subject": "TR-062"
+        },
+        {
+            "column": 30,
+            "row": 8,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 11,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 12,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 17,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 18,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 22,
+            "subject": "TR-064"
+        },
+        {
+            "column": 30,
+            "row": 23,
+            "subject": "TR-064"
+        },
+        {
+            "column": 31,
+            "row": 2,
+            "subject": "TR-064"
+        },
+        {
+            "column": 31,
+            "row": 8,
+            "subject": "TR-064"
+        },
+        {
+            "column": 31,
+            "row": 10,
+            "subject": "TR-064"
+        },
+        {
+            "column": 31,
+            "row": 13,
+            "subject": "TR-064"
+        },
+        {
+            "column": 31,
+            "row": 14,
+            "subject": "TR-064"
+        },
+        {
+            "column": 31,
+            "row": 15,
+            "subject": "TR-064"
+        },
+        {
+            "column": 31,
+            "row": 22,
+            "subject": "TR-064"
+        },
+        {
+            "column": 32,
+            "row": 1,
+            "subject": "TR-064"
+        },
+        {
+            "column": 32,
+            "row": 2,
+            "subject": "TR-062"
+        },
+        {
+            "column": 32,
+            "row": 3,
+            "subject": "TR-064"
+        },
+        {
+            "column": 32,
+            "row": 6,
+            "subject": "TR-062"
+        },
+        {
+            "column": 32,
+            "row": 7,
+            "subject": "TR-064"
+        },
+        {
+            "column": 32,
+            "row": 8,
+            "subject": "TR-064"
+        },
+        {
+            "column": 32,
+            "row": 16,
+            "subject": "TR-064"
+        },
+        {
+            "column": 32,
+            "row": 22,
+            "subject": "TR-062"
+        }
+    ]
+}

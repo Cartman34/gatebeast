@@ -1,0 +1,23 @@
+/* Thème « encre » — le sombre par défaut des pages de revue.
+ *
+ * Intention : une page de revue ne sert qu'à juger des images, donc l'interface s'efface. Un fond presque noir légèrement bleuté, un texte qui ne brûle pas les yeux, une seule couleur d'accent —
+ * ambre — réservée à ce qui appelle une action. Aucune teinte proche de celles des sprites, pour qu'aucune couleur de l'interface ne fausse le jugement d'une image.
+ */
+
+:root {
+  color-scheme: dark;
+  --ink: #e6e4e0;
+  --bg: #101114;
+  --card: #191b1f;
+  --line: #2b2e34;
+  --muted: #8e9299;
+  --accent: #d9a441;
+  --valider: #2f5c3a;
+  --valider-bord: #4e8a5e;
+  --reprendre: #6b4a1c;
+  --reprendre-bord: #a4762c;
+  --ecarter: #5c2f2f;
+  --ecarter-bord: #8a4e4e;
+  --damier-a: #202329;
+  --damier-b: #1a1d22;
+}
