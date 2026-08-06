@@ -1,0 +1,122 @@
+# Les règles du dépôt — GateBeast
+
+**Usage :** ce que lit et applique tout agent qui **construit** le projet, avant d'agir — les règles de tenue du dépôt et les renvois vers ce qui fait foi. On y arrive par l'aiguilleur
+[AGENTS.md](../AGENTS.md), qui dit à qui ces règles s'adressent. Dépôt du projet GateBeast, jeu original de collection de créatures.
+
+**Intention :** réunir ce qu'un agent doit savoir pour ne pas nuire, et rien de plus. **Ce fichier n'est pas un fourre-tout** : une règle qui dit ce que le jeu doit être va à la conception, une règle
+sur le contenu d'un document va dans ce document, une règle de conduite valable au-delà de GateBeast va à la méthode commune. Ne reste ici que ce qui n'a pas d'autre foyer — et ce qui s'en trouve un
+déménage. Il ne couvre ni la cible du jeu, ni l'état des travaux, ni le vocabulaire : chacun a son document.
+
+**Le générateur d'images n'est pas concerné par une seule ligne de ce document**, et il ne le charge plus : son enveloppe coupe la lecture automatique des instructions du dépôt. Une règle écrite ici
+ne l'atteindra jamais — ce qui doit lui parvenir s'écrit dans sa consigne, jamais ici.
+
+## Comment on respecte les règles
+
+Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit comment les règles s'appliquent quand elles rencontrent la réalité du dépôt.
+
+- **UNE RÈGLE ÉCRITE PRIME SUR L'EXISTANT, TOUJOURS.** Ce qui entoure le fichier qu'on modifie n'est **jamais** une référence : du code, du texte ou une convention qui contredisent une règle définie
+  sont un **écart à corriger**, pas un exemple à suivre. On ne s'inspire de l'existant **que** là où aucune règle n'est écrite. Un agent qui aligne son travail sur ce qu'il voit autour de lui applique
+  un standard que personne n'a décidé, et le propage : c'est ainsi qu'une faute d'un agent devient « le standard du projet » au bout de trois reprises. **Un standard se définit, il ne se déduit
+  jamais**, et l'existant fautif se corrige au fil de l'eau, à mesure qu'on le croise.
+- **Ce qu'on vient d'écrire se contrôle avant d'être montré** : `php scripts/check-text-width.php <fichiers>` sur tout fichier touché. La vigilance seule ne tient pas — le pli d'origine d'un agent
+  revient dès qu'il ne le contrôle pas explicitement, et c'est au contrôle mécanique de l'arrêter, pas à sa mémoire.
+- **200 caractères par ligne, et c'est le SEUL standard de longueur du projet — impératif.** Il **remplace et annule tous les autres**, sans exception et quelle que soit leur provenance.
+  **Les exemples qui suivent ne forment PAS une liste fermée** — ils illustrent, ils ne délimitent pas : les 79 de PEP 8, les 88 d'un formateur Python, les 120 d'un style PHP, les 80 d'un usage
+  Markdown, les 72 d'un message de commit, et toute habitude d'agent. Tout autre standard de longueur, nommé ici ou non, tombe de la même façon. Un agent qui replie son
+  texte plus court applique un standard qu'il s'est apporté lui-même : c'est cette substitution qui est interdite, pas seulement le dépassement.
+- **Le plafond de 200 vaut partout, et TOUT texte cherche à l'atteindre.** « Tout » se prend au pied de la lettre : **tout fichier texte du projet, quel qu'il soit**, et ce qui suit n'en est qu'un
+  échantillon, jamais la liste complète — documents, `SUIVI.md`, descriptions, notes, **commentaires et documentation embarquée dans le code**, **messages de commit**, **le texte que le code porte et
+  produit, soit toute chaîne de caractères écrite dans un fichier de code : message de faute, message d'avancement, libellé, fragment de consigne assemblé**, consignes de génération, fichiers de
+  configuration, scripts. Un support absent de cette énumération suit la même règle : aucun n'a de règle à lui. Seules les **instructions** — le code exécutable lui-même — n'ont rien à remplir : elles
+  restent aussi courtes que la lisibilité le demande, avec pour seule obligation de ne pas franchir le plafond.
+- **Une ligne repliée à quatre-vingts caractères double le nombre de lignes sans rien ajouter** et rallonge chaque relecture ; un texte replié court se rediffe entièrement au premier mot changé.
+  Ce qui est déjà écrit ne se reprend pas pour cette seule raison ; ce qui s'écrit maintenant respecte la convention.
+
+## Les modes de travail et la conduite
+
+- **Deux modes de travail, et l'opérateur seul les fixe.** Un **mode** dit qui décide de l'avancée entre deux gestes de l'agent — lui-même, ou l'opérateur.
+  - **Dépilement continu** — l'agent prend la pile du `SUIVI.md` dans son ordre et traite les sujets les uns après les autres sans rien demander. Il ne s'arrête que si le sujet porte une question, un
+    inconnu, une incohérence, ou s'il veut proposer quelque chose ; sinon il fait, et il rend compte quand c'est fini. C'est le mode **par défaut**.
+  - **Lot** — l'agent n'exécute rien avant d'avoir annoncé ce qu'il compte faire et reçu la validation de l'opérateur. Ce qui remonte remonte groupé, jamais sujet par sujet, et l'opérateur tranche en
+    bloc. Y vont sans qu'il ait à le redire : toute proposition, toute génération d'image, tout verdict à demander.
+- **Le mode s'annonce avant de commencer, et l'agent s'arrête sur cette annonce** — à commencer par son démarrage, où c'est le mode par défaut qui s'applique et où il doit donc l'annoncer comme les
+  autres : l'opérateur confirme, et l'agent part. Une annonce sans arrêt ne sert à rien, elle passe dans le flux et l'opérateur découvre le mode au résultat.
+- **On dépile, on ne commente pas la pile.** Constater ce qui manque et le dire n'est pas un travail : ce qui manque se fait. Une tâche ne remonte à l'opérateur que si elle est finie, ou si elle est
+  bloquée par une décision qui lui appartient. **Ce qui fait sortir un sujet du dépilement, et rien d'autre : une question, un inconnu, une incohérence, ou quelque chose que l'agent veut proposer.**
+  Tout le reste se fait — l'ordre de la pile ne se redemande pas.
+- **On travaille par lots, jamais un sujet à la fois.** Plusieurs générations partent ensemble, l'opérateur ne repasse qu'une fois sur le lot entier et tranche en bloc. Un sujet traité seul
+  consomme un aller-retour complet pour un seul verdict.
+- **On ne s'arrête que pour une question dont la réponse change ce qui va être construit** — jamais pour demander l'autorisation d'avancer sur ce qui est déjà décidé. Les questions se posent
+  **numérotées**, groupées, et l'opérateur y répond par leur numéro.
+- **Tout ce que l'opérateur dit entre dans la pile du `SUIVI.md`, immédiatement et avant d'être traité.** Une demande, une capture, un défaut relevé en passant : rien ne reste dans la conversation. Le
+  contexte se résume et se perd, la pile non — une remarque perdue se paie en la faisant redire. Une capture s'écrit **en toutes lettres**, puisque l'image ne survit pas au résumé alors que sa
+  description oui. Quand elle ne suffit pas à savoir quoi faire, la ligne le dit : ce que je vois, mon appréciation, et ce qui me manque. Repérer le manque et le nommer est le travail de l'agent ;
+  trancher est celui de l'opérateur.
+- **On regarde son propre résultat avant de le montrer.** Une image produite se regarde, une page publiée s'ouvre, et ce qui cloche se dit **avant** que l'opérateur ait à le signaler. Trois tentatives
+  sur le même sapin, une popin sans ses valeurs, un bouton étalé sur toute la largeur : chaque fois le défaut était visible et c'est lui qui l'a vu. Livrer sans regarder transforme chaque sujet en
+  trois allers-retours au lieu d'un.
+- **Une demande dont la réponse échoue deux fois se relit à la source avant d'être retentée.** Trois sapins identiques sont sortis parce que la description disait l'inverse du modèle : la troisième
+  relance aurait dû être une relecture. Regarder la référence soi-même vaut mieux que faire attendre l'opérateur.
+
+## Où vit quoi
+
+- **`doc/conception/` — la cible, et elle fait foi.** Rapatriée ici depuis `conceptions/`, elle suit désormais le versionnage du projet. Chemin de reprise : la méthode
+  (`~/projects/conceptions/methode/`), puis `doc/conception/vision.md`, `doc/conception/questions.md`, puis la descente jusqu'au nœud concerné en lisant ses ancêtres.
+- **`doc/` — la documentation du projet.** `doc/conception/` décrit la **cible** et fait foi ; le reste de `doc/` décrira l'existant.
+- **`SUIVI.md` — où en est le travail** : état courant, points ouverts, défauts constatés, outils. À lire en premier pour reprendre. **`PLAN-ACTION.md` — le découpage en briques vers la 0.1.** Ni l'un
+  ni l'autre n'est de la conception : ils décrivent le chemin, jamais la cible.
+- **`scripts/` — l'outillage de production**, **intégralement en anglais** : noms, contenu, commentaires.
+- **`assets/` — les images produites.** **Rien ne se jette** : une image écartée cesse d'être montrée, elle n'est pas supprimée.
+- **`local/` — le répertoire de travail de l'agent** : essais, mesures, brouillons, jamais commité. **Rien de ce qui s'y trouve ne se cite nulle part** : ni dans une description, ni dans une consigne
+  envoyée au générateur, ni dans le suivi, ni dans un document. Un fichier cité doit être versionné, sinon la référence est morte pour tout le monde sauf pour l'agent qui l'a écrite. Le répertoire se
+  tient rangé : les extraits de planche vivent sous `local/extraits/<planche>/<code du sujet>.png`, produits par un script versionné, donc refaisables par n'importe qui à la commande.
+
+## L'outillage
+
+- **Tout script s'ouvre par un bloc de commentaire « Usage » et « Intention », en anglais** — quel que soit son langage, PHP, Python, shell, JavaScript ou autre. L'**usage** dit à quoi il sert et
+  comment on l'appelle ; l'**intention** dit pourquoi il existe et pourquoi il fait ainsi plutôt qu'autrement. Un script Python ajoute à son intention **pourquoi il est en Python et non en PHP** : la
+  bibliothèque ou l'outil qui n'existe que là, nommé. Sans cette phrase, le choix se relit comme une habitude et se reproduit sans raison.
+- **PHP est le langage par défaut de l'outillage pérenne**, et la transition y va progressivement. Tout script durable neuf s'écrit en PHP. Python reste admis là où il apporte une bibliothèque ou un
+  outil qui n'existe qu'en Python — mesure d'image, traitement de matrice —, et ce choix se justifie en tête du fichier. **Aucun remplacement brut n'est prévu** : ce qui tourne en Python et fait son
+  travail y reste jusqu'à ce qu'une raison propre le fasse bouger ; réécrire pour réécrire est proscrit.
+- **Un outil non validé se demande, il ne s'essaie pas.** Le projet a une liste d'outils validés — Python pour l'outillage, PHP pour l'enveloppe du générateur, Codex comme générateur d'images,
+  `rsvg-convert` pour regarder un SVG produit (liste tenue à jour au tableau « Outils extérieurs et versions constatées » de `SUIVI.md`, à lire là plutôt qu'à recopier ici). Aucun autre langage, outil
+  ou bibliothèque ne s'emploie sans l'accord de l'opérateur : un agent qui pense en avoir besoin **exprime le besoin et attend**, il n'essaie pas « juste pour voir ». Chaque outil introduit
+  devient une dépendance que quelqu'un devra installer, comprendre et maintenir, sur toutes les machines où le projet tourne — ça ne se décide pas au détour d'un dépannage.
+- **Les clés des fichiers de données sont en anglais**, au même titre que le code — ce sont les mêmes noms que le code manipule. Une clé française oblige tout lecteur à mélanger les deux langues dans
+  la même expression, et le mélange se propage par imitation au fichier suivant. Ne vaut que pour les clés : valeurs et textes destinés à l'opérateur — consignes de génération comprises — restent en
+  français. Anglais américain, comme partout ailleurs (`doc/glossaire.md`).
+
+## La production d'images
+
+- **Le générateur d'images est l'agent Codex, enveloppé par `scripts/generate-image.php`** (versionné avec le projet). Personne ne l'appelle directement : un seul outil commande un sprite de bout en
+  bout ([chaîne de production](doc/conception/referentiels/visuel/assets/chaine-de-production.md)).
+- **Trois barrières séparent le générateur d'images des règles du dépôt, et elles se couvrent l'une l'autre.** `AGENTS.md` n'est plus qu'un aiguilleur sans contenu, qui lui dit explicitement que rien
+  d'ici ne le concerne ; son enveloppe coupe la lecture automatique des instructions du dépôt, à l'appel ; et la consigne qu'il reçoit le lui redit en toutes lettres. Constaté le 2026-08-06 : deux
+  générations ont répondu « mode lot : cette génération nécessite votre validation » au lieu de dessiner, parce que la règle des modes venait d'être écrite dans le fichier qu'il chargeait. Ce qui doit
+  parvenir au rôle `illustrator` s'écrit **dans sa consigne**, jamais dans un document du dépôt.
+- **Une seule génération par version, aucune relance sans accord** — sauf la reprise unique prévue par la chaîne de production des assets
+  ([chaîne de production](doc/conception/referentiels/visuel/assets/chaine-de-production.md)), qui ne vaut que pour elle.
+- **Toute sprite générée est inscrite à son sujet et l'artefact de suivi est republié — sans exception** ([chaîne de production](doc/conception/referentiels/visuel/assets/chaine-de-production.md)).
+  Une image qui existe sans être inscrite n'existe pour personne : elle n'apparaît nulle part, personne ne peut la juger, et elle se refait.
+
+## L'écriture et les libellés
+
+- **Tout libellé et tout titre affiché commence par une majuscule** — « Vue principale », jamais « vue principale ». Une seule majuscule, celle du début : elle ne se répète pas à chaque mot. Les codes
+  et les adresses techniques gardent leur casse exacte, celle des fichiers (`OB-010`, `cutout/cloture/...`), aucune majuscule ajoutée. Une interface où la casse varie d'un libellé à l'autre donne
+  l'impression que personne ne l'a relue — c'est le genre de détail qui se corrige une fois par page tant que la règle n'existe pas.
+- **Tout rapport destiné à être lu est en Markdown — règle générale.** Un rapport se relit, se cite, se colle dans une conversation et s'affiche dans une page : le Markdown lui donne titres, tableaux
+  et blocs de code sans rien coûter, là où le texte brut oblige chaque lecteur à refaire la mise en forme dans sa tête. Ne vaut que pour ce qui se lit : ce qui se relit par machine — évaluations,
+  mesures, catalogues — reste du JSON, et les deux coexistent plutôt que l'un n'imite l'autre.
+
+## Le versionnage et la publication
+
+- **Git : aucune écriture d'historique sans ordre explicite de l'opérateur** — `commit`, `commit --amend` et `push` compris. L'agent exécute lui-même les commandes git, mais seulement une fois l'ordre
+  donné ; les commits restent occasionnels, pas un par étape. Dépôt distant : `git@github.com:Cartman34/gatebeast.git` (`origin`, branche `main`). **Jamais de ligne `Co-Authored-By` nommant Claude ou
+  Anthropic** : l'opérateur est l'unique auteur de ses commits.
+- **Publication** : les revues sont des artefacts Claude republiés à adresse stable (le paramètre `url` de l'outil Artifact conserve le lien). Les adresses en cours sont listées dans `SUIVI.md`.
+
+## La méthode commune
+
+Méthode de travail commune : `~/projects/conceptions/methode/` — conception descendante, collaboration avec l'opérateur, principes d'exécution. Elle vaut au-delà de GateBeast et prime sur
+les habitudes d'un agent, exactement comme ce document.

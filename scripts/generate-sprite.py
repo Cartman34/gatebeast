@@ -68,16 +68,30 @@ POSTS_TEXT = {
 }
 
 
-def sheet_of(code: str, qualifier: str = None) -> tuple:
-    """The label and the description of a subject, read verbatim from its inventory entry. Without
-    `qualifier`, the base description; with one (e.g. a portillon value like "gate-closed"), the
-    description proper to it — see asset_common.sheet_description."""
+def sheet_of(code: str, candidates: tuple = (), required: tuple = ()) -> tuple:
+    """The label and the description of a subject, read verbatim from its inventory entry.
+
+    `candidates` are everything this variant asks for that a fiche may describe on its own — its
+    density, its proposition, its gate, its form. The fiche decides: whichever of them it writes a
+    description for is the description to quote, and a value it says nothing about leaves the base one
+    in place (a number of posts is a finish, rendered by a clause of the consigne instead).
+
+    `required` are the values whose field declares `defines_kind` — another piece, not the same one
+    finished differently. Their own description is mandatory: missing, sheet_description faults rather
+    than letting the consigne carry the plain fence's description for a gate.
+
+    Two candidates described at once is a fault too: which one the consigne quotes is a decision of the
+    fiche, and nothing here is entitled to pick.
+    """
     for path in sorted(SHEETS.glob("*.md")):
         for line in path.read_text(encoding="utf-8").splitlines():
             if not line.startswith(f"- **{code} "):
                 continue
             label = line.split("**")[1].replace(code, "").strip()
-            description, _ = asset_common.sheet_description(line, code, qualifier)
+            written = [value for value in candidates if value in required or asset_common.declares_qualified_description(line, value)]
+            if len(written) > 1:
+                raise SystemExit(f"FAULT {code} décrit à part plusieurs des valeurs demandées ensemble ({', '.join(written)}) — laquelle citer appartient à la fiche, rien ici ne la choisit.")
+            description, _ = asset_common.sheet_description(line, code, written[0] if written else None)
             return label, description
     raise SystemExit(f"FAULT {code} n'est pas à l'inventaire — rien ne se produit sans fiche.")
 
@@ -150,7 +164,7 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
                          "son image de référence (--ref pour une image du sujet seul, --plate pour "
                          "une scène où il apparaît parmi d'autres).")
     type_, sujet = sujet_type(code)
-    extras = asset_common.extra_instructions(code, sujet)
+    extras = asset_common.extra_instructions(code, sujet, type_)
     # An image is commanded BY THE REF of its variant: the referentiel holds that variant, and everything the consigne needs about it — its shape, its
     # composition, its gate, whatever its type declares — is read there rather than retyped on the command line. What used to be asked value by value is
     # now asked once, by the name the variant already goes by everywhere else.
@@ -178,11 +192,18 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
         # asked for without a composition came out different depending on which of the two you believed.
         posts = int(type_["compositions"]["default"].rsplit("-", 1)[1])
 
-    # Which asked value the sheet is quoted for. The referentiel already says it: a variant that DEFINES THE KIND of the piece is another thing, not the
-    # same thing finished differently, so it carries its own description — a gate, a density of grass. One that does not (a number of posts) is rendered by
-    # a clause instead. Read there, never decided here.
-    defining = [value for name, value in asked.items() if (type_.get(f"{name}s") or {}).get("defines_kind")]
-    label, description = sheet_of(code, defining[0] if defining else portillon)
+    # Which asked value the sheet is quoted for — THE FICHE DECIDES, and it decides for every field alike: a description proper to a value or a form is an
+    # optional mark of the fiche format (inventaire/README.md), written where the sujet changes with that value. Keyed on `defines_kind` before, the clause
+    # only ever reached the gates: the three grass densities and the two building propositions all carry their own descriptions, none of their fields
+    # declares `defines_kind`, and every one of those variants was therefore produced with the base description — a variant that is in fact the main view.
+    # `defines_kind` says which variant LEADS a label (sujets-et-variantes.md); it never said which description gets quoted, and reading it that way is what
+    # made a whole family of variants unproducible in silence. What it does keep is its own guarantee: such a value MUST be described, never quietly served
+    # the base text.
+    required = [value for name, value in asked.items() if (type_.get(f"{name}s") or {}).get("defines_kind")]
+    candidates = [value for _, value in sorted(asked.items())]
+    if shape != shape_vocab.DEFAULT_SHAPE:
+        candidates.append(shape)
+    label, description = sheet_of(code, candidates, required)
     edges = shape_vocab.edges_of(shape)
     joined = [SIDE[edge] for edge in edges]
     reach = " et ".join(", ".join(joined).rsplit(", ", 1))

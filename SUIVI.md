@@ -12,7 +12,7 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **MAJEUR — la cascade ne fonctionne pas.** La règle de cohérence du projet veut qu'un variant se produise **à partir de la vue principale validée**, fournie comme référence visuelle. Le mécanisme est en place et l'image est bien déposée dans le répertoire de travail du générateur ; mais deux essais sur la clôture nord-sud, dont un avec une consigne disant en toutes lettres « exactement la clôture de l'image de référence, vue tournée d'un quart de tour », ont rendu **une autre clôture**. Deux générations de la même fiche donnent aussi deux chênes nettement différents. Ces images n'ont pas été soumises à l'opérateur : le jugement ci-dessus est celui de l'agent principal, pas un verdict de l'opérateur. Conséquence : rien ne garantit aujourd'hui la cohérence entre les variants d'un même sujet — les huit pièces de clôture, les quatre orientations d'un personnage, les poses d'une marche. **Décision à prendre avec l'opérateur avant toute production de variants.**
 
-**Fait — la couche assets est conçue** (2026-08-03) : modèle sujet / type / profil / variant, orientation dans le repère du monde, action, et une direction par partie qui pointe dans le repère du sujet (`north` = droit devant), images numérotées en dessous, repli déclaré, empilement à l'écran, lots par type, chaîne de production. Voir [rendu en calques](doc/conception/referentiels/technique/rendu-en-calques.md), [assets](doc/conception/referentiels/visuel/assets/index.md), [sujets et variants](doc/conception/referentiels/visuel/assets/sujets-et-variantes.md) et le [lexique](doc/lexique.md) enrichi du vocabulaire de production (anglais américain).
+**Fait — la couche assets est conçue** (2026-08-03) : modèle sujet / type / profil / variant, orientation dans le repère du monde, action, et une direction par partie qui pointe dans le repère du sujet (`north` = droit devant), images numérotées en dessous, repli déclaré, empilement à l'écran, lots par type, chaîne de production. Voir [rendu en calques](doc/conception/referentiels/technique/rendu-en-calques.md), [assets](doc/conception/referentiels/visuel/assets/index.md), [sujets et variants](doc/conception/referentiels/visuel/assets/sujets-et-variantes.md) et le [glossaire](doc/glossaire.md) enrichi du vocabulaire de production (anglais américain).
 
 **Fait — le projet a son dépôt** (2026-08-03) : la conception a quitté `conceptions/` et vit ici, dans `doc/conception/`, sous versionnage. **Les images ont une archive complète hors dépôt, `~/projects/gatebeast-assets/` : elle contient TOUT ce qui a été produit (403 Mo), rien n'est jamais perdu.** Le dépôt ne versionne que les images vivantes — les assets du POC et les six planches courantes ; les versions dépassées et les pages de revue reconstructibles restent dans l'archive seule. **À faire avant tout tir : les outils pointent encore vers l'ancien emplacement** (`conceptions/gatebeast/…`) et doivent être réajustés.
 
@@ -29,7 +29,7 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 | `TR-060` grand chêne, `TR-062` herbe haute | **regénérées sur fond transparent, ni jugées ni inscrites au catalogue**. Le chêne montre beaucoup trop de racines apparentes — c'est **sa fiche** qui les demande, pas la consigne ; l'opérateur l'accepte pour l'instant. |
 | `TR-061` bosquet de sapins, `TR-063` pommier, `CH-019` chemin de terre battue, `BT-001` centre de soin | **à produire**. Le pommier et le bosquet de sapins ont été **renommés et entièrement réécrits** le 2026-08-04 : leurs anciennes fiches décrivaient un « petit arbre » et un « bosquet dense » sans essence. |
 
-**Décisions du 2026-08-04, toutes écrites dans la conception.** On dit **opérateur**, jamais « propriétaire » (terme banni, [glossaire de la méthode](../conceptions/methode/glossaire.md)). Les **types sont fins** — un type regroupe ce qui s'échange sans incohérence : herbe, arbre, bosquet d'arbres, clôture, chemin, et non « végétation ». Le **passage** d'un sujet se déclare **côté par côté**, jamais il ne se déduit d'une forme : tout se traverse par défaut, un type peut renverser cette valeur, et **trois niveaux** — type, sujet, variant — se surchargent en ne portant que ce qu'ils définissent ; fermer deux côtés adjacents ferme ce qui est entre eux ; l'inventaire se revalide à chaque ajout. Le **catalogue est gelé** : un fichier neuf le remplacera, construit autour des **types, sujets, variants et représentations** — la sprite n'étant qu'une représentation parmi d'autres. Le **lexique** a quitté la conception pour `doc/lexique.md`, **biome** y est défini, et les **humains** sont réunis à l'inventaire sous `HU-nnn` — il n'y a pas de sujet « personnage-joueur ».
+**Décisions du 2026-08-04, toutes écrites dans la conception.** On dit **opérateur**, jamais « propriétaire » (terme banni, [glossaire de la méthode](../conceptions/methode/glossaire.md)). Les **types sont fins** — un type regroupe ce qui s'échange sans incohérence : herbe, arbre, bosquet d'arbres, clôture, chemin, et non « végétation ». Le **passage** d'un sujet se déclare **côté par côté**, jamais il ne se déduit d'une forme : tout se traverse par défaut, un type peut renverser cette valeur, et **trois niveaux** — type, sujet, variant — se surchargent en ne portant que ce qu'ils définissent ; fermer deux côtés adjacents ferme ce qui est entre eux ; l'inventaire se revalide à chaque ajout. Le **catalogue est gelé** : un fichier neuf le remplacera, construit autour des **types, sujets, variants et représentations** — la sprite n'étant qu'une représentation parmi d'autres. Le **glossaire** a quitté la conception pour `doc/glossaire.md`, **biome** y est défini, et les **humains** sont réunis à l'inventaire sous `HU-nnn` — il n'y a pas de sujet « personnage-joueur ».
 
 **Nouvel outil — le plan de composition** ([sa fiche](doc/outils/plan-de-composition.md)) : `scripts/build-composition-plan.py` rend un plan à plat depuis un JSON déclaratif qui *est* le plan, avec des contrôles qui bloquent. Le moteur partagé est `scripts/composition_plan.py`. Premier plan produit : `assets/poc/cloture/plan-composition-OB-010-usage.json` — carré fermé, croix centrale, quatre antennes, les quinze formes de tracé exercées.
 
@@ -97,11 +97,131 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **Le sapin et le pommier** ont vu leurs fiches corrigées en profondeur ; le chemin aussi, sa couleur passant du sable doré à un **ocre brun terreux** — la fiche disait terre battue et décrivait du sable.
 
+## Les points ouverts — la seule liste qui fait foi
+
+**Intention :** un point ouvert ne vit jamais dans la conversation, qui se résume et se perd. Il vit ici, avec son code, jusqu'à ce que l'opérateur le tranche — et un agent relancé à froid retrouve
+ses arbitrages sans avoir à les lui faire redire. Chaque point porte un code et un numéro, pour qu'une réponse tienne en un mot : **Q** une question, **P** une proposition, **S** un sujet, **T** un
+test, **W** une alerte. Les séries sont indépendantes, continues tant qu'un point reste ouvert, et repartent à 1 quand la série se vide.
+
+**`GO` et `STOP` sont les deux seuls mots de reprise et d'arrêt du dépilement**, et ils sont stricts : rien d'autre ne vaut reprise, aucune phrase ne s'interprète comme un feu vert, et le silence
+encore moins. Tant qu'aucun `GO` n'est donné, l'agent n'écrit que ce document.
+
+| Code | Point | Attend | État |
+|---|---|---|---|
+| Q2 | Verdict sur les deux densités de l'herbe de clairière, produites le 2026-08-06 | l'opérateur | ouvert |
+| P3 | Déplacer vers la méthode commune les règles qui ne sont pas propres à GateBeast — les deux modes, le dépilement, les lots, la pile | l'opérateur | à proposer |
+| S2 | L'angle de vue des touffes d'herbe : elles sortent vues de face, la caméra du projet plonge à soixante-dix degrés | l'agent | à corriger |
+| ~~Q1~~ | ~~Le nom du sujet `TR-064`~~ | — | **résolu** — « herbe de clairière », HDC entre nous |
+| ~~S1~~ | ~~Restructurer `AGENTS.md`~~ | — | **résolu** — devenu un aiguilleur sans contenu, les règles vivent dans `doc/regles-du-depot.md`, structuré en sections |
+| ~~P1~~ | ~~Empêcher le générateur d'images de lire les règles du dépôt~~ | — | **résolu** — lecture automatique coupée à l'appel, plus l'aiguilleur, plus la consigne : trois barrières |
+| ~~P2~~ | ~~Deux lignes de récapitulatif en fin de message~~ | — | **résolu** — en service |
+| ~~W1~~ | ~~`AGENTS.md` enfreignait son propre standard de largeur~~ | — | **résolu** — les deux fichiers passent le contrôle `scripts/check-text-width.php` |
+
 ## La pile — ce qui reste à faire, dans l'ordre où je le dépile
 
 **C'est ici que tout entre.** Une demande de l'opérateur, un défaut que je constate, une remarque en passant : rien ne reste dans la conversation. Le contexte se résume et se perd ; cette liste, non. Tant qu'une ligne est ici, elle est due.
 
 **Une capture d'écran s'écrit avant d'être traitée, toujours** : ce que j'y vois est noté en toutes lettres, même si l'image parle d'elle-même — une image ne survit pas au résumé du contexte, sa description si. Et **quand ce qu'elle montre ne suffit pas à savoir quoi faire, je le dis dans la ligne** : j'écris ce que je vois, puis mon appréciation et ce qui me manque pour agir. C'est à l'opérateur de trancher, pas à moi de deviner — mais c'est à moi de repérer le manque et de le nommer, plutôt que de partir sur une hypothèse et de produire à côté.
+
+### Les deux densités de l'herbe de clairière, produites le 2026-08-06 — mon jugement avant celui de l'opérateur
+
+**Ce qui est acquis** : la clause du variant atteint le générateur, les deux images sont enfin distinctes l'une de l'autre et de la vue principale, les quantités demandées sont respectées — une
+vingtaine de touffes pour la moyenne, un tapis plein pour la dense — et le fond est parfaitement transparent.
+
+**Deux défauts que je vois, sur les deux images.** D'abord **les touffes sont vues de face**, brins dressés à la verticale devant nous, alors que la caméra du projet plonge à soixante-dix degrés :
+on devrait voir le dessus des touffes bien plus que leur côté. Ensuite, sur la moyenne, **la répartition est régulière** — les touffes forment une trame presque quadrillée, alors que la description
+demande une répartition irrégulière ; l'œil accroche la grille dès qu'on regarde l'image en entier. Sur la dense, le tapis forme **un carré à bords droits**, ce que l'opérateur avait déjà refusé sur
+la vue principale de ce sujet (« la case est carrée, pas ronde », puis « je n'ai pas demandé de dessiner un carré avec des herbes ») : ici c'est la description qui l'a demandé, en disant « d'un bord à
+l'autre de l'image ».
+
+### Séance du 2026-08-06 — tout ce que l'opérateur a posé, avant traitement
+
+**Trois questions attendent sa réponse, et rien ne bouge dessus :**
+
+1. **Ce que j'ai écrit sans go** — trois règles de conduite ajoutées à la méthode de collaboration, cinq aux principes d'exécution, quatre à `AGENTS.md`. Proposé : tout annuler et le
+   reproposer au bon endroit, groupé. En attente.
+2. **Les entêtes « Usage » et « Intention »** — proposés pour `AGENTS.md`, avec la phrase disant qu'il n'est pas un fourre-tout, et pour la méthode commune, où la règle existe pour le code
+   et manque pour les documents. En attente.
+3. **Les cinq images à relancer** — l'herbe clairsemée dans ses trois densités, les propositions `p2` et `p3` du centre de soin et de la maison de ferme. Toutes dessinées avec la description
+   de base de leur sujet, le variant demandé n'atteignant pas le générateur. En attente.
+
+**Ce que l'opérateur a défini ce jour, et qui doit être écrit là où ça s'applique** — aucune de ces règles n'est encore rangée correctement :
+
+- **Un ordre est un ordre ; une question, une affirmation, une exigence n'en sont jamais un.** Seul un ordre déclenche une action ; le reste appelle une réponse ou une proposition.
+- **Deux modes de travail, l'opérateur seul les fixe** — dépilement continu (par défaut) et lot. Le mode s'annonce avant de commencer et l'agent s'arrête sur cette annonce, démarrage compris.
+- **Un compte rendu tient en une ligne** ; les détails se donnent si l'opérateur les demande.
+- **On ne désigne rien par son code dans la conversation** — l'opérateur ne connaît pas les refs par cœur ; on nomme les sujets.
+- **Rien ne se propose sans son constat dans le même message** — le défaut, ce qu'il a produit, puis la solution.
+- **Toute règle donnée s'écrit, immédiatement, au niveau où elle s'applique** — la conversation ne conserve rien.
+- **La documentation porte l'information, jamais la donnée** — elle dit comment ça marche et où lire ; la donnée vit à un seul endroit, celui d'où les outils la lisent. Bascule **au fil de
+  l'eau**, jamais en refonte, chaque déplacement proposé.
+- **L'inventaire des sujets, c'est `assets/sujets.json`, et il fait foi** — la documentation cesse de recopier ses valeurs. Divergence déjà constatée : l'herbe clairsemée est haute d'une case
+  dans la documentation et de trois dixièmes dans l'inventaire, qui cite pourtant la documentation comme source.
+- **On dit toujours de quel référentiel on parle** — le mot seul ne désigne rien. Il n'est pas banni, il est à qualifier.
+- **Une donnée sortie de la documentation reste consultable** — une commande la rend lisible sans ouvrir le fichier ni écrire de code.
+- **Les mêmes gestes portent les mêmes noms d'un outil à l'autre** — `list`, `show <ref>`, `help`, pour tout outil de consultation, quel que soit le référentiel qu'il ouvre.
+- **Une règle qui change emporte ses validateurs dans le même geste** — ça ne se demande pas, ça fait partie du changement.
+- **Là où deux traitements écrivent la même chose, on pose un verrou dès la conception** — pas après le premier dégât. « Je développe vite, ça casse, je corrige » est proscrit.
+- **Une description ne laisse aucune ambiguïté, en toute circonstance** — couleur, forme, proportions chiffrées, ce qui est visible et ce qui ne l'est pas. Quand une référence existe, elle est
+  donnée au générateur **avec** la description, jamais à sa place.
+- **Une référence se regarde avant d'être décrite** — décrire de mémoire produit une description fausse. Les extraits de planche sont autorisés, rangés, produits par un script versionné.
+- **Rien de `local/` ne se cite nulle part** — ce répertoire n'est pas versionné, une référence à lui est morte pour tout le monde sauf pour l'agent qui l'écrit.
+- **Tout document s'ouvre par son usage et son intention** — et dit ce qu'il ne couvre pas. `AGENTS.md` n'est pas un fourre-tout : chaque règle va dans le document dont elle relève.
+- **Un standard se définit, il ne se déduit jamais** — ce qu'un agent a mal fait ne devient pas la norme parce que le suivant l'a imité ; l'existant se corrige au fil de l'eau.
+- **Le suivi est le support de l'agent** — il l'écrit quand il veut, sans demander. Il doit permettre à tout moment d'être coupé et relancé de zéro **sans aucune perte** : ce qui n'y est pas écrit
+  n'existe pas.
+- **Tant que le dépilement n'est pas lancé, l'agent ne modifie que le suivi** — rien d'autre, aucun fichier. Le dépilement demande une **confirmation explicite** de l'opérateur ; tout ce qui
+  survient avant elle entre dans la pile et y attend.
+- **L'opérateur donne la cible, l'agent met en place les actions pour l'atteindre** — et l'existant se corrige pour s'y conformer plutôt que d'être laissé en écart. C'est la méthode de travail.
+- **On prend le bon chemin, jamais le plus court** — bâcler se paie plus tard, et plus cher. Un travail fait à moitié laisse à celui qui suit le soin de découvrir ce qui manque.
+- **Toute génération part en tâche de fond, sans exception** — on ne l'attend jamais. La règle existe déjà dans la méthode commune (« rien de long ne bloque la conversation ») et n'était pas tenue.
+- **En dépilement, une question de l'opérateur met le dépilement en pause** — au plus tôt, le temps d'y répondre ; c'est lui qui dit quand repartir.
+- **Le socle de consigne reste général** — il sert à toutes les générations. Ce qui est propre à une famille descend au **type**, qui porte sa propre consigne : deux types peuvent vouloir l'inverse
+  l'un de l'autre, l'arbre ne veut rien à son pied quand la clôture veut de l'herbe au pied de ses poteaux.
+- **Le contrôle de longueur de ligne doit être un outil versionné**, lancé sur ce qui vient d'être écrit avant de le montrer — la vigilance seule ne tient pas, le pli d'origine revient.
+- **Tout point ouvert porte un code et un numéro**, pour que l'opérateur réponde par lui seul : **Q** une question, **P** une proposition, **S** un sujet, **T** un test, **W** une alerte. Les séries
+  sont indépendantes, continues tant que le point reste ouvert, et repartent à 1 quand la série est vide.
+- **Aucune interprétation, jamais** — une reprise de dépilement se donne explicitement ; l'absence de refus n'est pas un accord, et une consigne de correction n'est pas un ordre d'exécuter.
+- **Une règle écrite prime sur l'existant, toujours** — l'entourage d'un fichier n'est une référence que là où aucune règle n'est définie. `AGENTS.md` porte cette règle en tête depuis le 2026-08-06,
+  avec son contrôle mécanique, `scripts/check-text-width.php`, à lancer sur tout fichier touché avant de le montrer.
+
+**W1 — `AGENTS.md` enfreint le standard qu'il porte** : vingt de ses puces font de 235 à 886 caractères d'une seule ligne, quand le plafond du projet est 200. Le fichier n'a par ailleurs **aucune
+section** : c'est une liste à plat, alors que la structure est exigée. **S1 — sa restructuration est demandée par l'opérateur** : sections, règles primordiales en tête (celles qui disent comment on
+respecte les règles), aucune perte d'instruction ni d'information, reformulation permise. **Pas encore engagée, aucune reprise donnée.**
+
+**P1 — plusieurs règles de `AGENTS.md` ne sont pas propres à GateBeast** — les deux modes, le dépilement, les lots, la pile, l'annonce du mode. Leur place est la méthode commune. À proposer une fois
+la restructuration faite, jamais dans le même geste.
+
+**Trois constats de la séance, à porter aux descriptions concernées :**
+
+- **Le sapin de référence** (en haut à gauche de la planche de campagne) : cône environ deux fois plus haut que large, six à sept couronnes étagées et nettement séparées, branches
+  légèrement retombantes, bord découpé en paquets d'aiguilles. Vert profond en deux bandes, vert clair jaunissant à la lumière, vert bleuté sombre à l'ombre. **La couronne la plus basse se
+  raccourcit et remonte vers le tronc** au lieu de s'évaser, et le **tronc est nu sur près d'un cinquième de la hauteur** : fût droit et épais, écorce brun-roux à sillons verticaux, évasé au
+  pied, sans contreforts. Aucun cône, aucune neige.
+- **Le portillon** n'est pas un morceau de clôture : c'est **deux poteaux et un battant entre eux**, rien d'autre. Fermé, le battant ferme l'écart ; ouvert, il pivote sur le côté. Les deux
+  versions sont à refaire, le style est bon.
+- **Le chemin** ne demande aucun arbitrage : il est déjà dessiné sur les planches de référence, donc il se décrit tel qu'il y est, et la planche est donnée au générateur comme référence.
+
+**Fait ce jour** : la clause d'un variant atteint enfin le générateur (voir plus haut), et le mot banni `axe` reste employé dans mes propres écrits d'aujourd'hui — à purger.
+
+**État du dépôt à cet instant, pour une reprise à froid.** Rien n'est enregistré dans l'historique ; voici ce qui est modifié et sur quelle autorité :
+
+| Fichier | Ce qui a changé | Autorité |
+|---|---|---|
+| `scripts/generate-sprite.py`, `scripts/asset_common.py` | la description propre à un variant atteint le générateur, quel que soit le champ qui la porte | **demandé par l'opérateur**, vérifié à blanc sur l'herbe dense, la proposition `p3` du centre de soin et le portillon ouvert |
+| `SUIVI.md` | le défaut expliqué et daté, et la présente section | support de l'agent, libre |
+| `AGENTS.md` | quatre règles ajoutées (référentiel à qualifier, description sans ambiguïté, référence regardée avant d'être décrite, `local/` jamais cité) | **écrites sans go** — à annuler et reproposer au bon endroit |
+| méthode commune, collaboration | compte rendu en une ligne | accordé |
+| méthode commune, collaboration | trois règles (désigner par le nom, constat avant proposition, toute règle s'écrit) | **écrites sans go** |
+| méthode commune, exécution | cinq règles (documentation contre donnée, noms de sous-commandes, validateurs, verrou, et leurs intentions) | **écrites sans go** |
+| `local/scripts/` | trois scripts jetables : longueur de ligne, extrait de planche, champs de variants | jamais commité |
+
+Le dépôt de la méthode commune portait déjà deux fichiers modifiés à l'arrivée — `execution.md` et `revue-visuelle.md` : ils ne sont pas de moi, et je n'en gère pas l'historique.
+
+**Mode en cours** : aucun, et le dépilement attend une confirmation explicite. Un ordre reçu le 2026-08-06 est **exécuté aux trois quarts** : les définitions sont passées au glossaire (inventaire des
+sujets, référentiel toujours qualifié), la façon d'écrire une description au mode d'emploi de l'inventaire, l'entête de `AGENTS.md` et la règle générale des entêtes à la méthode. **Reste à faire de
+cet ordre : relancer les deux densités d'herbe** — la moyenne et la dense, l'une après l'autre et jamais en parallèle tant qu'aucun verrou ne protège l'inventaire, avec la planche de campagne en
+référence. La clairsemée n'est pas concernée : sa description est la description de base, celle qui passait déjà.
 
 ### Production
 
@@ -114,7 +234,24 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 7. **`CH-019` chemin** — couleur encore trop jaune ; sa fiche dit « terre battue » et décrit du sable clair, à trancher.
 8. **`CH-020` cours d'eau** — angle de caméra à reprendre, fiche pas encore revue.
 
+### Page du parc — deux défauts relevés le 2026-08-06
+
+**Une remarque traitée n'est jamais marquée résolue, donc elle revient.** L'opérateur relit le plan, retrouve ses anciennes remarques mêlées aux neuves, et redit ce qui est déjà fait. **Ce qui est
+traité doit se marquer comme résolu** sur le plan lui-même, pour que la lecture suivante ne montre que ce qui reste dû.
+
+**Capture du 2026-08-06 — la colonne des remarques est étroite alors que la page est large.** Les remarques s'affichent dans une bande centrale d'environ huit cents pixels, chaque texte se repliant sur
+trois lignes courtes — « (28,7) J'ai dit de l'herbe autour du cours d'eau mais 2 cases pleines… » — avec un bouton « Retirer » à droite et de larges marges vides de part et d'autre. **L'opérateur : la
+colonne doit prendre la largeur disponible.**
+
+**Capture du 2026-08-06 — une remarque neuve s'affiche déjà en gris.** Sur le plan, l'étiquette « (47,43) Herbe rase » apparaît en gris clair sur fond blanc, dans le même style que les remarques
+résolues, alors qu'elle vient d'être posée et n'a pas été traitée. Le gris signifiant « résolu », une remarque neuve se lit comme déjà réglée et sera ignorée. À corriger : une remarque naît en attente,
+et ne passe au gris qu'une fois marquée résolue.
+
 ### Page des sprites — défauts en attente
+
+**Capture du 2026-08-06 — le relevé prend trop de place.** L'encart « Votre relevé, à me coller en conversation » occupe le bas de la page avec une zone de texte haute d'une quinzaine de lignes, qui
+montre le récapitulatif en cours : le bâtiment de la maquette, deux portillons nord-sud passés à reprendre, et trois commentaires — « Il est raté », « Style bon mais image incohérente », « Bien mais
+propose 2 autres herbes hautes (nouveaux sujets) ». **L'opérateur : la zone de texte sert peu et prend beaucoup de place — elle doit être repliée par défaut et se déplier sur un bouton.**
 
 **Capture du 2026-08-05** : sur une image commentée, la barre d'actions ne montre que « À reprendre », « Écarter » et « + ». **Le bouton de validation a disparu.** L'opérateur : « je ne peux pas valider un variant quand j'ai fait une remarque dessus, peut-être que la condition est autre, mais le bouton ne doit jamais être bloqué ». Les actions offertes dépendent aujourd'hui de l'état courant — l'image est à reprendre, donc la validation n'est pas proposée. À corriger : **toutes les actions restent toujours offertes**, l'opérateur change d'avis quand il veut.
 
@@ -133,9 +270,24 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 **Ce que ça implique, et qui n'existe pas encore** : un plan refuse aujourd'hui deux sujets sur une même case — c'est même son seul contrôle d'occupation. Il faudra que la déclaration porte des **calques** : une case peut avoir un sol ET un volume posé dessus. Le rendu en calques est déjà la façon dont le jeu affiche la carte, donc la conception ne s'y oppose pas ; c'est le format du plan qui est à étendre. **Rien n'est engagé là-dessus.**
 
-**LA CLAUSE D'UN VARIANT N'ARRIVE PAS AU GÉNÉRATEUR — défaut d'outillage, constaté le 2026-08-05 en fin de séance.** Vérifié sur la consigne réellement envoyée pour `TR-064` en densité `dense` (`var/generations/sprites/TR-064_densite-dense-v4-rapport.md`) : elle ne porte **aucun mot** de la description propre à `dense`, seulement la description de base du sujet. Les trois tentatives successives ne pouvaient donc que redonner une herbe clairsemée, quelle que soit la fiche.
+**LA CLAUSE D'UN VARIANT N'ARRIVAIT PAS AU GÉNÉRATEUR — défaut d'outillage constaté le 2026-08-05, RÉPARÉ le 2026-08-06.** Vérifié sur la consigne réellement envoyée pour `TR-064` en
+densité `dense` (`var/generations/sprites/TR-064_densite-dense-v4-rapport.md`) : elle ne portait **aucun mot** de la description propre à `dense`, seulement la description de base du
+sujet. Les trois tentatives successives ne pouvaient donc que redonner une herbe clairsemée, quelle que soit la fiche.
 
-**Ce que ça invalide** : chaque fois qu'une variante est sortie « identique à la précédente », la cause a pu être celle-là et non le modèle ni la formulation — les propositions `p2` et `p3` des bâtiments sont à re-vérifier sous cet angle. **C'est le premier point à traiter à la reprise** : sans lui, toute variante produite est en réalité une vue principale.
+**La cause** : l'outil n'allait chercher la description propre à une valeur que si l'axe portant cette valeur se déclarait `defines_kind`. Un seul axe le déclare, le portillon. Les
+**densités** d'herbe et les **propositions** de bâtiment ne le déclarent pas — leurs descriptions, pourtant écrites à l'inventaire, n'atteignaient jamais le générateur. Or
+`defines_kind` dit quel variant **mène le libellé** ([sujets et variants](doc/conception/referentiels/visuel/assets/sujets-et-variantes.md)), jamais quelle description se cite : le mode
+d'emploi de l'inventaire pose qu'une description propre à une valeur ou à une forme se cite **dès que la fiche l'écrit**, pour n'importe quel axe. C'était le code qui contredisait la
+documentation, et c'est donc lui qui a cédé.
+
+**Le correctif** : la fiche décide seule. Toute valeur demandée par le variant — densité, proposition, portillon, et la forme — est confrontée à la fiche ; celle que la fiche décrit à
+part fournit la description citée, les autres laissent la description de base en place (le nombre de poteaux reste une finition rendue par une clause). Ce que `defines_kind` garde :
+une valeur qui change la nature de la pièce **doit** être décrite, et son absence reste une faute bruyante. Deux valeurs décrites à part dans la même demande sont une faute aussi :
+laquelle citer appartient à la fiche.
+
+**Ce que ça invalide** : les trois densités de `TR-064` et les propositions `p2` et `p3` de `BT-001` et `BT-002` ont **toutes** été produites avec la description de base de leur sujet —
+chacune était en réalité une vue principale. Les verdicts « trop proche de la première » et « `p3` sortie verte alors que sa fiche demande une palette chaude » s'expliquent par là et
+**ne jugent pas les fiches**. À relancer une fois le lot arbitré.
 
 ### Outillage
 
@@ -397,7 +549,9 @@ Les six planches sont des références **documentées** : chacune a sa fiche, et
 
 **Ce que ça change** : l'inventaire a été écrit avant les planches et n'a jamais été confronté à elles. Rien n'est urgent pour le POC — le parc n'emploie qu'une poignée de sujets — mais **toute production hors du parc partira de fiches fausses** tant que ce n'est pas repris. Et **aucun sujet ne se crée sans l'opérateur** : la liste est une proposition, pas un chantier lancé.
 
-**Contradiction en attente d'arbitrage** : le sapin. L'opérateur le veut « nettement plus petit que les six cases du bosquet », mais la fiche du bosquet dit que chacun de ses sapins est « à la taille d'un sapin ». Les deux ne peuvent être vrais. Sa fiche n'est pas écrite tant que ce n'est pas tranché.
+**Fausse contradiction, effacée le 2026-08-06.** Il était écrit ici que l'opérateur voulait le sapin « nettement plus petit que les six cases du bosquet », en contradiction avec la description du
+bosquet. **Il n'a jamais dit ça** : c'était une déduction d'agent, écrite comme si elle venait de lui, et elle a bloqué la reprise du sapin pendant deux jours. La seule chose que l'opérateur a dite du
+sapin est qu'il veut celui de la planche de campagne, en haut à gauche. **Leçon : une déduction ne s'écrit jamais au nom de l'opérateur** — ce qu'il n'a pas dit se demande, ou ne s'écrit pas.
 
 **Chantiers ouverts en fin de journée du 2026-08-04 :**
 
@@ -405,7 +559,7 @@ Les six planches sont des références **documentées** : chacune a sa fiche, et
 - **Les descriptions d'inventaire passent en français.** Ordre de l'opérateur : toute consigne envoyée au générateur est en français, or la description du sujet y était citée en anglais — le seul fragment qui restait. La règle du README est déjà retournée ; la réécriture d'une centaine de fiches est en cours. Ce n'est pas une traduction mot à mot : le texte doit être aussi concret en français, sans rien perdre ni rien ajouter, en prescription positive.
 - **Le catalogue gelé doit être débranché**, pas seulement cessé d'être écrit. Il porte encore tout l'adressage dont dépendent deux outils vivants — `check-asset.py` et `record-asset.py`. Le débranchement ne se fait **qu'après** une correspondance ligne à ligne prouvant que le référentiel des sujets fournit tout ce qu'ils y prennent ; s'il manque quoi que ce soit, c'est le référentiel qui est incomplet, et le compléter est une décision de conception.
 - **Le vocabulaire des formes est recopié en dur dans cinq outils**, et cette copie vit dans le module du catalogue gelé. Un détenteur unique le remplace, les autres l'importent — comme les tailles en pixels, qui n'ont plus jamais divergé depuis qu'elles en ont un.
-- **Une forme peut porter une qualification** devant ses bords — `gate-ew`, `gate-ns` — parce que deux pièces peuvent relier les mêmes bords sans être le même dessin. Règle écrite dans la conception et au lexique.
+- **Une forme peut porter une qualification** devant ses bords — `gate-ew`, `gate-ns` — parce que deux pièces peuvent relier les mêmes bords sans être le même dessin. Règle écrite dans la conception et au glossaire.
 - **La toile demandée au générateur épouse la forme réelle du sujet.** Elle se calculait sur le seul sol : un pommier haut de trois cases recevait un carré et s'écrasait. La profondeur au sol se projette presque en vraie grandeur, la hauteur s'écrase au tiers — la caméra est à soixante-dix degrés **sous l'horizontale**, donc près de la verticale. Cette convention est la source d'une erreur commise et corrigée aujourd'hui : elle est désormais écrite noir sur blanc dans le service qui détient les tailles.
 
 - **Le portillon** `OB-010_shape-ew-avec-portillon.png` est **rattaché** au référentiel le 2026-08-04, sur un axe `ouverture` proposé. Deux points attendent l'opérateur : le nom de l'axe, et **le passage** — un portillon se traverse, ce qui renverse la fermeture du type sur les deux côtés reliés.

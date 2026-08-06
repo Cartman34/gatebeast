@@ -49,6 +49,20 @@ DESCRIPTION_PATTERN = re.compile(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)")
 # exactly the same kind of structural read as finding the italics: form and place, never content.
 QUALIFIED_DESCRIPTION_PATTERN = "Description propre à la {kind} `{qualifier}`"
 
+QUALIFIED_DESCRIPTION_KINDS = ("valeur", "forme")
+
+
+def declares_qualified_description(text: str, qualifier: str) -> bool:
+    """Whether the fiche in `text` writes a description proper to `qualifier` — asked BEFORE quoting it.
+
+    A qualified description is OPTIONAL (inventaire/README.md): a value may rewrite the sujet's
+    description, or be a mere finish the consigne renders with a clause of its own. A caller holding
+    several asked values therefore has to know which of them the fiche actually describes, and it must
+    find that out without provoking the fault sheet_description() raises for a qualifier it cannot
+    honour. Asked here rather than by re-matching the phrase elsewhere: the fiche format has one owner.
+    """
+    return any(QUALIFIED_DESCRIPTION_PATTERN.format(kind=kind, qualifier=qualifier) in text for kind in QUALIFIED_DESCRIPTION_KINDS)
+
 
 def sheet_description(text: str, code: str, qualifier: str = None) -> tuple:
     """The sheet's own description in `text`, found by its FORM and its PLACE — never by the words it
@@ -79,7 +93,7 @@ def sheet_description(text: str, code: str, qualifier: str = None) -> tuple:
     the wrong one, must never reach the generator silently.
     """
     if qualifier:
-        for kind in ("valeur", "forme"):
+        for kind in QUALIFIED_DESCRIPTION_KINDS:
             phrase = QUALIFIED_DESCRIPTION_PATTERN.format(kind=kind, qualifier=qualifier)
             introduced = text.find(phrase)
             if introduced == -1:
@@ -130,9 +144,8 @@ ses faces supérieures sont largement visibles, et son volume se lit. C'est la C
 dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face."""
 
 CADRAGE_CUTOUT = f"""\
-UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus :
-aucun décor, aucun sol, aucune herbe, aucun accessoire, aucun autre être vivant, aucun cadre, aucune
-bordure, aucun texte.
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
+ce que la description demande appartient au sujet et se dessine, quelle que soit la matière dont il est fait.
 
 {FOND}
 
@@ -140,10 +153,9 @@ CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine 
 Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
 c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
 transparente subsiste tout autour."""
-# Une proportion de hauteur imposée contredisait la caméra : pour occuper les quatre cinquièmes de la
-# hauteur, un sujet doit être dressé et vu de face, alors que la plongée l'écrase. Le générateur suivait
-# la plus concrète des deux consignes et rendait des vues frontales. On dit désormais ce qu'on veut — la
-# largeur pleine, la hauteur laissée à la caméra — au lieu d'imposer deux règles qui se contredisent.
+# An imposed height proportion contradicted the camera: to fill four fifths of the height a subject has to stand upright and face us, whereas the seventy-degree
+# dive flattens it. The generator followed the more concrete of the two clauses and returned front views — the apple tree and the thicket came back that way.
+# What is asked now is what is actually wanted: the full width, and the height left to the camera, instead of two rules that contradict each other.
 
 CADRAGE_TRACE = f"""\
 UN SEUL SUJET, ET RIEN D'AUTRE : la pièce d'assemblage décrite ci-dessous, et absolument rien de plus —
@@ -337,20 +349,26 @@ def taille_clause(footprint: tuple, height: float) -> str:
 EXTRA_MARKER = "Consigne supplémentaire de génération :"
 
 
-def extra_instructions(code: str, sujet: dict = None) -> dict:
-    """The extra generation instructions given to ONE subject, from the two places they may live.
+def extra_instructions(code: str, sujet: dict = None, type_: dict = None) -> dict:
+    """The extra generation instructions that apply here, from the three places they may live.
 
-    Both are optional and neither is required (operator, 2026-08-05): a subject may carry one, the
-    other, both, or none. Whatever is found is quoted to the generator and shown in the report — the
-    report holds the two whenever the two are given, so nothing is silently preferred.
+    All three are optional and none is required (operator, 2026-08-05): a subject may carry one, two,
+    all or none. Whatever is found is quoted to the generator and shown in the report — the report
+    holds every one of them, so nothing is silently preferred.
 
-    - the INVENTORY SHEET, after the marker above, in italics like every other quoted text there;
-    - the SUJETS REFERENTIEL, under the sujet's own "consigne_supplementaire" key.
+    - the TYPE, under its own "consigne_supplementaire" key: what every subject of that family needs said, and what the common base must NOT say. The base is used by every generation there is, so a
+      need proper to one family put there contaminates all the others — a clause forbidding grass in the image, written for a tree that kept sprouting some at its foot, made every grass subject
+      contradict its own description (operator, 2026-08-06). A type is exactly the level where such a clause belongs, and it is also where two families can want opposite things: a tree wants nothing at
+      its foot, a fence wants grass at the foot of its posts.
+    - the INVENTORY ENTRY, after the marker above, in italics like every other quoted text there;
+    - the subject's own "consigne_supplementaire" key in the inventory of subjects.
 
     Returns a dict keyed by the human name of each source, empty values dropped: it is passed straight
     to the report and iterated to build the prompt block.
     """
     found = {}
+    if type_ and type_.get("consigne_supplementaire"):
+        found["Consigne supplémentaire — le type"] = type_["consigne_supplementaire"]
     for folder in (Path(__file__).resolve().parents[1] / "doc" / "conception" / "referentiels"
                    / "visuel" / "inventaire",):
         for path in sorted(folder.glob("*.md")):
@@ -362,7 +380,7 @@ def extra_instructions(code: str, sujet: dict = None) -> dict:
                 if match:
                     found["Consigne supplémentaire — fiche d'inventaire"] = match.group(1).strip()
     if sujet and sujet.get("consigne_supplementaire"):
-        found["Consigne supplémentaire — référentiel des sujets"] = sujet["consigne_supplementaire"]
+        found["Consigne supplémentaire — le sujet"] = sujet["consigne_supplementaire"]
 
     return found
 

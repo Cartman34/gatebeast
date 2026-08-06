@@ -25,7 +25,7 @@ Usage:
   --variant    the REF of the variant, as the referentiel writes it — e.g.
                orientation-south_action-idle_shape-ns_posts-1_frame-01. Left out, the main view's.
                An unknown ref is refused: a variant is declared before it is produced.
-  --frame      the image's own number within its variant (lexique: frame-01, frame-02...) — not a
+  --frame      the image's own number within its variant (glossaire: frame-01, frame-02...) — not a
                version number, defaults to 1
   --dry-run    show what would be written, touch nothing
 """

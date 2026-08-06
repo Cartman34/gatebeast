@@ -26,6 +26,6 @@ Ce nœud couvre le lore, le bestiaire et la nomenclature du monde. Il exclut les
 
 - [creatures-temoins.md](creatures-temoins.md) — *statut esquisse* : les créatures de la revue visuelle, décrites une fois pour toutes, rune et position comprises ; aucune consigne ne décrit une créature hors fiche.
 Les humains ont quitté ce nœud : ce sont des sujets, et tous les sujets vivent à l'[inventaire](../visuel/inventaire/personnages.md), sous les codes `HU-nnn`.
-Le [lexique](../../../lexique.md) — les termes importants en français et en anglais — a quitté ce nœud : il nomme, il ne décide pas, et relève donc de la documentation du projet, pas de la conception.
+Le [glossaire](../../../glossaire.md) — les termes importants en français et en anglais — a quitté ce nœud : il nomme, il ne décide pas, et relève donc de la documentation du projet, pas de la conception.
 
 À ouvrir : bestiaire (fiches des créatures), lieux et toponymie, histoire du joueur.

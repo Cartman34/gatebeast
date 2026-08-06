@@ -218,7 +218,7 @@ def leading_variant_keys(type_def):
 
 def variant_field_values(type_def, entry):
     """Every value a variant carries on one of its type's variant fields that is not that field's own
-    default — the referentiel's own rule (doc/lexique.md, composition d'un sujet): a default is never
+    default — the referentiel's own rule (doc/glossaire.md, composition d'un sujet): a default is never
     written, since writing it on every variant would only make every other one harder to read by
     comparison. A variant names its value under the field's own singular name (`compositions` ->
     `composition`, `portillons` -> `portillon`), read here from what the type actually declares, never

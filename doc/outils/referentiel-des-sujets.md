@@ -83,15 +83,15 @@ ancienne au-delà de ce nombre sortant du fichier (jamais du disque).
 
 ## Le maître, l'image numérotée et les mesures — trois données que le débranchement du catalogue exigeait
 
-Le champ `path` d'une représentation est son **livrable** (lexique : « le maître exporté à la définition
+Le champ `path` d'une représentation est son **livrable** (glossaire : « le maître exporté à la définition
 de livraison ; il n'est ni rogné ni retouché ») — c'est ce que le jeu affiche. Trois autres champs
 complètent la représentation, tous distincts du `statut` de version et du `verdict` :
 
-- **`maitre`** — le chemin du **maître** (lexique : « l'image telle que le générateur l'a rendue,
+- **`maitre`** — le chemin du **maître** (glossaire : « l'image telle que le générateur l'a rendue,
   conservée pour toujours »), sous `assets/poc/`. Sans lui, rien ne relie un livrable à ce dont il est
   issu : on ne peut ni le réexporter plus finement, ni prouver qu'il n'a pas été retouché depuis. Chaque
   maître déclaré a été vérifié présent sur le disque avant d'être écrit ici.
-- **`numero_image`** — le rang de l'**image** au sens du lexique : « un fichier d'une variante, numéroté
+- **`numero_image`** — le rang de l'**image** au sens du glossaire : « un fichier d'une variante, numéroté
   `frame-01`, `frame-02`… Une posture fixe n'en a qu'un, une marche en a plusieurs. » **Ce n'est pas un
   numéro de version** : deux images d'une même marche sont deux images de la même variante, prises à des
   instants différents de la même posture animée ; deux tentatives du même dessin sont deux *versions* de

@@ -1,14 +1,22 @@
-# Lexique — anglais et français
+# Glossaire du projet — anglais et français
 
-> Ce lexique est de la **documentation**, pas de la conception : il nomme, il ne décide pas. Les termes propres à la méthode de travail — dont *opérateur* — vivent dans le [glossaire de la méthode](../../conceptions/methode/glossaire.md).
+**Usage :** les mots du projet GateBeast, chacun défini en une ligne, en français et en anglais. On y cherche ce qu'un terme veut dire, et rien d'autre.
 
-**Intention :** fixer chaque terme important dans les deux langues **au moment où il est créé**, jamais après coup. Une traduction décidée plus tard arrive toujours trop tard : le terme s'est déjà répandu dans le code, les textes et les habitudes.
+**Intention :** il nomme, il ne décide pas, et il n'explique aucun fonctionnement — une définition tient sur une ligne, le reste vit dans le document qui traite du sujet. C'est de la
+**documentation**, jamais de la conception. Les termes de la façon de travailler — dont *opérateur* et les rôles — vivent dans le [glossaire de la méthode](../../conceptions/methode/glossaire.md),
+qui porte le même nom parce qu'il est de même nature : seul son périmètre diffère.
 
-**Le français fait foi.** C'est la langue dans laquelle les termes sont pensés et arbitrés, et celle de l'interface de la 0.x. L'anglais servira le code, le nom du jeu et l'internationalisation ([vision](../../vision.md)) : à terme, interface et lore existeront dans les deux langues.
+**Intention :** fixer chaque terme important dans les deux langues **au moment où il est créé**, jamais après coup. Une traduction décidée plus tard arrive toujours trop tard : le terme s'est déjà
+répandu dans le code, les textes et les habitudes.
 
-**L'anglais est l'anglais américain.** Orthographe américaine sans exception — `center` et non `centre`, `color` et non `colour`, `catalog` et non `catalogue` —, dans le lexique comme dans le code.
+**Le français fait foi.** C'est la langue dans laquelle les termes sont pensés et arbitrés, et celle de l'interface de la 0.x. L'anglais servira le code, le nom du jeu et l'internationalisation
+([vision](../../vision.md)) : à terme, interface et lore existeront dans les deux langues.
 
-Règle : un terme important entre dans le lexique **dès sa création**, avec sa forme française arrêtée et une forme anglaise **provisoire** — marquée d'un astérisque quand elle demande encore confirmation. Une forme anglaise incertaine ne bloque jamais : elle se note, se signale, et se reprend plus tard avec quelqu'un dont c'est le métier. Ce qui est interdit, c'est de créer un terme sans rien noter du tout et de découvrir la question de traduction une fois le mot répandu partout.
+**L'anglais est l'anglais américain.** Orthographe américaine sans exception — `center` et non `centre`, `color` et non `colour`, `catalog` et non `catalogue` —, dans le glossaire comme dans le code.
+
+Règle : un terme important entre dans le glossaire **dès sa création**, avec sa forme française arrêtée et une forme anglaise **provisoire** — marquée d'un astérisque quand elle demande encore
+confirmation. Une forme anglaise incertaine ne bloque jamais : elle se note, se signale, et se reprend plus tard avec quelqu'un dont c'est le métier. Ce qui est interdit, c'est de créer un terme sans
+rien noter du tout et de découvrir la question de traduction une fois le mot répandu partout.
 
 | Français | Anglais | Ce que c'est |
 |---|---|---|
@@ -67,12 +75,15 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 | point de pose | anchor | Le point par lequel le sujet est posé dans le monde : le milieu du bord bas de son emprise. |
 | calque | layer | L'une des cinq familles d'empilement à l'écran : sol, décor au sol, monde, dessus, interface. |
 | élévation | elevation | Le niveau auquel un sujet se tient : le sol, une passerelle, un étage. |
-| catalogue d'assets | asset catalog | Le fichier qui décrit chaque profil et chaque variant ; source unique de la génération, des plans et du rendu. |
+| inventaire des sujets | subject inventory | Le fichier `assets/sujets.json`, qui déclare types, sujets, variants et images produites ; il fait foi, tous les outils y lisent. |
+| HDC | — | Abréviation d'usage, en conversation seulement, pour l'herbe de clairière (`TR-064`). |
+| HH | — | Abréviation d'usage, en conversation seulement, pour les herbes hautes (`TR-062` et les sujets à venir). |
+| référentiel | reference set | Un ensemble de références tenu à jour, toujours qualifié — l'inventaire des sujets, le référentiel technique —, jamais employé seul. |
 | tuile de sol | ground tile | Une image de matière répétable bord à bord. |
 | détourage | cutout | Le retrait du fond de fabrication, qui transforme l'image produite en image à fond transparent. |
 | fond de fabrication | key color | Le magenta pur sur lequel le générateur pose le sujet, et qui n'existe dans aucune matière du monde. |
 | génération d'image | image generation | L'acte de demander une image au générateur et de la recevoir, distinct de la *chaîne de production* qui l'entoure. **Toujours qualifié** : le jeu générera aussi des cartes, des noms, des plans — « génération » seul ne dit pas ce qu'on génère. |
-| chaîne de production | production pipeline | L'enchaînement fiche → consigne → génération → détourage → contrôles → catalogue. |
+| chaîne de production | production pipeline | L'enchaînement description → consigne → génération → livrable → contrôles → inventaire des sujets. |
 | planche-contact | contact sheet | La page de revue qui rassemble un lot produit, avec sa note et le motif de chaque défaut. |
 | reprise | retry | La seconde et dernière tentative accordée à une image jugée fautive. |
 | mise en défaut | flagged | L'état d'une image qui a échoué deux fois : elle est écartée, signalée, et n'arrête pas le reste du lot. |
@@ -81,7 +92,8 @@ Terme en attente : **tracé** — forme anglaise provisoire (`trace`), à confir
 
 ## Termes bannis
 
-Un mot est banni quand il désigne plusieurs choses à la fois, ou quand il porte un sens venu d'ailleurs qui ne vaut pas ici. Un terme banni ne s'emploie **nulle part** — ni dans les documents, ni dans le code, ni dans les échanges.
+Un mot est banni quand il désigne plusieurs choses à la fois, ou quand il porte un sens venu d'ailleurs qui ne vaut pas ici. Un terme banni ne s'emploie **nulle part** — ni dans les documents, ni dans
+le code, ni dans les échanges.
 
 | Terme banni | À employer à la place | Pourquoi |
 |---|---|---|

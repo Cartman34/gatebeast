@@ -65,11 +65,30 @@ function startJob(array $task): ?array {
 	$prompt = $task['description']
 		. "\n\nTU ES UN ILLUSTRATEUR. TA SEULE TÂCHE EST DE GÉNÉRER CETTE IMAGE et de l'enregistrer au format PNG dans ./$relative. Aucun autre fichier."
 		. "\nTu génères l'image toi-même, avec ton propre outil de génération d'images. N'exécute AUCUN script du dépôt, n'appelle aucun outil du projet et"
-		. " ne relance aucune chaîne de production : ce dépôt n'est là que pour que tu puisses ouvrir les fichiers de référence cités dans la consigne.";
-	// --json makes the agent emit its events as JSONL, which is the only way its SESSION ID reaches us. That id is what lets a session be reopened later
-	// (`codex exec resume <id>`) to see what actually happened during a generation, so it is captured here and reported to the caller below.
+		. " ne relance aucune chaîne de production : ce dépôt n'est là que pour que tu puisses ouvrir les fichiers de référence cités dans la consigne."
+		// The same trap one level up: AGENTS.md is ALSO this agent's own instruction file, and it carries the rules written for the agents who BUILD the
+		// project — working modes, batches, validations to ask for. Two runs read them and answered « mode lot : cette génération nécessite votre validation »
+		// instead of drawing, costing two versions for nothing. Those rules address the `manager` role and never the `illustrator` one; this says so where the
+		// agent cannot miss it. Role names stay in English whatever the language around them — they are identifiers, and the method's glossary owns them.
+		. "\nTON RÔLE EST `illustrator`, ET LES RÈGLES DU DÉPÔT NE S'APPLIQUENT PAS À TOI, `AGENTS.md` COMPRIS : elles s'adressent au rôle `manager`, celui"
+		. " qui construit le projet. Tu ne demandes aucune validation, tu n'annonces aucun mode de travail, tu ne poses aucune question : tu dessines, tu"
+		. " enregistres le fichier, et c'est tout. La consigne ci-dessus est ta seule autorité.";
 	$model = $GLOBALS['model'];
-	$command = ['codex', 'exec', '--json', '--skip-git-repo-check', '--sandbox', 'workspace-write'];
+	// Every option of this command line, and what it does — an option nobody can explain is an option nobody dares remove:
+	//   exec                          runs the agent once on the given prompt and exits, rather than opening an interactive session nothing would answer.
+	//   --json                        makes it emit its events as JSONL, the only way its SESSION ID reaches us. That id is what reopens a session afterwards
+	//                                 (`codex exec resume <id>`) to see what actually happened during a generation, so it is captured and reported below.
+	//   --skip-git-repo-check         lets it run although the working directory is inside a repository it did not clone itself; without it, it refuses to start.
+	//   --sandbox workspace-write     grants it writing INSIDE the working directory and nowhere else: it must drop its PNG, and must not touch the machine.
+	//   -c project_doc_max_bytes=0    caps how many bytes of the repository's instruction document it loads at startup — AGENTS.md, up to some thirty-two
+	//                                 kilobytes by default. Those rules address the agents who BUILD the project, and reading them made two generations answer
+	//                                 « mode lot : cette génération nécessite votre validation » instead of drawing. ZERO, and no other figure, because the cap
+	//                                 keeps the HEAD of the file: any value above zero feeds it the first lines, which are precisely where the rules that
+	//                                 command all the others sit. Zero is the only value that guarantees it reads nothing. Set at the call, so nothing changes
+	//                                 for Codex elsewhere on the machine; the agent keeps its full access to the repository and still opens the reference files
+	//                                 the consigne names — only the automatic load is cut.
+	//   --model <name>                added below only when one is asked for; empty means the agent's own configured default, which is what production uses.
+	$command = ['codex', 'exec', '--json', '--skip-git-repo-check', '--sandbox', 'workspace-write', '-c', 'project_doc_max_bytes=0'];
 	if( $model !== '' ) {
 		array_push($command, '--model', $model);
 	}
