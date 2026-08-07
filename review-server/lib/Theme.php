@@ -1,9 +1,7 @@
 <?php
 /**
  * USAGE
- *   require_once __DIR__ . '/../lib/Theme.php';
- *   $theme = Theme::get();      // l'instance du service, à prendre une fois
- *   echo $theme->css('encre');  // à poser en tête du <style> de la page
+ *   Dress a review page in the project's colours, so changing the look never means touching a page.
  *
  * INTENTION
  *   Un thème est un jeu de variables de couleur, et rien d'autre : il vit dans son propre fichier sous `themes/`, la page inclut celui qu'elle veut, et changer d'habillage ne demande de toucher

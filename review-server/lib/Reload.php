@@ -1,11 +1,7 @@
 <?php
 /**
  * USAGE
- *   require_once __DIR__ . '/../lib/Reload.php';
- *   $reload = Reload::get();          // the service instance, taken once
- *   echo $reload->styles();           // inside the page's <style>
- *   echo $reload->markup();           // anywhere in the body
- *   echo $reload->script($route);     // at the end of the body, with the route this page is served at
+ *   Let a served page notice it has been rebuilt and offer to reload itself, so nobody works on a stale version without knowing.
  *
  * INTENTION
  *   A published page reloaded itself whenever it was republished; a locally served page did not, and the operator was left looking at a stale version without knowing it (operator, 2026-08-07). The

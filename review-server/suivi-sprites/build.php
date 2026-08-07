@@ -14,16 +14,16 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/review-server/bootstrap.php';
-require_once $root . '/review-server/lib/Inventaire.php';
-require_once $root . '/review-server/lib/Vignette.php';
+require_once $root . '/review-server/lib/Inventory.php';
+require_once $root . '/review-server/lib/Thumbnail.php';
 bootBuild();
 
 const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur du projet, tenue par scripts/tile_scale.py
 const COMPARE_PIXELS_PER_TILE = 48;  // ce qu'une case mesure dans la FSP, où l'on juge et compare (opérateur, 2026-08-06)
 
 $outputPath = $argv[1] ?? __DIR__ . '/page.html';
-$inventaire = new Inventaire($root);
-$vignettes = new Vignette($root);
+$inventory = new Inventory($root);
+$thumbnails = new Thumbnail($root);
 $theme = Theme::get();
 $favicon = Favicon::get();
 $releve = Releve::get();
@@ -43,16 +43,16 @@ function escape(string $text): string
 }
 
 /** La première lettre en majuscule, et elle seule — la règle d'affichage du projet. */
-function capitale(string $text): string
+function capitalize(string $text): string
 {
     return mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1);
 }
 
 /** L'image d'une représentation, réduite à la taille demandée, ou null si le fichier manque — un trou se montre, il ne se cache pas. */
-function image(Vignette $vignettes, array $representation, int $width): ?array
+function image(Thumbnail $thumbnails, array $representation, int $width): ?array
 {
     try {
-        return $vignettes->reduire($representation['path'], $width);
+        return $thumbnails->shrink($representation['path'], $width);
     } catch (RuntimeException $fault) {
         fwrite(STDERR, $fault->getMessage() . "\n");
 
@@ -65,24 +65,24 @@ $popins = '';
 $missing = [];
 $compte = [];
 
-foreach ($inventaire->types() as $typeName => $type) {
-    $codes = $inventaire->sujetsOfType($typeName);
+foreach ($inventory->types() as $typeName => $type) {
+    $codes = $inventory->sujetsOfType($typeName);
     if (!$codes) {
         continue;
     }
     $tiles = '';
     foreach ($codes as $code) {
-        $sujet = $inventaire->sujet($code);
-        $spread = $inventaire->spread($sujet);
-        $main = $inventaire->mainVariant($sujet);
-        $current = $main ? $inventaire->currentRepresentation($main) : null;
+        $sujet = $inventory->sujet($code);
+        $spread = $inventory->spread($sujet);
+        $main = $inventory->mainVariant($sujet);
+        $current = $main ? $inventory->currentRepresentation($main) : null;
         $produced = 0;
         foreach ($sujet['variants'] as $variant) {
             $produced += $variant['representations'] ? 1 : 0;
         }
         $picture = '<span class="tuile-vide">à produire</span>';
         if ($current) {
-            $shot = image($vignettes, $current, SCREEN_PIXELS_PER_TILE * $spread['columns']);
+            $shot = image($thumbnails, $current, SCREEN_PIXELS_PER_TILE * $spread['columns']);
             if ($shot) {
                 $picture = sprintf('<img src="%s" width="%d" height="%d" alt="">', $shot[0], $shot[1], $shot[2]);
             } else {
@@ -93,7 +93,7 @@ foreach ($inventaire->types() as $typeName => $type) {
         // autres. C'est sur cet état que les filtres agissent, et c'est celui qu'on cherche quand on ouvre la page — ce qui reste dû, pas ce qui est fini.
         $etats = [];
         foreach ($sujet['variants'] as $variant) {
-            $etats[] = etatDuVariant($inventaire, $variant);
+            $etats[] = variantState($inventory, $variant);
         }
         $etat = in_array('a-reprendre', $etats, true) ? 'a-reprendre'
             : (in_array('a-produire', $etats, true) ? 'a-produire'
@@ -102,10 +102,10 @@ foreach ($inventaire->types() as $typeName => $type) {
         $tiles .= sprintf(
             '        <button type="button" class="tuile" data-sujet="%s" data-etat="%s"><span class="tuile-image">%s</span>'
             . '<span class="tuile-nom">%s</span><span class="tuile-compte">%d/%d variant%s</span></button>' . "\n",
-            escape($code), escape($etat), $picture, escape(capitale($inventaire->label($code))), $produced, count($sujet['variants']),
+            escape($code), escape($etat), $picture, escape(capitalize($inventory->label($code))), $produced, count($sujet['variants']),
             count($sujet['variants']) > 1 ? 's' : ''
         );
-        $popins .= popin($inventaire, $vignettes, $root, $code, $sujet);
+        $popins .= popin($inventory, $thumbnails, $root, $code, $sujet);
     }
     $sections .= sprintf(
         "    <section class=\"type\">\n      <h2>%s <span class=\"slug\">%s</span></h2>\n      <div class=\"grille\">\n%s      </div>\n    </section>\n",
@@ -114,9 +114,9 @@ foreach ($inventaire->types() as $typeName => $type) {
 }
 
 /** L'état d'un variant, en un mot : ce sur quoi les filtres de la grille agissent. */
-function etatDuVariant(Inventaire $inventaire, array $variant): string
+function variantState(Inventory $inventory, array $variant): string
 {
-    $current = $inventaire->currentRepresentation($variant);
+    $current = $inventory->currentRepresentation($variant);
     if (!$current) {
         return 'a-produire';
     }
@@ -129,7 +129,7 @@ function etatDuVariant(Inventaire $inventaire, array $variant): string
  * TOUTES les mensurations d'une image, et pas une sélection : ce que le sujet déclare — emprise, couvert, hauteur — et ce que l'export a mesuré sur le fichier.
  * Choisir trois chiffres à montrer, c'est décider à la place de l'opérateur lequel compte, et c'est justement ce qu'il regarde quand une image lui paraît fausse.
  */
-function mesures(array $representation, array $sujet): string
+function measurements(array $representation, array $sujet): string
 {
     $lignes = [];
     $emprise = $sujet['emprise'];
@@ -180,7 +180,7 @@ function mesures(array $representation, array $sujet): string
  * l'une des trois seule est ce qui a fait chercher la mauvaise cause plus d'une fois. Absentes, elles se taisent : les premières images du projet sont
  * antérieures à la règle qui fige une consigne.
  */
-function consigne(string $root, array $representation): string
+function frozenPrompt(string $root, array $representation): string
 {
     $master = $representation['maitre'] ?? null;
     if (!$master) {
@@ -205,27 +205,27 @@ function consigne(string $root, array $representation): string
 }
 
 /** La FSP d'un sujet : ses variants, la version courante de chacun en grand, les antérieures, les mesures, la consigne, le verdict et les actions. */
-function popin(Inventaire $inventaire, Vignette $vignettes, string $root, string $code, array $sujet): string
+function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string $code, array $sujet): string
 {
-    $spread = $inventaire->spread($sujet);
+    $spread = $inventory->spread($sujet);
     $blocks = '';
     foreach ($sujet['variants'] as $variant) {
         $ref = $variant['ref'];
-        $current = $inventaire->currentRepresentation($variant);
+        $current = $inventory->currentRepresentation($variant);
         $picture = '<p class="a-produire">À produire</p>';
         if ($current) {
-            $shot = image($vignettes, $current, COMPARE_PIXELS_PER_TILE * $spread['columns']);
+            $shot = image($thumbnails, $current, COMPARE_PIXELS_PER_TILE * $spread['columns']);
             $picture = $shot ? sprintf('<img src="%s" width="%d" height="%d" alt="">', $shot[0], $shot[1], $shot[2])
                 : '<p class="a-produire">Image illisible</p>';
         }
         $verdict = $current['verdict'] ?? null;
         $comment = $current['commentaire_operateur'] ?? '';
-        $previous = $inventaire->previousRepresentations($variant);
+        $previous = $inventory->previousRepresentations($variant);
         $identifier = $code . ' ' . $ref;
         $anciennes = '';
         foreach ($previous as $old) {
             // Chaque ancienne version est cliquable et s'ouvre en grand : une vignette de la moitié d'une case ne sert qu'à savoir qu'elle existe, pas à la juger.
-            $shot = image($vignettes, $old, COMPARE_PIXELS_PER_TILE * $spread['columns']);
+            $shot = image($thumbnails, $old, COMPARE_PIXELS_PER_TILE * $spread['columns']);
             if ($shot) {
                 $anciennes .= sprintf('<figure><button type="button" class="voir-image" data-src="%s" data-titre="%s"><img src="%s" width="%d" height="%d" alt=""></button>'
                     . '<figcaption>%s</figcaption></figure>',
@@ -238,19 +238,19 @@ function popin(Inventaire $inventaire, Vignette $vignettes, string $root, string
             . '<div class="actes" data-id="%s">%s</div>'
             . '<div class="mot-zone"><button type="button" class="effacer-mot" data-id="%s" title="Effacer" aria-label="Effacer le commentaire">✕</button>'
             . '<textarea class="mot" data-id="%s" rows="2" placeholder="Ce qui devrait changer.">%s</textarea></div></article>' . "\n",
-            escape(etatDuVariant($inventaire, $variant)),
+            escape(variantState($inventory, $variant)),
             // COMPARER N'APPARAÎT QUE S'IL Y A DE QUOI COMPARER : un sujet à variant unique n'offre pas une case qui ne peut rien faire.
             count($sujet['variants']) > 1
                 ? sprintf('<label class="variant-choix"><input type="checkbox" class="comparer" data-ref="%s"> Comparer</label>', escape($ref))
                 : '',
             escape($ref), $picture,
-            $verdict ? sprintf('<p class="verdict verdict--%s">%s</p>', escape($verdict), escape(capitale(str_replace('-', ' ', $verdict)))) : '',
-            $current ? mesures($current, $sujet) : '',
+            $verdict ? sprintf('<p class="verdict verdict--%s">%s</p>', escape($verdict), escape(capitalize(str_replace('-', ' ', $verdict)))) : '',
+            $current ? measurements($current, $sujet) : '',
             $anciennes ? '<details class="pli"><summary>' . count($previous) . ' version' . (count($previous) > 1 ? 's' : '')
                 . ' antérieure' . (count($previous) > 1 ? 's' : '') . '</summary><div class="anciennes">' . $anciennes . '</div></details>' : '',
-            $current ? consigne($root, $current) : '',
-            escape(cleDeRevue($identifier, $current)), actes(cleDeRevue($identifier, $current)),
-            escape(cleDeRevue($identifier, $current)), escape(cleDeRevue($identifier, $current)), escape($comment)
+            $current ? frozenPrompt($root, $current) : '',
+            escape(reviewKey($identifier, $current)), actions(reviewKey($identifier, $current)),
+            escape(reviewKey($identifier, $current)), escape(reviewKey($identifier, $current)), escape($comment)
         );
     }
 
@@ -258,7 +258,7 @@ function popin(Inventaire $inventaire, Vignette $vignettes, string $root, string
         "      <div class=\"fsp\" id=\"fsp-%s\" hidden>\n        <div class=\"fsp-barre\"><p class=\"fsp-titre\">%s <span class=\"slug\">%s</span></p>"
         . "<button type=\"button\" class=\"fsp-fermer\" aria-label=\"Fermer\">✕</button></div>\n"
         . "        <div class=\"fsp-corps\">\n          <div class=\"variants\">\n%s          </div>\n        </div>\n      </div>\n",
-        escape($code), escape(capitale($inventaire->label($code))), escape($code), $blocks
+        escape($code), escape(capitalize($inventory->label($code))), escape($code), $blocks
     );
 }
 
@@ -268,12 +268,12 @@ function popin(Inventaire $inventaire, Vignette $vignettes, string $root, string
  * verdict de la précédente ne la juge pas — il restait pourtant collé au variant, si bien qu'un bosquet refait revenait « à reprendre » avec le commentaire de son
  * ancêtre (opérateur, 2026-08-06). Le libellé, lui, reste celui du variant : c'est ce qui se lit dans le relevé.
  */
-function cleDeRevue(string $identifier, ?array $current): string
+function reviewKey(string $identifier, ?array $current): string
 {
     return $current['path'] ?? $identifier;
 }
 
-function actes(string $identifier): string
+function actions(string $identifier): string
 {
     // DES BOUTONS, PAS DES CASES À COCHER GRISES. Une action se clique et s'allume ; une case à cocher nue au milieu d'une carte se lit comme un formulaire
     // administratif, et l'opérateur l'a dit dès qu'elle est apparue. La case reste dessous — c'est elle qui porte l'état — mais elle est masquée et c'est le
@@ -314,7 +314,8 @@ $page = <<<'HTML'
 
   .fsp { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: var(--bg); overflow: auto; }
   .fsp[hidden] { display: none; }
-  .fsp-barre { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--line); }
+  .fsp-barre { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px;
+               background: var(--card); border-bottom: 1px solid var(--line); }
   .fsp-titre { margin: 0; font-size: 1.1rem; font-weight: 600; }
   .fsp-fermer { padding: 4px 12px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
   .fsp-corps { padding: 16px; }
@@ -349,14 +350,16 @@ $page = <<<'HTML'
   /* LA CROIX EST COLLÉE AU CHAMP, en haut à droite : c'est le geste courant pour vider une saisie, et un bouton posé à côté avec son mot écrit prenait la place
      d'un tiers du champ pour dire ce qu'une croix dit sans un mot. */
   .mot-zone { position: relative; margin-top: 8px; }
-  .mot { display: block; width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit; font: inherit; font-size: .82rem; line-height: 1.4; padding: 6px; resize: vertical; }
+  .mot { display: block; width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit; font: inherit;
+         font-size: .82rem; line-height: 1.4; padding: 6px; resize: vertical; }
   .effacer-mot { align-self: stretch; padding: 0 10px; background: none; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); font: inherit; font-size: .8rem; cursor: pointer; }
   .effacer-mot:hover { border-color: var(--accent); color: var(--accent); }
   .variant { box-sizing: border-box; }
   .mesures { display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; margin: 8px 0 0; font-size: .74rem; color: var(--muted); }
   .mesures dt { font-weight: 600; white-space: nowrap; }
   .mesures dd { margin: 0; }
-  .voir-texte { display: block; width: 100%; margin-top: 6px; padding: 5px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit; font: inherit; font-size: .78rem; text-align: left; cursor: pointer; }
+  .voir-texte { display: block; width: 100%; margin-top: 6px; padding: 5px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit;
+                font: inherit; font-size: .78rem; text-align: left; cursor: pointer; }
   .voir-texte:hover { border-color: var(--accent); color: var(--accent); }
   .fsp-outils { display: flex; gap: 8px; }
   .fsp-outils button { padding: 4px 12px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
@@ -592,7 +595,7 @@ HTML;
 // LES ORPHELINS : toute image livrée sous assets/cutout/ que l'inventaire ne réclame pas. Une image qui existe sans être inscrite n'existe pour personne — elle
 // n'apparaît nulle part, personne ne peut la juger, et elle se refait. La page les montre plutôt que de laisser croire que tout est rangé.
 $reclamees = [];
-foreach ($inventaire->sujets() as $sujet) {
+foreach ($inventory->sujets() as $sujet) {
     foreach ($sujet['variants'] as $variant) {
         foreach ($variant['representations'] ?? [] as $representation) {
             $reclamees[$representation['path']] = true;
@@ -637,8 +640,8 @@ $page = strtr($page, [
 ]);
 
 file_put_contents($outputPath, $page);
-printf("%s — %d sujets, %.1f ko%s\n", $outputPath, count($inventaire->sujets()), strlen($page) / 1024,
+printf("%s — %d sujets, %.1f ko%s\n", $outputPath, count($inventory->sujets()), strlen($page) / 1024,
     $missing ? ', ' . count($missing) . ' image(s) illisible(s)' : '');
-if ($inventaire->sansLibelle) {
-    fwrite(STDERR, 'SANS LIBELLÉ : ' . implode(', ', $inventaire->sansLibelle) . "\n");
+if ($inventory->sansLibelle) {
+    fwrite(STDERR, 'SANS LIBELLÉ : ' . implode(', ', $inventory->sansLibelle) . "\n");
 }

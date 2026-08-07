@@ -21,8 +21,8 @@
       "consigne_supplementaire": "CE SUJET N'A AUCUN VOLUME : il est DANS le sol, pas posé dessus. Aucune épaisseur, aucun bombé, aucun arrondi, aucun bord relevé, aucune ombre portée — sa surface est exactement celle du terrain autour de lui. La clause de style qui demande des volumes sculptés et arrondis comme de petites figurines NE S'APPLIQUE PAS à lui : elle vaut pour ce qui se dresse, et rien ne se dresse ici. Sa couleur reste DOUCE et TERREUSE : la clause qui demande des couleurs franches et saturées ne doit pas le pousser vers un jaune vif ou un doré — une terre foulée est claire et un peu grisée, jamais éclatante.",
       "_consigne_comment": "Trois générations perdues sur le chemin, la dernière le 2026-08-06 : un ruban jaune d'or, bombé, exactement la « brioche » que l'opérateur avait nommée. La cause n'est pas sa description mais le SOCLE, écrit pour des sujets qui ont du volume et des couleurs saturées — deux clauses qui, appliquées à une matière de sol, la soulèvent et l'éclairent. Le type est le niveau juste pour les désamorcer : elles restent vraies pour tout ce qui se dresse.",
       "assembles": true,
-      "rotates": true,
-      "_rotates_comment": "Plat : le moteur pivote un dessin pour obtenir les autres bords, un seul dessin par forme suffit (sujets-et-variantes.md, decision 27).",
+      "rotates": false,
+      "_rotates_comment": "Chaque orientation se dessine séparément (opérateur, 2026-08-07) : une pièce tournée emporte sa lumière avec elle, et le soleil se retrouve du mauvais côté. Ce type pivotait auparavant, et un seul dessin par famille suffisait ; cette économie est abandonnée.",
       "lot_v0": [
         {
           "orientation": "south",
@@ -53,6 +53,66 @@
           "action": "idle",
           "shape": "nesw",
           "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "e",
+          "ref": "orientation-south_action-idle_shape-e_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "s",
+          "ref": "orientation-south_action-idle_shape-s_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "w",
+          "ref": "orientation-south_action-idle_shape-w_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "es",
+          "ref": "orientation-south_action-idle_shape-es_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "sw",
+          "ref": "orientation-south_action-idle_shape-sw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nw",
+          "ref": "orientation-south_action-idle_shape-nw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "esw",
+          "ref": "orientation-south_action-idle_shape-esw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nsw",
+          "ref": "orientation-south_action-idle_shape-nsw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "new",
+          "ref": "orientation-south_action-idle_shape-new_frame-01"
         }
       ],
       "_lot_comment": "Les cinq dessins de tracé (extrémité, ligne, angle, trois branches, croisement) — c'est ce qu'il faut réellement produire, pas ce qu'un chemin doit savoir accepter : voir formes_couvertes_par_rotation ci-dessous, qui porte cette seconde notion et explique pourquoi les deux ne se confondent pas. Complété le 2026-08-04 (l'opérateur : « il manque tous les autres variants !! ») : les deux dessins précédents (ligne, angle) suffisaient pour le lot v0 minimal de lots-de-variantes.md, mais pas pour un tracé qui se ramifie réellement.",
@@ -73,15 +133,15 @@
         "new",
         "nesw"
       ],
-      "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier — ce qu'il doit savoir faire — à ne jamais confondre avec lot_v0 ci-dessus, qui dit ce qu'il faut dessiner. Le type pivote (rotates) : chacun des cinq dessins du lot couvre lui-même toutes ses rotations — l'extrémité shape-n sert aussi à e, s, w ; la ligne shape-ns sert aussi à ew ; l'angle shape-ne sert aussi à es, sw, nw ; les trois branches shape-nes servent aussi à esw, nsw, new ; le croisement shape-nesw n'a pas de rotation distincte. Produire les quinze séparément dessinerait dix fois ce qui n'est qu'une rotation du même dessin (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md, table des lots)."
+      "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier. Depuis le 2026-08-07 elles se dessinent TOUTES séparément — aucune n'est couverte par la rotation d'une autre —, et chacune est donc déclarée au lot ci-dessus. Le nom de cette clé est devenu trompeur et reste à changer."
     },
     "cours-d-eau": {
       "layer": "decor-au-sol",
       "passage_default": "closed",
       "_passage_comment": "Un cours d'eau ferme le passage par défaut : on ne le franchit que par un ouvrage dédié — pont, gué, passerelle (format-de-composition.md, « Ouvrages d'eau : ponts, gués, passerelles »). scene-de-reference.md confirme la règle en pratique : un chemin qui rencontre une rivière la franchit par un pont, jamais en la traversant directement.",
       "assembles": true,
-      "rotates": true,
-      "_rotates_comment": "Plat comme le chemin, jamais un volume : le moteur pivote un dessin pour obtenir les autres bords, un seul dessin par forme suffit (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md range chemin et cours d'eau dans le même lot).",
+      "rotates": false,
+      "_rotates_comment": "Chaque orientation se dessine séparément (opérateur, 2026-08-07) : une pièce tournée emporte sa lumière avec elle, et le soleil se retrouve du mauvais côté. Ce type pivotait auparavant, et un seul dessin par famille suffisait ; cette économie est abandonnée.",
       "lot_v0": [
         {
           "orientation": "south",
@@ -112,6 +172,66 @@
           "action": "idle",
           "shape": "nesw",
           "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "e",
+          "ref": "orientation-south_action-idle_shape-e_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "s",
+          "ref": "orientation-south_action-idle_shape-s_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "w",
+          "ref": "orientation-south_action-idle_shape-w_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "es",
+          "ref": "orientation-south_action-idle_shape-es_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "sw",
+          "ref": "orientation-south_action-idle_shape-sw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nw",
+          "ref": "orientation-south_action-idle_shape-nw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "esw",
+          "ref": "orientation-south_action-idle_shape-esw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nsw",
+          "ref": "orientation-south_action-idle_shape-nsw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "new",
+          "ref": "orientation-south_action-idle_shape-new_frame-01"
         }
       ],
       "_lot_comment": "Même raisonnement que le type chemin, avec lequel lots-de-variantes.md le regroupe explicitement : cinq dessins de tracé à produire, pas quinze — voir formes_couvertes_par_rotation.",
@@ -132,7 +252,7 @@
         "new",
         "nesw"
       ],
-      "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier — ce qu'il doit savoir faire — à ne jamais confondre avec lot_v0 ci-dessus, qui dit ce qu'il faut dessiner. Le type pivote (rotates) : chacun des cinq dessins du lot couvre lui-même toutes ses rotations, exactement comme pour le type chemin (voir son commentaire). Produire les quinze séparément dessinerait dix fois ce qui n'est qu'une rotation du même dessin (sujets-et-variantes.md, decision 27 ; lots-de-variantes.md, table des lots)."
+      "_formes_couvertes_par_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier. Depuis le 2026-08-07 elles se dessinent TOUTES séparément — aucune n'est couverte par la rotation d'une autre —, et chacune est donc déclarée au lot ci-dessus. Le nom de cette clé est devenu trompeur et reste à changer."
     },
     "cloture": {
       "layer": "monde",
@@ -238,6 +358,69 @@
           "shape": "ns",
           "portillon": "gate-open",
           "ref": "orientation-south_action-idle_shape-ns_gate-open_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "n",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-n_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "e",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-e_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "s",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-s_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "w",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-w_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nes",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-nes_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "esw",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-esw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nsw",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-nsw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "new",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-new_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nesw",
+          "composition": "posts-1",
+          "ref": "orientation-south_action-idle_shape-nesw_posts-1_frame-01"
         }
       ],
       "_lot_comment": "Six formes en composition posts-1, chacune dessinée séparément puisque le type ne pivote pas — la seule composition que l'opérateur ait validée pour ces pièces, écrite explicitement pour ne pas retomber sur le défaut du type (posts-2), ce qui avait fabriqué cinq variants attendus jamais demandés (corrigé le 2026-08-05). Plus les quatre variants de portillon (deux sens de ligne × deux états), écrites sans composition parce qu'aucune ne leur a été demandée — un silence non écrit ne se résout jamais vers compositions.default. Plus les deux portillons à DEUX POTEAUX demandés par l'opérateur le 2026-08-05, en est-ouest seulement : la décision écrite à l'inventaire veut qu'une pièce nord-sud ne montre qu'un seul poteau, ses deux poteaux se superposant exactement dans l'alignement du regard. Douze images en tout."
@@ -462,7 +645,47 @@
           "orientation": "south",
           "action": "idle",
           "shape": "n",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-n.png",
+              "maitre": "poc/sol/CH-019_shape-n.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 16,
+                  "top": 0,
+                  "right": 79,
+                  "bottom": 75,
+                  "width": 64,
+                  "height": 76
+                },
+                "contact_px": {
+                  "left": 37,
+                  "right": 59,
+                  "width": 23
+                },
+                "anchor_px": {
+                  "x": 48,
+                  "y": 76
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
           "ref": "orientation-south_action-idle_shape-n_frame-01"
         },
         {
@@ -495,7 +718,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 96.0
+                  "y": 96
                 },
                 "master_size_px": {
                   "width": 96,
@@ -534,7 +757,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 86.0
+                  "y": 86
                 },
                 "master_size_px": {
                   "width": 96,
@@ -595,7 +818,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 96.0
+                  "y": 96
                 },
                 "master_size_px": {
                   "width": 96,
@@ -633,8 +856,8 @@
                   "width": 23
                 },
                 "anchor_px": {
-                  "x": 48.0,
-                  "y": 86.0
+                  "x": 48,
+                  "y": 86
                 },
                 "master_size_px": {
                   "width": 96,
@@ -682,7 +905,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 40.0
+                  "y": 40
                 },
                 "master_size_px": {
                   "width": 192,
@@ -721,7 +944,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 67.0
+                  "y": 67
                 },
                 "master_size_px": {
                   "width": 192,
@@ -746,6 +969,109 @@
           ],
           "principale": true,
           "ref": "orientation-south_action-idle_shape-ew_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "e",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-e_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "s",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-s.png",
+              "maitre": "poc/sol/CH-019_shape-s.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 16,
+                  "top": 35,
+                  "right": 79,
+                  "bottom": 95,
+                  "width": 64,
+                  "height": 61
+                },
+                "contact_px": {
+                  "left": 16,
+                  "right": 79,
+                  "width": 64
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 96.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-s_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "w",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-w_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "es",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-es_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "sw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-sw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "esw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-esw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nsw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nsw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "new",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-new_frame-01"
         }
       ]
     },
@@ -763,14 +1089,94 @@
           "orientation": "south",
           "action": "idle",
           "shape": "n",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-n.png",
+              "maitre": "poc/sol/CH-020_shape-n.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 32,
+                  "top": 0,
+                  "right": 63,
+                  "bottom": 93,
+                  "width": 32,
+                  "height": 94
+                },
+                "contact_px": {
+                  "left": 41,
+                  "right": 54,
+                  "width": 14
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 94
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
           "ref": "orientation-south_action-idle_shape-n_frame-01"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "ns",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-ns.png",
+              "maitre": "poc/sol/CH-020_shape-ns.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 33,
+                  "top": 0,
+                  "right": 62,
+                  "bottom": 95,
+                  "width": 30,
+                  "height": 96
+                },
+                "contact_px": {
+                  "left": 34,
+                  "right": 61,
+                  "width": 28
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 96
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
           "ref": "orientation-south_action-idle_shape-ns_frame-01"
         },
         {
@@ -813,6 +1219,109 @@
           ],
           "principale": true,
           "ref": "orientation-south_action-idle_shape-ew_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "e",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-e_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "s",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-s.png",
+              "maitre": "poc/sol/CH-020_shape-s.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 23,
+                  "top": 2,
+                  "right": 72,
+                  "bottom": 95,
+                  "width": 50,
+                  "height": 94
+                },
+                "contact_px": {
+                  "left": 24,
+                  "right": 72,
+                  "width": 49
+                },
+                "anchor_px": {
+                  "x": 48.0,
+                  "y": 96.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-s_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "w",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-w_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "es",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-es_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "sw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-sw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "esw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-esw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nsw",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nsw_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "new",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-new_frame-01"
         }
       ]
     },
@@ -999,8 +1508,8 @@
                   "width": 11
                 },
                 "anchor_px": {
-                  "x": 47.0,
-                  "y": 67.0
+                  "x": 47,
+                  "y": 67
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1068,8 +1577,8 @@
                   "width": 55
                 },
                 "anchor_px": {
-                  "x": 47.0,
-                  "y": 47.0
+                  "x": 47,
+                  "y": 47
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1108,7 +1617,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 63.0
+                  "y": 63
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1146,8 +1655,8 @@
                   "width": 81
                 },
                 "anchor_px": {
-                  "x": 47.0,
-                  "y": 46.0
+                  "x": 47,
+                  "y": 46
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1186,7 +1695,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 64.0
+                  "y": 64
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1272,8 +1781,8 @@
                   "width": 7
                 },
                 "anchor_px": {
-                  "x": 38.0,
-                  "y": 73.0
+                  "x": 38,
+                  "y": 73
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1312,7 +1821,7 @@
                 },
                 "anchor_px": {
                   "x": 37.5,
-                  "y": 72.0
+                  "y": 72
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1350,8 +1859,8 @@
                   "width": 1
                 },
                 "anchor_px": {
-                  "x": 43.0,
-                  "y": 37.0
+                  "x": 43,
+                  "y": 37
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1390,7 +1899,7 @@
                 },
                 "anchor_px": {
                   "x": 61.5,
-                  "y": 67.0
+                  "y": 67
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1459,7 +1968,7 @@
                 },
                 "anchor_px": {
                   "x": 46.5,
-                  "y": 169.0
+                  "y": 169
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1536,7 +2045,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 96.0
+                  "y": 96
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1572,6 +2081,158 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ns_gate-open_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "n",
+          "composition": "posts-1",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-n_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "e",
+          "composition": "posts-1",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-e_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-e_posts-1.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 124
+                },
+                "silhouette_px": {
+                  "left": 28,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 123,
+                  "width": 68,
+                  "height": 124
+                },
+                "contact_px": {
+                  "left": 34,
+                  "right": 63,
+                  "width": 30
+                },
+                "anchor_px": {
+                  "x": 48.5,
+                  "y": 124.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 124
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-e_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "s",
+          "composition": "posts-1",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-s_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "w",
+          "composition": "posts-1",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-w_posts-1.png",
+              "maitre": "poc/cloture/OB-010_shape-w_posts-1.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 125
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 13,
+                  "right": 70,
+                  "bottom": 106,
+                  "width": 71,
+                  "height": 94
+                },
+                "contact_px": {
+                  "left": 40,
+                  "right": 64,
+                  "width": 25
+                },
+                "anchor_px": {
+                  "x": 52.0,
+                  "y": 107.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 125
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-w_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nes",
+          "composition": "posts-1",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nes_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "esw",
+          "composition": "posts-1",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-esw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nsw",
+          "composition": "posts-1",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nsw_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "new",
+          "composition": "posts-1",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-new_posts-1_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "nesw",
+          "composition": "posts-1",
+          "representations": [],
+          "ref": "orientation-south_action-idle_shape-nesw_posts-1_frame-01"
         }
       ]
     },
@@ -1621,7 +2282,7 @@
                 },
                 "anchor_px": {
                   "x": 95.5,
-                  "y": 220.0
+                  "y": 220
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1660,7 +2321,7 @@
                 },
                 "anchor_px": {
                   "x": 89.5,
-                  "y": 318.0
+                  "y": 318
                 },
                 "master_size_px": {
                   "width": 384,
@@ -1701,7 +2362,7 @@
                 },
                 "anchor_px": {
                   "x": 92.5,
-                  "y": 368.0
+                  "y": 368
                 },
                 "master_size_px": {
                   "width": 384,
@@ -1742,7 +2403,7 @@
                 },
                 "anchor_px": {
                   "x": 94.5,
-                  "y": 295.0
+                  "y": 295
                 },
                 "master_size_px": {
                   "width": 384,
@@ -1815,8 +2476,8 @@
                   "width": 165
                 },
                 "anchor_px": {
-                  "x": 99.0,
-                  "y": 357.0
+                  "x": 99,
+                  "y": 357
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1855,7 +2516,7 @@
                 },
                 "anchor_px": {
                   "x": 108.5,
-                  "y": 375.0
+                  "y": 375
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1894,7 +2555,7 @@
                 },
                 "anchor_px": {
                   "x": 95.5,
-                  "y": 148.0
+                  "y": 148
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1933,7 +2594,7 @@
                 },
                 "anchor_px": {
                   "x": 95.5,
-                  "y": 181.0
+                  "y": 181
                 },
                 "master_size_px": {
                   "width": 192,
@@ -1971,8 +2632,8 @@
                   "width": 119
                 },
                 "anchor_px": {
-                  "x": 95.0,
-                  "y": 201.0
+                  "x": 95,
+                  "y": 201
                 },
                 "master_size_px": {
                   "width": 192,
@@ -2011,7 +2672,7 @@
                 },
                 "anchor_px": {
                   "x": 96.5,
-                  "y": 138.0
+                  "y": 138
                 },
                 "master_size_px": {
                   "width": 192,
@@ -2049,8 +2710,8 @@
                   "width": 139
                 },
                 "anchor_px": {
-                  "x": 95.0,
-                  "y": 368.0
+                  "x": 95,
+                  "y": 368
                 },
                 "master_size_px": {
                   "width": 384,
@@ -2091,7 +2752,7 @@
                 },
                 "anchor_px": {
                   "x": 102.5,
-                  "y": 341.0
+                  "y": 341
                 },
                 "master_size_px": {
                   "width": 384,
@@ -2183,7 +2844,7 @@
                 },
                 "anchor_px": {
                   "x": 145.5,
-                  "y": 381.0
+                  "y": 381
                 },
                 "master_size_px": {
                   "width": 288,
@@ -2222,7 +2883,7 @@
                 },
                 "anchor_px": {
                   "x": 149.5,
-                  "y": 259.0
+                  "y": 259
                 },
                 "master_size_px": {
                   "width": 288,
@@ -2260,8 +2921,8 @@
                   "width": 57
                 },
                 "anchor_px": {
-                  "x": 143.0,
-                  "y": 281.0
+                  "x": 143,
+                  "y": 281
                 },
                 "master_size_px": {
                   "width": 288,
@@ -2299,8 +2960,8 @@
                   "width": 47
                 },
                 "anchor_px": {
-                  "x": 139.0,
-                  "y": 288.0
+                  "x": 139,
+                  "y": 288
                 },
                 "master_size_px": {
                   "width": 288,
@@ -2339,7 +3000,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 146.0
+                  "y": 146
                 },
                 "master_size_px": {
                   "width": 192,
@@ -2380,7 +3041,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 164.0
+                  "y": 164
                 },
                 "master_size_px": {
                   "width": 192,
@@ -2506,7 +3167,7 @@
                 },
                 "anchor_px": {
                   "x": 28.5,
-                  "y": 98.0
+                  "y": 98
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2544,8 +3205,8 @@
                   "width": 53
                 },
                 "anchor_px": {
-                  "x": 43.0,
-                  "y": 100.0
+                  "x": 43,
+                  "y": 100
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2584,7 +3245,7 @@
                 },
                 "anchor_px": {
                   "x": 51.5,
-                  "y": 118.0
+                  "y": 118
                 },
                 "master_size_px": {
                   "width": 192,
@@ -2625,7 +3286,7 @@
                 },
                 "anchor_px": {
                   "x": 45.5,
-                  "y": 120.0
+                  "y": 120
                 },
                 "master_size_px": {
                   "width": 192,
@@ -2666,7 +3327,7 @@
                 },
                 "anchor_px": {
                   "x": 45.5,
-                  "y": 114.0
+                  "y": 114
                 },
                 "master_size_px": {
                   "width": 192,
@@ -2726,8 +3387,8 @@
                   "width": 19
                 },
                 "anchor_px": {
-                  "x": 42.0,
-                  "y": 102.0
+                  "x": 42,
+                  "y": 102
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2765,8 +3426,8 @@
                   "width": 45
                 },
                 "anchor_px": {
-                  "x": 45.0,
-                  "y": 100.0
+                  "x": 45,
+                  "y": 100
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2804,8 +3465,8 @@
                   "width": 57
                 },
                 "anchor_px": {
-                  "x": 41.0,
-                  "y": 87.0
+                  "x": 41,
+                  "y": 87
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2843,8 +3504,8 @@
                   "width": 7
                 },
                 "anchor_px": {
-                  "x": 66.0,
-                  "y": 74.0
+                  "x": 66,
+                  "y": 74
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2891,8 +3552,8 @@
                   "width": 15
                 },
                 "anchor_px": {
-                  "x": 46.0,
-                  "y": 101.0
+                  "x": 46,
+                  "y": 101
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2930,8 +3591,8 @@
                   "width": 83
                 },
                 "anchor_px": {
-                  "x": 48.0,
-                  "y": 100.0
+                  "x": 48,
+                  "y": 100
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2969,8 +3630,8 @@
                   "width": 53
                 },
                 "anchor_px": {
-                  "x": 56.0,
-                  "y": 81.0
+                  "x": 56,
+                  "y": 81
                 },
                 "master_size_px": {
                   "width": 96,
@@ -3009,7 +3670,7 @@
                 },
                 "anchor_px": {
                   "x": 48.5,
-                  "y": 90.0
+                  "y": 90
                 },
                 "master_size_px": {
                   "width": 96,
@@ -3048,7 +3709,7 @@
                 },
                 "anchor_px": {
                   "x": 58.5,
-                  "y": 89.0
+                  "y": 89
                 },
                 "master_size_px": {
                   "width": 96,
@@ -3086,8 +3747,8 @@
                   "width": 5
                 },
                 "anchor_px": {
-                  "x": 65.0,
-                  "y": 85.0
+                  "x": 65,
+                  "y": 85
                 },
                 "master_size_px": {
                   "width": 96,
@@ -3126,7 +3787,7 @@
                 },
                 "anchor_px": {
                   "x": 55.5,
-                  "y": 90.0
+                  "y": 90
                 },
                 "master_size_px": {
                   "width": 96,
@@ -3187,7 +3848,7 @@
                 },
                 "anchor_px": {
                   "x": 95.5,
-                  "y": 374.0
+                  "y": 374
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3225,8 +3886,8 @@
                   "width": 49
                 },
                 "anchor_px": {
-                  "x": 96.0,
-                  "y": 381.0
+                  "x": 96,
+                  "y": 381
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3265,7 +3926,7 @@
                 },
                 "anchor_px": {
                   "x": 95.5,
-                  "y": 456.0
+                  "y": 456
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3303,8 +3964,8 @@
                   "width": 29
                 },
                 "anchor_px": {
-                  "x": 95.0,
-                  "y": 392.0
+                  "x": 95,
+                  "y": 392
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3342,8 +4003,8 @@
                   "width": 35
                 },
                 "anchor_px": {
-                  "x": 95.0,
-                  "y": 333.0
+                  "x": 95,
+                  "y": 333
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3382,7 +4043,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 213.0
+                  "y": 213
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3421,7 +4082,7 @@
                 },
                 "anchor_px": {
                   "x": 40.5,
-                  "y": 236.0
+                  "y": 236
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3461,8 +4122,8 @@
                   "width": 31
                 },
                 "anchor_px": {
-                  "x": 47.0,
-                  "y": 191.0
+                  "x": 47,
+                  "y": 191
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3501,7 +4162,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 196.0
+                  "y": 196
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3541,8 +4202,8 @@
                   "width": 21
                 },
                 "anchor_px": {
-                  "x": 48.0,
-                  "y": 287.0
+                  "x": 48,
+                  "y": 287
                 },
                 "master_size_px": {
                   "width": 192,
@@ -3624,8 +4285,8 @@
                   "width": 391
                 },
                 "anchor_px": {
-                  "x": 763.0,
-                  "y": 1137.0
+                  "x": 763,
+                  "y": 1137
                 },
                 "master_size_px": {
                   "width": 1536,
@@ -3693,8 +4354,8 @@
                   "width": 1095
                 },
                 "anchor_px": {
-                  "x": 763.0,
-                  "y": 1179.0
+                  "x": 763,
+                  "y": 1179
                 },
                 "master_size_px": {
                   "width": 1536,
@@ -3732,8 +4393,8 @@
                   "width": 327
                 },
                 "anchor_px": {
-                  "x": 740.0,
-                  "y": 981.0
+                  "x": 740,
+                  "y": 981
                 },
                 "master_size_px": {
                   "width": 1536,
@@ -3781,7 +4442,7 @@
                 },
                 "anchor_px": {
                   "x": 770.5,
-                  "y": 1600.0
+                  "y": 1600
                 },
                 "master_size_px": {
                   "width": 1536,
@@ -3848,7 +4509,7 @@
                 },
                 "anchor_px": {
                   "x": 194.5,
-                  "y": 482.0
+                  "y": 482
                 },
                 "master_size_px": {
                   "width": 960,
@@ -3899,7 +4560,7 @@
                 },
                 "anchor_px": {
                   "x": 205.5,
-                  "y": 416.0
+                  "y": 416
                 },
                 "master_size_px": {
                   "width": 480,
@@ -3947,7 +4608,7 @@
                 },
                 "anchor_px": {
                   "x": 248.5,
-                  "y": 564.0
+                  "y": 564
                 },
                 "master_size_px": {
                   "width": 480,
@@ -3985,8 +4646,8 @@
                   "width": 109
                 },
                 "anchor_px": {
-                  "x": 215.0,
-                  "y": 435.0
+                  "x": 215,
+                  "y": 435
                 },
                 "master_size_px": {
                   "width": 480,

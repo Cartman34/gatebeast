@@ -1,10 +1,6 @@
 <?php
 /**
- * Usage: require this file, then call the one function that matches what you are — `bootApp()` for a page served on the fly, `bootBuild()` for a command that produces a page.
- *
- *   require_once __DIR__ . '/../bootstrap.php';
- *   bootBuild();
- *   $favicon = Favicon::get();
+ * Usage: start anything that runs in the review server — a served page or a build command — by wiring what it needs to fail properly and loading the shared services.
  *
  * Intention: THIS FILE DOES NOTHING BY BEING LOADED — it only defines functions (operator, 2026-08-07). Loading a file must never have effects of its own: a require that registers handlers behind
  * your back cannot be read, cannot be skipped, and cannot be told apart from a plain include. Here the call is the effect, and it is written where it happens.
@@ -14,8 +10,9 @@
  * sameness was being copied into six files before this one existed.
  */
 
-// Les services que toute page emploie. L'inventaire et la fabrique de vignettes n'y sont PAS : ils prennent la racine du dépôt et se construisent chez leur appelant, seul à la connaître.
+// The services every page uses. The inventory and the thumbnail factory are NOT here: they take the repository root and are built by their caller, the only one that knows it.
 require_once __DIR__ . '/lib/Faults.php';
+require_once __DIR__ . '/lib/Notes.php';
 require_once __DIR__ . '/lib/Favicon.php';
 require_once __DIR__ . '/lib/Reload.php';
 require_once __DIR__ . '/lib/Releve.php';

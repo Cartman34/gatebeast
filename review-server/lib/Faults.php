@@ -1,11 +1,7 @@
 <?php
 /**
  * USAGE
- *   require_once __DIR__ . '/../lib/Faults.php';
- *   $faults = Faults::get();       // the service instance, taken once
- *   $faults->asExceptions();       // every PHP error becomes an exception
- *   $faults->onConsole();          // for a command: an uncaught exception is reported on the error output, and the command fails
- *   $faults->onPage(fn (Throwable $fault) => …);   // for a served page: an uncaught exception is rendered by the given closure
+ *   Make failures visible and uniform, at the start of anything that runs — a command or a served page. Not called directly: the bootstrap wires it.
  *
  * INTENTION
  *   ONE WAY TO FAIL, AND ONLY ONE: an exception (operator, 2026-08-07). PHP has two error systems living side by side — its own warnings and notices, which by default print half a line and let the

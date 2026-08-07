@@ -1,13 +1,7 @@
 <?php
 /**
  * USAGE
- *   require_once __DIR__ . '/../lib/Inventaire.php';
- *   $inventaire = new Inventaire();
- *   $inventaire->types();                       // every type with its declaration
- *   $inventaire->sujets();                      // every subject with its variants and representations
- *   $inventaire->label('TR-064');               // the French name a human reads
- *   $inventaire->variantFields($type);          // the extra variant fields a type declares
- *   $inventaire->currentRepresentation($variant); // the version shown today, or null
+ *   Read the subject inventory — types, subjects, variants, versions — whenever a page has to show what the project has produced.
  *
  * INTENTION
  *   Reads THE inventory of subjects — assets/sujets.json — and nothing else, for every page that shows what the project has produced. Three pages read it today, each with its own copy of the same
@@ -19,7 +13,7 @@
  *   In PHP because it is the project's default language for durable tooling, and reading JSON needs nothing that only Python has.
  */
 
-class Inventaire
+class Inventory
 {
     private array $data;
     private array $labels;

@@ -1,12 +1,7 @@
 <?php
 /**
  * USAGE
- *   require_once __DIR__ . '/../lib/Releve.php';
- *   $releve = Releve::get();                     // l'instance du service, à prendre une fois
- *   echo $releve->styles();                      // once, inside the page's <style>
- *   echo $releve->markup('Votre relevé, à me coller en conversation');
- *   echo $releve->script();                      // once, inside the page's <script>
- *   // and the page defines, before that script: window.construireReleve = function () { return "..."; };
+ *   Give a review page the ending it always has: the operator ticks and writes, then copies one text to paste back. Used by any page that carries a relevé.
  *
  * INTENTION
  *   The review pages all end the same way: the operator ticks or writes things, then copies one text to paste back into the conversation. That ending was written three times — sprites page, plan,
@@ -38,7 +33,8 @@ class Releve
   .releve-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
   .releve-head h2 { margin: 0; font-size: 1.05rem; flex: 1 1 auto; }
   .releve-intro { margin: 10px 0 0; color: var(--muted, #9aa192); }
-  .releve-texte { margin: 12px 0 0; padding: 12px; max-height: 40vh; overflow: auto; white-space: pre-wrap; background: var(--bg, #14170f); border: 1px solid var(--line, #333a2f); border-radius: 3px; }
+  .releve-texte { margin: 12px 0 0; padding: 12px; max-height: 40vh; overflow: auto; white-space: pre-wrap;
+                  background: var(--bg, #14170f); border: 1px solid var(--line, #333a2f); border-radius: 3px; }
   .releve-texte[hidden] { display: none; }
   .releve-etat { margin: 0; font-size: .85rem; color: var(--muted, #9aa192); }
   /* LE BOUTON FIXE, EN BAS À DROITE : le relevé se copie de n'importe où dans la page, sans avoir à redescendre jusqu'à lui. C'est ce que l'opérateur a demandé, et

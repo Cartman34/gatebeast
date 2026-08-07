@@ -37,6 +37,29 @@ if (isset(LEGACY_ROUTES[$path])) {
  * THE DATE OF THE TRACKING DOCUMENT WAS NOT A SIGNATURE, and that was the first attempt: the operator saw the home page announce a new version every time anything at all was written into the
  * tracking document, which happens constantly. The registry has since moved out of it entirely, which settles the matter at its root: the page now watches exactly what it shows.
  */
+/**
+ * The remarks of a page: read on load, replaced whenever they change.
+ *
+ * The server is the only writer. A page is a copy on someone's screen, possibly an old one; letting each copy write to the file would have the last reload win and silently drop what was written
+ * elsewhere. The page sends its whole list, so a removal is simply a list without it.
+ */
+if ($path === '/notes') {
+    require_once $here . '/bootstrap.php';
+    $notes = Notes::get();
+    $route = $_GET['page'] ?? '';
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+        $notes->save($route, json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR));
+        echo '{"ecrit":true}';
+
+        return true;
+    }
+    echo json_encode($notes->forRoute($route), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    return true;
+}
+
 if ($path === '/version') {
     header('Content-Type: text/plain; charset=utf-8');
     // The answer must never be served from the browser's cache: a signature kept in reserve would say forever that nothing has changed.

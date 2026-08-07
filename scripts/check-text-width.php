@@ -35,8 +35,14 @@ function continuesAParagraph(string $line): bool
     if (preg_match('/[=(){}\[\]$]/u', $trimmed)) {
         return false;
     }
+    // A LINE ENDING IN A SEMICOLON IS A STATEMENT, and several in a row are a block of them — never a hand-wrapped paragraph. Without this, five `require_once` lines one after another were reported
+    // as folded prose, on a file where the rule exempts instructions outright. Prose that ends a folded line on a semicolon does exist and will now go unreported; missing one is worth far less than
+    // crying wolf on every script of the project, which teaches everyone to ignore the tool.
+    if (str_ends_with($trimmed, ';')) {
+        return false;
+    }
 
-    return (bool) preg_match('/[a-zA-ZÀ-ÿ0-9,;:]$/u', $trimmed) && !preg_match('/^\s*([-*+>#|]|\d+\.|```)/u', ltrim($trimmed));
+    return (bool) preg_match('/[a-zA-ZÀ-ÿ0-9,:]$/u', $trimmed) && !preg_match('/^\s*([-*+>#|]|\d+\.|```)/u', ltrim($trimmed));
 }
 
 $paths = array_slice($argv, 1);

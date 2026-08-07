@@ -1,9 +1,9 @@
 <?php
 /**
- * Usage: php review-server/maquette-campagne/build.php
+ * Usage: build the Maquette Campagne page, whenever its plan or its mounted mock-up has been produced again.
  *
- * Builds review-server/maquette-campagne/page.html — ONE page holding the two views of Maquette Campagne: its composition plan, and the mock-up mounted from it. Two sections, folded or unfolded at will, each
- * remembering its own state from one visit to the next, and each keeping the review tools it already has.
+ * Builds ONE page holding the two views of Maquette Campagne: its composition plan, and the mock-up mounted from it. Two sections, folded or unfolded at will, each remembering its own state from
+ * one visit to the next, and each keeping the review tools it already has.
  *
  * Intention: the plan and the mock-up answer the same question — is this scene right? — and the operator was made to open two addresses to ask it. One subject, one page.
  *
@@ -29,15 +29,15 @@ $sources = [
      'quoi' => 'Les sprites posées sur leurs cases, à l\'échelle du monde : le sol d\'abord, puis ce qui se dresse dessus.'],
 ];
 
-// Les noms que les deux pages emploient toutes les deux. Préfixer ceux d'un seul côté suffit à les séparer, et c'est la maquette qui est préfixée — le plan en porte davantage, et moins on touche,
-// moins on casse. Les identifiants CSS et les sélecteurs JS passent par la même table, donc rien ne peut être renommé d'un côté seulement.
+// The names both pages use. Prefixing one side is enough to tell them apart, and it is the mock-up that gets prefixed — the plan carries more of them, and the less one touches, the less one
+// breaks. CSS identifiers and JS selectors go through this same table, so nothing can end up renamed on one side only.
 const PARTAGES = ['plan', 'dessin', 'zone', 'survol', 'saisie', 'saisie-ou', 'saisie-boutons', 'poser', 'supprimer', 'rouvrir', 'annuler', 'remarques',
     'remarques-head', 'remarques-vides', 'copier', 'effacer', 'taille', 'zooms', 'zoom', 'marque', 'ou', 'quoi', 'retirer', 'barre', 'mode', 'wrap',
     'eyebrow', 'lede', 'notes', 'tally', 'source', 'dit', 'rest', 'code', 'number', 'scene', 'scene-cadre', 'scene-piste', 'pose', 'trou', 'manquants',
     'compte', 'remarque--reglee', 'reelle', 'fixe', 'tire'];
 
-/** Le corps d'un document produit : ce qui est entre <div class="wrap"> et la fin, sans son entête ni son titre — la page d'accueil les porte déjà. */
-function corps(string $html): string
+/** The body of a produced document: what lies between <div class="wrap"> and the end, without its header or its title — the page above already carries those. */
+function bodyOf(string $html): string
 {
     $start = strpos($html, '<div class="wrap">');
     $end = strrpos($html, '</div>');
@@ -46,13 +46,13 @@ function corps(string $html): string
 }
 
 /**
- * Le contenu de toutes les balises d'un nom donné, sans les balises.
+ * The contents of every tag of a given name, without the tags.
  *
- * SANS EXPRESSION RÉGULIÈRE, ET C'EST DÉLIBÉRÉ : la maquette embarque ses sprites en clair dans ses styles, ce qui fait un document de plus d'un mégaoctet, et une
- * expression paresseuse sur un tel texte dépasse la limite de retour arrière du moteur — elle ne rend alors RIEN, sans le dire. La page sortait donc sans un seul
- * style ni une seule image, et se construisait sans erreur. Deux recherches de position font le même travail et ne mentent pas.
+ * NO REGULAR EXPRESSION HERE, AND THAT IS DELIBERATE: the mock-up carries its sprites in clear inside its styles, which makes a document of more than a megabyte, and a lazy expression over such a
+ * text exceeds the engine's backtracking limit — it then returns NOTHING, without saying so. The page came out without a single style or picture, and built without an error. Two searches for a
+ * position do the same work and never lie.
  */
-function contenus(string $html, string $tag): string
+function contentsOf(string $html, string $tag): string
 {
     $open = "<{$tag}>";
     $close = "</{$tag}>";
@@ -71,8 +71,8 @@ function contenus(string $html, string $tag): string
     return implode("\n", $parts);
 }
 
-/** Renomme les classes partagées d'un document : dans son balisage, dans ses styles et dans ses sélecteurs. Un seul passage, une seule table, aucune moitié de renommage possible. */
-function prefixer(string $text, string $prefix): string
+/** Renames the shared classes of a document: in its markup, in its styles and in its selectors. One pass, one table, no half-rename possible. */
+function prefixClasses(string $text, string $prefix): string
 {
     foreach (PARTAGES as $name) {
         $text = preg_replace('/(?<=class=")' . preg_quote($name, '/') . '(?=[" ])/', $prefix . $name, $text);
@@ -99,13 +99,13 @@ foreach ($sources as $source) {
         throw new RuntimeException("{$source['fichier']} n'existe pas — construis d'abord le plan et la maquette de la scène");
     }
     $html = file_get_contents($source['fichier']);
-    $style = contenus($html, 'style');
-    $script = contenus($html, 'script');
-    $body = corps($html);
+    $style = contentsOf($html, 'style');
+    $script = contentsOf($html, 'script');
+    $body = bodyOf($html);
     if ($source['prefixe']) {
-        $style = prefixer($style, $source['prefixe']);
-        $script = prefixer($script, $source['prefixe']);
-        $body = prefixer($body, $source['prefixe']);
+        $style = prefixClasses($style, $source['prefixe']);
+        $script = prefixClasses($script, $source['prefixe']);
+        $body = prefixClasses($body, $source['prefixe']);
     }
     $allStyles .= "\n/* ---- {$source['cle']} ---- */\n" . $style;
     $allScripts .= "\n/* ---- {$source['cle']} ---- */\n" . $script;
@@ -162,6 +162,10 @@ $page = <<<'HTML'
 {$blocks}
 </div>
 
+<!-- LE LIEN AVEC LE SERVEUR VIENT AVANT LES OUTILS DE REVUE, et l'ordre n'est pas indifférent : l'un des deux outils s'exécute dès qu'il est lu, sans attendre la fin de la page. Placé après lui,
+     ce lien n'existait pas encore au moment où il cherchait ses remarques, et la page s'ouvrait vide en affirmant qu'il n'y en avait aucune. -->
+{$notesScript}
+
 <script>
 {$scripts}
 
@@ -190,6 +194,8 @@ $page = <<<'HTML'
 HTML;
 
 $page = strtr($page, ['{$styles}' => $allStyles . "\n" . $reload->styles(), '{$scripts}' => $allScripts, '{$blocks}' => $blocks,
-    '{$favicon}' => $favicon->tag(), '{$reloadMarkup}' => $reload->markup(), '{$reloadScript}' => $reload->script('/maquette-campagne')]);
+    '{$favicon}' => $favicon->tag(), '{$reloadMarkup}' => $reload->markup(), '{$reloadScript}' => $reload->script('/maquette-campagne'),
+    // The two views melted here each carry their own review tool; the link to the server is written ONCE, and each tool keeps its remarks in its own section of the file.
+    '{$notesScript}' => Notes::get()->script('/maquette-campagne')]);
 file_put_contents("$here/page.html", $page);
 printf("review-server/maquette-campagne/page.html — %d section(s) fusionnée(s), %.1f Ko\n", count($sources), strlen($page) / 1024);

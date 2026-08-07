@@ -1,9 +1,7 @@
 <?php
 /**
  * USAGE
- *   require_once __DIR__ . '/../lib/Favicon.php';
- *   $favicon = Favicon::get();     // the service instance, taken once
- *   echo $favicon->tag();          // to be put in the page's <head>
+ *   Give a review page the icon its browser tab shows, so it is recognisable among twenty others.
  *
  * INTENTION
  *   Every review page carries the same favicon, written once here: a tab is what tells a review page apart from twenty others, and four pages each writing their own would end up not all carrying it.

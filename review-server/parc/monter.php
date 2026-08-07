@@ -31,22 +31,41 @@ $faviconTag = $favicon->tag();
 $reloadStyles = $route === null ? '' : $reload->styles();
 $reloadMarkup = $route === null ? '' : $reload->markup();
 $reloadScript = $route === null ? '' : $reload->script($route);
+// A source melted into another page has no route of its own: its remarks are those of the final page, which carries the link to the server.
+$notesScript = $route === null ? '' : Notes::get()->script($route);
 
 const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur par défaut du projet, tenue par scripts/tile_scale.py
 const GROUND_TYPES = ['sol', 'chemin', 'herbe'];
 
-// LE PLAN ET LA SORTIE SE DONNENT EN ARGUMENT, le parc n'étant que la valeur par défaut : il y aura d'autres maquettes — la scène de référence de 32 × 24 d'abord (opérateur,
-// 2026-08-06) —, et un monteur qui ne sait monter qu'une carte oblige à le recopier pour la suivante. Un seul monteur, autant de maquettes.
+// THE PLAN AND THE OUTPUT ARE ARGUMENTS, the park being only the default: there will be other mock-ups — the 32 × 24 reference scene first (operator, 2026-08-06) — and a mounter that can only
+// mount one map forces you to copy it for the next. One mounter, as many mock-ups as needed.
 $planPath = $argv[1] ?? "$root/assets/maquette/plan-parc-a.json";
 $outputPath = $argv[2] ?? __DIR__ . '/maquette.html';
 $plan = json_decode(file_get_contents($planPath), true, 512, JSON_THROW_ON_ERROR);
 $sujets = json_decode(file_get_contents("$root/assets/sujets.json"), true, 512, JSON_THROW_ON_ERROR)['sujets'];
 
+/**
+ * The name of the shape that joins these edges, in the project's own order.
+ *
+ * THE ORDER IS THE COMPASS, NEVER THE ALPHABET, and getting that wrong made three shapes unreachable without a word. The referential names them `ne`, `nes`, `nesw` — north, east, south, west —
+ * while sorting the letters gives `en`, `ens`, `ensw`, which match nothing. The pieces were drawn, declared and correct; the cell simply never asked for them by the name they carry, and fell back
+ * on another shape. A trace that does not join up is what that looks like from the outside.
+ */
+function shapeKey(array $joins): string
+{
+    $key = '';
+    foreach (['n', 'e', 's', 'w'] as $edge) {
+        $key .= in_array($edge, $joins, true) ? $edge : '';
+    }
+
+    return $key;
+}
+
 /** The image a subject shows on THIS cell: the variant whose shape matches what the cell joins, and its current representation.
  *
- * LA FORME COMPTE, ET L'IGNORER RUINE LA MAQUETTE. Une barrière, un chemin, un cours d'eau ont un dessin par forme — ligne, angle, extrémité —, et le plan dit pour chaque
- * case quels bords elle rejoint. Prendre le premier variant venu posait la même ligne est-ouest sur cent dix-sept cases de clôture, angles compris : la maquette montrait
- * alors un tracé qui ne se raccorde nulle part. Le repli sur le premier variant ne vaut que pour un sujet qui n'a pas de formes.
+ * THE SHAPE MATTERS, AND IGNORING IT RUINS THE MOCK-UP. A fence, a path, a watercourse have one drawing per shape — line, corner, end — and the plan says, for every cell, which edges it joins.
+ * Taking the first variant that came laid the same east-west line on a hundred and seventeen fence cells, corners included: the mock-up then showed a trace that joined nothing. Falling back on the
+ * first variant is only ever right for a subject that has no shapes.
  */
 function currentImage(array $sujets, string $code, array $joins = []): ?string
 {
@@ -54,8 +73,7 @@ function currentImage(array $sujets, string $code, array $joins = []): ?string
     if (!$sujet) {
         return null;
     }
-    sort($joins);
-    $wanted = $joins ? implode('', $joins) : null;
+    $wanted = $joins ? shapeKey($joins) : null;
 
     $fallback = null;
     foreach ($sujet['variants'] as $variant) {
@@ -84,7 +102,7 @@ $columns = $plan['grid']['columns'];
 $rows = $plan['grid']['rows'];
 $capture = new Capture();
 
-// Les cases se posent dans l'ordre du rendu : le sol d'abord, puis ce qui se dresse dessus, de haut en bas — un sujet plus bas passe devant celui qui est derrière lui.
+// Cells are laid in rendering order: the ground first, then what stands on it, top to bottom — a subject further down passes in front of the one behind it.
 $ground = [];
 $standing = [];
 foreach ($plan['cells'] as $cell) {
@@ -119,11 +137,10 @@ foreach (array_merge($ground, $standing) as $cell) {
         continue;
     }
 
-    // LA SPRITE EST POSÉE SUR LA LARGEUR DE SON EMPRISE, sa hauteur suivant ses propres proportions : un sujet qui se dresse déborde vers le HAUT de sa case, jamais vers le
-    // bas — c'est son pied qui est planté là. On l'accroche donc par le bas de sa case, et on la laisse monter.
-    // LA LARGEUR À L'ÉCRAN EST CELLE DU COUVERT, PAS DE L'EMPRISE. L'image a été demandée à la largeur de ce que le volume surplombe : la poser à la largeur du pied
-    // rétrécirait la couronne d'un chêne de six cases jusqu'à deux, et tout le parc paraîtrait planté de bonsaïs. Elle se centre alors sur son emprise, qui reste ce qui
-    // touche le sol.
+    // THE SPRITE IS LAID ON THE WIDTH OF ITS FOOTPRINT, its height following its own proportions: a subject that stands overflows UPWARD out of its cell, never downward — its foot is what is
+    // planted there. So it hangs from the bottom of its cell and is left to rise.
+    // THE WIDTH ON SCREEN IS THE CANOPY'S, NOT THE FOOTPRINT'S. The image was ordered at the width of what the volume overhangs: laying it at the width of the foot would shrink the crown of a
+    // six-cell oak down to two, and the whole park would look planted with bonsais. It is then centred on its footprint, which remains what touches the ground.
     $spread = $sujets[$code]['couvert'] ?? $sujets[$code]['emprise'] ?? ['columns' => $wide, 'rows' => $high];
     $width = $spread['columns'] * SCREEN_PIXELS_PER_TILE;
     $left -= ($width - $wide * SCREEN_PIXELS_PER_TILE) / 2;
@@ -132,16 +149,16 @@ foreach (array_merge($ground, $standing) as $cell) {
     $height = (int) round($width * $imageHeight / $imageWidth);
     $bottom = $top + $high * SCREEN_PIXELS_PER_TILE;
     $placed++;
-    // L'IMAGE EST EMBARQUÉE UNE FOIS, PAS MILLE. Une case ne porte qu'une classe ; l'image elle-même vit dans une règle de style, en clair dans la page. Répétée en adresse
-    // sur chaque case, elle pèserait mille fois son poids ; laissée en chemin de fichier, elle ne s'afficherait pas du tout, un artefact n'étant qu'une page seule.
-    // La classe porte l'IMAGE, pas le sujet : deux formes d'une même clôture sont deux dessins différents et ne peuvent pas partager une règle de style.
+    // THE IMAGE IS CARRIED ONCE, NOT A THOUSAND TIMES. A cell carries only a class; the image itself lives in a style rule, in clear inside the page. Repeated on every cell it would weigh a
+    // thousand times its own weight; left as a file path it would not show at all, an artifact being a single page.
+    // The class carries the IMAGE, not the subject: two shapes of the same fence are two different drawings and cannot share a style rule.
     $token = preg_replace('/[^a-z0-9]+/', '-', strtolower(pathinfo($image, PATHINFO_FILENAME)));
     $atlas[$token] = $image;
     ?>
 <?php
-    // L'EMPILEMENT SUIT LA PROFONDEUR, ET RIEN D'AUTRE : ce qui est planté plus près de la caméra se dessine PAR-DESSUS ce qui est derrière, quel que soit son type. Sans ça,
-    // une touffe d'herbe posée devant un arbre passait sous son tronc (opérateur, 2026-08-06). La rangée du PIED décide — c'est là que le sujet touche le sol —, et c'est
-    // exactement ainsi que le jeu affichera sa carte. La rangée est comptée depuis 1, donc l'ordre est directement lisible.
+    // STACKING FOLLOWS DEPTH, AND NOTHING ELSE: what is planted closer to the camera is drawn OVER what is behind, whatever its type. Without this, a tuft of grass laid in front of a tree went
+    // under its trunk (operator, 2026-08-06). The row of the FOOT decides — that is where the subject touches the ground — and it is exactly how the game will draw its map. The row is counted
+    // from 1, so the order reads directly.
     $depth = (int) ($bottom / SCREEN_PIXELS_PER_TILE);
     ?>
 <div class="pose s-<?= $token ?>" title="<?= htmlspecialchars($code, ENT_QUOTES) ?>"
@@ -158,7 +175,7 @@ foreach ($missing as $code => $count) {
 }
 $manquants = $manquants ?: '<li>Aucun : toutes les cases déclarées ont leur image.</li>';
 
-// Le sol du parc : la sprite de la cellule par défaut, celle que le plan déclare, embarquée une fois et carrelée sur toute la scène.
+// The ground of the scene: the sprite of the default cell, the one the plan declares, carried once and tiled over the whole scene.
 $defaultImage = currentImage($sujets, $plan['default_cell']);
 if ($defaultImage === null || !is_file("$root/assets/$defaultImage")) {
     throw new RuntimeException("la cellule par défaut {$plan['default_cell']} n'a aucune image courante — le sol de la scène serait inventé");
@@ -171,7 +188,7 @@ foreach ($atlas as $token => $image) {
     $styles .= ".pose.s-$token { background-image: url(data:image/png;base64,$data); }\n";
 }
 
-// CE QU'IL Y A SUR CHAQUE CASE, pour que le survol le dise. Dressé ici comme il l'est sur la page du plan : le même besoin, la même réponse.
+// WHAT SITS ON EVERY CELL, so that hovering can say it. Drawn up here as it is on the plan page: the same need, the same answer.
 $occupancy = [];
 foreach ($plan['cells'] as $cell) {
     for ($c = $cell['column']; $c < $cell['column'] + ($cell['columns'] ?? 1); $c++) {
@@ -293,7 +310,7 @@ $capture->start();
 
   <div class="zone">
     <?php // LA PISTE PORTE LA TAILLE AGRANDIE, LE CADRE RESTE À LA TAILLE DE L'ÉCRAN. Sans elle, le zoom agrandissait le cadre lui-même : la scène débordait de la page et
-          // il n'y avait plus rien à faire défiler, donc plus moyen de naviguer (opérateur, 2026-08-06). Un agrandissement se prévoit avec son moyen de se déplacer dedans. ?>
+          // there was nothing left to scroll, and therefore no way to navigate (operator, 2026-08-06). A zoom is planned together with the means of moving inside it. ?>
     <div class="scene-cadre">
       <div class="scene-piste">
       <div class="scene" id="scene" data-cote="<?= SCREEN_PIXELS_PER_TILE ?>" data-colonnes="<?= $columns ?>" data-lignes="<?= $rows ?>"
@@ -362,14 +379,14 @@ $capture->start();
 
   function zoomer(pixels) {
     var cadre = scene.closest('.scene-cadre');
-    // Le point de la carte qui est au CENTRE de la fenêtre avant l'agrandissement, en cases : c'est lui qu'on remet au centre après, sinon un zoom envoie l'opérateur ailleurs
-    // sur la carte et il doit se retrouver à chaque fois.
+    // The point of the map at the CENTRE of the window before zooming, in cells: it is what gets put back in the centre afterwards, otherwise a zoom sends the operator elsewhere on the map and he
+    // has to find his way again every time.
     var centreX = (cadre.scrollLeft + cadre.clientWidth / 2) / (cote * echelle);
     var centreY = (cadre.scrollTop + cadre.clientHeight / 2) / (cote * echelle);
     echelle = pixels / cote;
     scene.style.transform = 'scale(' + echelle + ')';
-    // LA PISTE réserve la place que la scène occupe RÉELLEMENT une fois agrandie — une mise à l'échelle ne change pas la place qu'un élément demande à sa mise en page. Le CADRE,
-    // lui, garde la taille de la fenêtre et fait défiler : c'est ce qui permet de se déplacer dans une carte plus grande que l'écran.
+    // THE TRACK reserves the room the scene REALLY takes once scaled — scaling does not change the room an element asks of its layout. THE FRAME keeps the size of the window and scrolls: that is
+    // what makes it possible to move around a map larger than the screen.
     piste.style.width = (colonnes * cote * echelle) + 'px';
     piste.style.height = (lignes * cote * echelle) + 'px';
     cadre.scrollLeft = centreX * cote * echelle - cadre.clientWidth / 2;
@@ -379,8 +396,8 @@ $capture->start();
     });
   }
 
-  // SE DÉPLACER À LA SOURIS, en tirant la carte : les barres de défilement suffisent à la rigueur, mais on lit une carte en la faisant glisser. Le clic simple continue d'attacher
-  // une remarque — seul un vrai glissement, au-delà de quelques pixels, compte comme un déplacement.
+  // MOVING WITH THE MOUSE, by dragging the map: scrollbars would do at a pinch, but a map is read by sliding it. A plain click still attaches a remark — only a real drag, beyond a few pixels,
+  // counts as a movement.
   var tire = null;
   var glisse = false;
   var cadreScene = scene.closest('.scene-cadre');
@@ -412,29 +429,20 @@ $capture->start();
     bouton.addEventListener('click', function () { zoomer(Number(bouton.dataset.zoom)); });
   });
 
-  var MEMOIRE = 'gatebeast-maquette-parc-remarques';
   var remarques = [];
   var vise = null;
 
-  try {
-    remarques = JSON.parse(localStorage.getItem(MEMOIRE)) || [];
-  } catch (erreur) {
-    remarques = [];
-  }
-
+  /* LES REMARQUES VIVENT DANS LE DÉPÔT, PAS DANS LE NAVIGATEUR (opérateur, 2026-08-07). Elles s'y perdaient dès que l'adresse changeait, elles n'étaient lisibles que par celui qui les
+     avait écrites, et il fallait les recopier à la main dans la conversation. Le serveur les tient : la page les demande en s'ouvrant, et lui rend la liste entière à chaque changement. */
   function retenir() {
-    try {
-      localStorage.setItem(MEMOIRE, JSON.stringify(remarques));
-    } catch (erreur) {
-      // Une mémoire indisponible ne coûte que la survie au rechargement.
-    }
+    if (window.gatebeastNotes) { window.gatebeastNotes.save('maquette', remarques); }
   }
 
   /* La case sous un point de l'écran. La scène est posée en pixels, pas dans un repère à échelle : la case se lit directement, au décalage du cadre près et à ce que le
      cadre a défilé de côté. */
   function caseSous(x, y) {
     var cadre = scene.getBoundingClientRect();
-    // La case se lit à l'échelle du moment : le cadre mesuré est déjà celui de la scène agrandie, donc la taille d'une case à l'écran l'est aussi.
+    // The cell reads at the current scale: the measured frame is already that of the scaled scene, so the size of a cell on screen is too.
     var pas = cote * echelle;
     var colonne = Math.floor((x - cadre.left) / pas) + 1;
     var ligne = Math.floor((y - cadre.top) / pas) + 1;
@@ -507,7 +515,7 @@ $capture->start();
   scene.addEventListener('mouseleave', function () { survol.hidden = true; });
 
   scene.addEventListener('click', function (evenement) {
-    // Un glissement de carte n'attache pas de remarque : sans ça, chaque déplacement à la souris ouvrirait la saisie sur la case où le doigt s'est levé.
+    // Dragging the map attaches no remark: without this, every move with the mouse would open the input on whatever cell the finger came up on.
     if (glisse) {
       glisse = false;
       return;
@@ -573,7 +581,7 @@ $capture->start();
       var texte = 'Maquette du parc\n' + (remarques.length ? remarques.map(function (remarque) {
         return '(' + remarque.colonne + ',' + remarque.ligne + ') : ' + remarque.texte;
       }).join('\n') : 'Aucune remarque.');
-      // La copie passe par un champ caché : l'appel direct au presse-papiers est refusé dans le cadre où vit cet artefact.
+      // The copy goes through a hidden field: the direct call to the clipboard is refused in the frame this page used to live in.
       var holder = document.createElement('textarea');
       holder.value = texte;
       holder.setAttribute('readonly', 'readonly');
@@ -607,10 +615,20 @@ $capture->start();
     }
   });
 
+  /* Les remarques arrivent du serveur, donc APRÈS l'ouverture de la page : on dessine une première fois sans elles, puis de nouveau quand elles sont là. Attendre pour tout afficher rendrait la
+     page inerte le temps d'un aller-retour, pour un contenu qui n'est presque jamais long. */
   marquer();
   afficher();
+  if (window.gatebeastNotes) {
+    window.gatebeastNotes.load('maquette', function (chargees) {
+      remarques = chargees;
+      marquer();
+      afficher();
+    });
+  }
 })();
 </script>
+<?= $notesScript ?>
 <?= $reloadScript ?>
 <?php
 file_put_contents($outputPath, $capture->take());

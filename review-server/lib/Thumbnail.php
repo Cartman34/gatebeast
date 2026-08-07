@@ -1,9 +1,7 @@
 <?php
 /**
  * USAGE
- *   require_once __DIR__ . '/../lib/Vignette.php';
- *   $vignettes = new Vignette();
- *   [$uri, $width, $height] = $vignettes->reduire('cutout/vegetation/TR-064-v6.png', 24);
+ *   Put a picture in a page without carrying its full weight, whenever the page shows it smaller than the file is.
  *
  * INTENTION
  *   Turns an image on disk into what a page can carry: reduced to the size it will actually be SHOWN at, and embedded as a data URI. An artifact is one single file — it cannot fetch anything — so
@@ -18,7 +16,7 @@
  *   In PHP with gd, constated present on this machine: nothing here needs a library that only Python has.
  */
 
-class Vignette
+class Thumbnail
 {
     private string $cache;
 
@@ -35,7 +33,7 @@ class Vignette
      *
      * Raises rather than returning a placeholder: an image a page cannot read is a fact its builder must report, and a silent grey square would let it ship looking finished.
      */
-    public function reduire(string $relative, int $width): array
+    public function shrink(string $relative, int $width): array
     {
         $path = $this->root . '/assets/' . $relative;
         if (!is_file($path)) {

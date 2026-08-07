@@ -192,6 +192,8 @@ $faviconTag = $favicon->tag();
 $reloadStyles = $route === null ? '' : $reload->styles();
 $reloadMarkup = $route === null ? '' : $reload->markup();
 $reloadScript = $route === null ? '' : $reload->script($route);
+// Une source fondue dans une autre page n'a pas de route à elle : ses remarques sont celles de la page finale, qui porte le sien.
+$notesScript = $route === null ? '' : Notes::get()->script($route);
 $page = <<<HTML
 <title>Le parc — maquette</title>
 {$faviconTag}
@@ -437,18 +439,10 @@ document.querySelectorAll('.plan').forEach(function (section) {
     return code ? (noms[code] || code) + ' · ' + code : defaut;
   }
 
-  try {
-    remarques = JSON.parse(localStorage.getItem(memoire)) || [];
-  } catch (erreur) {
-    remarques = [];
-  }
-
+  /* LES REMARQUES VIVENT DANS LE DÉPÔT, PAS DANS LE NAVIGATEUR (opérateur, 2026-08-07) : elles s'y perdaient au moindre changement d'adresse, personne d'autre que leur auteur ne pouvait les
+     lire, et il fallait les recopier à la main. Le serveur les tient ; la page les demande en s'ouvrant et lui rend la liste entière à chaque changement. */
   function retenir() {
-    try {
-      localStorage.setItem(memoire, JSON.stringify(remarques));
-    } catch (erreur) {
-      // Une mémoire indisponible ne coûte que la survie au rechargement : les remarques de la séance en cours, elles, restent lisibles et copiables.
-    }
+    if (window.gatebeastNotes) { window.gatebeastNotes.save('plan', remarques); }
   }
 
   /* Les cases commentées se marquent SUR le dessin, dans son propre repère : le repère suit l'ajustement et la taille réelle tout seul, là où une pastille posée par-dessus
@@ -700,10 +694,19 @@ document.querySelectorAll('.plan').forEach(function (section) {
     }
   });
 
+  /* Les remarques arrivent du serveur, donc après l'ouverture : on dessine une première fois sans elles, puis de nouveau quand elles sont là. */
   marquer();
   afficher();
+  if (window.gatebeastNotes) {
+    window.gatebeastNotes.load('plan', function (chargees) {
+      remarques = chargees;
+      marquer();
+      afficher();
+    });
+  }
 });
 </script>
+{$notesScript}
 {$reloadScript}
 HTML;
 
