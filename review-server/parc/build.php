@@ -1,8 +1,8 @@
 <?php
 /**
- * Usage: php artefacts/parc/build.php
+ * Usage: php review-server/parc/build.php
  *
- * Builds artefacts/parc/page.html — the page of the park mock-up: the composition plan retained for it, commentable cell by cell, and later the mounted mock-up itself.
+ * Builds review-server/parc/page.html — the page of the park mock-up: the composition plan retained for it, commentable cell by cell, and later the mounted mock-up itself.
  *
  * Intention: this is the last link of a chain that never varies, and the chain is the rule — A RESOURCE IS PRODUCED BY A SCRIPT, THEN INCLUDED AS IT STANDS. Nothing is ever
  * made on the fly by a page. Here the plan is DECLARED in JSON, case by case ; scripts/build-composition-plan.py checks that declaration and draws the SVG from it ; and this
@@ -18,14 +18,23 @@
  */
 
 $root = __DIR__ . '/../..';
+require_once $root . '/review-server/bootstrap.php';
+bootBuild();
+// THE SERVED ROUTE IS THE THIRD ARGUMENT: this page is served at /parc, but the same builder also produces a SOURCE of the Campagne page, melted into another one. A source carries no reload notice
+// — the final page would otherwise hold two of them, on a route that is not its own. That absence of a route is `null`, never an empty string: an empty string is a string holding nothing, which is
+// not the same as having no route at all. A command line can only carry text, so the emptiness it hands over is brought back to null right here.
+$route = ($argv[3] ?? '/parc') ?: null;
+
+// Services are taken here, at the top, once.
+$favicon = Favicon::get();
+$reload = Reload::get();
 // LE PLAN ET LA SORTIE SE DONNENT EN ARGUMENT, le parc n'étant que la valeur par défaut : il y a d'autres plans à présenter — la scène de référence de 32 × 24 d'abord —, et
 // un constructeur qui ne sait bâtir qu'une page oblige à le recopier pour la suivante. Sans argument, il découvre les plans du parc comme avant.
 $declarations = isset($argv[1]) ? [$argv[1]] : glob("$root/assets/maquette/plan-*.json");
 $outputPath = $argv[2] ?? __DIR__ . '/page.html';
 sort($declarations);
 if ($declarations === []) {
-    fwrite(STDERR, "FAULT aucun plan déclaré sous assets/maquette/\n");
-    exit(1);
+    throw new RuntimeException('aucun plan déclaré sous assets/maquette/');
 }
 
 // Les libellés des sujets : la seule prose de ce script, et elle ne décrit aucun parc — elle dit ce qu'un code désigne, ce que le référentiel des sujets ne donne pas en clair.
@@ -58,13 +67,17 @@ require_once "$root/scripts/Capture.php";
 
 $capture = new Capture();
 $sections = '';
+// THE PAGE TITLE COMES FROM THE PLAN, it is not written here: this builder also produces the Campagne scene, and announced it as "Le parc" — the operator caught it on 2026-08-07, no longer knowing
+// which mock-up he was looking at. The plan carries its title, and that is what stands. With several plans at once, the page holds them all and none can name the whole.
+$title = count($declarations) === 1
+    ? json_decode(file_get_contents($declarations[0]), true, 512, JSON_THROW_ON_ERROR)['title']
+    : 'Les plans de composition';
 foreach ($declarations as $file) {
     $drawing = substr($file, 0, -strlen('.json')) . '.svg';
     if (!is_file($drawing)) {
         // Le dessin ne se fabrique pas ici : son absence dit que le plan n'a jamais été dessiné, ou jamais redessiné depuis que sa déclaration a changé. Les deux se corrigent
         // en relançant l'outil de dessin, jamais en s'en passant.
-        fwrite(STDERR, 'FAULT ' . basename($drawing) . " manque : lancer scripts/build-composition-plan.py sur sa déclaration\n");
-        exit(1);
+        throw new RuntimeException(basename($drawing) . ' manque : lancer scripts/build-composition-plan.py sur sa déclaration');
     }
     $plan = json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
     $svg = file_get_contents($drawing);
@@ -75,8 +88,7 @@ foreach ($declarations as $file) {
     // La géométrie de la grille, ANNONCÉE PAR LE DESSIN et jamais recalculée ici : c'est elle qui permet de retrouver la case sous le pointeur. La recalculer reviendrait à
     // tenir une seconde vérité, qui se tromperait le jour où le dessin change de proportions.
     if (!preg_match('/data-tile="([0-9.]+)" data-top="([0-9.]+)"/', $svg, $box)) {
-        fwrite(STDERR, "FAULT $source : le dessin n'annonce pas sa grille, la case sous le pointeur serait invention\n");
-        exit(1);
+        throw new RuntimeException("$source : le dessin n'annonce pas sa grille, la case sous le pointeur serait invention");
     }
     $side = (float) $box[1];
     $topOffset = (float) $box[2];
@@ -175,8 +187,14 @@ foreach ($declarations as $file) {
     $sections .= $capture->take();
 }
 
+$faviconTag = $favicon->tag();
+// A source melted into another page carries no notice: no route puts out all three pieces at once, without the template having to know about that case.
+$reloadStyles = $route === null ? '' : $reload->styles();
+$reloadMarkup = $route === null ? '' : $reload->markup();
+$reloadScript = $route === null ? '' : $reload->script($route);
 $page = <<<HTML
 <title>Le parc — maquette</title>
+{$faviconTag}
 <style>
   :root {
     color-scheme: light dark;
@@ -328,12 +346,14 @@ $page = <<<HTML
   .remarques li button { padding: .15rem .6rem; font-size: .8rem; }
 
   footer { color: var(--muted); font-size: .9rem; max-width: 64ch; }
+{$reloadStyles}
 </style>
+{$reloadMarkup}
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">GateBeast · maquette du parc</p>
-    <h1>Le parc</h1>
+    <p class="eyebrow">GateBeast · plan de composition</p>
+    <h1>{$title}</h1>
     <p class="lede">Le plan retenu, déclaré case par case dans son propre fichier ; le dessin en est tiré, puis vérifié — chaque raccord doit être annoncé des deux côtés.
     Clique une case pour dire ce qui devrait y changer.</p>
   </header>
@@ -684,6 +704,7 @@ document.querySelectorAll('.plan').forEach(function (section) {
   afficher();
 });
 </script>
+{$reloadScript}
 HTML;
 
 file_put_contents($outputPath, $page);

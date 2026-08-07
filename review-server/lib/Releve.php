@@ -2,9 +2,10 @@
 /**
  * USAGE
  *   require_once __DIR__ . '/../lib/Releve.php';
- *   echo Releve::styles();                       // once, inside the page's <style>
- *   echo Releve::markup('Votre relevé, à me coller en conversation');
- *   echo Releve::script();                       // once, inside the page's <script>
+ *   $releve = Releve::get();                     // l'instance du service, à prendre une fois
+ *   echo $releve->styles();                      // once, inside the page's <style>
+ *   echo $releve->markup('Votre relevé, à me coller en conversation');
+ *   echo $releve->script();                      // once, inside the page's <script>
  *   // and the page defines, before that script: window.construireReleve = function () { return "..."; };
  *
  * INTENTION
@@ -22,7 +23,15 @@
 
 class Releve
 {
-    public static function styles(): string
+    private static ?self $instance = null;
+
+    /** L'instance du service. C'est la SEULE méthode statique ici, et elle ne fait que ça : tout le travail est d'instance. */
+    public static function get(): self
+    {
+        return self::$instance ??= new self();
+    }
+
+    public function styles(): string
     {
         return <<<'CSS'
   .releve { margin-top: 32px; padding: 16px; background: var(--card, #1c211a); border: 1px solid var(--line, #333a2f); border-radius: 4px; }
@@ -43,7 +52,7 @@ class Releve
 CSS;
     }
 
-    public static function markup(string $title, string $intro = 'Rien n\'est envoyé : le bouton copie tout. Le texte lui-même ne s\'affiche que si vous le demandez.'): string
+    public function markup(string $title, string $intro = 'Rien n\'est envoyé : le bouton copie tout. Le texte lui-même ne s\'affiche que si vous le demandez.'): string
     {
         $title = htmlspecialchars($title, ENT_QUOTES);
         $intro = htmlspecialchars($intro, ENT_QUOTES);
@@ -63,7 +72,7 @@ CSS;
 HTML;
     }
 
-    public static function script(): string
+    public function script(): string
     {
         return <<<'JS'
 (function () {

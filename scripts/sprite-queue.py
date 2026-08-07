@@ -27,7 +27,7 @@ WHAT "run" ACTUALLY CHAINS, PER REQUEST
   1. scripts/generate-sprite-subject.py <code> [--ref R] --generate, or
      scripts/generate-sprite-trace.py <code> <shape> --posts N [--ref R] --generate
   2. scripts/export-asset.py <the image the step above produced>
-  3. python3 artefacts/suivi-sprites/build.py
+  3. php review-server/suivi-sprites/build.php
 
   Steps 2 and 3 run right after step 1 lands for THAT request, not once the whole queue is empty.
   Step 3 touches one shared page, so it is the one step this script serializes across workers — step
@@ -228,10 +228,10 @@ def _run_entry(entry: dict, build_lock: threading.Lock) -> bool:
     # serialized, and only for the requests this process itself is driving.
     with build_lock:
         built = subprocess.run(
-            ["python3", str(REPO / "artefacts" / "suivi-sprites" / "build.py")],
+            ["php", str(REPO / "review-server" / "suivi-sprites" / "build.php")],
             cwd=REPO.parent, capture_output=True, text=True)
     if built.returncode:
-        reason = _tail(built.stderr) or _tail(built.stdout) or "build.py en échec"
+        reason = _tail(built.stderr) or _tail(built.stdout) or "build.php en échec"
         _fail(entry, reason, image_rel)
         return False
     _log(code, "page reconstruite")

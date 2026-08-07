@@ -1,7 +1,14 @@
-# Les artefacts publiés — le registre des adresses
+# Les artefacts publiés — les règles du registre
 
-**Usage :** le registre de tout ce que le projet publie. **On l'ouvre AVANT toute publication**, sans exception, puis on liste les artefacts existants pour vérifier qu'il n'en manque aucun — ce
-document peut être en retard, la liste réelle fait foi. On y republie, on n'y crée jamais d'adresse neuve pour un sujet qui en a déjà une.
+**Usage :** ce qu'il faut savoir avant de publier quoi que ce soit, et comment se tient le registre. **Les données, elles, vivent dans `review-server/artefacts.json`** — un artefact, son état, son
+adresse — et **ce document n'en recopie aucune**. C'est de ce fichier que l'index se construit ; l'ouvrir est le geste qui précède toute publication, puis on liste les artefacts existants pour
+vérifier qu'il n'en manque aucun : le registre peut être en retard, la liste réelle fait foi. On republie sur une adresse existante, on n'en crée jamais une neuve pour un sujet qui en a déjà une.
+
+**Pourquoi la donnée n'est pas ici** (opérateur, 2026-08-07) : elle vivait dans un tableau de `SUIVI.md`, et l'index allait l'y lire. Le suivi est le document de travail de l'agent — il se réécrit
+sans cesse, et **il n'a pas à servir de source de données à l'application**. Une donnée vit à un seul endroit : celui d'où l'outil la lit.
+
+**Le format est du JSON, et ce n'est pas un choix de goût** : PHP n'embarque pas de lecteur YAML, et en ajouter un est une dépendance à installer sur toute machine où le projet tourne — donc une
+décision de l'opérateur. Le JSON est natif, et c'est déjà le format du référentiel des sujets. **Le YAML se ferait volontiers** si l'opérateur veut l'extension.
 
 **Intention :** une adresse non consignée est une adresse perdue, et le suivant en crée une de plus. C'est arrivé le 2026-08-06 : la maquette du parc a reçu une seconde adresse, et **les remarques que
 l'opérateur y avait posées ont été perdues** — elles vivent dans le navigateur, attachées à la page qui les a reçues. Ce registre est un document à part, et non une section du suivi : le suivi dit où
@@ -10,66 +17,37 @@ en est le travail et se réécrit sans cesse, tandis qu'une adresse est durable 
 **Un artefact, un sujet, plusieurs supports possibles.** Le même artefact peut être servi à plusieurs endroits — une page Claude aujourd'hui, une adresse chez le générateur ou un hébergement propre
 demain. Chaque support porte son **identifiant** quand il en a un, parce que c'est lui qui permet de republier au bon endroit ; l'adresse complète, elle, se lit et se colle.
 
+**Depuis le 2026-08-07, le support de travail est le serveur local.** Les pages de revue qu'on utilise vivent sous `review-server/` et se regardent sur `http://localhost:8080/`, une commande les
+sert toutes (`php review-server/serve.php`). Les artefacts Claude ne disparaissent pas pour autant : ils restent inscrits ici, leurs adresses restent valables, et il pourra y en avoir d'autres. Ce
+registre continue donc de faire foi pour ce qui est **publié** — ce qui est servi en local n'a pas d'adresse à tenir, c'est tout l'intérêt.
+
 **Quatre états, et seuls ces quatre-là.** **Vivant** : on s'en sert, il se republie. **Archivé** : plus actif, mais consultable, et son adresse reste valable — archiver n'est pas supprimer. **Clos** :
 son sujet est tranché, il ne bougera plus. **À ne pas rouvrir** : un doublon créé par erreur, sur lequel on ne republie jamais ; il reste inscrit jusqu'à ce que l'opérateur le supprime, et sa ligne
 disparaît alors avec lui.
 
-## Vivants
+**CE QUI EST ARCHIVÉ N'EST PLUS MAINTENU** (opérateur, 2026-08-07), et c'est le sens même du mot ici : on ne le reconstruit pas, on ne le corrige pas, on ne le suit pas. **Il prendra donc de la
+dette** — le jour où on le restaure, il aura pris du retard sur tout ce qui a bougé entre-temps. Cette dette est **acceptée d'avance et connue**, puisque la règle la dit : elle n'a pas à être
+signalée à chaque fois, ni à être rattrapée en douce au passage. Ce qui vaut pour une page publiée vaut pour tout ce que le projet archive, page servie comprise.
 
-### Index des artefacts
-La porte d'entrée vers tous les autres, bâtie sur ce registre. Produit par `artefacts/index/`. Ouvert le 2026-08-04.
-- Artefact Claude · `cf3f2ac3-903c-43fb-ac91-c8e0129ab949` · https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949
+## Archiver, geste par geste
 
-### Suivi des sprites
-L'unique endroit où se lit l'état de la production. Produit par `artefacts/suivi-sprites/build.php` depuis le 2026-08-06 ; le constructeur Python reste en place, non supprimé, tant que la version PHP
-n'a pas rattrapé tout ce qu'il faisait.
-- Artefact Claude · `844640e3-8d10-47d5-b74d-aca74b99f63c` · https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c
+**Intention :** l'essentiel de l'archivage, c'est **qu'il se voie** — la chose quitte les vivants de l'index et se retrouve sous « Archivés ». Un archivage qui ne change que le code laisse tout le
+monde croire que la page est encore tenue. Constaté le 2026-08-07 : les deux pages du parc ont été retirées du serveur et décrites comme archivées, **sans que l'index bouge d'un pixel**, parce que
+l'état vivait à deux endroits et que je n'en avais changé qu'un. Il n'en a plus qu'un depuis, et c'est ce qui empêche l'oubli de se reproduire.
 
-### Le plan de composition du parc
-Le plan déclaré case par case, avec la remarque par case. Produit par `artefacts/parc/build.php`. Ouvert le 2026-08-05.
-- Artefact Claude · `5f9bb2af-9126-44e6-b953-59afb7ab4e28` · https://claude.ai/code/artifact/5f9bb2af-9126-44e6-b953-59afb7ab4e28
+**Les deux gestes, et aucun n'est facultatif :**
 
-### La maquette du parc
-La scène montée, trois tailles de case, navigation et remarque par case. Produit par `artefacts/parc/monter.php`. Republié le 2026-08-06. **D'autres maquettes viendront, chacune avec sa propre
-adresse.**
-- Artefact Claude · `1a5e7074-017e-40b3-9366-005ead586562` · https://claude.ai/code/artifact/1a5e7074-017e-40b3-9366-005ead586562
+1. **Le passer à l'état `archived` dans `review-server/artefacts.json`.** C'est ce geste-là, et lui seul, qui le fait descendre sous « Archivés » dans l'index.
+2. **Le retirer des pages servies** — son entrée sort de la déclaration des pages du serveur de revue, gardée en commentaire juste à côté pour que la restauration soit une ligne à remettre. Son
+   constructeur et sa page restent sur le disque : archiver n'est pas supprimer.
 
-### Maquette Campagne
-Le plan de composition et la maquette montée de la scène 32 × 24, en **deux sections repliables** sur une seule page, chacune gardant son état de pli d'une visite à l'autre et ses propres outils de
-revue. Produite par `artefacts/scene/build.php`, à partir de `artefacts/parc/build.php` et `artefacts/parc/monter.php`, tous deux devenus génériques. Ouverte le 2026-08-06.
-- Artefact Claude · `9c6cbb31-5f72-4db7-a8dc-237550866ce8` · https://claude.ai/code/artifact/9c6cbb31-5f72-4db7-a8dc-237550866ce8
+## Où se lit la liste
 
-### Plans de composition des sujets
-Tout plan déclaré sous `assets/poc/`, par découverte automatique. Produit par `artefacts/plans-de-composition/`. Ouvert le 2026-08-04.
-- Artefact Claude · `21dd8a3a-aea2-484d-9202-3749e24cb8b9` · https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9
+**Nulle part ici.** La liste — nom, description, état, adresse, ce qui produit chaque artefact — vit dans `review-server/artefacts.json`, et **la recopier ici serait exactement la faute que ce
+document vient de corriger** : deux listes divergent toujours, et c'est celle que personne ne lit qui reste juste.
 
-### Audit de l'inventaire
-Les écarts entre l'inventaire et les six planches, à arbitrer ligne par ligne. Produit par `artefacts/audit-inventaire/`. En attente d'arbitrage.
-- Artefact Claude · `a15caa68-3b52-4cab-a92e-4b0829b172aa` · https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa
+**Pour la voir, on ouvre l'index** : `php review-server/serve.php`, puis `http://localhost:8080/`. Il montre les quatre états, chacun dans sa section, chaque artefact avec son adresse. C'est la même
+liste que le fichier, rendue lisible — et c'est la seule façon de la consulter sans ouvrir de fichier, comme le veut la règle qui demande qu'une donnée sortie de la documentation reste consultable.
 
-## Archivés
-
-### Tour de nettoyage
-Trente et un éléments relevés, un verdict par ligne. Produit par `artefacts/nettoyage/`.
-- Artefact Claude · `8598d3c2-a037-4edf-af42-f2fb4447498c` · https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c
-
-### Planches de référence
-Chaque planche du monde avec son rapport noté.
-- Artefact Claude · `12a098f0-aecb-4326-8d4a-e60c80802413` · https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413
-
-### Calibration de l'échelle humaine
-- Artefact Claude · `044dfac1-998d-4b36-87a5-639059ddba40` · https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40
-
-## Clos
-
-### Direction artistique
-L'historique de la revue, jusqu'à la validation de la direction artistique.
-- Artefact Claude · `f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5` · https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5
-
-### Son
-Les essais et le plafond constaté ; la synthèse est abandonnée.
-- Artefact Claude · `e0c55e5f-f179-4ef7-9338-9d2b2cc341b8` · https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8
-
-## À ne pas rouvrir
-
-Aucun pour l'instant. Le doublon de la maquette, créé et neutralisé le 2026-08-06, a été supprimé par l'opérateur le jour même.
+**Une entrée mal formée ne fait pas taire l'index** : elle est écartée et signalée en bas de page, avec ce qui cloche. Un état inconnu, un nom manquant, une adresse qui n'en est pas une : chacun se
+dit. Ce qui ne se voit pas, c'est une entrée juste mais fausse — d'où le geste qui précède toute publication, lister les artefacts existants et confronter.

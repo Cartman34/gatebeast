@@ -1,8 +1,8 @@
 <?php
 /**
- * Usage: php artefacts/scene/build.php
+ * Usage: php review-server/maquette-campagne/build.php
  *
- * Builds artefacts/scene/page.html — ONE page holding the two views of Maquette Campagne: its composition plan, and the mock-up mounted from it. Two sections, folded or unfolded at will, each
+ * Builds review-server/maquette-campagne/page.html — ONE page holding the two views of Maquette Campagne: its composition plan, and the mock-up mounted from it. Two sections, folded or unfolded at will, each
  * remembering its own state from one visit to the next, and each keeping the review tools it already has.
  *
  * Intention: the plan and the mock-up answer the same question — is this scene right? — and the operator was made to open two addresses to ask it. One subject, one page.
@@ -14,11 +14,18 @@
 
 $root = dirname(__DIR__, 2);
 $here = __DIR__;
+require_once $root . '/review-server/bootstrap.php';
+bootBuild();
+
+// Services are taken here, at the top, once.
+$favicon = Favicon::get();
+$reload = Reload::get();
 
 $sources = [
-    ['cle' => 'plan', 'titre' => 'Le plan de composition', 'fichier' => "$root/artefacts/parc/scene-plan.html", 'prefixe' => null,
+    // Both sources are produced WITHOUT a reload notice (empty third argument to their builder): this page is the one that carries it, once, on its own route.
+    ['cle' => 'plan', 'titre' => 'Le plan de composition', 'fichier' => "$root/review-server/parc/maquette-campagne-plan.html", 'prefixe' => null,
      'quoi' => 'Ce que la scène déclare, case par case : quel sujet est posé où, et quels bords chaque pièce rejoint. Les raccords y sont vérifiés par calcul.'],
-    ['cle' => 'maquette', 'titre' => 'La maquette montée', 'fichier' => "$root/artefacts/parc/scene-campagne.html", 'prefixe' => 'mq-',
+    ['cle' => 'maquette', 'titre' => 'La maquette montée', 'fichier' => "$root/review-server/parc/maquette-campagne-montee.html", 'prefixe' => 'mq-',
      'quoi' => 'Les sprites posées sur leurs cases, à l\'échelle du monde : le sol d\'abord, puis ce qui se dresse dessus.'],
 ];
 
@@ -70,9 +77,13 @@ function prefixer(string $text, string $prefix): string
     foreach (PARTAGES as $name) {
         $text = preg_replace('/(?<=class=")' . preg_quote($name, '/') . '(?=[" ])/', $prefix . $name, $text);
         $text = preg_replace('/(?<=class=")((?:[\w-]+ )*)' . preg_quote($name, '/') . '(?=[" ])/', '$1' . $prefix . $name, $text);
-        $text = str_replace(['.' . $name . ' ', '.' . $name . '{', '.' . $name . ',', '.' . $name . ':', '.' . $name . '[', "'." . $name . "'", '".' . $name . '"'],
-            ['.' . $prefix . $name . ' ', '.' . $prefix . $name . '{', '.' . $prefix . $name . ',', '.' . $prefix . $name . ':', '.' . $prefix . $name . '[',
-             "'." . $prefix . $name . "'", '".' . $prefix . $name . '"'], $text);
+        // A SELECTOR IS RECOGNISED BY WHAT SURROUNDS IT, NOT BY A LIST OF CASES. This line used to enumerate what could follow a name — space, brace, comma, colon, bracket, quote — and one was
+        // missing: the DOT of `.pose.s-tr-060`, two classes required on the same element. The element took the new name while its rule kept the old one, so nothing applied any more: the mock-up's
+        // sprites were placed, named on hover, and invisible.
+        //
+        // WHAT PRECEDES MATTERS AS MUCH, and forgetting it broke the zoom buttons: a first fix renamed every `.name` and turned `dataset.zoom` into `dataset.mq-zoom`. A property access is preceded
+        // by a name, a closing parenthesis or a bracket; a selector never is. Both ends are stated, and neither is a list to keep up to date.
+        $text = preg_replace('/(?<![\w\-\)\]])\.' . preg_quote($name, '/') . '(?![\w-])/', '.' . $prefix . $name, $text);
         $text = str_replace(["classList.toggle('" . $name . "'", 'classList.add(\'' . $name . '\'', 'classList.remove(\'' . $name . '\''],
             ["classList.toggle('" . $prefix . $name . "'", 'classList.add(\'' . $prefix . $name . '\'', 'classList.remove(\'' . $prefix . $name . '\''], $text);
     }
@@ -85,8 +96,7 @@ $allStyles = '';
 $allScripts = '';
 foreach ($sources as $source) {
     if (!is_file($source['fichier'])) {
-        fwrite(STDERR, "FAULT {$source['fichier']} n'existe pas — construis d'abord le plan et la maquette de la scène\n");
-        exit(1);
+        throw new RuntimeException("{$source['fichier']} n'existe pas — construis d'abord le plan et la maquette de la scène");
     }
     $html = file_get_contents($source['fichier']);
     $style = contenus($html, 'style');
@@ -115,11 +125,21 @@ HTML;
 
 $page = <<<'HTML'
 <title>Maquette Campagne</title>
+{$favicon}
 
 <style>
 {$styles}
 
 /* ---- la page qui porte les deux ---- */
+  /* THIS PAGE HAD NO MARGIN AT ALL and stuck to the edge of the screen, its title clipped (operator, 2026-08-07). It never had one: published, it sat in a frame that gave it some; served as it
+     stands, nobody does that for it any more. Its measure is that of its two sources, so the same content keeps its width going from /parc to /maquette-campagne. */
+  .page {
+    width: min(100%, 1760px);
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem) 5rem;
+  }
+  .page-tete { max-width: 64ch; }
+  .page-tete h1 { margin: 0 0 .4rem; }
   .volet { margin-top: 1.2rem; border: 1px solid var(--line, #333a2f); border-radius: 4px; overflow: hidden; }
   .plier {
     display: flex; align-items: center; gap: .6rem; width: 100%; padding: .8rem 1rem;
@@ -165,8 +185,11 @@ $page = <<<'HTML'
   });
 })();
 </script>
+{$reloadMarkup}
+{$reloadScript}
 HTML;
 
-$page = strtr($page, ['{$styles}' => $allStyles, '{$scripts}' => $allScripts, '{$blocks}' => $blocks]);
+$page = strtr($page, ['{$styles}' => $allStyles . "\n" . $reload->styles(), '{$scripts}' => $allScripts, '{$blocks}' => $blocks,
+    '{$favicon}' => $favicon->tag(), '{$reloadMarkup}' => $reload->markup(), '{$reloadScript}' => $reload->script('/maquette-campagne')]);
 file_put_contents("$here/page.html", $page);
-printf("artefacts/scene/page.html — %d section(s) fusionnée(s), %.1f Ko\n", count($sources), strlen($page) / 1024);
+printf("review-server/maquette-campagne/page.html — %d section(s) fusionnée(s), %.1f Ko\n", count($sources), strlen($page) / 1024);

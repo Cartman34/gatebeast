@@ -110,15 +110,37 @@ encore moins. Tant qu'aucun `GO` n'est donné, l'agent n'écrit que ce document.
 la parenthèse refermée — il en faut une neuve, donnée explicitement. **À porter aux règles du dépôt**, avec les deux modes, au prochain `GO`.
 
 **Le compteur de chaque série vit ici**, pour survivre au résumé du contexte : la numérotation est **continue tant qu'un seul point de la série reste ouvert**, et ne repart à 1 que lorsque la série est
-entièrement répondue. Dernier numéro attribué — **Q4**, **P3**, **S2**, **T1**, **W1**.
+entièrement répondue. Dernier numéro attribué — **Q3**, **P11**, **S13**, **T3**, **W7**. *(La série des questions est repartie à 1 le 2026-08-07 : Q1 à Q7 étaient toutes répondues, et Q1 et Q2
+le sont à leur tour.)* **Une question fermée numérote aussi ses options**, en lettres — `Q1A`, `Q1B` — pour qu'une réponse tienne en un code seul. *(Cette ligne disait `Q4`, `P3`, `S2`, `T1` alors que le tableau porte déjà `P10`, `S6` et `T2` : elle n'avait pas suivi. Un compteur faux rend le prochain numéro
+attribué en double, donc il est recalé sur le plus grand numéro réellement attribué dans chaque série.)*
 
 | Code | Point | Attend | État |
 |---|---|---|---|
-| Q1 | **Basculer la revue sur un serveur local** (`php -S` depuis le dépôt) au lieu des artefacts : plus de publication, plus d'adresses à tenir, plus de limite de poids, et surtout les remarques écrites dans un fichier versionné au lieu du navigateur. Décidé « à faire », non engagé | l'agent, au prochain `GO` | à faire |
-| P10 | Migrer `artefacts/suivi-sprites/build.py` vers PHP **et le mettre au propre** — **fait le 2026-08-06** : `build.php` produit la page publiée, bâti sur `artefacts/lib/` (Inventaire, Vignette, Releve, Theme). Le Python reste en place, non supprimé | — | fait |
+| ~~Q1~~ | ~~Basculer la revue sur un serveur local~~ | — | **fait le 2026-08-07** — quatre pages servies sur `localhost:8080`, sorties identiques avant/après par empreinte, accueil dynamique |
+| S8 | **Les remarques dans un fichier versionné du dépôt** au lieu du navigateur : cible et état par remarque, ce qui règle la remarque traitée qui revient, la remarque neuve affichée en gris, et le relevé à recopier. Sorti de Q1 parce que c'est un changement, pas un déplacement | l'agent | à proposer |
+| S9 | **Mettre en commun le code recopié** entre les pages du parc et de la scène — relevé, lecture d'inventaire. Sorti de Q1 pour la même raison | l'agent | à proposer |
+| ~~P11~~ | ~~Le rechargement automatique des pages servies~~ | — | **fait le 2026-08-07** — bandeau, anneau de cinq secondes, bouton central, sur les cinq pages |
+| ~~W5~~ | ~~Les sprites de la maquette ne s'affichent pas~~ | — | **résolu le 2026-08-07** — le renommage des classes ratait les sélecteurs composés : l'élément prenait le nouveau nom, sa règle gardait l'ancien |
+| W7 | **Une page archivée a été reconstruite plusieurs fois** — celle du parc — alors qu'archivé veut dire « plus maintenu ». Repris par l'opérateur ; arrêté | l'agent | à ne plus refaire |
+| ~~T3~~ | ~~Ouvrir la source de la maquette sans la page qui la fond~~ | — | **sans objet** — la scène a été redessinée et regardée directement, le verdict est tombé sans elle |
+| S13 | **La barrière est à regénérer avec une vraie hauteur** : dessinée sur deux pixels au lieu d'une case, elle est invisible en maquette. Rejoint les quatre sujets déjà relevés trop bas | l'agent | à produire |
+| ~~Q1~~ | ~~La zone verte : plan ou maquette montée~~ | — | **répondue le 2026-08-07** — la maquette montée |
+| ~~Q2~~ | ~~Le défaut se voit-il ailleurs que sur la Campagne~~ | — | **sans objet** — le parc est archivé, il n'y a plus qu'une maquette servie |
+| W6 | **Le contrôle de largeur se trompe sur du code** : cinq `require_once` d'affilée sont comptés comme un paragraphe replié trop court, alors que la règle dit qu'une instruction n'a rien à remplir. Faux positif, à corriger dans l'outil | l'agent | à corriger |
+| S12 | **Les noms et commentaires français du code antérieur** — modules partagés et constructeurs des pages. Le code s'écrit en anglais ; à corriger au fil de l'eau | l'agent | à corriger |
+| ~~S11~~ | ~~Une favicon pour toutes les pages de revue~~ | — | **faite le 2026-08-07** — la face de la créature de référence, tirée de sa sprite, la même sur les cinq pages |
+| ~~S10~~ | ~~Donner les adresses locales depuis l'accueil~~ | — | **fait le 2026-08-07** — les cards des cinq pages servies ici mènent au local, les autres gardent leur adresse publiée |
+| ~~W4~~ | ~~L'accueil réécrit au lieu d'être converti~~ | — | **corrigé le 2026-08-07** — conversion fidèle, page servie identique au bit près à celle du constructeur Python |
+| ~~Q5~~ | ~~Comment la bascule se fait~~ | — | **tranchée le 2026-08-07** — déplacement vers un dossier servi en local, page par page, conversion en PHP sans autre modification, images inchangées, les artefacts restent |
+| ~~Q7~~ | ~~Le nom du dossier de destination~~ | — | **tranchée le 2026-08-07** — `review-server/`, nom donné par l'opérateur |
+| ~~Q6~~ | ~~Le sort des pages publiées remplacées~~ | — | **sans objet** — une reconstruction remplace de toute façon la page précédente (opérateur, 2026-08-07) |
+| W3 | **`AGENTS.md` a été mal réécrit hier** : il emploie « aiguilleur » comme s'il désignait quelque chose de connu, au point que le mot se lit comme un rôle. Le fichier oriente, il n'a pas à se nommer ; à réécrire sans ce mot | l'agent | à corriger |
+| W2 | **Ce document enfreint lui-même le standard de largeur** : le contrôle relève 106 écarts au 2026-08-07 — des lignes de 200 à 1 080 caractères, et cinq paragraphes repliés trop court. Aucun n'est de ce jour, ils sont tous antérieurs ; correction au fil de l'eau, à mesure qu'une section est retouchée | l'agent | à corriger |
+| ~~P10~~ | ~~Migrer la page des sprites vers PHP et la mettre au propre~~ | — | **fait le 2026-08-06**, et **le Python supprimé le 2026-08-07** sur ordre de l'opérateur : `review-server/` ne porte aucun Python |
 | S4 | Le bouton fixe de copie du relevé doit exister sur **toutes** les pages qui portent un relevé, et ce morceau est à factoriser au lieu d'être recopié | l'agent | à faire |
 | S5 | La comparaison de variants sélectionnés, à 48 px par case, dans la FSP du sujet | l'agent | à faire |
-| S6 | L'index des artefacts ne montre pas la scène de référence : il lit encore le tableau du suivi, alors que le registre est désormais `doc/artefacts.md` | l'agent | à faire |
+| ~~S6~~ | ~~L'index lit le tableau du suivi au lieu du registre~~ | — | **fait le 2026-08-07** — les données sont dans `review-server/artefacts.json`, les règles dans `doc/artefacts.md`, le suivi n'est plus lu par l'appli |
+| S7 | **Les cours d'eau et les chemins en réseau** : développer ce qui existe pour obtenir une première version de réseau, et juger les raccords à l'œil. Section dédiée dans la pile | l'agent | à faire |
 | ~~Q4~~ | ~~La position des deux poteaux du portillon~~ | — | **résolu** — l'image validée le dit : au tiers et aux deux tiers, les lisses jusqu'aux deux bords |
 | ~~S3~~ | ~~Refonte de la page des sprites en grille et FSP~~ | — | **fait le 2026-08-06** — grille, FSP plein écran, visionneuse désactivée dedans, relevé replié, vignettes alignées par le bas |
 | P3 | Déplacer vers la méthode commune les règles qui ne sont pas propres à GateBeast — les deux modes, le dépilement, les lots, la pile | l'opérateur | à proposer |
@@ -136,6 +158,313 @@ entièrement répondue. Dernier numéro attribué — **Q4**, **P3**, **S2**, **
 **C'est ici que tout entre.** Une demande de l'opérateur, un défaut que je constate, une remarque en passant : rien ne reste dans la conversation. Le contexte se résume et se perd ; cette liste, non. Tant qu'une ligne est ici, elle est due.
 
 **Une capture d'écran s'écrit avant d'être traitée, toujours** : ce que j'y vois est noté en toutes lettres, même si l'image parle d'elle-même — une image ne survit pas au résumé du contexte, sa description si. Et **quand ce qu'elle montre ne suffit pas à savoir quoi faire, je le dis dans la ligne** : j'écris ce que je vois, puis mon appréciation et ce qui me manque pour agir. C'est à l'opérateur de trancher, pas à moi de deviner — mais c'est à moi de repérer le manque et de le nommer, plutôt que de partir sur une hypothèse et de produire à côté.
+
+### S7 — les cours d'eau et les chemins en réseau, demandé par l'opérateur le 2026-08-07
+
+**Ses mots, tels quels** : « Pour les cours d'eau et les chemins, on va développer ce qu'on a pour permettre une première version de réseau et voir si c'est si mal en fait. »
+
+**Ce que j'en comprends, et qui reste à confirmer** : on étend le mécanisme des formes déjà en place — celui qui fait qu'une pièce se désigne par les bords qu'elle relie, `shape-ns`, `shape-ne` — pour
+qu'un chemin ou un cours d'eau **déclaré comme une suite de points** attribue tout seul la bonne pièce à chaque case qu'il traverse, produise celles qui manquent, et se monte sur la maquette. Puis on
+**regarde le résultat avant d'en débattre** : la crainte est que les raccords de bord à bord se voient, et « voir si c'est si mal en fait » dit qu'on la vérifie à l'œil plutôt que de la supposer.
+
+**Ce qui existe déjà et qu'on ne refait pas** : les formes et leur vocabulaire, le contrôle de cohérence d'un enchaînement de pièces, la déclaration point par point du cours d'eau du parc, et les
+lots de dessins recensés — cinq dessins pour un chemin, quinze configurations couvertes par rotation.
+
+**Ce qui manque, et c'est pour ça que ce n'est pas encore un réseau** : trois cases de clôture du parc portent déjà la mauvaise forme, ce qui montre que l'attribution de la pièce à la case n'est
+aujourd'hui ni automatique ni contrôlée ; le chemin n'a qu'une version dont la couleur est encore en défaut ; et le cours d'eau n'a pas de version courante jugée, son angle de caméra étant à
+reprendre. Le réseau se verra donc d'abord avec des pièces imparfaites — ce qui n'empêche pas de juger les **raccords**, qui sont la question posée.
+
+### Q1 — LA BASCULE EST FAITE, le 2026-08-07, sur `GO` de l'opérateur
+
+**Comment on regarde la revue maintenant** : une commande, `php review-server/serve.php`, puis `http://localhost:8080/`. Le port se donne en argument si 8080 est pris. Rien à installer.
+
+**Les quatre adresses** : `/` l'accueil, `/sprites` le suivi des sprites, `/parc` le plan du parc, `/parc/maquette` la maquette du parc, `/scene` la maquette Campagne. Une adresse ne dépend plus du
+nom du fichier qui la porte : une page peut être reconstruite, renommée ou découpée sans que l'adresse bouge.
+
+**Ce qui a été déplacé, et rien d'autre** : les quatre pages et les modules partagés ont quitté `artefacts/` pour `review-server/`, avec leur historique (déplacement suivi par le versionnage, pas
+une copie). Les images n'ont pas bougé d'un octet.
+
+**La preuve que rien n'a changé** : les cinq documents produits ont été construits **avant** le déplacement et **après**, et comparés par empreinte. **Les cinq empreintes sont identiques.** Le
+déplacement n'a donc modifié aucune page — ce n'est pas une appréciation, c'est une mesure.
+
+**Ce qui a été écrit de neuf, et pourquoi c'est le strict nécessaire** : le lanceur, le routeur, la déclaration des pages servies, et l'accueil. L'accueil est **la seule page dynamique**, décidé par
+l'opérateur : il se rend à chaque appel, dit pour chaque page si elle est construite, depuis combien de temps et combien elle pèse, et donne la commande exacte pour la reconstruire. **Ces commandes
+n'étaient écrites nulle part** — celles de la maquette Campagne ont dû être retrouvées en lisant le code, ce qui rendait la page irreconstructible par quiconque ne l'avait pas écrite.
+
+**Deux constats faits au passage, tous deux vérifiés :** le fichier qui enfile les demandes de sprite appelait le constructeur à son ancien chemin — corrigé, sans quoi la file serait tombée en
+panne au premier usage après le déplacement. Et **trois des pages enregistrées dans le dépôt ne correspondent plus à ce que leur constructeur produit aujourd'hui** : elles datent d'avant des
+changements de données. Ce n'est pas un effet du déplacement — c'était déjà vrai avant, la comparaison avant/après le prouve — mais ça veut dire qu'une page se reconstruit avant d'être jugée.
+
+**Ce qui n'a délibérément pas été fait, et qui reste dû** : les remarques dans un fichier versionné, et la mise en commun du code recopié entre les pages du parc et de la scène. Ce sont des
+changements, pas des déplacements ; ils sortent de ce sujet et se proposeront chacun pour lui-même.
+
+### L'index tombait en 500 et y restait — corrigé le 2026-08-07
+
+**Capture de l'opérateur** : la page d'erreur du navigateur, « Cette page ne fonctionne pas / Impossible de traiter cette demande via localhost à l'heure actuelle / HTTP ERROR 500 », avec un bouton
+« Actualiser ». **Ses mots** : « des fois l'index tombe en 500 […] généralement, tu corriges l'erreur vite, c'est sûrement transitoire mais du coup, lui il ne recharge plus la page ».
+
+**C'est exactement ça, et le second point est le vrai défaut.** La faute est passagère — un fichier attrapé en cours d'écriture pendant que je le modifie — et elle se lève en quelques secondes.
+Mais le navigateur restait **bloqué sur la page morte**, parce que la veille de rechargement vivait dans la page qui venait justement d'échouer à se rendre. Une page d'erreur sans veille est un
+cul-de-sac : elle n'annonce jamais que le monde est réparé.
+
+**Corrigé en deux endroits** : la page d'erreur de l'index et la page « pas encore construite » du serveur **portent désormais la veille**, comme n'importe quelle page. Elles reviennent d'elles-mêmes
+dès que la faute est levée, et le disent en toutes lettres. **Et toute faute imprévue devient une page lisible** au lieu du 500 nu du navigateur, qui ne dit rien : on veut savoir si le registre est
+cassé ou si le fichier a simplement été attrapé à moitié écrit.
+
+**Une règle en est sortie, donnée par l'opérateur : « transformer les erreurs PHP en exceptions et n'utiliser que des exceptions partout ».** Écrite à la méthode commune. Appliquée dans la foulée à
+tout le serveur de revue : un service dédié convertit les avertissements du langage en exceptions, une commande s'arrête sur la sortie d'erreur, une page servie se rend en page lisible. Les `exit`
+au milieu du code ont disparu. **Ce qui n'est pas une faute ne lève pas** : une image manquante qu'on veut montrer comme manquante se rapporte et se poursuit, c'est même tout l'intérêt du trou.
+
+### Le registre des artefacts sort du suivi — 2026-08-07
+
+**L'opérateur** : « Le fichier de SUIVI ne devrait pas être utilisé par l'appli. » Il a raison, et c'était la cause de l'oubli d'archivage : l'état d'un artefact vivait à deux endroits — le registre
+documentaire et un tableau de ce suivi — et l'index lisait le second. J'avais mis à jour le premier.
+
+**Ce qui a changé** : les données vivent dans `review-server/artefacts.json`, seul endroit d'où l'index les lit ; `doc/artefacts.md` ne porte plus que les règles — les quatre états, ce qu'archiver
+veut dire, les gestes de l'archivage — et **ne recopie aucune valeur** ; le tableau a quitté ce suivi. Une donnée, un endroit. `S6` est soldé par là même.
+
+**Le format est du JSON, et je te le signale plutôt que de le décider en silence** : tu as proposé du YAML, et c'est le meilleur choix pour un fichier tenu à la main. Mais **PHP n'embarque pas de
+lecteur YAML** — le vérifier a pris une commande —, et en installer un est une dépendance à poser sur toute machine où le projet tourne : ça t'appartient. Le JSON est natif et c'est déjà le format
+du référentiel des sujets. **Dis un mot et je bascule en YAML**, l'extension installée.
+
+**L'archivage se fait maintenant en deux gestes, et le premier est celui qui se voyait manquer** : passer l'état à `archived` dans le registre — c'est lui, et lui seul, qui fait descendre la carte
+sous « Archivés » —, puis retirer l'entrée des pages servies, gardée en commentaire juste à côté pour que la restauration soit une ligne à remettre.
+
+### W5 — LA VRAIE CAUSE, trouvée et corrigée le 2026-08-07 : un sélecteur composé que le renommage ne savait pas voir
+
+**Le défaut** : sur la page Maquette Campagne, la maquette montée s'affichait comme une étendue d'herbe vide. Aucun sujet visible — ni la ferme, ni le chêne, ni les sapins — alors que le survol les
+nommait un par un. Ma première explication, une barrière trop plate, **était fausse** : elle expliquait un trait fin, pas une scène entièrement vide.
+
+**La cause, en une phrase** : la page Campagne fond deux vues en une, et **renomme les classes de la seconde** pour que leurs outils cessent de se marcher dessus. Le renommage reconnaissait un nom
+de classe à ce qui le suivait — espace, accolade, virgule, deux-points, crochet, guillemet — et il manquait **le point** : celui de `.pose.s-tr-060`, qui exige deux classes sur le même élément.
+Résultat, **l'élément prenait le nouveau nom et sa règle gardait l'ancien** : plus rien ne s'appliquait. Le sol, lui, tenait à une règle simple, et restait visible — d'où l'herbe nue.
+
+**Ce qui l'a rendu introuvable pendant sept contrôles** : chaque fichier était juste, chaque règle présente, chaque image en place, chaque case bien imbriquée. Rien de ce qu'on peut chercher dans un
+fichier n'était faux. **Ce qui était faux, c'est que deux textes justes ne se correspondaient plus** — et ça ne se voit qu'en les confrontant l'un à l'autre, ou à l'écran.
+
+**Le correctif tient en une ligne, et il change la façon de raisonner** : au lieu d'énumérer ce qui peut suivre un nom, on dit qu'un nom **ne se prolonge pas** — toute autre chose le termine, connue
+ou non. Une suite qu'on énumère est une suite qu'on oublie. Le même défaut dormait sur une seconde règle composée, corrigée du même coup.
+
+**MA PREMIÈRE CORRECTION A CASSÉ LES BOUTONS DE ZOOM, et la leçon vaut la peine.** Elle renommait *tout* `.nom` rencontré — y compris `dataset.zoom` dans le script, devenu `dataset.mq-zoom`. En
+voulant cesser d'énumérer ce qui SUIT un nom, j'avais oublié ce qui le PRÉCÈDE : un accès de propriété est précédé d'un nom, d'une parenthèse ou d'un crochet ; un sélecteur ne l'est jamais. Les deux
+bouts sont désormais dits, et aucun des deux n'est une liste à tenir à jour. **Une correction se vérifie sur ce qu'elle répare ET sur ce qu'elle touche au passage** — je n'avais regardé que la
+maquette, pas les boutons juste au-dessus.
+
+**Vérifié à l'écran, pas déduit** : Playwright et Chromium sont installés sur cette machine — je l'ignorais et je l'avais dit trop vite. La page a donc été ouverte pour de vrai, et la scène montrée
+en entier : maison de ferme, grand chêne, sapins, pommiers, chemin, cours d'eau, barrière et ses angles. Les captures ont été supprimées après lecture.
+
+**Une commande unique reconstruit une page servie, par sa route** : `php review-server/build.php /maquette-campagne` — les trois commandes et leurs longs chemins vivaient dans la déclaration des
+pages, elle les exécute au lieu qu'on les recopie. Sans route, elle reconstruit toutes les pages servies ; les pages archivées n'en font pas partie, et c'est le but.
+
+### Ce que j'avais cru avant, et qui était faux : la barrière de deux pixels
+
+**La page n'a rien.** Elle décrit 300 cases posées, chacune avec ses coordonnées et son image, et la scène complète se dessine correctement — la maison de ferme, le grand chêne, les sapins, les
+pommiers, le chemin, le cours d'eau et la barrière sont tous à leur place. Sept contrôles successifs l'avaient déjà laissé entendre ; le dessin le prouve.
+
+**Ce que voyait l'opérateur** : à la case survolée, la barrière est bien là — **un trait brun sombre d'environ deux pixels de haut sur une case qui en fait vingt-quatre**. Sur un fond d'herbe vive,
+un trait pareil ne se voit pas : l'œil le prend pour un défaut de compression, et le survol qui nomme « Barrière » paraît mentir. **Ce n'est donc pas un défaut d'affichage, c'est la sprite qui est
+trop plate.** Le tableau des hauteurs de ce suivi le disait déjà en chiffres — barrière dessinée à 1,0 case pour une fourchette de 1,1 à 1,4 —, mais un « trop bas, de peu » sur un tableau ne laissait
+pas imaginer ça.
+
+**Comment je l'ai vu, faute de navigateur sur cette machine** : un script jetable relit la page, en tire les coordonnées de chaque case et l'image que chacune réclame, et **redessine la scène** dans
+une image que je peux regarder — puis un second agrandit dix fois les cases autour d'une position donnée. Il n'invente rien : il ne dessine que ce que la page écrit. C'est ce qui rend son verdict
+recevable.
+
+**Ce qui reste dû, et qui n'est plus le même sujet** : la barrière est à regénérer avec une vraie hauteur. Elle rejoint les quatre sujets déjà relevés comme trop bas.
+
+### W5 — le constat d'origine, tel qu'il a été posé le 2026-08-07
+
+**Capture de l'opérateur** : une étendue uniformément verte, sans un seul sujet dessiné. Le pointeur posé dessus fait apparaître deux étiquettes — « (5,9) Barrière · OB-010 » et une pastille sombre
+« OB-010 ». En haut de la capture, la phrase « Clique une case pour lui attacher une remarque » ; en bas, « Les remarques », « Copier le récapitulatif », « Tout effacer ». **Ses mots** : « Le hover
+indique des sprites mais rien n'est affiché. »
+
+**Ce que j'ai vérifié, et qui est SAIN** — quatre contrôles, aucun supposé :
+- les deux dessins de plan, celui du parc et celui de la Campagne, sont corrects : je les ai convertis en image et regardés, tout y est à sa place ;
+- la maquette montée pose bien ses 308 sujets, et son constructeur ne signale aucun sujet sans image ;
+- les quatorze habillages de sujet qu'elle emploie sont tous définis avec leur image — aucun n'est posé sans dessin ;
+- la fusion des deux vues dans la page Campagne conserve les deux côtés du renommage : la règle et les 309 éléments qui s'en réclament.
+
+**Ce qui reste à faire, et pourquoi je m'arrête là** : le défaut ne se voit pas en lisant les fichiers, il ne se voit qu'à l'affichage — et je n'ai pas de navigateur pour l'ouvrir. Deux questions
+sont ouvertes là-dessus, et elles désignent des causes sans rapport : deviner mènerait à corriger ce qui n'est pas cassé. La série des questions repartait à 1, toutes les précédentes étant répondues.
+
+**Q1 est répondue : c'est la MAQUETTE MONTÉE** (opérateur, 2026-08-07). Les sujets sont donc posés et rendus invisibles, ce qui écarte le dessin de plan.
+
+**Sixième contrôle, fait après cette réponse, et lui aussi sain** : les deux règles qui portent une case posée — celle qui la place et celle qui l'habille — sont présentes dans la page fusionnée,
+mot pour mot identiques à celles de la source, renommage compris. **Rien de ce qui se lit dans les fichiers n'explique le défaut.**
+
+**Q3 est tranchée : on reste en JSON** (opérateur, 2026-08-07). Rien à installer, et c'est déjà le format du référentiel des sujets.
+
+**T3 — l'épreuve qui tranche, et elle prend cinq secondes.** Ouvrir la source de la maquette **directement**, sans la page qui la fond :
+`http://localhost:8080/review-server/parc/maquette-campagne-montee.html`.
+
+- **Les sprites apparaissent** → la source est bonne, et c'est la **fusion des deux vues** qui les perd. Une seule page est en cause.
+- **Elles n'apparaissent pas non plus** → c'est le **monteur** qui produit une maquette invisible, et la fusion n'y est pour rien.
+
+Sans cette épreuve, les deux causes restent ouvertes, et corriger l'une reviendrait à toucher au hasard une page qui n'a rien.
+
+### Les liens de l'accueil menaient encore aux pages publiées — corrigé le 2026-08-07
+
+**L'opérateur** : « Les liens de l'index n'ont pas changé, c'est toujours vers claude.ai ». **Il a raison, et c'était un vrai piège** : cinq des pages listées sont désormais servies ici, mais leur
+card envoyait toujours sur la page publiée. On clique sans y penser, on commente la mauvaise copie, et rien ne le signale.
+
+**Corrigé** : une card mène au local dès que le serveur sert cette page, et le dit — « Servie ici ». Les autres gardent leur adresse publiée, qui reste juste : elles ne sont pas servies ici.
+L'adresse publiée n'est pas perdue pour autant, elle vit au registre, qui est sa place.
+
+**Le rapprochement se fait sur le NOM, et c'est le point faible** : un artefact renommé d'un côté et pas de l'autre cesserait de correspondre, et sa card repartirait vers la page publiée sans un
+mot. Le défaut se dit donc sur la page elle-même, au bas, plutôt que de se découvrir en cliquant.
+
+### Le rechargement automatique, la page Campagne renommée, et quatre règles données — 2026-08-07
+
+**Le rechargement automatique est en service sur les cinq pages.** La page redemande au serveur la signature de sa propre route toutes les deux secondes — une date, jamais la page, qui pèse des
+mégaoctets. Si elle a changé depuis l'ouverture, un bandeau s'affiche en bas à droite : « Une nouvelle version de cette page est prête », un anneau qui se vide en cinq secondes, et au centre de
+l'anneau un bouton rond qui recharge tout de suite. **Rien n'est perdu au rechargement** : les remarques sont enregistrées à la frappe et la page se rouvre dessus.
+
+**Les deux sources de la page Campagne ne portent pas l'annonce** : elles sont fondues dans une autre page, qui la porte une seule fois, sur sa propre route. Une page produite comme source reçoit
+donc **aucune route** — `null`, jamais une chaîne vide.
+
+**La page « scène » est renommée « maquette campagne » partout** — dossier, fichiers, adresse — sur ordre de l'opérateur. **L'ancienne adresse redirige vers la neuve**, définitivement : une adresse
+ouverte une fois vit dans un signet ou dans un message, et la renommer sans rien laisser derrière la casse pour tout le monde sauf pour celui qui a renommé.
+
+**Le titre d'une page de plan vient désormais du plan lui-même.** Le constructeur du parc bâtit aussi la Campagne, et l'annonçait « Le parc » : l'opérateur ne savait plus quelle maquette il
+regardait. Le plan porte son titre, c'est lui qui fait foi.
+
+**La page Campagne collait au bord de l'écran, titre rogné.** Elle n'avait jamais eu de marge : publiée, elle était posée dans un cadre qui lui en donnait ; servie telle quelle, plus personne ne le
+fait à sa place. Sa mesure est maintenant celle de ses deux sources, pour qu'un même contenu ne change pas de largeur d'une page à l'autre.
+
+**Quatre règles données par l'opérateur ce jour, toutes écrites à la méthode commune, qui vaut au-delà de GateBeast :**
+
+- **Un terme technique se dit en anglais** — « les cards », jamais « les cartes ». La phrase reste en français, c'est le terme qui garde sa langue.
+- **Le code s'organise en services** : le travail vit dans des méthodes d'instance, et **l'instance se récupère par une méthode statique, appelée dans le constructeur** de qui s'en sert. Aucune
+  injection de dépendances n'est exigée. Les quatre modules partagés ont été repris ainsi dans la foulée.
+- **Un service se prend dans une variable, en haut ou dans le constructeur** — pas un appel à l'accès statique dispersé au milieu du code.
+- **L'absence de valeur se dit `null`, jamais par une chaîne vide** : une chaîne vide est une chaîne qui ne contient rien, ce qui n'est pas la même chose que ne rien avoir du tout.
+
+**Et le code s'écrit en anglais, commentaires compris** — la règle existait, je l'enfreignais : mes noms et mes commentaires étaient en français. Repris sur tout ce que j'ai écrit ce jour. **Reste
+un écart, non traité** : les modules et les constructeurs antérieurs portent des noms et des commentaires français. À corriger au fil de l'eau, à mesure qu'on les croise.
+
+### Une règle de vocabulaire, donnée par l'opérateur le 2026-08-07
+
+**Ses mots** : « Quand tu parles d'un terme technique, tu dois utiliser le mot anglais → "les cards" ». Écrite aussitôt à la méthode commune, au protocole de collaboration : elle vaut au-delà de
+GateBeast. La phrase reste en français, c'est le terme qui garde sa langue.
+
+### La favicon des pages de revue — faite le 2026-08-07
+
+**Le motif est la face de la créature de référence** (opérateur : « j'aurais dit une créature, peu importe laquelle, mais y'a une créature de référence si tu veux »). Une seule créature est produite
+à ce jour, `SP-001` : c'est elle. Un jeu de collection de créatures se reconnaît à une créature.
+
+**Elle se fabrique DEPUIS la sprite, jamais à la main** : le jour où la créature de référence est redessinée, la favicon suit sans que personne y pense. Elle est ensuite recopiée en clair dans
+chaque page, comme le thème — une page servie reste un fichier unique.
+
+**Deux cadrages ont été essayés et regardés avant de garder le bon.** Le premier prenait le haut de la silhouette : il ramenait la **queue**, qui monte plus haut que les oreilles, et **coupait le
+museau**. Le deuxième prenait la bête entière, juste mais minuscule dans un onglet. Le troisième, retenu sur demande de l'opérateur — « on peut ne voir que sa face » —, cadre la face entière,
+oreilles et museau compris. **Rien n'indique à une machine où se trouve une tête** : les deux valeurs qui la situent sont donc écrites en clair et se règlent à l'œil, ce que dit le fichier.
+
+**Un piège rencontré, et corrigé** : l'image fabriquée est gardée en cache. Le premier réglage repris n'a rien changé à l'écran — le cache rendait l'ancienne image sans un mot, et le réglage
+paraissait sans effet. Le cadrage entre désormais dans le nom du fichier gardé, au même titre que la date de la sprite.
+
+### P11 — le rechargement automatique des pages servies, demandé par l'opérateur le 2026-08-07 — proposé, RIEN N'EST FAIT
+
+**Ses mots** : « Une petite différence entre le serveur local et les artefacts, c'est que les artefacts rechargeaient la page. Est-ce qu'on peut faire un rechargement auto mais moins brutal ? Genre
+un Toast qui alerte qu'une nouvelle version de la page est disponible avec un rond pour dire que dans 5 secondes, ça va se recharger tout seul + au milieu du rond de timer, un bouton rond pour
+recharger maintenant. »
+
+**Oui, et c'est peu de chose.** Une page construite est un fichier ; le serveur sait donc dire à quand remonte sa dernière écriture. La page demande cette date toutes les deux secondes — une
+requête minuscule, sans rapport avec son poids — et si elle a changé depuis son ouverture, c'est qu'une reconstruction est passée. Le toast apparaît à ce moment-là, jamais avant.
+
+**Ce que ça donne à l'écran** : un bandeau discret en bas, « Une nouvelle version de cette page est prête », un anneau qui se vide en cinq secondes, et au centre de l'anneau un bouton rond qui
+recharge tout de suite.
+
+**LE DANGER QUE J'AVAIS ANNONCÉ N'EXISTE PAS — l'opérateur m'a repris, et il a raison ; vérifié dans le code.** J'avais écrit qu'un rechargement emporterait les remarques non recopiées. C'est faux :
+**chaque page enregistre à la frappe**, lettre par lettre, dans la mémoire du navigateur, et se rouvre sur ce qu'on y avait laissé. Rien n'a été retiré par le déplacement, qui n'a touché à aucune
+ligne de comportement. Un rechargement ne détruit donc rien, et le rechargement automatique se fait sans précaution particulière ni question à trancher.
+
+**Ce que ma phrase confondait** : ce qui a été perdu le 2026-08-06 l'a été parce qu'une page a changé d'**adresse**, pas parce qu'elle s'est rechargée. La mémoire du navigateur est attachée à
+l'adresse — même page rechargée, mêmes remarques ; adresse différente, mémoire vide.
+
+**Et c'est une conséquence de la bascule à connaître** : les remarques posées sur les pages **publiées** ne suivent pas sur le serveur local, l'adresse n'étant pas la même. Les pages publiées
+existent toujours et restent consultables : ce qui y attend s'y lit encore et se recopie. Rien n'est perdu, mais rien ne migre tout seul.
+
+**Où ça s'écrit** : un seul morceau, partagé, inclus par les quatre pages — pas quatre copies. C'est le même besoin que S9, et ce serait la première pièce à passer en commun.
+
+### `review-server/` ne porte aucun Python — ordre de l'opérateur, 2026-08-07
+
+**Ses mots** : « dans review server, il ne doit plus y avoir de python, vu que tu dois avoir tout converti en php ».
+
+**Ce qui a été supprimé** : les deux constructeurs Python qui avaient suivi le déplacement — celui de la page des sprites et celui de l'accueil — et les deux pages qu'ils produisaient, devenues
+orphelines. Rien n'est perdu : tout est dans l'historique du dépôt, et les deux pages se refont d'une commande.
+
+**Ce qui a été vérifié avant de supprimer, parce qu'un ordre ne dispense pas de regarder** : le constructeur PHP des sprites annonçait dans son propre entête qu'il ne faisait pas encore les filtres,
+les mesures, la consigne figée et le rapport de production. **C'était périmé** — il fait tout cela depuis. Ne restent hors de lui que les jugements automatiques, matière morte puisque l'agent qui
+notait est débranché depuis le 2026-08-04, et le recensement des fichiers égarés sur le disque. L'entête est corrigé : il disait faux, et c'est sur cette phrase-là qu'on aurait décidé.
+
+**Deux conséquences traitées dans le même geste** : la file d'attente des sprites lançait le constructeur Python après chaque génération — elle lance désormais le PHP, sans quoi elle serait tombée
+en panne au premier usage. Et la page des sprites perd le suffixe `-php` de son nom : il n'existait que pour la distinguer de la sortie Python, qui n'existe plus. L'adresse `/sprites`, elle, ne
+bouge pas — c'est exactement ce qu'un routeur sert à garantir.
+
+### W4 — l'accueil a été RÉÉCRIT au lieu d'être converti — faute de l'agent, relevée par l'opérateur le 2026-08-07
+
+**Sa capture** : la page d'accueil servie en local, fond sombre, titre « La revue », un paragraphe d'explication, puis quatre cartes encadrées — suivi des sprites, plan du parc, maquette du parc,
+maquette Campagne — chacune avec son titre en ambre, une phrase de description, une pastille verte « Construite il y a 14 heures, 12 145 Ko » et un dépliant « La reconstruire ». En pied de page,
+une ligne renvoyant au registre des adresses.
+
+**Ses mots** : « Je n'ai pas dit de changer la structure et le style de cette page, juste qu'elle devenait dynamique. »
+
+**Il a raison, et la faute est nette.** La règle du sujet est « sans autre modification » ; « dynamique » disait **quand** la page se rend, pas **ce qu'elle montre**. J'en ai fait une page neuve :
+autre contenu — les pages servies en local au lieu des artefacts publiés —, autre structure, autre style. La conversion aurait dû rendre **exactement la page d'avant**, au rendu près, et seulement
+cesser d'être construite d'avance.
+
+**Ce que ça coûte quand ça passe inaperçu** : l'opérateur croit relire une page qu'il connaît, et il en découvre une autre. Une conversion qui change ce qu'elle convertit ne peut plus être vérifiée
+par comparaison — c'est justement la comparaison qui rendait tout ce chantier sûr, et je m'en étais privé sur la seule page où je l'avais laissée de côté.
+
+**Correction faite le 2026-08-07, et vérifiée** : l'accueil est désormais la conversion du constructeur d'origine — même source, même lecture, mêmes règles, même structure, même style ; seul le
+moment du rendu change. **La page servie et la page produite par le constructeur Python sont identiques au bit près**, entités HTML comprises. Le constructeur Python reste en place, non supprimé,
+comme pour la page des sprites : c'est lui qui sert de témoin à la comparaison.
+
+**Une tension nommée plutôt que tranchée en douce** : le bloc de style est recopié tel quel, et le contrôle de largeur y signale cinq paragraphes repliés plus court que la convention. Les reformater
+changerait la page produite et détruirait la preuve d'identité. Le bloc reste donc **verbatim**, ces écarts étant hérités du fichier d'origine et non introduits ici.
+
+**Ce que l'accueil ne fait pas, et c'est voulu** : il ne liste pas les pages servies en local, puisque ce n'est pas ce qu'il faisait. Les cinq adresses locales existent et fonctionnent, mais rien ne
+les donne depuis l'accueil. À décider plus tard, comme un sujet à part — ce serait un changement.
+
+### Q1 — le plan tel qu'il a été écrit avant l'exécution, et les raisons qui l'ont motivé
+
+**Quatre raisons, toutes constatées dans ce suivi, aucune supposée.**
+
+1. **La publication est un geste de plus, et elle rate.** Le 2026-08-06, une adresse neuve a été créée pour une page qui en avait déjà une, **et les remarques que l'opérateur y avait posées ont été
+   perdues avec l'ancienne page**. Il a fallu écrire une règle — lister les artefacts avant toute publication — pour se protéger d'un geste dont on peut simplement se passer.
+2. **Les remarques vivent dans le navigateur, attachées à l'adresse qui les a reçues.** Elles ne se versionnent pas, ne se relisent hors de la page par personne, et disparaissent avec elle ; c'est
+   pour cela qu'il existe un bouton « copier le relevé » et que l'opérateur doit coller son relevé en conversation. Servie en local, une remarque s'écrit dans un fichier du dépôt : l'agent la lit
+   directement, elle survit à la fermeture de l'onglet, et son historique est celui du dépôt.
+3. **Le poids.** Une page publiée doit embarquer ses images ; d'où la fabrique de vignettes et le plafond de 500 ko qui affichait « image trop volumineuse ». En local, une image est un fichier servi
+   tel quel : plus de plafond, plus d'encodage, la définition d'origine consultable d'un clic. La fabrique de vignettes reste utile pour la vitesse, elle cesse d'être une condition de publication.
+4. **Les adresses à tenir.** Douze artefacts, un inventaire tenu à la main, quatre états, une règle « on ne crée jamais un artefact quand un artefact dédié existe ». Rien de tout cela n'existe avec
+   une page servie depuis le dépôt : l'adresse est le chemin du fichier, elle ne peut ni se perdre ni se dédoubler.
+
+## Q5 — TRANCHÉE PAR L'OPÉRATEUR LE 2026-08-07 : COMMENT LA BASCULE SE FAIT
+
+**Ses mots, et ils commandent tout ce qui suit.** Les pages de revue **se déplacent** vers un dossier servi par le serveur local. **Les images ne bougent pas** — elles restent où elles sont, seuls
+les scripts se déplacent. On migre **petit à petit**, page par page, et on en profite pour convertir en PHP celles qui ne le sont pas encore, **sans autre modification** : une page migrée rend
+exactement ce qu'elle rendait avant. **Les artefacts restent les artefacts Claude** : ils ne disparaissent pas, il pourra y en avoir d'autres demain ; ce sont seulement les pages **qu'on utilise**
+qui migrent.
+
+**Ce que « sans autre modification » autorise quand même** (précisé par l'opérateur le même jour) : **réutiliser les outils déjà fabriqués pour PHP** — les modules de `artefacts/lib/`, lecture de
+l'inventaire, fabrique de vignettes, relevé. Convertir en s'appuyant dessus n'est pas une modification, c'est la conversion elle-même.
+
+**Ce que cette décision sort du sujet** : les remarques dans un fichier versionné, et la mise en commun du code recopié entre les pages du parc et de la scène. Ce sont des **changements**, pas des
+déplacements — ils deviennent des sujets à part, à traiter après, chacun proposé pour lui-même.
+
+**Ce qu'il reste réellement à faire, page par page.** Les trois pages de travail — les sprites, le parc, la scène — **construisent déjà en PHP** : pour elles la migration se réduit au déplacement.
+Une seule page vivante construit encore hors PHP, la porte d'entrée qui liste les autres : c'est la seule vraie conversion du lot.
+
+**Ce que je décide sans demander** : le port 8080, et **aucun outil neuf** — `php -S` est le serveur intégré de PHP, déjà à la liste des outils validés, rien à installer sur aucune machine.
+
+**La page d'accueil est dynamique, et elle est la seule** (opérateur, 2026-08-07). On l'appelle **l'index** ou **l'accueil**, et elle **ne se construit plus** : elle se rend à chaque appel, donc elle
+découvre les pages servies au moment où on la demande, au lieu de figer une liste qui se périme. C'est cohérent avec ce qu'elle est — un sommaire n'a pas de contenu propre, seulement l'état des
+autres. **Toutes les autres pages restent construites**, et c'est ce qui garde la migration à un simple déplacement : les rendre dynamiques serait une modification, et « sans autre modification » est
+la règle du sujet. Le jour où l'une d'elles gagnerait à l'être, ce sera un sujet à part, proposé pour lui-même.
+
+**Le dossier de destination est `review-server/`** — nom donné par l'opérateur le 2026-08-07, aucune de mes trois propositions retenue. Il est **en anglais**, et c'est cohérent : ce dossier ne
+contient que du code, et le code du projet est en anglais. Il nomme la mécanique plutôt que le métier, ce qui va bien à un dossier dont le contenu est justement le serveur et ce qu'il sert.
 
 ### Les deux densités de l'herbe de clairière, produites le 2026-08-06 — mon jugement avant celui de l'opérateur
 
@@ -865,20 +1194,9 @@ Décidées avec l'opérateur ; elles remplacent les comptes rendus en conversati
 
 **Règle absolue : on ne crée jamais un artefact nouveau quand un artefact dédié existe déjà.** On republie sur son adresse. Cet inventaire est **exhaustif** et se tient à jour dans le même geste que toute publication — une adresse non consignée est une adresse perdue, et le suivant crée un doublon. Avant toute publication : lire cet inventaire, puis lister les artefacts existants pour vérifier qu'il n'en manque aucun.
 
-| Artefact | Adresse | État |
-|---|---|---|
-| **Index des artefacts** — la porte d'entrée vers tous les autres | https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949 | vivant, ouvert le 2026-08-04 |
-| **Audit de l'inventaire** — les écarts avec les six planches | https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa | archivé — à reprendre plus tard |
-| **Suivi des sprites** — l'état de la production, sujet par sujet | https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c | vivant, republié le 2026-08-06 |
-| **Plans de composition** — tout plan déclaré sous `assets/poc/` | https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9 | archivé |
-| **Tour de nettoyage** — 31 éléments, un verdict par ligne | https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c | archivé |
-| **Planches de référence** — chaque planche et son rapport noté | https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413 | archivé |
-| **Calibration de l'échelle humaine** | https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40 | archivé |
-| **Direction artistique** — l'historique de la revue | https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5 | clos — DA validée |
-| **Son** — les essais et le plafond constaté | https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8 | clos — synthèse abandonnée |
-| **La maquette du parc** — la scène montée, à trois tailles de case | https://claude.ai/code/artifact/1a5e7074-017e-40b3-9366-005ead586562 | vivant, republié le 2026-08-06 |
-| **Maquette Campagne** — 32 × 24 cases, plan et maquette | https://claude.ai/code/artifact/9c6cbb31-5f72-4db7-a8dc-237550866ce8 | vivant, ouvert le 2026-08-06 |
-| **Le plan de composition du parc** — déclaré case par case | https://claude.ai/code/artifact/5f9bb2af-9126-44e6-b953-59afb7ab4e28 | vivant, ouvert le 2026-08-05 |
+**LE TABLEAU DES ADRESSES A QUITTÉ CE DOCUMENT le 2026-08-07** (opérateur : « le fichier de suivi ne devrait pas être utilisé par l'appli »). Il vivait ici et l'index allait l'y lire ; or ce suivi
+est mon document de travail, il se réécrit sans cesse, et il n'a rien à faire en source de données. **Les données vivent dans `review-server/artefacts.json`**, seul endroit d'où l'index les lit ;
+**les règles du registre vivent dans [doc/artefacts.md](doc/artefacts.md)**, qui n'en recopie aucune. Cela solde `S6` : il n'y a plus deux sources pour un même état.
 
 ## Ce qui attend l'opérateur
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * Usage: php artefacts/parc/monter.php
+ * Usage: php review-server/parc/monter.php
  *
- * Builds artefacts/parc/maquette.html — the park mock-up itself: every sprite the plan declares, laid on its own cell, at the scale of the world.
+ * Builds review-server/parc/maquette.html — the park mock-up itself: every sprite the plan declares, laid on its own cell, at the scale of the world.
  *
  * Intention: the plan says which subject stands on which cell; the referentiel says which image is that subject's current one; the tile scale says what a cell measures on
  * screen. Mounting the mock-up is nothing more than putting those three together — and it is the first time the sprites are seen TOGETHER, which is the only way to judge
@@ -17,6 +17,20 @@
 
 $root = __DIR__ . '/../..';
 require_once "$root/scripts/Capture.php";
+require_once "$root/review-server/bootstrap.php";
+bootBuild();
+// THE SERVED ROUTE IS THE THIRD ARGUMENT: this mounter produces the mock-up served at /parc/maquette, but also a SOURCE of the Campagne page, melted elsewhere. A source carries no reload notice —
+// the final page would otherwise hold two of them, on a route that is not its own. That absence of a route is `null`, never an empty string: an empty string is a string holding nothing, which is
+// not the same as having no route at all. A command line can only carry text, so the emptiness it hands over is brought back to null right here.
+$route = ($argv[3] ?? '/parc/maquette') ?: null;
+
+// Services are taken here, at the top, once — and so is what they render: the template below only has to lay down variables, with no call in the middle of the HTML.
+$favicon = Favicon::get();
+$reload = Reload::get();
+$faviconTag = $favicon->tag();
+$reloadStyles = $route === null ? '' : $reload->styles();
+$reloadMarkup = $route === null ? '' : $reload->markup();
+$reloadScript = $route === null ? '' : $reload->script($route);
 
 const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur par défaut du projet, tenue par scripts/tile_scale.py
 const GROUND_TYPES = ['sol', 'chemin', 'herbe'];
@@ -147,8 +161,7 @@ $manquants = $manquants ?: '<li>Aucun : toutes les cases déclarées ont leur im
 // Le sol du parc : la sprite de la cellule par défaut, celle que le plan déclare, embarquée une fois et carrelée sur toute la scène.
 $defaultImage = currentImage($sujets, $plan['default_cell']);
 if ($defaultImage === null || !is_file("$root/assets/$defaultImage")) {
-    fwrite(STDERR, "FAULT la cellule par défaut {$plan['default_cell']} n'a aucune image courante — le sol du parc serait inventé\n");
-    exit(1);
+    throw new RuntimeException("la cellule par défaut {$plan['default_cell']} n'a aucune image courante — le sol de la scène serait inventé");
 }
 $defaultTile = base64_encode(file_get_contents("$root/assets/$defaultImage"));
 
@@ -174,6 +187,7 @@ const NOMS = ['BT-001' => 'Centre de soin', 'BT-002' => 'Maison de ferme', 'CH-0
 $capture->start();
 ?>
 <title>Le parc — maquette montée</title>
+<?= $faviconTag ?>
 <style>
   :root { color-scheme: light dark; --paper: #e8ece6; --surface: #fff; --ink: #12211b; --muted: #5d6f63; --line: #c7d1c6; --accent: #2d6b3c;
           --sans: "Segoe UI", system-ui, sans-serif; --mono: ui-monospace, "Cascadia Mono", monospace; }
@@ -254,12 +268,14 @@ $capture->start();
   .manquants { margin: 0; padding-left: 1.2rem; color: var(--muted); display: flex; flex-direction: column; gap: .2rem; max-width: 64ch; }
   .manquants .code { font-family: var(--mono); color: var(--ink); }
   .compte { margin: 0; font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+<?= $reloadStyles ?>
 </style>
+<?= $reloadMarkup ?>
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">GateBeast · maquette du parc</p>
-    <h1>La maquette montée</h1>
+    <p class="eyebrow">GateBeast · maquette montée</p>
+    <h1><?= htmlspecialchars($plan['title'], ENT_QUOTES) ?> — montée</h1>
     <p class="lede">Chaque sprite posée sur sa case, d'après le plan et le référentiel : le sol d'abord, puis ce qui se dresse dessus, de haut en bas. C'est la première fois
     que les sujets se voient ensemble, et donc la première fois qu'on peut juger s'ils appartiennent au même monde.</p>
   </header>
@@ -595,6 +611,7 @@ $capture->start();
   afficher();
 })();
 </script>
+<?= $reloadScript ?>
 <?php
 file_put_contents($outputPath, $capture->take());
 printf("%s — %d sprites posées, %d sujet(s) sans image\n", $outputPath, $placed, count($missing));

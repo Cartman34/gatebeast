@@ -2,7 +2,8 @@
 /**
  * USAGE
  *   require_once __DIR__ . '/../lib/Theme.php';
- *   echo Theme::css('encre');   // à poser en tête du <style> de la page
+ *   $theme = Theme::get();      // l'instance du service, à prendre une fois
+ *   echo $theme->css('encre');  // à poser en tête du <style> de la page
  *
  * INTENTION
  *   Un thème est un jeu de variables de couleur, et rien d'autre : il vit dans son propre fichier sous `themes/`, la page inclut celui qu'elle veut, et changer d'habillage ne demande de toucher
@@ -13,18 +14,26 @@
 
 class Theme
 {
-    public static function css(string $name = 'encre'): string
+    private static ?self $instance = null;
+
+    /** L'instance du service. C'est la SEULE méthode statique ici, et elle ne fait que ça : tout le travail est d'instance. */
+    public static function get(): self
+    {
+        return self::$instance ??= new self();
+    }
+
+    public function css(string $name = 'encre'): string
     {
         $path = __DIR__ . '/themes/' . preg_replace('/[^a-z-]/', '', $name) . '.css';
         if (!is_file($path)) {
-            throw new RuntimeException("FAULT le thème « {$name} » n'existe pas sous artefacts/lib/themes/ — une page ne s'habille pas d'un thème inventé.");
+            throw new RuntimeException("FAULT le thème « {$name} » n'existe pas sous review-server/lib/themes/ — une page ne s'habille pas d'un thème inventé.");
         }
 
         return file_get_contents($path);
     }
 
     /** Les thèmes disponibles, pour qu'une page puisse les proposer sans les connaître d'avance. */
-    public static function disponibles(): array
+    public function disponibles(): array
     {
         return array_map(fn (string $path) => basename($path, '.css'), glob(__DIR__ . '/themes/*.css') ?: []);
     }

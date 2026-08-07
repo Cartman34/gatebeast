@@ -1,0 +1,97 @@
+{
+    "_usage": "Le registre des artefacts, en données. Lu par la page d'accueil du serveur de revue, et par elle seule. Les règles qui gouvernent ce registre — les quatre états, ce qu'archiver veut dire, les gestes de l'archivage — vivent dans doc/artefacts.md, qui ne recopie aucune de ces valeurs.",
+    "_intention": "Ces données vivaient dans un tableau de SUIVI.md, et l'accueil allait les y lire. Le suivi est le document de travail de l'agent : il se réécrit sans cesse, il n'a pas à être une source de données pour l'application (opérateur, 2026-08-07). Une donnée vit à un seul endroit, celui d'où l'outil la lit — c'est ici.",
+    "_format": "JSON et non YAML, faute de mieux : PHP n'embarque pas de lecteur YAML, et en installer un est une dépendance qui appartient à l'opérateur. Le JSON est natif et c'est déjà le format du référentiel des sujets. À rebasculer si l'opérateur veut le YAML.",
+    "states": {
+        "alive": "Vivant",
+        "archived": "Archivé",
+        "closed": "Clos",
+        "forbidden": "À ne pas rouvrir"
+    },
+    "artefacts": [
+        {
+            "name": "Index des artefacts",
+            "description": "la porte d'entrée vers tous les autres",
+            "state": "alive",
+            "state_text": "vivant, ouvert le 2026-08-04",
+            "address": "https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949"
+        },
+        {
+            "name": "Suivi des sprites",
+            "description": "l'état de la production, sujet par sujet",
+            "state": "alive",
+            "state_text": "vivant, republié le 2026-08-06",
+            "address": "https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c"
+        },
+        {
+            "name": "Maquette Campagne",
+            "description": "32 × 24 cases, plan et maquette",
+            "state": "alive",
+            "state_text": "vivant, ouvert le 2026-08-06",
+            "address": "https://claude.ai/code/artifact/9c6cbb31-5f72-4db7-a8dc-237550866ce8"
+        },
+        {
+            "name": "Le plan de composition du parc",
+            "description": "déclaré case par case",
+            "state": "archived",
+            "state_text": "archivé le 2026-08-07, plus maintenu",
+            "address": "https://claude.ai/code/artifact/5f9bb2af-9126-44e6-b953-59afb7ab4e28"
+        },
+        {
+            "name": "La maquette du parc",
+            "description": "la scène montée, à trois tailles de case",
+            "state": "archived",
+            "state_text": "archivé le 2026-08-07, plus maintenu",
+            "address": "https://claude.ai/code/artifact/1a5e7074-017e-40b3-9366-005ead586562"
+        },
+        {
+            "name": "Audit de l'inventaire",
+            "description": "les écarts avec les six planches",
+            "state": "archived",
+            "state_text": "archivé — à reprendre plus tard",
+            "address": "https://claude.ai/code/artifact/a15caa68-3b52-4cab-a92e-4b0829b172aa"
+        },
+        {
+            "name": "Plans de composition",
+            "description": "tout plan déclaré sous `assets/poc/`",
+            "state": "archived",
+            "state_text": "archivé",
+            "address": "https://claude.ai/code/artifact/21dd8a3a-aea2-484d-9202-3749e24cb8b9"
+        },
+        {
+            "name": "Tour de nettoyage",
+            "description": "31 éléments, un verdict par ligne",
+            "state": "archived",
+            "state_text": "archivé",
+            "address": "https://claude.ai/code/artifact/8598d3c2-a037-4edf-af42-f2fb4447498c"
+        },
+        {
+            "name": "Planches de référence",
+            "description": "chaque planche et son rapport noté",
+            "state": "archived",
+            "state_text": "archivé",
+            "address": "https://claude.ai/code/artifact/12a098f0-aecb-4326-8d4a-e60c80802413"
+        },
+        {
+            "name": "Calibration de l'échelle humaine",
+            "description": "",
+            "state": "archived",
+            "state_text": "archivé",
+            "address": "https://claude.ai/code/artifact/044dfac1-998d-4b36-87a5-639059ddba40"
+        },
+        {
+            "name": "Direction artistique",
+            "description": "l'historique de la revue",
+            "state": "closed",
+            "state_text": "clos — DA validée",
+            "address": "https://claude.ai/code/artifact/f5b1e6f7-ad28-4f72-9c41-f0a2cdfd38c5"
+        },
+        {
+            "name": "Son",
+            "description": "les essais et le plafond constaté",
+            "state": "closed",
+            "state_text": "clos — synthèse abandonnée",
+            "address": "https://claude.ai/code/artifact/e0c55e5f-f179-4ef7-9338-9d2b2cc341b8"
+        }
+    ]
+}

@@ -1,29 +1,35 @@
 <?php
 /**
- * Usage: php artefacts/suivi-sprites/build.php [sortie.html]
+ * Usage: php review-server/suivi-sprites/build.php [sortie.html]
  *
  * Builds the sprite tracking page in PHP: a grid of subjects, and one full-screen popin per subject holding its variants, their versions and the actions.
  *
- * Intention: this is the PHP side of the migration decided on 2026-08-06. It is written BESIDE the Python builder, which stays in place and keeps producing the published page — nothing can break
- * while the two are compared. It is also the first page assembled from the shared modules of artefacts/lib/ rather than from its own copy of everything: the inventory reader, the thumbnail factory
- * and the relevé all live there and serve the other pages too.
+ * Intention: this is the migration decided on 2026-08-06, and since 2026-08-07 it is the only builder of this page — the Python one it was written beside has been removed on the operator's order,
+ * review-server holding no Python at all. It is also the first page assembled from the shared modules of review-server/lib/ rather than from its own copy of everything: the inventory reader, the
+ * thumbnail factory and the relevé all live there and serve the other pages too.
  *
- * WHAT IT DELIBERATELY DOES NOT DO YET, and which the Python one still does: the filters by state, the measured criteria and their reports, the judgements, the frozen consigne shown beside an image,
- * the stray files found on disk. They come next, module by module — a page that claims to replace another must be compared to it feature by feature, not declared equivalent.
+ * What the Python builder did and this one does NOT: the judgements — dead matter anyway, the agent that scored sprites was unplugged on 2026-08-04 — and the listing of stray files found on disk.
+ * Everything else it announced as missing has since been caught up: the filters by state, the measures, the frozen consigne and the production report are all here.
  */
 
 $root = dirname(__DIR__, 2);
-require_once $root . '/artefacts/lib/Inventaire.php';
-require_once $root . '/artefacts/lib/Vignette.php';
-require_once $root . '/artefacts/lib/Releve.php';
-require_once $root . '/artefacts/lib/Theme.php';
+require_once $root . '/review-server/bootstrap.php';
+require_once $root . '/review-server/lib/Inventaire.php';
+require_once $root . '/review-server/lib/Vignette.php';
+bootBuild();
 
 const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur du projet, tenue par scripts/tile_scale.py
 const COMPARE_PIXELS_PER_TILE = 48;  // ce qu'une case mesure dans la FSP, où l'on juge et compare (opérateur, 2026-08-06)
 
-$outputPath = $argv[1] ?? __DIR__ . '/page-php.html';
+$outputPath = $argv[1] ?? __DIR__ . '/page.html';
 $inventaire = new Inventaire($root);
 $vignettes = new Vignette($root);
+$theme = Theme::get();
+$favicon = Favicon::get();
+$releve = Releve::get();
+$reload = Reload::get();
+
+// Les images manquantes plus bas ne sont PAS des fautes : elles se rapportent et se montrent comme des trous. Un trou qui se voit est ce qui dit à l'opérateur ce qui reste dû.
 
 const TYPE_LABELS = [
     'sol' => 'Sol', 'chemin' => 'Chemin', 'cours-d-eau' => "Cours d'eau", 'cloture' => 'Clôture et mur',
@@ -285,6 +291,7 @@ function actes(string $identifier): string
 // et laisserait des trous silencieux à leur place — ce qui est arrivé, et la page est sortie sans un seul style.
 $page = <<<'HTML'
 <title>Suivi des sprites</title>
+{$favicon}
 
 <style>
 {$theme}
@@ -371,6 +378,7 @@ $page = <<<'HTML'
   .tuile[hidden] { display: none; }
   .type[hidden] { display: none; }
 {$releveStyles}
+{$reloadStyles}
 </style>
 
 <div class="wrap">
@@ -397,6 +405,7 @@ $page = <<<'HTML'
 {$horsModele}
 {$releveMarkup}
 </div>
+{$reloadMarkup}
 
 {$popins}
 
@@ -577,6 +586,7 @@ $page = <<<'HTML'
 })();
 {$releveScript}
 </script>
+{$reloadScript}
 HTML;
 
 // LES ORPHELINS : toute image livrée sous assets/cutout/ que l'inventaire ne réclame pas. Une image qui existe sans être inscrite n'existe pour personne — elle
@@ -612,12 +622,16 @@ foreach (['tout' => 'Tout', 'a-reprendre' => 'À reprendre', 'a-produire' => 'À
 }
 
 $page = strtr($page, [
-    '{$theme}' => Theme::css('encre'),
+    '{$theme}' => $theme->css('encre'),
+    '{$favicon}' => $favicon->tag(),
+    '{$reloadStyles}' => $reload->styles(),
+    '{$reloadMarkup}' => $reload->markup(),
+    '{$reloadScript}' => $reload->script('/sprites'),
     '{$filtres}' => $filtres,
     '{$horsModele}' => $horsModele,
-    '{$releveStyles}' => Releve::styles(),
-    '{$releveMarkup}' => Releve::markup('Votre relevé, à me coller en conversation'),
-    '{$releveScript}' => Releve::script(),
+    '{$releveStyles}' => $releve->styles(),
+    '{$releveMarkup}' => $releve->markup('Votre relevé, à me coller en conversation'),
+    '{$releveScript}' => $releve->script(),
     '{$sections}' => $sections,
     '{$popins}' => $popins,
 ]);
