@@ -77,7 +77,7 @@
   <h1>Suivi des sujets</h1>
   <p class="lede">Ce qui reste à faire, dans l'ordre où je le dépile. Les points ouverts d'abord, du plus prioritaire au moins prioritaire ; à priorité égale, le plus ancien passe devant.
   Cette page se lit, elle ne s'édite pas : une seule commande écrit les points, et elle reconstruit la page en sortant.</p>
-  <p class="compte">22 ouvert(s) · 45 fermé(s) · php scripts/backlog.php next</p>
+  <p class="compte">23 ouvert(s) · 45 fermé(s) · php scripts/backlog.php next</p>
   <article class="point" data-statut="todo">
     <p class="point-tete"><span class="point-ref">remarque-disparait</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
     <h2>Une remarque de variant disparaît quand elle est notée, alors qu&#039;elle doit partir quand elle est traitée</h2>
@@ -92,8 +92,30 @@
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">stop-priorite</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
+    <h2>PREMIÈRE PRIORITÉ DE LA REPRISE : le STOP de l&#039;opérateur doit arrêter l&#039;agent, à coup sûr</h2>
+    <div class="point-corps"><p><strong>C&#039;EST LA PREMIÈRE CHOSE À FAIRE À LA REPRISE, AVANT TOUT LE RESTE</strong> (opérateur, 2026-08-08). Quand il demande un <code>STOP</code>, l&#039;agent doit s&#039;arrêter — à coup sûr, quel que soit le moment où le mot est<br />
+envoyé. Ça a échoué quatre fois dans la journée, et il a dû redire le mot.</p>
+<p><strong>CE QUI A ÉTÉ FAIT, ET QUI NE SUFFIT PAS À CLORE LE SUJET</strong> : le hook de fin de tour lit désormais le dernier message de l&#039;opérateur dans le transcrit et désarme sur <code>STOP</code>. C&#039;est éprouvé sur un<br />
+transcrit fabriqué (<code>bash local/scripts/essai-stop-transcrit.sh</code>), <strong>jamais en conditions réelles</strong>. Un essai sur une charge fabriquée prouve que le code marche sur ce qu&#039;on lui donne, pas qu&#039;il<br />
+reçoit ce qu&#039;on croit.</p>
+<p><strong>LA PISTE DE L&#039;OPÉRATEUR, NON TESTÉE</strong> : « ça arrive en plusieurs lignes et t&#039;as mal géré le multiligne ». Elle est plausible et <strong>elle n&#039;a pas été éprouvée</strong> — le seul essai fait porte sur un mot<br />
+seul. Un <code>STOP</code> suivi d&#039;une ligne vide, ou précédé d&#039;un retour, doit désarmer ; un <code>STOP</code> au milieu d&#039;une phrase ne doit pas.</p>
+<p><strong>L&#039;AUTRE EXPLICATION, ÉTAYÉE MAIS PARTIELLE</strong> : <code>UserPromptSubmit</code> ne se déclenche que sur un message qui commence un tour. La trace <code>var/hooks/prompt-log</code> le montre — elle porte les messages<br />
+d&#039;ouverture de tour et <strong>aucun</strong> de ceux envoyés pendant que l&#039;agent travaillait. Si le hook avait tourné et mal lu, il aurait laissé une ligne : il n&#039;en a laissé aucune.</p>
+<p><strong>LES DEUX PEUVENT ÊTRE VRAIES À LA FOIS</strong>, et c&#039;est le piège : l&#039;une expliquerait les <code>STOP</code> en cours de route, l&#039;autre ceux envoyés à l&#039;arrêt. Il faut les séparer avant de conclure.</p>
+<p><strong>COMMENT TRANCHER, DANS L&#039;ORDRE :</strong></p>
+<p>1. <strong>Éprouver le multiligne sur les deux hooks</strong> : <code>STOP</code> seul, <code>STOP</code> suivi d&#039;un saut de ligne, <code>STOP</code> précédé d&#039;un saut, <code>STOP</code> au milieu d&#039;une phrase. Les trois premiers désarment, le dernier non.<br />
+2. <strong>Éprouver en conditions réelles</strong> : l&#039;opérateur envoie un <code>STOP</code> pendant que l&#039;agent travaille, puis on lit <code>var/hooks/stop-log</code>. La ligne dit ce que le hook a décidé et pourquoi.<br />
+3. <strong>Ne conclure qu&#039;après</strong>, et n&#039;écrire la cause que si la trace la montre.</p>
+<p><strong>CE QUI NE DOIT PAS ÊTRE REFAIT</strong> : conclure sur une hypothèse parce qu&#039;elle est cohérente. Il a fallu trois occurrences et un lien vers la documentation pour trouver la première cause, et la<br />
+seule chose qui a permis de trancher est une <strong>trace écrite à chaque passage</strong>. Les deux hooks en ont une maintenant : elle se lit avant de supposer.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">types-en-francais</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
+    <p class="point-tete"><span class="point-ref">types-en-francais</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
     <h2>Les valeurs de type nomment des répertoires sur le disque et restent en français</h2>
     <div class="point-corps"><p><strong>TRANCHÉ PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « à l&#039;affichage, ok en français ; mais dans le code, ça doit respecter les mêmes règles et être en anglais ». Les valeurs de type ne bénéficient d&#039;aucune<br />
 exception — elles sont du code.</p>
@@ -110,28 +132,28 @@ consigne qui l&#039;a produite — et ce lien est ce qui permet de comprendre un
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">rune-creature</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
+    <p class="point-tete"><span class="point-ref">rune-creature</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
     <h2>La rune de la créature doit être une demi-lune comme sur la référence DA, et il lui faut des variants de posture</h2>
     <div class="point-corps"><p>La rune de la créature doit être une demi-lune comme sur la référence DA, et il lui faut des variants de posture</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">pont-ns</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
+    <p class="point-tete"><span class="point-ref">pont-ns</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
     <h2>Le pont nord-sud n&#039;est toujours pas corrigé</h2>
     <div class="point-corps"><p>Le pont nord-sud n&#039;est toujours pas corrigé</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">pieces-plates-96</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la décision demandée par reprise-plates</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
+    <p class="point-tete"><span class="point-ref">pieces-plates-96</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la décision demandée par reprise-plates</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
     <h2>Refaire les huit pièces plates livrées en 96 x 96, la case en demande 96 x 84</h2>
     <div class="point-corps"><p>Refaire les huit pièces plates livrées en 96 x 96, la case en demande 96 x 84</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-decision">
-    <p class="point-tete"><span class="point-ref">reprise-plates</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : ta réponse : d&#039;un coup, ou au fil des reprises</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
+    <p class="point-tete"><span class="point-ref">reprise-plates</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : ta réponse : d&#039;un coup, ou au fil des reprises</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
     <h2>Les huit pièces plates : toutes reprises d&#039;un coup, ou au fil des reprises ordinaires ?</h2>
     <div class="point-corps"><p><strong>CE QUE JE DEMANDE</strong> : les huit pièces plates devenues non conformes se refont-elles <strong>d&#039;un coup</strong>, ou <strong>au fil des reprises ordinaires</strong> ?</p>
 <p><strong>CE QUI S&#039;EST PASSÉ</strong> : la case projetée est passée de carrée à <code>96 × 84 px</code> le 2026-08-08, par ta décision. Les pièces plates dessinées avant sont livrées en <code>96 × 96</code> — cinq du chemin <code>CH-019</code>,<br />
@@ -151,14 +173,14 @@ sont dans ce lot-là. Les refaire séparément, c&#039;est deux passages là où
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">tri-profondeur</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
+    <p class="point-tete"><span class="point-ref">tri-profondeur</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">9</span></p>
     <h2>Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</h2>
     <div class="point-corps"><p>Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-decision">
-    <p class="point-tete"><span class="point-ref">formes-de-trace</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : le lot de seize dessins à valider, formes manquantes et pièces plates réunies</span><span class="point-prio">priorité 5</span><span class="point-attend">attend : agent</span><span class="point-rang">9</span></p>
+    <p class="point-tete"><span class="point-ref">formes-de-trace</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : le lot de seize dessins à valider, formes manquantes et pièces plates réunies</span><span class="point-prio">priorité 5</span><span class="point-attend">attend : agent</span><span class="point-rang">10</span></p>
     <h2>Vingt et une formes de tracé manquent : tirer d&#039;abord celles que la planche p1 v8 emploie</h2>
     <div class="point-corps"><p><strong>LE RELEVÉ EST FAIT, 2026-08-08, ET IL DIVISE LE SUJET PAR TROIS.</strong> Il était bloqué parce que le plan de la maquette ne se construisait plus ; il se construit depuis aujourd&#039;hui, et le compte se<br />
 lit directement.</p>
@@ -184,7 +206,7 @@ pièces.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">bouton-copie-releve</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">10</span></p>
+    <p class="point-tete"><span class="point-ref">bouton-copie-releve</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">11</span></p>
     <h2>Le bouton de copie du relevé doit exister sur toutes les pages qui en portent un</h2>
     <div class="point-corps"><p><strong>Constat localisé le 2026-08-07, et il est pire que « recopié » : il l&#039;est deux fois.</strong> Le bouton de copie du relevé et toute sa mécanique existent <strong>en trois exemplaires</strong> — une fois dans le module partagé, qui sert la page des sprites, et <strong>deux fois à l&#039;identique dans les deux sources de la page Campagne</strong> : le plan et la maquette montée en portent chacun leur copie.</p>
 <p><strong>Ce que ça produit aujourd&#039;hui</strong> : la page des sprites a la barre fixe pleine largeur avec son compte, restaurée le 2026-08-07 ; la page Campagne, elle, n&#039;a que son bouton dans le corps de la page, sans barre fixe et sans compte. <strong>L&#039;opérateur doit donc redescendre chercher le bouton</strong> sur la page qu&#039;il relit tous les jours, alors qu&#039;il ne le fait plus sur l&#039;autre.</p>
@@ -196,7 +218,7 @@ pièces.</p>
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">comparaison-variants</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">11</span></p>
+    <p class="point-tete"><span class="point-ref">comparaison-variants</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">12</span></p>
     <h2>La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</h2>
     <div class="point-corps"><p><strong>La comparaison de variants sélectionnés, à 48 pixels par case, dans la fiche du sujet.</strong></p>
 <p><strong>Le préalable est levé</strong> : la sélection multiple fonctionne depuis le 2026-08-07 — la comparaison n&#039;engage plus dès le premier variant coché, donc on peut enfin en retenir plusieurs. Avant, cocher le premier masquait tous les autres et la case du second n&#039;était plus là pour être cochée.</p>
@@ -208,7 +230,7 @@ pièces.</p>
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">convergence-revue</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span><span class="point-rang">12</span></p>
+    <p class="point-tete"><span class="point-ref">convergence-revue</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span><span class="point-rang">13</span></p>
     <h2>Faire converger les deux outils de revue de la page Campagne</h2>
     <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08 : OUI, ON FAIT CONVERGER.</strong> Écrite ici plutôt que laissée dans la conversation, à sa demande expresse — une réponse qui ne vit que dans le fil se redemande à la<br />
 séance suivante. L&#039;accord porte sur le principe et sur la solution décrite plus bas ; il ne dispense pas de regarder la page à chaque étape.</p>
@@ -253,7 +275,7 @@ reprise commence par sortir le module sans le brancher à personne : à ce stade
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">commentaires-anglais</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">13</span></p>
+    <p class="point-tete"><span class="point-ref">commentaires-anglais</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
     <h2>Les commentaires français du code antérieur, à repasser en anglais au fil de l&#039;eau</h2>
     <div class="point-corps"><p><strong>LA RÈGLE EST FIGÉE ET INCHANGEABLE : le code et ses commentaires sont en ANGLAIS AMÉRICAIN</strong> (opérateur, 2026-08-08). Elle a été un instant énoncée à l&#039;envers puis reprise le jour même ; ce point<br />
 reprend donc exactement le sens qu&#039;il avait, et il ne se rediscute plus.</p>
@@ -275,7 +297,7 @@ en anglais. Les renommer touche la donnée et tout ce qui la lit, donc ce n&#039
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">largeur-du-suivi</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
+    <p class="point-tete"><span class="point-ref">largeur-du-suivi</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">15</span></p>
     <h2>Le suivi enfreint lui-même le standard de largeur</h2>
     <div class="point-corps"><p><strong>Le contrôle relève 108 écarts dans le document de suivi au 2026-08-07</strong> : des lignes de 200 à 1 080 caractères, et cinq paragraphes repliés trop court. <strong>Aucun n&#039;est de ce jour</strong> — tout ce qui a été écrit aujourd&#039;hui passe le contrôle.</p>
 <p><strong>Ce qui a changé la nature du point</strong> : les points ouverts ont quitté ce document le 2026-08-07 pour un fichier de données et une page. Une grande partie de ce que le document porte encore est donc <strong>de l&#039;histoire figée</strong> — l&#039;ancien tableau des points, des sections de séances passées, des analyses closes. Replier ligne par ligne un texte dont la moitié est destinée à disparaître serait du travail perdu deux fois.</p>
@@ -285,7 +307,7 @@ en anglais. Les renommer touche la donnée et tout ce qui la lit, donc ce n&#039
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-commit-seance</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">15</span></p>
+    <p class="point-tete"><span class="point-ref">regle-commit-seance</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
     <h2>Écrire à la méthode commune : le commit se fait en fin de séance, jamais à la reprise</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08 : « tu dois commit à la fin d&#039;une session, pas au début, sinon tu ne sais plus ce qui a été fait ».</strong> À écrire à la méthode commune, protocole de<br />
 collaboration, avec son intention.</p>
@@ -302,7 +324,7 @@ le message porte cette mention en dernière ligne.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">noms-des-composants</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
+    <p class="point-tete"><span class="point-ref">noms-des-composants</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
     <h2>Écrire la règle : tout composant porte un nom, standard, anglais, et inscrit au glossaire</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « donne toujours des noms à tes composants (cohérent et standard) et je dois pouvoir savoir quel nom ça a » ; puis, quand j&#039;ai baptisé<br />
 le panneau latéral « tiroir » : « un nom technique est en anglais et reste en anglais, même en FR. La description peut dire tiroir pour la compréhension ».</p>
@@ -322,7 +344,7 @@ le nom d&#039;un composant en fait partie et qu&#039;il ne se traduit pas en par
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-ordre-depilage</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
+    <p class="point-tete"><span class="point-ref">regle-ordre-depilage</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">18</span></p>
     <h2>Écrire la règle : un point engagé passe devant, et un gros point se découpe</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « ce qui est déjà in-progress est la prio ! Sauf si c&#039;est bloqué par un todo (mais là ça doit revenir en todo ou pending dependency) ».</p>
 <p><strong>L&#039;INTENTION</strong> : un point engagé porte un contexte que personne d&#039;autre n&#039;a — une page à moitié refaite, une décision à moitié appliquée —, et c&#039;est exactement ce qu&#039;un arrêt jette. Prendre un point<br />
@@ -341,7 +363,7 @@ plus prioritaire par-dessus ne gagne pas une journée, elle perd celle qui est d
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-constantes</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">18</span></p>
+    <p class="point-tete"><span class="point-ref">regle-constantes</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">19</span></p>
     <h2>Écrire la règle : des constantes préfixées, jamais de littéral recopié</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « utilise des constantes ou des constantes de classes, autant que tu peux ! Règle de code » ; puis « les constantes doivent être<br />
 préfixées ».</p>
@@ -361,7 +383,7 @@ les types de représentation, les noms de calques. Chacun est une famille qui m�
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">describe-arg-mute</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">19</span></p>
+    <p class="point-tete"><span class="point-ref">describe-arg-mute</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">20</span></p>
     <h2>backlog.php describe accepte un texte en argument et l&#039;ignore en silence</h2>
     <div class="point-corps"><p>Constaté le 2026-08-08 en écrivant le point <code>droits-parent</code>. <code>describe &lt;REF&gt;</code> lit son texte sur l&#039;entrée standard, comme son bloc d&#039;usage le dit. Mais appelé avec le texte en argument positionnel —<br />
 <code>describe &lt;REF&gt; &quot;...&quot;</code> —, il ne refuse pas : il lit une entrée standard vide, écrase la description par la chaîne vide, et annonce « description reprise, 0 caractères ». Le message se lit comme un<br />
@@ -371,7 +393,7 @@ succès, et la description est perdue sans que personne le voie.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">bash-simple</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">20</span></p>
+    <p class="point-tete"><span class="point-ref">bash-simple</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">21</span></p>
     <h2>Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</h2>
     <div class="point-corps"><p><strong>LA DOC FAIT AUTORITÉ, LA MÉMOIRE NE SERT PAS</strong> (opérateur, 2026-08-08) : une consigne rangée dans la mémoire de l&#039;agent ne serait pas mieux respectée qu&#039;une règle écrite, et elle échappe à tout<br />
 le monde — elle ne se relit pas, ne se corrige pas, ne suit pas le dépôt. Ce qui doit tenir s&#039;écrit dans la documentation. Deux consignes données ce jour-là avaient été mises en mémoire ; la mémoire<br />
@@ -390,14 +412,14 @@ défaut est dans l&#039;application, pas dans la règle : il n&#039;y a rien à 
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">locales-francaises</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">21</span></p>
+    <p class="point-tete"><span class="point-ref">locales-francaises</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">22</span></p>
     <h2>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</h2>
     <div class="point-corps"><p>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">22</span></p>
+    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">23</span></p>
     <h2>Monter à la méthode commune les règles d&#039;outillage et d&#039;écriture, et elles seules</h2>
     <div class="point-corps"><p><strong>DÉCISION DE L&#039;OPÉRATEUR, 2026-08-08, ET ELLE TRANCHE LE POINT : SEULE LA FAMILLE « OUTILLAGE ET ÉCRITURE » EST COMMUNE. Tout le reste est propre à ce projet et n&#039;en sort pas.</strong> Cette décision<br />
 annule le « non, pas encore » du 2026-08-07 : la question n&#039;était pas prématurée, elle était mal posée — elle demandait un tout ou rien, alors que le partage se fait famille par famille.</p>

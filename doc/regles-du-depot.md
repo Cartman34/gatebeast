@@ -66,6 +66,8 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   met à jour, décrit et ferme librement, et il ajoute sans demander **ce que l'opérateur lui dit d'ajouter**. Ouvrir un sujet que personne n'a demandé, non : « tu risques de t'enfoncer dans une
   mauvaise pratique sans vérification ». Un point ouvert oriente le travail de toutes les séances suivantes, et un agent qui remplit lui-même sa propre pile finit par travailler sur ce qu'il a décidé
   seul, en croyant suivre le projet.
+- **LES PRIORITÉS 1 À 10 SONT RÉSERVÉES À L'OPÉRATEUR** (2026-08-08). Elles disent ce qui est urgent, important ou de grande priorité **selon lui**, et lui seul les attribue. Ce que l'agent propose
+  ou ouvre commence à **11** : sans cette réserve, ce qu'il juge pressant se mélange à ce que l'opérateur juge pressant, et la tête de pile cesse de dire la volonté de quelqu'un.
 - **CE QUI SE FAIT À LA PLACE : on le fait, ou on le propose.** Un défaut trouvé en chemin se corrige dans la foulée — c'est déjà la règle, « ce qui manque se fait ». Ce qui est trop gros pour être
   fait dans la foulée se **propose** à l'opérateur, avec ce qu'il coûte, et n'entre à la pile qu'une fois validé. Un défaut qu'on ne peut ni faire ni proposer tout de suite se dit dans le compte
   rendu, il ne s'inscrit pas de force.

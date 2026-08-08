@@ -747,6 +747,17 @@
             "waiting": "agent",
             "created": "2026-08-08",
             "updated": "2026-08-08"
+        },
+        {
+            "ref": "stop-priorite",
+            "code": "W19",
+            "label": "PREMIÈRE PRIORITÉ DE LA REPRISE : le STOP de l'opérateur doit arrêter l'agent, à coup sûr",
+            "description": "**C'EST LA PREMIÈRE CHOSE À FAIRE À LA REPRISE, AVANT TOUT LE RESTE** (opérateur, 2026-08-08). Quand il demande un `STOP`, l'agent doit s'arrêter — à coup sûr, quel que soit le moment où le mot est\nenvoyé. Ça a échoué quatre fois dans la journée, et il a dû redire le mot.\n\n**CE QUI A ÉTÉ FAIT, ET QUI NE SUFFIT PAS À CLORE LE SUJET** : le hook de fin de tour lit désormais le dernier message de l'opérateur dans le transcrit et désarme sur `STOP`. C'est éprouvé sur un\ntranscrit fabriqué (`bash local/scripts/essai-stop-transcrit.sh`), **jamais en conditions réelles**. Un essai sur une charge fabriquée prouve que le code marche sur ce qu'on lui donne, pas qu'il\nreçoit ce qu'on croit.\n\n**LA PISTE DE L'OPÉRATEUR, NON TESTÉE** : « ça arrive en plusieurs lignes et t'as mal géré le multiligne ». Elle est plausible et **elle n'a pas été éprouvée** — le seul essai fait porte sur un mot\nseul. Un `STOP` suivi d'une ligne vide, ou précédé d'un retour, doit désarmer ; un `STOP` au milieu d'une phrase ne doit pas.\n\n**L'AUTRE EXPLICATION, ÉTAYÉE MAIS PARTIELLE** : `UserPromptSubmit` ne se déclenche que sur un message qui commence un tour. La trace `var/hooks/prompt-log` le montre — elle porte les messages\nd'ouverture de tour et **aucun** de ceux envoyés pendant que l'agent travaillait. Si le hook avait tourné et mal lu, il aurait laissé une ligne : il n'en a laissé aucune.\n\n**LES DEUX PEUVENT ÊTRE VRAIES À LA FOIS**, et c'est le piège : l'une expliquerait les `STOP` en cours de route, l'autre ceux envoyés à l'arrêt. Il faut les séparer avant de conclure.\n\n**COMMENT TRANCHER, DANS L'ORDRE :**\n\n1. **Éprouver le multiligne sur les deux hooks** : `STOP` seul, `STOP` suivi d'un saut de ligne, `STOP` précédé d'un saut, `STOP` au milieu d'une phrase. Les trois premiers désarment, le dernier non.\n2. **Éprouver en conditions réelles** : l'opérateur envoie un `STOP` pendant que l'agent travaille, puis on lit `var/hooks/stop-log`. La ligne dit ce que le hook a décidé et pourquoi.\n3. **Ne conclure qu'après**, et n'écrire la cause que si la trace la montre.\n\n**CE QUI NE DOIT PAS ÊTRE REFAIT** : conclure sur une hypothèse parce qu'elle est cohérente. Il a fallu trois occurrences et un lien vers la documentation pour trouver la première cause, et la\nseule chose qui a permis de trancher est une **trace écrite à chaque passage**. Les deux hooks en ont une maintenant : elle se lit avant de supposer.",
+            "status": "todo",
+            "priority": 1,
+            "waiting": "agent",
+            "created": "2026-08-08",
+            "updated": "2026-08-08"
         }
     ]
 }

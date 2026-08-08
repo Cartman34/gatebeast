@@ -6,41 +6,42 @@ Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : s
 
 ## FIN DE SÉANCE DU 2026-08-08 (SOIR) — CE QU'IL FAUT SAVOIR POUR REPRENDRE, ET RIEN D'AUTRE
 
-**OUVRE LA SESSION DEPUIS `~/projects/gatebeast`.** Les hooks du projet sont déclarés à la racine du dépôt, et ils fonctionnent : vérifié aujourd'hui de bout en bout.
+**LA PREMIÈRE CHOSE À FAIRE, AVANT TOUT LE RESTE : `W stop-priorite`.** Quand l'opérateur demande un `STOP`, l'agent doit s'arrêter — à coup sûr. Ça a échoué quatre fois le 2026-08-08 et il a dû
+redire le mot. Une correction est en place et **n'est pas éprouvée en conditions réelles** ; la piste de l'opérateur — « ça arrive en plusieurs lignes et t'as mal géré le multiligne » — **n'est pas
+testée non plus**. Le point dit comment trancher, dans l'ordre, et ce qu'il ne faut pas refaire : conclure sur une hypothèse parce qu'elle est cohérente.
 
-**UN `GO` OU UN `STOP` ENVOYÉ PENDANT QUE L'AGENT TRAVAILLE N'ARME NI NE DÉSARME RIEN.** `UserPromptSubmit` ne se déclenche qu'à l'ouverture d'un tour — c'est la documentation qui le dit, et trois
-mesures le confirment. Le mot doit être envoyé **seul, en ouverture de tour**. Les deux hooks tracent désormais chacun de leurs passages sous `var/hooks/` : `prompt-log` et `stop-log`.
+**OUVRE LA SESSION DEPUIS `~/projects/gatebeast`.** Les hooks du projet y sont déclarés et ils fonctionnent. **Les deux tracent chacun de leurs passages** sous `var/hooks/` — `prompt-log` et
+`stop-log` —, et c'est la seule chose qui a permis de trancher quoi que ce soit sur eux : on les lit avant de supposer.
 
-**LE HOOK DE FIN DE TOUR LAISSE PASSER AU BOUT DE CINQ REFUS CONSÉCUTIFS**, et c'est voulu — un point qui ne peut pas bouger ne doit pas enfermer l'agent en boucle. Il l'annonçait sur une sortie que
-personne ne voyait ; il l'écrit maintenant dans sa trace.
+**UN MESSAGE ENVOYÉ PENDANT QUE L'AGENT TRAVAILLE N'ATTEINT PAS `UserPromptSubmit`** — la documentation le dit et la trace le montre. La parole de l'opérateur vaut quand même : l'agent s'arrête, et
+il le dit. C'est la garde qui reste armée, pas l'ordre qui est perdu.
 
-**UN SUJET QUE L'AGENT OUVRE DE LUI-MÊME PART EN `proposed` ET NE SE PREND PAS SANS VALIDATION** (opérateur, 2026-08-08). L'agent tient le suivi, il ne décide pas de ce sur quoi le projet travaille.
-`--demande` met un point directement à faire quand c'est l'opérateur qui l'a demandé. **Cinq points attendent sa validation.**
+**UN SUJET QUE L'AGENT OUVRE DE LUI-MÊME PART EN `proposed` ET NE SE PREND PAS SANS VALIDATION.** Il tient le suivi, il ne décide pas de ce sur quoi le projet travaille. `--demande` met un point
+directement à faire quand c'est l'opérateur qui l'a demandé.
 
-**CE QUI ATTEND L'OPÉRATEUR, ET RIEN NE PART SANS LUI :**
+**CE QUI ATTEND L'OPÉRATEUR :**
 
-1. **Le lot de seize dessins de tracé** — huit formes manquantes que les compositions emploient, et huit pièces plates à refaire à la nouvelle case. Les huit manquantes ont été lancées en fin de
-   séance sur son ordre ; les huit reprises attendent.
-2. **Juger les trois propositions du centre de soin**, côte à côte dans sa fiche.
-3. **Cinq sujets `proposed`** à valider ou à classer.
+1. **Juger les trois propositions du centre de soin**, côte à côte dans sa fiche.
+2. **Cinq sujets `proposed`** à valider ou à classer.
+3. **Huit pièces plates à reprendre** — livrées en `96 × 96` quand la case en demande `96 × 84`.
 
-**LA CASE PROJETÉE N'EST PLUS CARRÉE : `24 × 21 px`, `96 × 84` en source.** C'est la décision la plus structurante de la journée. **L'échelle en pixels fait foi, jamais le facteur** — `96 × 0,866`
-donne 83,14 et non 84, et un code qui recalculerait avec le facteur rouvrirait le liseré à chaque raccord. Tout est écrit à `doc/conception/referentiels/technique/rendu-en-calques.md`.
+**LA CASE PROJETÉE N'EST PLUS CARRÉE : `24 × 21 px`, `96 × 84` en source.** L'échelle en pixels fait foi, **jamais le facteur** — `96 × 0,866` donne 83,14 et non 84, et recalculer avec le facteur
+rouvrirait un liseré à chaque raccord. Tout est à `doc/conception/referentiels/technique/rendu-en-calques.md`.
 
-**LE VOCABULAIRE DU RÉFÉRENTIEL EST PASSÉ EN ANGLAIS** : `assets/sujets.json` devient `assets/subjects.json`, vingt-sept clés et deux jeux de valeurs traduits, treize lecteurs suivis. **Les valeurs
-de type restent en français** — elles nomment des répertoires sur le disque, et l'opérateur a tranché qu'elles doivent y passer aussi : c'est `W14 types-en-francais`, en `proposed`.
+**LE RÉFÉRENTIEL PARLE ANGLAIS** : `assets/subjects.json`, vingt-sept clés et deux jeux de valeurs. **Les valeurs de type restent en français** et doivent y passer aussi — elles nomment des
+répertoires sur le disque, c'est `W14 types-en-francais`, en `proposed`.
 
-**CINQ CONTRÔLES NEUFS, ET DEUX ONT TROUVÉ CE QUE PERSONNE NE VOYAIT :**
+**LA RÈGLE QUI COMMANDE LE RESTE : LE CODE NE LAISSE JAMAIS UNE ERREUR TRANSPARENTE.** Cinq défauts sur six trouvés le 2026-08-08 étaient de cette famille — un sélecteur muet, une fonction toujours
+fausse, une section perdue dans un `[]`, un plan qui échoue en laissant son ancien SVG, un monteur qui substituait le dessin du voisin. Aucun n'avait levé quoi que ce soit.
 
-- `php scripts/check-page-selectors.php` — un sélecteur qui ne trouve rien ne lève aucune erreur. Il a trouvé des marques qui s'accumulaient sans jamais s'effacer sur la page Campagne.
-- `python3 scripts/check-code-language.py` — le vocabulaire technique français dans le code.
-- `bash local/scripts/essai-garde-depilement.sh`, `essai-garde-portees.sh`, `essai-hook-prompt.sh`, `essai-hook-stop.sh` — les gardes et les hooks, éprouvés sur leurs propres charges.
+**CINQ CONTRÔLES NEUFS** : `check-page-selectors.php` (un sélecteur qui ne trouve rien ne lève rien — il a découvert des marques qui s'accumulaient sans jamais s'effacer), `check-code-language.py`,
+et les essais des gardes et des hooks sous `local/scripts/essai-*.sh`.
 
-**LA RÈGLE QUI COMMANDE LE RESTE : LE CODE NE LAISSE JAMAIS UNE ERREUR TRANSPARENTE.** Cinq défauts sur six trouvés aujourd'hui étaient de cette famille — un sélecteur muet, `is_flat` toujours faux,
-une section perdue dans un `[]`, un plan qui échoue en laissant son ancien SVG, un monteur qui substituait un dessin voisin en silence. Aucun n'avait levé quoi que ce soit.
+**CE QUI EST ENGAGÉ ET NON FINI** : `Q1 convergence-revue`, aux étapes 3 et 4. Le module commun `review-server/lib/Remarks.php` existe et **le plan y est branché** ; la maquette garde encore sa
+copie. La suite est écrite dans le point.
 
-**CE QUI EST ENGAGÉ ET NON FINI** : `Q1 convergence-revue`, aux étapes 3 et 4. Le module commun `review-server/lib/Remarks.php` existe et **le plan y est branché** ; la maquette garde encore sa copie.
-La suite est écrite dans le point : brancher la maquette, contrôler, regarder, puis supprimer la seconde copie.
+**UN LOT DE HUIT DESSINS DE TRACÉ A ÉTÉ LANCÉ EN FIN DE SÉANCE** et tournait encore à l'arrêt : ses images et ses rapports seront sur le disque à la reprise, **non commités**. À regarder et à
+inscrire avant d'aller plus loin.
 
 ## POUR REPRENDRE À FROID — LIRE CECI EN ENTIER, RIEN D'AUTRE N'EST NÉCESSAIRE POUR DÉMARRER
 

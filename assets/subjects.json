@@ -1523,7 +1523,47 @@
           "orientation": "south",
           "action": "idle",
           "shape": "es",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-es.png",
+              "master": "poc/sol/CH-020_shape-es.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 40,
+                  "top": 39,
+                  "right": 95,
+                  "bottom": 95,
+                  "width": 56,
+                  "height": 57
+                },
+                "contact_px": {
+                  "left": 40,
+                  "right": 55,
+                  "width": 16
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 96.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
           "ref": "orientation-south_action-idle_shape-es_frame-01",
           "label": "Angle est-sud"
         },
@@ -1539,7 +1579,47 @@
           "orientation": "south",
           "action": "idle",
           "shape": "nw",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-nw.png",
+              "master": "poc/sol/CH-020_shape-nw.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 62,
+                  "bottom": 69,
+                  "width": 63,
+                  "height": 70
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 52,
+                  "width": 53
+                },
+                "anchor_px": {
+                  "x": 26.0,
+                  "y": 70.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
           "ref": "orientation-south_action-idle_shape-nw_frame-01",
           "label": "Angle nord-ouest"
         },
