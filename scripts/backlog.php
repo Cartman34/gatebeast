@@ -3,13 +3,13 @@
  * USAGE
  *   php scripts/backlog.php <subcommand> [arguments] — the one way the open points of the project are read and edited. Every subcommand that writes rebuilds the /sujets page on its way out.
  *
- *     next                                   the next point to take, and nothing else
- *     list [--all]                           the open points in priority order; --all adds the closed ones
- *     show <REF>                             one point in full, description included
- *     add <SERIES> <priority> <label>        a new point; its long description is read from standard input
- *     set <REF> <field> <value>              change one field: priorite, statut, libelle, attend
- *     describe <REF>                         replace the long description, read from standard input
- *     close <REF> [why]                      status "fait", with an optional closing sentence
+ *     next                                     the next point to take, and nothing else
+ *     list [--all]                             the open points in priority order; --all adds the closed ones
+ *     show <REF>                               one point in full, description included
+ *     add <SERIES> <priority> <label> [ref]    a new point; its long description is read from standard input
+ *     set <REF> <field> <value> [waits-on]     change one field: priority, status, label, waiting
+ *     describe <REF>                           replace the long description, read from standard input
+ *     close <REF> [why]                        status "done", with an optional closing sentence
  *
  * INTENTION
  *   The pile was prose in SUIVI.md: nothing could sort it, count it, or answer "what is next" without a human reading the whole document. Now a single command answers that, and the same command is
@@ -24,13 +24,13 @@ require_once $root . '/review-server/lib/Backlog.php';
 $backlog = new Backlog($root);
 $command = $argv[1] ?? 'next';
 
-/** Le jour, en toutes lettres — une date relative ne veut plus rien dire une semaine plus tard. */
+/** Today, spelled out — a relative date means nothing a week later. */
 function today(): string
 {
     return date('Y-m-d');
 }
 
-/** Reconstruit la page servie. Toute écriture passe par là : c'est ce qui garantit que la page ne ment jamais sur l'état de la pile. */
+/** Rebuilds the served page. Every write goes through here: that is what keeps the page from ever lying about the state of the pile. */
 function republish(string $root): void
 {
     exec(sprintf('php %s /sujets 2>&1', escapeshellarg($root . '/review-server/build.php')), $lines, $status);
@@ -39,12 +39,15 @@ function republish(string $root): void
     }
 }
 
-/** Une ligne de liste : la référence, la priorité, le statut, le libellé. Assez pour choisir, jamais plus. */
+/** One line of the listing: the ref, the priority, the status, the label. Enough to choose from, never more. */
 function line(array $point): string
 {
-    // LA REF EST UN SLUG DE VINGT CARACTÈRES, PAS UN COMPTEUR (opérateur, 2026-08-07) : « S34 » n'apprend rien, il faut ouvrir la tâche pour savoir de quoi il
-    // s'agit. Le compteur reste comme code interne, entre parenthèses, parce que tout l'historique du projet le cite.
-    return sprintf('%-20s (%-4s) p%-3d %-17s %s', $point['ref'], $point['code'] ?? '', $point['priority'], $point['status'], $point['label']);
+    // THE REF IS A TWENTY-CHARACTER SLUG, NOT A COUNTER (operator, 2026-08-07): "S34" teaches nothing, one has to open the task to learn what it is about. The
+    // counter stays as an internal code, in parentheses, because the whole history of the project cites it.
+    // WHAT A POINT WAITS ON SHOWS NEXT TO ITS STATUS, never in the card alone: one picks what to take by reading the listing, and "waiting" without its subject helps nobody.
+    $waiting = isset($point['waits_on']) ? ' ← ' . $point['waits_on'] : '';
+
+    return sprintf('%-20s (%-4s) p%-3d %-19s %s%s', $point['ref'], $point['code'] ?? '', $point['priority'], $point['status'], $point['label'], $waiting);
 }
 
 if ($command === 'next') {
@@ -55,7 +58,7 @@ if ($command === 'next') {
     }
     $point = $open[0];
     printf("%s\n\n%s\n", line($point), $point['description']);
-    $waiting = array_values(array_filter($open, fn (array $p) => $p['status'] === 'pending-decision'));
+    $waiting = array_values(array_filter($open, fn (array $p) => $p['status'] === Backlog::STATUS_PENDING_DECISION));
     if ($waiting) {
         printf("\nEt %d point(s) attendent une décision de l'opérateur : %s\n", count($waiting),
             implode(', ', array_column($waiting, 'ref')));
@@ -78,8 +81,9 @@ if ($command === 'show') {
     if (!$point) {
         throw new RuntimeException("FAULT le point « " . ($argv[2] ?? '') . " » n'existe pas.");
     }
-    printf("%s — %s\n\nPriorité %d · statut %s · attend %s · créé le %s · repris le %s\n\n%s\n",
+    printf("%s — %s\n\nPriorité %d · statut %s%s · attend %s · créé le %s · repris le %s\n\n%s\n",
         $point['ref'], $point['label'], $point['priority'], Backlog::STATUS_LABELS[$point['status']] ?? $point['status'],
+        isset($point['waits_on']) ? ' : ' . $point['waits_on'] : '',
         $point['waiting'], $point['created'], $point['updated'], $point['description']);
     exit(0);
 }
@@ -89,21 +93,34 @@ if ($command === 'add') {
     $priority = $argv[3] ?? null;
     $label = $argv[4] ?? null;
     if ($series === null || $priority === null || $label === null) {
-        throw new RuntimeException('FAULT usage : php scripts/backlog.php add <SÉRIE> <priorité> <libellé>, la description longue arrivant sur l\'entrée standard.');
+        throw new RuntimeException('FAULT usage : php scripts/backlog.php add <SÉRIE> <priorité> <libellé> [ref], la description longue arrivant sur l\'entrée standard.');
     }
     $description = trim(stream_get_contents(STDIN));
     // A POINT CARRIES BOTH: the slug it is read by, and the series code the whole project cites. Creation used to write the code into the ref, which produced a bare "Q1" among twenty-character
     // slugs and a duplicate code with it. Both are derived here, in that order, because the slug falls back to the code when the label collides.
     $code = $backlog->nextRef($series);
+    // THE REF IS GIVEN, NOT GUESSED (operator, 2026-08-08): a label cut at twenty characters rarely names the point, and that is how refs ended on padding dashes. Whoever creates the point knows
+    // better than the machine what it will be called in conversation. Deriving it stays for quick creations, never as the intent.
     $ref = $backlog->slugFor($label, $code);
+    if (isset($argv[5]) && trim($argv[5]) !== '') {
+        // A GIVEN REF IS NEVER TRIMMED SILENTLY: "regle-noms-composants" shortened without a word became "regle-noms", which no longer names the point. A silent truncation hands back a name nobody
+        // chose — exactly what giving the ref was meant to avoid. Refuse, state the limit, let the author decide.
+        $ref = trim($argv[5]);
+        if (strlen($ref) > 20 || $ref !== trim($ref, '-') || !preg_match('/^[a-z0-9-]+$/', $ref)) {
+            throw new RuntimeException("FAULT la ref « {$ref} » ne convient pas : vingt caractères au plus, minuscules, chiffres et tirets, et jamais un tiret au bord.");
+        }
+    }
+    if ($backlog->find($ref) !== null) {
+        throw new RuntimeException("FAULT la ref « {$ref} » est déjà prise — donnez-en une autre.");
+    }
     $backlog->save([
         'ref' => $ref,
         'code' => $code,
         'label' => $label,
         'description' => $description !== '' ? $description : $label,
-        'status' => 'todo',
+        'status' => Backlog::STATUS_TODO,
         'priority' => (int) $priority,
-        'waiting' => 'agent',
+        'waiting' => Backlog::WAITING_AGENT,
         'created' => today(),
         'updated' => today(),
     ]);
@@ -126,8 +143,21 @@ if ($command === 'set') {
     }
     // UN POINT QUI ATTEND UNE DÉCISION EST UNE QUESTION (opérateur, 2026-08-07), et l'outil le tient plutôt que la vigilance : deux décisions avaient été écrites sous un sujet et une proposition,
     // si bien que la série des questions paraissait vide alors que deux arbitrages attendaient — exactement ce que les codes existent pour rendre visible d'un coup d'œil.
-    if ($field === 'status' && $value === 'pending-decision' && !str_starts_with($point['ref'], 'Q')) {
-        throw new RuntimeException("FAULT « {$point['ref']} » ne peut pas passer « à trancher » : un point qui attend une décision de l'opérateur est une QUESTION, et sa référence commence par Q. "
+    // NO WAIT WITHOUT ITS SUBJECT NAMED (operator, 2026-08-08): a bare "blocked" does not say whether the point waits on an answer, on another point, or on an install. Two points sat blocked by
+    // nothing, and a question that did not exist was put to the operator. The fifth argument is what was missing, and it is mandatory.
+    if ($field === 'status' && in_array($value, Backlog::WAITING_STATUSES, true)) {
+        $waitsOn = $argv[5] ?? '';
+        if (trim($waitsOn) === '') {
+            throw new RuntimeException("FAULT « {$value} » exige de nommer l'attendu : php scripts/backlog.php set {$point['ref']} status {$value} \"ce qu'il attend\".");
+        }
+        $point['waits_on'] = trim($waitsOn);
+    }
+    if ($field === 'status' && !in_array($value, Backlog::WAITING_STATUSES, true)) {
+        unset($point['waits_on']);
+    }
+    // THE SERIES IS READ FROM THE CODE, NOT FROM THE REF (2026-08-08): refs have been slugs since the migration, so none starts with Q any more and this guard refused every question.
+    if ($field === 'status' && $value === Backlog::STATUS_PENDING_DECISION && !str_starts_with($point['code'] ?? '', Backlog::SERIES_QUESTION)) {
+        throw new RuntimeException("FAULT « {$point['ref']} » ne peut pas passer « à trancher » : un point qui attend une décision de l'opérateur est une QUESTION, et son code commence par Q. "
             . "Créez-le dans la série Q et classez celui-ci en renvoyant vers lui.");
     }
     $point[$field] = $field === 'priority' ? (int) $value : $value;
@@ -156,7 +186,7 @@ if ($command === 'close') {
     if (!$point) {
         throw new RuntimeException("FAULT le point « " . ($argv[2] ?? '') . " » n'existe pas.");
     }
-    $point['status'] = 'done';
+    $point['status'] = Backlog::STATUS_DONE;
     $point['updated'] = today();
     if (isset($argv[3])) {
         $point['description'] .= "\n\n**Fermé le " . today() . '** — ' . $argv[3];

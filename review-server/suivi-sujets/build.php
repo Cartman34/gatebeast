@@ -67,8 +67,11 @@ function card(array $point, int $rank = null): string
         . '    <div class="point-corps">%s</div>' . "\n"
         . '    <p class="point-pied">Créé le %s · repris le %s</p>' . "\n"
         . "  </article>\n",
-        escape($point['status']), escape($point['ref']), escape(Backlog::STATUS_LABELS[$point['status']] ?? $point['status']),
-        $point['priority'], escape($point['waiting'] === 'operator' ? 'opérateur' : 'agent'),
+        escape($point['status']),
+        escape($point['ref']),
+        // L'ATTENDU SE LIT AVEC LE STATUT : une carte « en attente » qui ne dit pas de quoi oblige à ouvrir la description pour savoir si elle réclame quelque chose de l'opérateur.
+        escape((Backlog::STATUS_LABELS[$point['status']] ?? $point['status']) . (isset($point['waits_on']) ? ' : ' . $point['waits_on'] : '')),
+        $point['priority'], escape($point['waiting'] === Backlog::WAITING_OPERATOR ? 'opérateur' : 'agent'),
         $rank !== null ? sprintf('<span class="point-rang">%s</span>', $rank === 1 ? 'le prochain' : (string) $rank) : '',
         escape($point['label']), markdown($point['description']),
         escape($point['created']), escape($point['updated'])
@@ -108,8 +111,9 @@ $page = <<<'HTML'
   .point-pied { margin: 8px 0 0; font-size: .72rem; color: var(--muted); }
   /* LE STATUT SE VOIT AVANT D'ÊTRE LU : une pile où tout se ressemble oblige à lire chaque carte pour savoir laquelle bouge. */
   .point[data-statut="in-progress"] { border-left: 3px solid var(--accent); }
-  .point[data-statut="pending-decision"] { border-left: 3px solid var(--reprendre-bord, #a4762c); }
-  .point[data-statut="blocked"] { border-left: 3px solid var(--ecarter-bord, #8a4e4e); }
+  .point[data-statut="pending-decision"] { border-left: 3px solid var(--state-rework-edge); }
+  .point[data-statut="pending-dependency"] { border-left: 3px solid var(--muted); }
+  .point[data-statut="waiting-external"] { border-left: 3px solid var(--state-dismissed-edge); }
   .point[data-statut="done"], .point[data-statut="dismissed"] { opacity: .55; }
   .clos { margin-top: 40px; }
   .clos summary { cursor: pointer; color: var(--muted); font-size: .9rem; }

@@ -25,12 +25,12 @@ $rules = [
     [
         'La zone de commentaire est repliée à l\'ouverture',
         'un champ toujours ouvert prend autant de hauteur que les trois actes réunis, sur chaque carte (opérateur, 2026-08-06 puis 2026-08-07)',
-        fn (string $html): bool => (bool) preg_match('/class="mot-zone" data-more="[^"]*" hidden/', $html),
+        fn (string $html): bool => (bool) preg_match('/class="comment-zone" data-more="[^"]*" hidden/', $html),
     ],
     [
         'Un bouton ouvre la zone de commentaire',
         'repliée sans bouton, elle serait inatteignable',
-        fn (string $html): bool => str_contains($html, 'class="mot-ouvrir"'),
+        fn (string $html): bool => str_contains($html, 'class="open-comment"'),
     ],
     [
         'Cocher « À reprendre » ou « Écarter » ouvre la zone',
@@ -40,8 +40,8 @@ $rules = [
     [
         'La croix de vidage est une croix, en haut à droite du champ',
         'demandée trois fois par l\'opérateur, perdue deux fois — un mot écrit dedans lui fait perdre sa place et sa forme',
-        fn (string $html): bool => str_contains($html, 'class="effacer-mot"')
-            && (bool) preg_match('/\.effacer-mot\s*\{[^}]*position:\s*absolute[^}]*top:[^}]*right:/s', $html),
+        fn (string $html): bool => str_contains($html, 'class="clear-comment"')
+            && (bool) preg_match('/\.clear-comment\s*\{[^}]*position:\s*absolute[^}]*top:[^}]*right:/s', $html),
     ],
     [
         'La comparaison n\'engage qu\'à partir de deux variants',
@@ -51,7 +51,22 @@ $rules = [
     [
         'Les actes gardent l\'échelle du constructeur d\'origine',
         'la version PHP avait pris la taille du texte courant, seize pixels, ce qui grossissait toute la carte d\'un tiers',
-        fn (string $html): bool => (bool) preg_match('/\.acte span, \.mot-ouvrir\s*\{[^}]*font-size:\s*10px/s', $html),
+        fn (string $html): bool => (bool) preg_match('/\.act span, \.open-comment\s*\{[^}]*font-size:\s*10px/s', $html),
+    ],
+    [
+        'Un verdict est un seul des trois',
+        'valider, à reprendre et écarter s\'excluent — une image acceptée et rejetée à la fois ne dit plus rien au relevé (opérateur, 2026-08-08)',
+        fn (string $html): bool => (bool) preg_match('/\.acts input\[data-id="\' \+ id \+ \'"\]/', $html),
+    ],
+    [
+        'Le rechargement automatique de page (RAP) rouvre les panneaux où l\'on était',
+        'le défilement était rendu, les panneaux non : une reconstruction pendant qu\'on juge renvoyait à la planche entière (opérateur, 2026-08-08)',
+        fn (string $html): bool => str_contains($html, 'gatebeast-sprites-panneaux') && str_contains($html, 'sessionStorage.getItem'),
+    ],
+    [
+        'Les images hors modèle se voient, elles ne sont pas seulement nommées',
+        'un nom de fichier ne dit pas si l\'image est un reste, une sonde ou une sprite dont l\'inscription s\'est perdue (opérateur, 2026-08-08)',
+        fn (string $html): bool => (bool) preg_match('/<figure class="orphan"><img/', $html),
     ],
     [
         'Les boutons du relevé portent l\'habillage du projet',

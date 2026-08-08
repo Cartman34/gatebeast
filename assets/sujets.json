@@ -5515,7 +5515,7 @@
                   "rows": 4
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             },
             {
               "type": "sprite",
@@ -5554,7 +5554,7 @@
                   "rows": 4
                 }
               },
-              "statut": "anterieure"
+              "statut": "courante"
             },
             {
               "type": "sprite",
@@ -5989,9 +5989,7 @@
   },
   "_hors_referentiel": {
     "_comment": "Sondes de capacité produites avant que la chaîne n'existe : ni code ni emprise ne leur est fabriqué, elles n'entrent pas au référentiel (rien ne se produit sans fiche). Leurs types existent bien ci-dessus. Elles restent sur le disque et visibles au suivi, hors référentiel, jusqu'à ce qu'un vrai sujet les remplace.",
-    "HU-000": "brouillon 'joueur' d'asset_common.py, absent de personnages.md",
-    "SOL-001": "absent de sols-et-chemins.md",
-    "SP-001-1": "SP-001 est à l'inventaire (creatures-temoins.md) mais sans emprise chiffrée — fiche incomplète, à compléter, pas à combler"
+    "SOL-001": "absent de sols-et-chemins.md"
   },
   "_libelles_variants": {
     "shape": {

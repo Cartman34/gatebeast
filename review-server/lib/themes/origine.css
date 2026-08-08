@@ -17,12 +17,16 @@
   --muted: #9aa494;
   --faint: #6e7869;
   --accent: #e5b255;
-  --valider: #1b5e3a;
-  --valider-bord: #6fd8a4;
-  --reprendre: #6b4a1c;
-  --reprendre-bord: #e5b255;
-  --ecarter: #8c1d18;
-  --ecarter-bord: #e8776b;
+  /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte.
+   * « À produire » et « à juger » n'en avaient pas : la première se dit en gris — rien n'est encore là à juger —, la seconde en clair, parce qu'elle réclame l'œil. */
+  --state-validated: #1b5e3a;
+  --state-validated-edge: #6fd8a4;
+  --state-rework: #6b4a1c;
+  --state-rework-edge: #e5b255;
+  --state-dismissed: #8c1d18;
+  --state-dismissed-edge: #e8776b;
+  --state-to-produce-edge: #6e7869;
+  --state-to-judge-edge: #cfd6c8;
   --damier-a: #23271f;
   --damier-b: #171a14;
 }

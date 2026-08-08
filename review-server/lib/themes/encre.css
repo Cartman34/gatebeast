@@ -12,12 +12,15 @@
   --line: #2b2e34;
   --muted: #8e9299;
   --accent: #d9a441;
-  --valider: #2f5c3a;
-  --valider-bord: #4e8a5e;
-  --reprendre: #6b4a1c;
-  --reprendre-bord: #a4762c;
-  --ecarter: #5c2f2f;
-  --ecarter-bord: #8a4e4e;
+  /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte. */
+  --state-validated: #2f5c3a;
+  --state-validated-edge: #4e8a5e;
+  --state-rework: #6b4a1c;
+  --state-rework-edge: #a4762c;
+  --state-dismissed: #5c2f2f;
+  --state-dismissed-edge: #8a4e4e;
+  --state-to-produce-edge: #6e7869;
+  --state-to-judge-edge: #cfd6c8;
   --damier-a: #202329;
   --damier-b: #1a1d22;
 }

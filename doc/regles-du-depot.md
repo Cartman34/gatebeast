@@ -75,7 +75,9 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **`doc/` — la documentation du projet.** `doc/conception/` décrit la **cible** et fait foi ; le reste de `doc/` décrira l'existant.
 - **`SUIVI.md` — où en est le travail** : état courant, points ouverts, défauts constatés, outils. À lire en premier pour reprendre. **`PLAN-ACTION.md` — le découpage en briques vers la 0.1.** Ni l'un
   ni l'autre n'est de la conception : ils décrivent le chemin, jamais la cible.
-- **`scripts/` — l'outillage de production**, **intégralement en anglais** : noms, contenu, commentaires.
+- **`scripts/` — l'outillage de production, INTÉGRALEMENT EN ANGLAIS AMÉRICAIN : noms, contenu, commentaires.** C'est figé et inchangeable (opérateur, 2026-08-08). **Un nom technique est anglais et le
+  reste même quand on en parle en français** — on dit « le `drawer` », jamais « le tiroir » ; le français ne sert qu'à l'expliquer. Cela vaut pour tout ce que la machine lit ou compare : fichiers,
+  fonctions, variables, classes, clés de données, noms de composants. **Seuls les textes destinés à l'opérateur restent en français** — messages affichés, libellés, descriptions.
 - **`assets/` — les images produites.** **Rien ne se jette** : une image écartée cesse d'être montrée, elle n'est pas supprimée.
 - **LA RACINE DE `local/` APPARTIENT À L'OPÉRATEUR, ET À LUI SEUL.** On n'y trouve que ses fichiers, et un agent **n'y touche jamais** — il ne les modifie pas, ne les déplace pas, ne les supprime pas
   et ne les lit pas. Tout ce qu'un agent produit descend dans un **sous-dossier** : `local/scripts/` pour ses scripts jetables, `local/extraits/` pour ses découpes d'images, et ainsi de suite. Une

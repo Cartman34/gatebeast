@@ -13,93 +13,93 @@
 set -u
 payload=$(cat)
 
-# LE DÉPILEMENT SE TIENT SUR LE « GO » DE L'OPÉRATEUR, PAS SUR LA PRÉSENCE DE CE DÉPÔT. Sans cette condition, toute session ouverte ici subissait le refus — une
-# session d'essai s'est retrouvée prise au piège le 2026-08-07, sommée de reprendre une tâche que personne ne lui avait confiée. C'est le hook du prompt qui arme
-# cet état sur le mot seul, et le désarme sur STOP.
+# THE DEQUEUE RESTS ON THE OPERATOR'S "GO", NOT ON THE PRESENCE OF THIS REPOSITORY. Without that condition, every session opened here took the refusal — a throwaway
+# test session got trapped on 2026-08-07, ordered to pick up a task nobody had given it. The prompt hook arms this state on the word alone, and disarms it on STOP.
 #
-# ET IL EXPIRE. Un GO donné le matin ne doit pas tenir le soir : la pile aura bougé, l'opérateur sera passé à autre chose, et l'agent serait renvoyé sur un travail
-# périmé. Passé ce délai, l'état est effacé et la fin de tour redevient libre — il faut alors un GO neuf, ce que la règle du dépôt demande déjà de toute façon.
+# AND IT EXPIRES. A GO given in the morning must not still hold at night: the pile will have moved, the operator will have gone on to something else, and the agent
+# would be pushed back onto stale work. Past that delay the state is erased and the end of turn is free again — a fresh GO is then needed, which the repository rule
+# asks for anyway.
 EXPIRY_SECONDS=$((3 * 3600))
-# SOUS var/, JAMAIS SOUS local/ : local appartient à l'agent et l'outillage n'y écrit rien.
-etat="$(dirname "$0")/../var/hooks/dequeue-armed"
+# UNDER var/, NEVER UNDER local/: local belongs to the agent and the tooling writes nothing there.
+state="$(dirname "$0")/../var/hooks/dequeue-armed"
 
-if [ ! -f "$etat" ]; then
+if [ ! -f "$state" ]; then
     exit 0
 fi
 
-arme=$(cat "$etat" 2>/dev/null || echo 0)
-if [ $(( $(date +%s) - arme )) -gt "$EXPIRY_SECONDS" ]; then
-    rm -f "$etat"
+armed=$(cat "$state" 2>/dev/null || echo 0)
+if [ $(( $(date +%s) - armed )) -gt "$EXPIRY_SECONDS" ]; then
+    rm -f "$state"
     echo "Le dépilement a expiré : le GO date de plus de trois heures. Il en faut un neuf pour repartir." >&2
     exit 0
 fi
 
-# Le garde-fou du garde-fou : au-delà de ce nombre de refus d'affilée, on laisse passer. Sans lui, une tâche qui ne peut réellement pas avancer enfermerait
-# l'agent dans une boucle sans fin, et c'est l'opérateur qui la paierait.
-COMPTEUR="$(dirname "$0")/../var/hooks/refusals"
-PLAFOND=5
+# The guard's own guard: past this many consecutive refusals, the turn is let through. Without it, a task that genuinely cannot move would lock the agent in an
+# endless loop, and the operator would be the one paying for it.
+COUNTER="$(dirname "$0")/../var/hooks/refusals"
+CEILING=5
 
 transcript=$(printf '%s' "$payload" | grep -o '"transcript_path"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*"\([^"]*\)"$/\1/')
 
-# L'APPLICATION DIT ELLE-MÊME QUAND ELLE A DÉJÀ ÉTÉ BLOQUÉE, et il faut l'écouter : elle plafonne les refus consécutifs et reprend la main au-delà. Sur l'épreuve,
-# un seul refus suffit à prouver que le mécanisme mord — s'entêter ne prouverait rien de plus et userait le plafond pour rien.
-deja_bloque=$(printf '%s' "$payload" | grep -o '"stop_hook_active"[[:space:]]*:[[:space:]]*true' || true)
+# THE APPLICATION SAYS ITSELF WHEN IT HAS ALREADY BEEN BLOCKED, and it must be listened to: it caps consecutive refusals and takes over past that. On the self-test,
+# one refusal is enough to prove the mechanism bites — insisting would prove nothing more and would burn the ceiling for nothing.
+already_blocked=$(printf '%s' "$payload" | grep -o '"stop_hook_active"[[:space:]]*:[[:space:]]*true' || true)
 
 # LE MOT D'ÉPREUVE : l'agent l'écrit quand il veut vérifier que le hook mord. C'est la seule condition qu'il déclenche lui-même, et elle ne coûte rien à laisser
 # en place — personne ne l'écrit par accident.
 #
-# ON NE LIT QUE LE DERNIER MESSAGE DE L'AGENT, ET C'EST TOUT L'ENJEU : lire la fin du fichier retrouvait le mot dans les tours PRÉCÉDENTS, si bien que la condition
-# ne pouvait plus jamais être satisfaite et que le refus se rejouait à l'infini. Constaté à la première épreuve, le 2026-08-07. Un hook qui interroge un historique
-# au lieu de l'état courant ne se relâche jamais.
-if [ -n "$transcript" ] && [ -f "$transcript" ] && [ -z "$deja_bloque" ]; then
-    dernier=$(python3 - "$transcript" <<'PY'
+# ONLY THE AGENT'S LAST MESSAGE IS READ, AND THAT IS THE WHOLE POINT: reading the end of the file found the word in PREVIOUS turns, so the condition could never be
+# satisfied again and the refusal replayed forever. Seen on the first self-test, 2026-08-07. A hook that questions a history instead of the current state never lets
+# go.
+if [ -n "$transcript" ] && [ -f "$transcript" ] && [ -z "$already_blocked" ]; then
+    last=$(python3 - "$transcript" <<'PY'
 import json, sys
 
-texte = ""
-with open(sys.argv[1], encoding="utf-8", errors="replace") as fichier:
-    for ligne in fichier:
+text = ""
+with open(sys.argv[1], encoding="utf-8", errors="replace") as handle:
+    for line in handle:
         try:
-            entree = json.loads(ligne)
+            entry = json.loads(line)
         except ValueError:
             continue
-        if entree.get("type") != "assistant":
+        if entry.get("type") != "assistant":
             continue
-        morceaux = entree.get("message", {}).get("content", [])
-        if isinstance(morceaux, str):
-            texte = morceaux
+        chunks = entry.get("message", {}).get("content", [])
+        if isinstance(chunks, str):
+            text = chunks
             continue
-        dits = [m.get("text", "") for m in morceaux if isinstance(m, dict) and m.get("type") == "text"]
-        if dits:
-            texte = "\n".join(dits)
-print(texte)
+        said = [chunk.get("text", "") for chunk in chunks if isinstance(chunk, dict) and chunk.get("type") == "text"]
+        if said:
+            text = "\n".join(said)
+print(text)
 PY
 )
-    if printf '%s' "$dernier" | grep -q 'EPREUVE-DU-HOOK'; then
+    if printf '%s' "$last" | grep -q 'EPREUVE-DU-HOOK'; then
         echo "ÉPREUVE DU HOOK : le mot déclencheur a été trouvé dans ta réponse, donc le refus fonctionne. Écris maintenant une phrase le confirmant, SANS ce mot, et le tour pourra se terminer." >&2
         exit 2
     fi
 fi
 
-restant=$(cd "$(dirname "$0")/.." && php scripts/backlog.php list 2>/dev/null | grep -c -E '^\S+ +\(\S+ *\) p[0-9]+ +(todo|in-progress)')
+remaining=$(cd "$(dirname "$0")/.." && php scripts/backlog.php list 2>/dev/null | grep -c -E '^\S+ +\(\S+ *\) p[0-9]+ +(todo|in-progress)')
 
-if [ "${restant:-0}" -eq 0 ]; then
-    rm -f "$COMPTEUR"
+if [ "${remaining:-0}" -eq 0 ]; then
+    rm -f "$COUNTER"
     exit 0
 fi
 
-refus=$(cat "$COMPTEUR" 2>/dev/null || echo 0)
-refus=$((refus + 1))
-mkdir -p "$(dirname "$COMPTEUR")"
-echo "$refus" > "$COMPTEUR"
+refusals=$(cat "$COUNTER" 2>/dev/null || echo 0)
+refusals=$((refusals + 1))
+mkdir -p "$(dirname "$COUNTER")"
+echo "$refusals" > "$COUNTER"
 
-if [ "$refus" -gt "$PLAFOND" ]; then
-    rm -f "$COMPTEUR"
-    echo "Le hook a refusé $PLAFOND fins de tour d'affilée et laisse passer celle-ci : $restant tâche(s) restent à faire ou en cours, et rien n'avance." >&2
+if [ "$refusals" -gt "$CEILING" ]; then
+    rm -f "$COUNTER"
+    echo "Le hook a refusé $CEILING fins de tour d'affilée et laisse passer celle-ci : $remaining tâche(s) restent à faire ou en cours, et rien n'avance." >&2
     exit 0
 fi
 
-premiere=$(cd "$(dirname "$0")/.." && php scripts/backlog.php next 2>/dev/null | head -1)
-echo "TU NE T'ARRÊTES PAS : $restant tâche(s) sont encore à faire ou en cours. Reprends la première sans rendre la main :" >&2
-echo "  $premiere" >&2
+first=$(cd "$(dirname "$0")/.." && php scripts/backlog.php next 2>/dev/null | head -1)
+echo "TU NE T'ARRÊTES PAS : $remaining tâche(s) sont encore à faire ou en cours. Reprends la première sans rendre la main :" >&2
+echo "  $first" >&2
 echo "Une tâche qui ne peut pas avancer sans l'opérateur se passe en « blocked » avec sa raison écrite, elle ne se laisse pas en « todo »." >&2
 exit 2

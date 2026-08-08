@@ -226,7 +226,12 @@ def export(path, force=False):
 
 
 def destination(path, out=None):
-    """Where the deliverable goes: assets/cutout/<same relative path>, the master left untouched."""
+    """Where the deliverable goes: assets/cutout/<same relative path>, the master left untouched.
+
+    THE ASSET THEME IS CARRIED BY THE MASTER'S OWN LOCATION, and that is why nothing here names it. The generator already writes its master under assets/poc/<theme subtree>/<type>/, so mirroring
+    the master's relative path puts the deliverable under assets/cutout/<theme subtree>/<type>/ on its own. Reading the theme here would be a second source for the same answer — and a second
+    source is a chance for the two to disagree. scripts/check-asset-theme.php is what keeps that promise honest.
+    """
     if out:
         return Path(out) / path.name
     try:

@@ -173,6 +173,8 @@ def main(arguments):
 
     sprite, measures = export_asset.export(source)
     target = export_asset.destination(source)
+    # THE THEME NEEDS NO BRANCHING HERE EITHER: both paths are read off the files themselves, so whatever subtree the theme put them under is what gets recorded. The referentiel therefore carries
+    # the theme without ever naming it, which is what lets a second theme exist without rewriting a single recorded path.
     # Relative to assets/, never to the repository: every path already in the referentiel is written
     # this way (check-sujets.py's own scan_cutout/claimed_paths compare on exactly this form), and a
     # path written the other way would silently read back as an unclaimed file.
