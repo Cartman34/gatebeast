@@ -66,6 +66,43 @@ transcript=$(printf '%s' "$payload" | grep -o '"transcript_path"[[:space:]]*:[[:
 # one refusal is enough to prove the mechanism bites — insisting would prove nothing more and would burn the ceiling for nothing.
 already_blocked=$(printf '%s' "$payload" | grep -o '"stop_hook_active"[[:space:]]*:[[:space:]]*true' || true)
 
+# A STOP SENT WHILE THE AGENT WORKS DISARMS TOO, AND THAT IS THE WHOLE POINT OF READING THE TRANSCRIPT HERE. UserPromptSubmit only fires on a message that starts
+# a turn: a message queued while the agent is running never reaches it, so the operator's STOP disarmed nothing and the guard kept refusing every end of turn —
+# he had to say it again, at a moment when the agent happened to be idle. This hook, on the other hand, runs at the END of the turn, and by then the message IS in
+# the transcript. So the last thing the operator said is read here, and STOP is honoured wherever it was sent.
+if [ -n "$transcript" ] && [ -f "$transcript" ]; then
+    dernier=$(python3 - "$transcript" <<'PY'
+import json, sys
+
+said = ""
+with open(sys.argv[1], encoding="utf-8", errors="replace") as handle:
+    for line in handle:
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        if entry.get("type") != "user":
+            continue
+        chunks = entry.get("message", {}).get("content", [])
+        if isinstance(chunks, str):
+            said = chunks
+            continue
+        # A tool result is also a "user" entry; only what the operator TYPED counts, which is the text blocks.
+        text = [chunk.get("text", "") for chunk in chunks if isinstance(chunk, dict) and chunk.get("type") == "text"]
+        if text:
+            said = "\n".join(text)
+print(said.strip())
+PY
+)
+    mot=$(printf '%s' "$dernier" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
+    if [ "$mot" = "STOP" ]; then
+        rm -f "$state"
+        say "LAISSE PASSER — STOP lu dans le transcrit, le dépilement est désarmé"
+        echo "Dépilement désarmé : ton STOP a été lu dans le transcrit, même envoyé pendant que je travaillais." >&2
+        exit 0
+    fi
+fi
+
 # LE MOT D'ÉPREUVE : l'agent l'écrit quand il veut vérifier que le hook mord. C'est la seule condition qu'il déclenche lui-même, et elle ne coûte rien à laisser
 # en place — personne ne l'écrit par accident.
 #

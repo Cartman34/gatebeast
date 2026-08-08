@@ -1475,7 +1475,47 @@
           "orientation": "south",
           "action": "idle",
           "shape": "w",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-w.png",
+              "master": "poc/sol/CH-020_shape-w.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 34,
+                  "right": 61,
+                  "bottom": 62,
+                  "width": 62,
+                  "height": 29
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 52,
+                  "width": 53
+                },
+                "anchor_px": {
+                  "x": 26.0,
+                  "y": 63.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
           "ref": "orientation-south_action-idle_shape-w_frame-01",
           "label": "Extrémité ouest"
         },
