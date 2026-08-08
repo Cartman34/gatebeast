@@ -4,6 +4,26 @@
 
 Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : seul l'état courant compte (le versionnage garde le reste).
 
+## FIN DE SÉANCE DU 2026-08-08 — CE QU'IL FAUT SAVOIR POUR REPRENDRE, ET RIEN D'AUTRE
+
+**LE DÉPÔT EST PROPRE ET RIEN N'EST EN COURS** : tout est commité, aucun point n'est `in-progress`, aucun fichier ne traîne. **Rien n'est poussé** — l'ordre n'a pas été donné, c'est la première chose
+à proposer.
+
+**OUVRE LA SESSION DEPUIS `~/projects/gatebeast`, PAS DEPUIS `~/projects`.** Les hooks du projet sont déclarés à la racine du dépôt : ouverte depuis le dossier parent, la session ne les charge pas, le
+`GO` n'arme rien, la fin de tour n'est jamais refusée. C'est ce qui s'est passé toute la journée du 2026-08-08 sans que personne le voie — le dépilement n'a tenu que sur la discipline de l'agent.
+
+**LE PREMIER POINT À PRENDRE EST CELUI DES CALQUES**, et il est plus large qu'il n'en a l'air. La conception arrête cinq familles de calques et le référentiel les déclare par type, mais **le monteur
+ne les lit pas** : il porte sa propre liste de types de sol écrite en dur, donc deux familles au lieu de cinq. L'herbe, déclarée dans le monde, est traitée comme du sol ; le cours d'eau, déclaré décor
+au sol, est trié parmi les volumes. **Et le plan ne retient qu'un sujet par case** : un second sujet sur la même case écrase le premier en silence, alors qu'une case doit porter un sprite par famille.
+Tout est écrit dans le point, avec les quatre étapes de correction.
+
+**TROIS QUESTIONS ATTENDENT L'OPÉRATEUR, et elles sont dans la pile sous la série `Q`** : le contrôle d'axonométrie sur les bâtiments, l'ordre de tir des formes de tracé qui manquent, et la
+convergence des deux outils de revue de la page Campagne. Les deux premières sont prêtes à partir dès qu'il tranche.
+
+**CE QUE LA JOURNÉE A CHANGÉ ET QUI NE SE DÉDUIT D'AUCUN FICHIER** : le vocabulaire du code repasse en anglais américain, noms de composants compris — un nom technique reste anglais même en parlant
+français, et il s'inscrit au glossaire ; les couleurs d'état sont des variables de thème ; les statuts de la pile sont des constantes préfixées ; un point engagé passe devant, quelle que soit sa
+priorité ; un gros point se découpe en plusieurs petits ; le commit se fait en fin de séance, et à la reprise s'il a été manqué.
+
 ### Le chemin est-ouest refait — les deux défauts sont corrigés, 2026-08-07
 
 **Sa largeur est réparée** : la pièce couvrait **25 %** de sa case quand sa description en demande les deux tiers, alors que sa pièce nord-sud en couvre 67 %. La neuve en couvre **65 %** — un chemin

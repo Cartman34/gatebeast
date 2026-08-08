@@ -169,18 +169,28 @@ plus avoir à supposer, puisque la règle avait été enfreinte quatre fois en u
   </article>
   <article class="point" data-statut="todo">
     <p class="point-tete"><span class="point-ref">pose-par-calque</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
-    <h2>Un personnage se pose sur n&#039;importe quelle case : c&#039;est le calque qui empile, pas la case</h2>
-    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « tout personnage (humain ou créature) peut aller sur une case sans que ce soit un souci, c&#039;est le système de layer qui gère ça ».</p>
-<p><strong>CE QUE ÇA CORRIGE</strong> : le script qui a posé l&#039;humain et le renardeau sur la Maquette Campagne <strong>refuse d&#039;écrire sur une case déjà prise</strong>, quel que soit le sujet. Cette prudence est juste pour un<br />
-arbre ou une clôture — deux volumes sur une case, le monteur ne sait pas les démêler — et <strong>fausse pour un personnage</strong> : un humain se tient sur l&#039;herbe, devant une clôture, sur un chemin, et c&#039;est<br />
-précisément ce que les calques servent à empiler. Les deux cases évidentes au bord du chemin ont donc été écartées pour rien, et les deux sujets sont posés une case plus loin qu&#039;ils ne devraient.</p>
-<p><strong>CE QU&#039;IL FAUT FAIRE :</strong></p>
-<p>1. <strong>La règle d&#039;exclusion devient une règle de calque</strong> : deux sujets du même calque ne partagent pas une case ; un personnage, qui vit au-dessus, se pose où il veut. Le contrôle porte alors sur le<br />
-   calque, plus sur la case.<br />
-2. <strong>Reposer l&#039;humain et le renardeau au bord du chemin</strong>, là où ils devaient être — la case libre la plus proche n&#039;était pas le bon critère, la bonne place l&#039;est.<br />
-3. <strong>Vérifier que le monteur les dessine bien par-dessus</strong>, et dans le bon ordre : le sol, puis le décor au sol, puis le monde, puis ce qui se tient dessus. Un personnage caché derrière une touffe<br />
-   d&#039;herbe haute serait le même défaut vu de l&#039;autre côté.</p>
-<p><strong>Le vocabulaire existe déjà</strong> : le glossaire nomme les cinq calques — sol, décor au sol, monde, dessus, interface. Ce point ne les redéfinit pas, il les fait respecter par l&#039;outillage de pose.</p>
+    <h2>Le monteur et le plan ignorent les calques déclarés : une case doit porter plusieurs sprites</h2>
+    <div class="point-corps"><p><strong>RÈGLE RAPPELÉE PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « tout personnage peut aller sur une case sans que ce soit un souci, c&#039;est le système de layer qui gère ça » ; puis « il y a différentes couches de<br />
+calque, c&#039;est déjà défini. Une case doit pouvoir avoir plein de sprites dessus, normalement ça a été conçu ».</p>
+<p><strong>IL A RAISON SUR TOUTE LA LIGNE : C&#039;EST CONÇU, C&#039;EST DÉCLARÉ, ET C&#039;EST MAL APPLIQUÉ.</strong> La conception arrête cinq familles de calques dans cet ordre — le sol, le décor au sol, le monde, le dessus,<br />
+l&#039;interface — avec un tri par profondeur à l&#039;intérieur du monde. Le référentiel les applique : <strong>chaque type déclare son calque</strong>, et onze types le portent.</p>
+<p><strong>PREMIER DÉFAUT — LE MONTEUR IGNORE LE CALQUE DÉCLARÉ ET LE REDEVINE.</strong> Il ne lit pas <code>layer</code> : il porte sa propre liste de « types de sol » écrite en dur dans le code, et range tout le reste dans un<br />
+second tas. Deux familles au lieu de cinq, et une seconde vérité à côté de celle du référentiel. <strong>Deux types sont déjà rangés à l&#039;envers, et ça se voit sur la maquette :</strong></p>
+<ul>
+<li><strong>L&#039;herbe déclare le calque <code>monde</code></strong> — elle se dresse, elle doit se trier par profondeur avec les arbres et les personnages. Le monteur la range dans le sol : elle ne passera jamais devant quoi<br />
+  que ce soit, et un personnage posé derrière une touffe d&#039;herbe haute lui passera devant au lieu d&#039;être caché.</li>
+<li><strong>Le cours d&#039;eau déclare le calque <code>decor-au-sol</code></strong> — on marche dessus, il est plat. Le monteur le range dans les volumes et le trie par profondeur avec les bâtiments.</li>
+</ul>
+<p><strong>SECOND DÉFAUT — UNE CASE NE PORTE QU&#039;UN SUJET DANS LE PLAN.</strong> Le constructeur du plan de composition range les sujets dans une table indexée par la case : <strong>un second sujet sur la même case écrase<br />
+le premier, en silence</strong>. C&#039;est exactement ce que la conception interdit — une case porte un sprite par famille de calque, plus les niveaux d&#039;élévation.</p>
+<p><strong>TROISIÈME DÉFAUT, LE MIEN, ET IL DÉCOULE DES DEUX AUTRES</strong> : le script qui a posé l&#039;humain et le renardeau refuse toute case déjà prise. J&#039;ai pris cette limite pour une règle du monde alors qu&#039;elle<br />
+n&#039;était que le reflet d&#039;un outillage incomplet, et les deux sujets sont posés une case plus loin qu&#039;ils ne devraient — les deux cases au bord du chemin ont été écartées pour rien.</p>
+<p><strong>CE QU&#039;IL FAUT FAIRE, DANS CET ORDRE :</strong></p>
+<p>1. <strong>Le monteur lit le calque déclaré</strong> et empile les cinq familles dans leur ordre, avec le tri par profondeur à l&#039;intérieur du monde. La liste de types écrite en dur disparaît : le référentiel est<br />
+   la source unique, la conception le dit déjà.<br />
+2. <strong>Le plan accepte plusieurs sujets sur une case</strong>, un par famille de calque, et le contrôle porte sur le calque : deux sujets du même calque sur la même case restent une faute, les autres non.<br />
+3. <strong>Reposer l&#039;humain et le renardeau au bord du chemin</strong>, là où ils devaient être.<br />
+4. <strong>Vérifier au tir d&#039;écran</strong> qu&#039;un personnage passe bien derrière ce qui doit le cacher et devant ce qui doit être caché.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
