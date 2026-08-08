@@ -35,7 +35,7 @@ $rules = [
     [
         'Cocher « À reprendre » ou « Écarter » ouvre la zone',
         'un refus sans motif fait repartir la reprise à l\'aveugle — trois tentatives perdues sur le sapin',
-        fn (string $html): bool => (bool) preg_match("/acte === 'reprendre' \|\| acte === 'ecarter'/", $html),
+        fn (string $html): bool => (bool) preg_match("/acte === 'rework' \|\| acte === 'discarded'/", $html),
     ],
     [
         'La croix de vidage est une croix, en haut à droite du champ',
@@ -73,6 +73,57 @@ $rules = [
         'sans règle à eux, ils tombent sur le bouton par défaut du navigateur — deux pavés gris sur une page sombre',
         fn (string $html): bool => (bool) preg_match('/\.releve-copier, \.releve-deplier, \.releve-fixe\s*\{/', $html),
     ],
+    [
+        'Un bouton quitte la comparaison depuis l\'intérieur',
+        'sans lui, on en sort en décochant chaque variant un par un, ou en fermant le panneau — donc en perdant le sujet qu\'on juge (opérateur, 2026-08-07)',
+        fn (string $html): bool => str_contains($html, 'class="quit-comparison"'),
+    ],
+    [
+        'Ce bouton n\'apparaît que pendant la comparaison, et par la classe de la liste',
+        'un affichage recalculé en JavaScript à côté de la classe se désynchronise ; ici la classe « comparison » est la seule source',
+        fn (string $html): bool => (bool) preg_match('/\.variants\.comparison \.quit-comparison\s*\{/', $html),
+    ],
+    [
+        'Le marquage des variants supporte un variant sans case à cocher',
+        'un variant à produire n\'a pas de case : lire « .checked » sans vérifier levait, et la ligne suivante — celle qui engage la comparaison — n\'était jamais atteinte (2026-08-08)',
+        fn (string $html): bool => (bool) preg_match('/var pick = variant\.querySelector\(\x27\.compare\x27\);/', $html),
+    ],
+    [
+        'La fermeture retombe sur le panneau visible quand la pile est vide',
+        'la pile vit en mémoire : vidée alors qu\'un panneau est à l\'écran, le bouton de fermeture ne fait plus rien et la page reste bloquée',
+        fn (string $html): bool => str_contains($html, "document.querySelector('.fsp:not([hidden])')"),
+    ],
+];
+
+// LA PAGE CAMPAGNE PORTE DEUX FOIS LE MÊME OUTIL DE REMARQUES — une copie pour le plan de composition, une pour la maquette montée, la seconde préfixée « mq- ».
+// Les faire converger est un remaniement à risque sur une page relue tous les jours, et le premier pas est de FIGER CE QUI DOIT SURVIVRE : sans ce filet, la
+// convergence se contrôle à l'œil, et deux comportements repartent — c'est déjà arrivé deux fois sur la page des sprites.
+//
+// Chaque règle est vérifiée SUR LES DEUX OUTILS, sauf celles qui portent sur le classement des traitées : le plan seul le sait faire aujourd'hui, et la maquette
+// doit l'hériter de la convergence. Une règle qui l'exigerait déjà des deux échouerait avant qu'on ait commencé.
+$campaign = $root . '/review-server/maquette-campagne/page.html';
+if (!is_file($campaign)) {
+    fwrite(STDERR, "FAULT la page Campagne n'est pas construite — php review-server/build.php /maquette-campagne\n");
+    exit(1);
+}
+$campaignHtml = file_get_contents($campaign);
+
+/** Un comportement attendu des DEUX outils : la même classe, une fois nue pour le plan, une fois préfixée pour la maquette. */
+$onBoth = fn (string $name): callable => fn (string $html): bool =>
+    str_contains($html, 'class="' . $name . '"') && str_contains($html, 'class="mq-' . $name . '"');
+
+$campaignRules = [
+    ['Le survol annonce la case sous le curseur', 'sans lui, on pose une remarque sur une case qu\'on croit désigner', $onBoth('code')],
+    ['Un clic ouvre la saisie', 'c\'est le seul geste qui attache une remarque à une case', $onBoth('poser')],
+    ['La saisie s\'annule', 'un clic malheureux ne doit pas obliger à écrire pour s\'en sortir', $onBoth('annuler')],
+    ['Les remarques posées se listent', 'une remarque qu\'on ne relit pas est une remarque perdue', $onBoth('remarques')],
+    ['Le récapitulatif se copie', 'c\'est ainsi que l\'opérateur me les transmet', $onBoth('copier')],
+    ['Les remarques s\'effacent', 'sans retrait, la liste ne se vide jamais et cesse d\'être lue', $onBoth('effacer')],
+    [
+        'Le plan classe une remarque traitée et sait la rouvrir',
+        'une remarque dont je me suis occupé qui revient à chaque lecture a coûté cinq redites le 2026-08-06 ; la maquette doit en hériter, elle ne l\'a pas encore',
+        fn (string $html): bool => str_contains($html, 'class="rouvrir"') && str_contains($html, 'dataset.resolus'),
+    ],
 ];
 
 $lost = [];
@@ -81,10 +132,15 @@ foreach ($rules as [$what, $why, $holds]) {
         $lost[] = "  PERDU : {$what}\n          {$why}";
     }
 }
+foreach ($campaignRules as [$what, $why, $holds]) {
+    if (!$holds($campaignHtml)) {
+        $lost[] = "  PERDU (page Campagne) : {$what}\n          {$why}";
+    }
+}
 
 if ($lost) {
-    fwrite(STDERR, count($lost) . " comportement(s) perdu(s) sur la page des sprites :\n" . implode("\n", $lost) . "\n");
+    fwrite(STDERR, count($lost) . " comportement(s) perdu(s) sur les pages de revue :\n" . implode("\n", $lost) . "\n");
     exit(1);
 }
 
-printf("La page des sprites tient ses %d comportements.\n", count($rules));
+printf("La page des sprites tient ses %d comportements, la page Campagne ses %d.\n", count($rules), count($campaignRules));

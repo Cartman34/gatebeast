@@ -6,7 +6,7 @@ The design forbids keeping the referentiel by hand ("Le catalogue s'écrit à l'
 main"), because a hand-kept file and the disk diverge within a week. This is the only writer.
 
 It resizes the master to delivery definition (export-asset.py), writes the sprite under
-assets/cutout/, and records it in assets/sujets.json: the sujet (created together with its first
+assets/cutout/, and records it in assets/subjects.json: the sujet (created together with its first
 variant if the code is new), the variant it belongs to, and the representation itself — livrable path,
 master path, image number, and the measures the export took.
 
@@ -36,7 +36,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-# export-asset.py and check-sujets.py are hyphenated, so they are loaded by path rather than imported
+# export-asset.py and check-subjects.py are hyphenated, so they are loaded by path rather than imported
 # by name. The deliverable is the master resized: this tool records that one, never a second copy of
 # its own making.
 EXPORT = Path(__file__).resolve().parent / "export-asset.py"
@@ -44,31 +44,31 @@ spec = importlib.util.spec_from_file_location("export_asset", EXPORT)
 export_asset = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(export_asset)
 
-CHECK_SUJETS = Path(__file__).resolve().parent / "check-sujets.py"
-spec = importlib.util.spec_from_file_location("check_sujets", CHECK_SUJETS)
-check_sujets = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(check_sujets)
+CHECK_SUBJECTS = Path(__file__).resolve().parent / "check-subjects.py"
+spec = importlib.util.spec_from_file_location("check_subjects", CHECK_SUBJECTS)
+check_subjects = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(check_subjects)
 
-SUJETS = check_sujets.SUJETS  # assets/sujets.json — one path, held by the checker, not recopied here
+SUBJECTS = check_subjects.SUBJECTS  # assets/subjects.json — one path, held by the checker, not recopied here
 
 def parse_footprint(text):
     columns, _, rows = text.partition("x")
 
     # Whole tiles, never fractional — and the referentiel's own checker requires an int
-    # (check-sujets.py, check_schema): a float footprint would write a sujet its own gate refuses.
+    # (check-subjects.py, check_schema): a float footprint would write a sujet its own gate refuses.
     return {"columns": int(columns), "rows": int(rows or columns)}
 
 
 MAIN_VIEW_REF = "orientation-south_action-idle_frame-01"
 
 
-def matching_variant(sujet, ref):
+def matching_variant(subject, ref):
     """The variant of `sujet` that goes by this ref.
 
     A variant is designated by its ref and by nothing else — the ref is its identifier, written in the referentiel, never recomputed (sujets-et-variantes.md).
     This used to compare the fields one by one, absence included, which is a second way of saying the same thing and a second way of getting it wrong.
     """
-    for variant in sujet["variants"]:
+    for variant in subject["variants"]:
         if variant.get("ref") == ref:
             return variant
 
@@ -78,7 +78,7 @@ def matching_variant(sujet, ref):
 def record(data, code, type_name, ref, name=None, footprint=None, height=None):
     """Find the sujet and the variant this ref designates, and return the variant ready to receive a new
     representation. A sujet and its first variant are created TOGETHER: the referentiel refuses a
-    sujet without at least one variant (check-sujets.py), so there is never a moment where the file
+    sujet without at least one variant (check-subjects.py), so there is never a moment where the file
     would hold one without the other.
 
     A variant is never invented here: its ref is written in the referentiel by whoever declares it, so
@@ -89,27 +89,27 @@ def record(data, code, type_name, ref, name=None, footprint=None, height=None):
         raise SystemExit(f"FAULT type inconnu : {type_name!r} — attendu parmi {sorted(types)} "
                          f"(le référentiel, plus l'ancienne liste du catalogue gelé)")
 
-    sujet = data["sujets"].get(code)
-    if sujet is None:
-        sujet = {
-            "profil": name, "type": type_name,
-            "emprise": footprint or {"columns": 1, "rows": 1},
-            "hauteur": height,
+    subject = data["subjects"].get(code)
+    if subject is None:
+        subject = {
+            "profile": name, "type": type_name,
+            "footprint": footprint or {"columns": 1, "rows": 1},
+            "height": height,
             "variants": [{"ref": ref, "orientation": "south", "action": "idle", "shape": "plain",
-                           "principale": True, "representations": []}],
+                           "main": True, "representations": []}],
         }
-        data["sujets"][code] = sujet
+        data["subjects"][code] = subject
     else:
         if footprint is not None:
-            sujet["emprise"] = footprint
+            subject["footprint"] = footprint
         if height is not None:
-            sujet["hauteur"] = height
+            subject["height"] = height
         if name is not None:
-            sujet["profil"] = name
+            subject["profile"] = name
 
-    variant = matching_variant(sujet, ref)
+    variant = matching_variant(subject, ref)
     if variant is None:
-        known = [entry.get("ref") for entry in sujet["variants"]]
+        known = [entry.get("ref") for entry in subject["variants"]]
         raise SystemExit(f"FAULT {code} n'a aucune variante de ref {ref!r} — une variante se déclare au référentiel avant d'être produite. Déclarées : {known}")
 
     return variant
@@ -126,8 +126,8 @@ def add_representation(variant, representation):
     """
     representations = variant.setdefault("representations", [])
     for previous in representations:
-        if previous.get("statut") == "courante":
-            previous["statut"] = "anterieure"
+        if previous.get("status") == "current":
+            previous["status"] = "previous"
     representations.insert(0, representation)
 
 
@@ -163,8 +163,8 @@ def main(arguments):
     height = float(options["height"]) if "height" in options else None
 
     try:
-        data = check_sujets.load()
-    except check_sujets.Fault as fault:
+        data = check_subjects.load()
+    except check_subjects.Fault as fault:
         print(f"FAULT {fault}")
         return 1
     # The variant is named by its ref, the identifier the referentiel holds for it. Left out, it is the main view's — the ref every sujet's first variant has.
@@ -176,7 +176,7 @@ def main(arguments):
     # THE THEME NEEDS NO BRANCHING HERE EITHER: both paths are read off the files themselves, so whatever subtree the theme put them under is what gets recorded. The referentiel therefore carries
     # the theme without ever naming it, which is what lets a second theme exist without rewriting a single recorded path.
     # Relative to assets/, never to the repository: every path already in the referentiel is written
-    # this way (check-sujets.py's own scan_cutout/claimed_paths compare on exactly this form), and a
+    # this way (check-subjects.py's own scan_cutout/claimed_paths compare on exactly this form), and a
     # path written the other way would silently read back as an unclaimed file.
     relative_target = str(target.resolve().relative_to(export_asset.ASSETS))
     relative_source = str(source.resolve().relative_to(export_asset.ASSETS))
@@ -185,14 +185,14 @@ def main(arguments):
             ("delivered_px", "silhouette_px", "contact_px", "anchor_px", "master_size_px",
              "kind", "footprint") if key in measures}
     representation = {
-        "type": "sprite", "path": relative_target, "maitre": relative_source,
-        "numero_image": frame, "mesures": kept, "statut": "courante",
+        "type": "sprite", "path": relative_target, "master": relative_source,
+        "image_number": frame, "measures": kept, "status": "current",
     }
     add_representation(variant, representation)
 
     try:
-        check_sujets.check_schema(data)
-    except check_sujets.Fault as fault:
+        check_subjects.check_schema(data)
+    except check_subjects.Fault as fault:
         print(f"FAULT le référentiel ne validerait plus après cet ajout : {fault}")
         return 1
 
@@ -208,8 +208,8 @@ def main(arguments):
 
     target.parent.mkdir(parents=True, exist_ok=True)
     sprite.save(target)
-    SUJETS.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"  référentiel {SUJETS}")
+    SUBJECTS.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"  référentiel {SUBJECTS}")
 
     return 0
 

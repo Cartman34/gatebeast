@@ -19,7 +19,7 @@ WHY CROPPING WAS DROPPED
   papered over.
 
 WHERE THE FOOTPRINT AND THE DELIVERY DEFINITION COME FROM
-  The footprint and the type are asked of assets/sujets.json — the referentiel of sujets, by the
+  The footprint and the type are asked of assets/subjects.json — the referentiel of sujets, by the
   inventory code the master's own file name starts with — never guessed here, never retyped. A code
   the referentiel does not carry is a briefing fault in itself: rien ne se produit sans fiche, so this
   tool refuses rather than fall back on assets/catalogue.json, which is FROZEN and never read here.
@@ -72,7 +72,7 @@ import tile_scale
 REPOSITORY = Path(__file__).resolve().parents[1]
 ASSETS = REPOSITORY / "assets"
 CUTOUT = ASSETS / "cutout"
-SUJETS = ASSETS / "sujets.json"
+SUBJECTS = ASSETS / "subjects.json"
 
 CONTACT_BAND = 0.03  # share of the silhouette height taken as the ground-contact band, unchanged rule
 
@@ -101,17 +101,17 @@ def profile_of(code):
     A code the referentiel does not carry is refused: rien ne se produit sans fiche, and fabricating a
     footprint here would be exactly the kind of invention the referentiel exists to rule out.
     """
-    data = json.loads(SUJETS.read_text(encoding="utf-8"))
-    sujet = data.get("sujets", {}).get(code)
-    if sujet is None:
-        raise ValueError(f"FAULT {code}: absent de assets/sujets.json — rien ne s'exporte sans fiche")
+    data = json.loads(SUBJECTS.read_text(encoding="utf-8"))
+    subject = data.get("subjects", {}).get(code)
+    if subject is None:
+        raise ValueError(f"FAULT {code}: absent de assets/subjects.json — rien ne s'exporte sans fiche")
     # LE COUVERT D'ABORD, L'EMPRISE À DÉFAUT — la même lecture que la génération, et c'est tout l'objet de cette ligne. L'image est demandée à la largeur de ce que le volume
     # SURPLOMBE ; la mesurer contre ce qui touche le SOL refusait toute image juste d'un sujet dont la couronne déborde de son pied. Constaté sur le sapin puis sur le
     # pommier : deux générations correctes jetées parce que les deux bouts de la chaîne ne lisaient pas la même étendue.
-    spread = sujet.get("couvert") or sujet["emprise"]
+    spread = subject.get("cover") or subject["footprint"]
     footprint = int(spread["columns"]), int(spread["rows"])
 
-    return sujet["type"], footprint, sujet.get("hauteur")
+    return subject["type"], footprint, subject.get("height")
 
 
 def briefing_fault(kind, footprint, master_size, declared_height=None):
@@ -218,7 +218,7 @@ def export(path, force=False):
     measures["master_size_px"] = {"width": source.size[0], "height": source.size[1]}
     measures["kind"] = kind
     measures["footprint"] = {"columns": footprint[0], "rows": footprint[1]}
-    measures["hauteur"] = {"tenue": kept, "constat": sentence}
+    measures["height"] = {"tenue": kept, "constat": sentence}
     if fault:
         measures["briefing_fault_overridden"] = fault
 

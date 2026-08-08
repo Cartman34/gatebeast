@@ -18,10 +18,12 @@ the chain already carries. What it costs is written above: it reads the outline,
 Python rather than PHP for the usual reason: image measurement lives here, and this asks the same two libraries every other measuring tool asks.
 """
 
+import json
 import sys
 from pathlib import Path
 
 import numpy
+import scipy.ndimage
 from PIL import Image
 
 # Ce qu'on appelle le corps du sujet : la tranche de hauteur où l'on mesure ses côtés. On écarte le haut, où une couronne ou un toit débordent et donnent une
@@ -39,6 +41,24 @@ MAXIMUM_ROUGHNESS = 3.0
 # L'écart de pente entre les deux côtés au-delà duquel on parle de convergence. Un dessin à la main n'est jamais au degré près : l'épreuve de projection du
 # 2026-08-06 a montré des copies tenant à un ou deux degrés. Au-delà de cinq, ce n'est plus de l'imprécision, c'est un point de fuite.
 CONVERGENCE_DEGREES = 5.0
+
+# READING THE INNER EDGES, AND ONLY ON WHAT IS BUILT (operator, 2026-08-08: "au moins sur les bâtiments ?"). The silhouette says nothing on a subject whose sides
+# are hidden by its own crown or dentelled by foliage — which is most of them, and the reason this check answered "aucun verdict" on every building it was given.
+# A BUILT subject is the favourable case and the only one worth this: the corner of a wall, a door jamb, the edge of a gable are long, straight, frank segments,
+# and they are exactly what carries the projection. A tree has none and never will.
+#
+# scipy rather than a new library: its gradients are already installed, next to numpy and Pillow. scikit-image would have brought a Hough transform and was asked
+# for; it turned out not to be needed, so it was not introduced (règles du dépôt: an unvalidated tool is asked for, never tried).
+GRADIENT_PERCENTILE = 92          # what counts as an edge pixel: the strongest 8 % of the opaque zone
+NEAR_VERTICAL_DEGREES = 25.0      # beyond this, an edge is a roof slope or a ground line, not an upright
+MINIMUM_EDGE_PIXELS = 200         # below this on either side, the subject has no upright structure to read
+
+# THE WALLS, AND NOT THE ROOF — this band is the whole difference between a measure and a false alarm. Read over the body at large, the farmhouse came back at
+# 19.6° of taper and would have been declared faulty; the same drawing read over its lower band comes back at 2.4°. What made the difference was the ROOF: seen
+# at an angle, its tile seams are countless short edges, tilted by the plane they lie on and not by any perspective, and within the near-vertical window. They
+# swamp the walls, which are the only edges that carry the projection. A wall is at the bottom of a building, so that is where this looks.
+WALLS_TOP = 0.70
+WALLS_BOTTOM = 0.94
 
 
 def sides(alpha):
@@ -75,8 +95,70 @@ def lean(ys, xs):
     return float(numpy.degrees(numpy.arctan(slope))), float(numpy.std(residual))
 
 
+def is_built(path):
+    """Whether this file draws a BUILT subject, read from the referential by the code in its name — never guessed from the letters."""
+    stem = Path(path).stem
+    code = stem.split("_")[0].rsplit("-v", 1)[0]
+    try:
+        data = json.loads((Path(__file__).resolve().parent.parent / "assets" / "subjects.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    subject = (data.get("subjects") or {}).get(code)
+
+    return bool(subject) and subject.get("type") == "batiment"
+
+
+def inner_lean(path):
+    """(left, right, count) — the median tilt of the near-vertical inner edges on each half of the subject, in degrees from the vertical.
+
+    Under a parallel projection every upright edge is vertical wherever it stands, so both halves read around zero and their difference is nil. Under a
+    perspective one the uprights fan towards a vanishing point: those left of centre lean one way, those right of centre the other, and the DIFFERENCE between
+    the two halves is the taper — the same quantity the silhouette measures, read where the subject actually has edges.
+    """
+    image = Image.open(path)
+    opaque = numpy.asarray(image.convert("RGBA"))[:, :, 3] > 128
+    grey = numpy.asarray(image.convert("L"), dtype=float)
+    gx = scipy.ndimage.sobel(grey, axis=1)
+    gy = scipy.ndimage.sobel(grey, axis=0)
+    strength = numpy.hypot(gx, gy)
+
+    band = numpy.zeros_like(opaque)
+    band[int(opaque.shape[0] * WALLS_TOP):int(opaque.shape[0] * WALLS_BOTTOM)] = True
+    useful = opaque & band
+    if not useful.any():
+        return None
+    strong = useful & (strength > numpy.percentile(strength[useful], GRADIENT_PERCENTILE))
+    # The gradient points ACROSS an edge; turning it a quarter gives the edge's own direction, measured from the vertical.
+    angle = numpy.degrees(numpy.arctan2(gx, -gy))
+    columns = numpy.arange(opaque.shape[1])[None, :].repeat(opaque.shape[0], 0)
+    middle = columns[useful].mean()
+
+    read = []
+    for half in (columns < middle, columns >= middle):
+        tilts = angle[strong & half]
+        tilts = tilts[numpy.abs(tilts) < NEAR_VERTICAL_DEGREES]
+        if len(tilts) < MINIMUM_EDGE_PIXELS:
+            return None
+        read.append((float(numpy.median(tilts)), len(tilts)))
+
+    return read[0][0], read[1][0], read[0][1] + read[1][1]
+
+
 def verdict(path):
     """(kept, sentence) — kept says whether the criterion holds; an undecidable subject is never a failure."""
+    # THE INNER EDGES FIRST, ON A BUILT SUBJECT: they decide where the silhouette cannot. The outline of a building is dentelled by its own roof and its planters,
+    # which is why this check answered "aucun verdict" on all three buildings it was ever given — while their walls and jambs were right there, unread.
+    if is_built(path):
+        inner = inner_lean(path)
+        if inner is not None:
+            left, right, pixels = inner
+            taper = abs(left - right)
+            if taper > CONVERGENCE_DEGREES:
+                return False, (f"CONVERGENCE lue sur les arêtes intérieures : {taper:.1f}° d'écart entre les deux moitiés "
+                               f"(gauche {left:+.1f}°, droite {right:+.1f}°, sur {pixels} pixels d'arête)")
+            return True, (f"projection parallèle tenue, lue sur les arêtes intérieures : {taper:.1f}° d'écart "
+                          f"(gauche {left:+.1f}°, droite {right:+.1f}°, sur {pixels} pixels d'arête)")
+
     alpha = numpy.asarray(Image.open(path).convert("RGBA"))[:, :, 3]
     measured = sides(alpha)
     if measured is None:

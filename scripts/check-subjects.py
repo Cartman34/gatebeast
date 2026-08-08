@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate assets/sujets.json and confront it with the inventory and the disk.
+"""Validate assets/subjects.json and confront it with the inventory and the disk.
 
 The referentiel (rendu-en-calques.md, decision 18) is the single source for types, sujets and their
 variants: this script is its gate. It refuses a file that does not conform to the model decided in
@@ -10,7 +10,7 @@ code must actually be inscribed there) and the disk (a produced file must be cla
 it is invisible to the referentiel even while it sits on disk).
 
 Generates nothing, writes nothing.
-Usage: python3 check-sujets.py
+Usage: python3 check-subjects.py
 """
 import json
 import re
@@ -22,7 +22,7 @@ import shape_vocab
 
 REPOSITORY = Path(__file__).resolve().parents[1]
 ASSETS = REPOSITORY / "assets"
-SUJETS = ASSETS / "sujets.json"
+SUBJECTS = ASSETS / "subjects.json"
 INVENTAIRE = REPOSITORY / "doc" / "conception" / "referentiels" / "visuel" / "inventaire"
 CREATURES = REPOSITORY / "doc" / "conception" / "referentiels" / "contenu" / "creatures-temoins.md"
 
@@ -36,9 +36,9 @@ EDGES = shape_vocab.EDGES
 LAYERS = {"sol", "decor-au-sol", "monde", "dessus", "interface"}
 ORIENTATIONS = {"north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"}
 CODE_PATTERN = re.compile(r"^[A-Z]{2,3}-\d{3}$")
-# A representation's statut: the one shown to the player ("courante"), or one kept for record
-# ("anterieure"). The list order carries no meaning — statut is the only thing that says which is which.
-STATUSES = {"courante", "anterieure"}
+# A representation's statut: the one shown to the player ("current"), or one kept for record
+# ("previous"). The list order carries no meaning — statut is the only thing that says which is which.
+STATUSES = {"current", "previous"}
 # How many earlier versions the review page SHOWS beside the current one. The referentiel itself keeps
 # every version an image has ever had, without limit: on garde tout, on versionne tout, on n'en affiche
 # que trois (operator, 2026-08-05). This figure therefore bounds a display and nothing else — it was
@@ -52,10 +52,10 @@ class Fault(Exception):
 
 
 def load():
-    if not SUJETS.is_file():
-        raise Fault(f"missing {SUJETS}")
+    if not SUBJECTS.is_file():
+        raise Fault(f"missing {SUBJECTS}")
     try:
-        return json.loads(SUJETS.read_text(encoding="utf-8"))
+        return json.loads(SUBJECTS.read_text(encoding="utf-8"))
     except json.JSONDecodeError as error:
         raise Fault(f"not valid JSON: {error}")
 
@@ -80,26 +80,26 @@ def check_variant(where, variant):
 
 def has_unlabelled_single_representation(representations):
     """True for the one tolerated gap: a variant with exactly one representation and no statut yet.
-    Treated as 'courante' by default (there is nothing else it could be), but signalled — not silently
+    Treated as 'current' by default (there is nothing else it could be), but signalled — not silently
     accepted — until the referentiel is completed."""
-    return len(representations) == 1 and "statut" not in representations[0]
+    return len(representations) == 1 and "status" not in representations[0]
 
 
 def check_representations(where, representations):
     """A variant's representations: several are allowed (a redraw keeps its predecessors, they are not
-    a fault), but exactly one must carry statut 'courante', and at most three may carry 'anterieure'.
+    a fault), but exactly one must carry statut 'current', and at most three may carry 'previous'.
     List order means nothing — statut is the only thing that decides which is shown. The one exception
-    is a variant with a single representation and no statut at all: tolerated as an implicit 'courante'
+    is a variant with a single representation and no statut at all: tolerated as an implicit 'current'
     (see has_unlabelled_single_representation), reported separately, never here."""
     if not representations or has_unlabelled_single_representation(representations):
         return
     for representation in representations:
-        if representation.get("statut") not in STATUSES:
+        if representation.get("status") not in STATUSES:
             raise Fault(f"{where}: representation {representation.get('path')!r} has missing or "
-                        f"invalid statut {representation.get('statut')!r}")
-    current = [r for r in representations if r["statut"] == "courante"]
+                        f"invalid statut {representation.get('status')!r}")
+    current = [r for r in representations if r["status"] == "current"]
     if len(current) != 1:
-        raise Fault(f"{where}: expected exactly one representation with statut 'courante', "
+        raise Fault(f"{where}: expected exactly one representation with statut 'current', "
                     f"found {len(current)}")
     # No ceiling on how many earlier versions a variant holds: every one is kept and versioned.
 
@@ -107,13 +107,13 @@ def check_representations(where, representations):
 def check_schema(data):
     """Structural conformance, checked top to bottom; raises Fault on the first thing that does not
     hold. Nothing here is fixed up — a caller sees exactly why the file was refused."""
-    if data.get("format") != "gatebeast-sujets":
+    if data.get("format") != "gatebeast-subjects":
         raise Fault("missing or wrong format marker")
     types = data.get("types")
-    sujets = data.get("sujets")
+    subjects = data.get("subjects")
     if not isinstance(types, dict) or not types:
         raise Fault("no types declared")
-    if not isinstance(sujets, dict):
+    if not isinstance(subjects, dict):
         raise Fault("no sujets section")
 
     for name, type_ in types.items():
@@ -123,29 +123,29 @@ def check_schema(data):
             raise Fault(f"type {name}: passage_default must be exactly 'open' or 'closed'")
         # A type's lot says which variants it expects of its sujets; it names them by their ref, and by
         # nothing else — the ref is what will be produced, recorded and shown under that name.
-        for variant in type_.get("lot_v0", []):
+        for variant in type_.get("batch_v0", []):
             if not variant.get("ref"):
                 raise Fault(f"type {name} lot_v0: an expected variant carries no ref")
         compositions = type_.get("compositions")
         if compositions and compositions.get("default") not in compositions.get("values", []):
             raise Fault(f"type {name}: composition default is not one of its own values")
 
-    for code, sujet in sujets.items():
+    for code, subject in subjects.items():
         if not CODE_PATTERN.match(code):
             raise Fault(f"sujet code not in the XX-nnn form: {code}")
-        type_name = sujet.get("type")
+        type_name = subject.get("type")
         if type_name not in types:
             raise Fault(f"{code}: type {type_name!r} is not declared among types")
-        footprint = sujet.get("emprise") or {}
+        footprint = subject.get("footprint") or {}
         columns, rows = footprint.get("columns"), footprint.get("rows")
         if not isinstance(columns, int) or not isinstance(rows, int) or columns < 1 or rows < 1:
             raise Fault(f"{code}: emprise missing or not a positive number of tiles")
-        if not sujet.get("variants"):
+        if not subject.get("variants"):
             raise Fault(f"{code}: no variants")
-        refs = [variant.get("ref") for variant in sujet["variants"]]
+        refs = [variant.get("ref") for variant in subject["variants"]]
         if len(set(refs)) != len(refs):
             raise Fault(f"{code}: two variants share a ref — a ref designates one variant and one only")
-        for variant in sujet["variants"]:
+        for variant in subject["variants"]:
             check_variant(code, variant)
             if "representations" not in variant:
                 raise Fault(f"{code}: a variant carries no representations list (empty is fine, "
@@ -156,11 +156,11 @@ def check_schema(data):
             allowed = (types[type_name].get("compositions") or {}).get("values")
             if composition and (not allowed or composition not in allowed):
                 raise Fault(f"{code}: composition {composition!r} is not declared by type {type_name}")
-            portillon = variant.get("portillon")
-            allowed_gates = (types[type_name].get("portillons") or {}).get("values")
-            if portillon and (not allowed_gates or portillon not in allowed_gates):
-                raise Fault(f"{code}: portillon {portillon!r} is not declared by type {type_name}")
-        overrides = (sujet.get("passage") or {}).get("cells", {})
+            gate = variant.get("gate")
+            allowed_gates = (types[type_name].get("gates") or {}).get("values")
+            if gate and (not allowed_gates or gate not in allowed_gates):
+                raise Fault(f"{code}: portillon {gate!r} is not declared by type {type_name}")
+        overrides = (subject.get("passage") or {}).get("cells", {})
         for cell in overrides:
             if not re.fullmatch(r"\d+,\d+", cell):
                 raise Fault(f"{code}: passage cell key {cell!r} is not 'column,row'")
@@ -172,13 +172,13 @@ def check_schema(data):
                     raise Fault(f"{code}: passage cell {cell!r} has a bad edge {edge!r}")
 
 
-def resolve_passage(sujet, type_):
+def resolve_passage(subject, type_):
     """Every cell of a sujet's footprint, every edge resolved with the level that decided it — the
     type's default, or the sujet's own override. Declared 'case par case', never deduced from the
     shape (sujets-et-variantes.md, decisions 13 and 16)."""
-    columns, rows = sujet["emprise"]["columns"], sujet["emprise"]["rows"]
+    columns, rows = subject["footprint"]["columns"], subject["footprint"]["rows"]
     default_open = type_["passage_default"] == "open"
-    overrides = (sujet.get("passage") or {}).get("cells", {})
+    overrides = (subject.get("passage") or {}).get("cells", {})
     cells = []
     for row in range(rows):
         for column in range(columns):
@@ -187,9 +187,9 @@ def resolve_passage(sujet, type_):
             resolved = {}
             for edge in EDGES:
                 if edge in override:
-                    resolved[edge] = (override[edge], "sujet")
+                    resolved[edge] = (override[edge], "subject")
                 else:
-                    resolved[edge] = (default_open, f"type {sujet['type']}")
+                    resolved[edge] = (default_open, f"type {subject['type']}")
             cells.append((key, resolved))
     return cells
 
@@ -223,8 +223,8 @@ def scan_poc():
 
 def claimed_paths(data):
     claimed = set()
-    for sujet in data["sujets"].values():
-        for variant in sujet["variants"]:
+    for subject in data["subjects"].values():
+        for variant in subject["variants"]:
             for representation in variant.get("representations", []):
                 claimed.add(representation["path"])
     return claimed
@@ -232,22 +232,22 @@ def claimed_paths(data):
 
 def variants_with_implicit_status(data):
     """Every variant tolerated under has_unlabelled_single_representation: its lone representation is
-    treated as 'courante' by default, but it is surfaced here so the gap does not stay invisible until
+    treated as 'current' by default, but it is surfaced here so the gap does not stay invisible until
     the referentiel is completed with an explicit statut."""
     pending = []
-    for code, sujet in data["sujets"].items():
-        for variant in sujet["variants"]:
+    for code, subject in data["subjects"].items():
+        for variant in subject["variants"]:
             representations = variant.get("representations") or []
             if has_unlabelled_single_representation(representations):
                 pending.append((code, representations[0]["path"]))
     return pending
 
 
-def probe_stems(hors_referentiel):
-    """The file stems of the deliberately out-of-referentiel probes (sujets.json, _hors_referentiel):
+def probe_stems(outside_referential):
+    """The file stems of the deliberately out-of-referentiel probes (subjects.json, _outside_referential):
     their files are expected on disk without any variant claiming them, so they must not be reported as
     unclaimed."""
-    return set(hors_referentiel)
+    return set(outside_referential)
 
 
 def unexported_masters(poc_files):
@@ -271,26 +271,26 @@ def main(verbose=False):
         print(f"REFUSED: {fault}")
         return 1
 
-    hors_referentiel = {key: value for key, value in data.get("_hors_referentiel", {}).items()
+    outside_referential = {key: value for key, value in data.get("_outside_referential", {}).items()
                         if key != "_comment"}
-    print(f"{len(data['types'])} types, {len(data['sujets'])} sujets, "
-          f"{len(hors_referentiel)} hors référentiel\n")
+    print(f"{len(data['types'])} types, {len(data['subjects'])} sujets, "
+          f"{len(outside_referential)} hors référentiel\n")
 
     # The passage of every cell of every sujet is thousands of lines — a building of sixteen by ten
     # alone prints a hundred and sixty. It is a detail one asks for; what this tool is run for is its
     # verdict. Kept behind --verbose, and summarised by default.
     print("PASSAGE — résolu niveau par niveau (type, puis sujet)")
-    for code in sorted(data["sujets"]):
-        sujet = data["sujets"][code]
-        type_ = data["types"][sujet["type"]]
-        resolved_cells = list(resolve_passage(sujet, type_))
+    for code in sorted(data["subjects"]):
+        subject = data["subjects"][code]
+        type_ = data["types"][subject["type"]]
+        resolved_cells = list(resolve_passage(subject, type_))
         if not verbose:
             redefined = sum(1 for _, resolved in resolved_cells
-                            if any(state[1] != f"type {sujet['type']}" for state in resolved.values()))
-            print(f"  {code} ({sujet['type']}, défaut du type : {type_['passage_default']}) — "
+                            if any(state[1] != f"type {subject['type']}" for state in resolved.values()))
+            print(f"  {code} ({subject['type']}, défaut du type : {type_['passage_default']}) — "
                   f"{len(resolved_cells)} case(s), {redefined} redéfinie(s)")
             continue
-        print(f"  {code} ({sujet['type']}, défaut du type : {type_['passage_default']})")
+        print(f"  {code} ({subject['type']}, défaut du type : {type_['passage_default']})")
         for key, resolved in resolved_cells:
             state = "  ".join(f"{edge}={'ouvert' if resolved[edge][0] else 'fermé'}"
                               f"[{resolved[edge][1]}]" for edge in EDGES)
@@ -298,16 +298,16 @@ def main(verbose=False):
 
     print("\nINVENTAIRE — chaque code de sujet doit y être réellement inscrit")
     texts = inventory_text()
-    absent = [code for code in sorted(data["sujets"]) if not code_in_inventory(code, texts)]
+    absent = [code for code in sorted(data["subjects"]) if not code_in_inventory(code, texts)]
     if absent:
         for code in absent:
             print(f"  ABSENT DE L'INVENTAIRE : {code}")
     else:
-        print(f"  les {len(data['sujets'])} sujets sont bien à l'inventaire")
+        print(f"  les {len(data['subjects'])} sujets sont bien à l'inventaire")
 
     print("\nDISQUE — tout livrable sous assets/cutout/ doit être réclamé")
     claimed = claimed_paths(data)
-    expected_probes = probe_stems(hors_referentiel)
+    expected_probes = probe_stems(outside_referential)
     unclaimed = [path for path in scan_cutout()
                 if path.relative_to(ASSETS).as_posix() not in claimed
                 and path.stem not in expected_probes]
@@ -331,13 +331,13 @@ def main(verbose=False):
     implicit_status = variants_with_implicit_status(data)
     if implicit_status:
         for code, path in implicit_status:
-            print(f"  {code} : {path} — à compléter d'un statut 'courante' explicite")
+            print(f"  {code} : {path} — à compléter d'un statut 'current' explicite")
     else:
         print("  chaque représentation porte un statut explicite")
 
-    if hors_referentiel:
-        print(f"\nHORS RÉFÉRENTIEL ({len(hors_referentiel)}) — sondes sans code ni emprise fabriqués")
-        for code, reason in hors_referentiel.items():
+    if outside_referential:
+        print(f"\nHORS RÉFÉRENTIEL ({len(outside_referential)}) — sondes sans code ni emprise fabriqués")
+        for code, reason in outside_referential.items():
             print(f"  {code} : {reason}")
 
     return 1 if absent or unclaimed else 0

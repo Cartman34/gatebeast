@@ -26,9 +26,9 @@ mkdir -p "$cible"
 
 python3 - <<'PY' > var/tmp/variants.txt
 import json
-data = json.load(open('assets/sujets.json'))
-for code, sujet in data['sujets'].items():
-    for variant in sujet['variants']:
+data = json.load(open('assets/subjects.json'))
+for code, subject in data['subjects'].items():
+    for variant in subject['variants']:
         print(code, variant['ref'])
 PY
 

@@ -7,8 +7,8 @@
  *   The pile lived in SUIVI.md, a document written for people: a point could only be found by reading prose, its state was a word in a table cell, and nothing could sort it or count it. It is now
  *   data, in one file, and the document keeps what it is good at — the reasoning, the constats, the decisions and why they were taken.
  *
- *   THE WORD "SUJET" IS THE OPERATOR'S, AND IT COLLIDES WITH THE GAME'S OWN VOCABULARY: a sujet in assets/sujets.json is a creature or a piece of scenery. These two never meet, because this one
- *   lives under review-server/ and is only ever reached through this class — but the collision is real and is the reason the file is not called assets/sujets.json's neighbour.
+ *   THE WORD "SUJET" IS THE OPERATOR'S, AND IT COLLIDES WITH THE GAME'S OWN VOCABULARY: a sujet in assets/subjects.json is a creature or a piece of scenery. These two never meet, because this one
+ *   lives under review-server/ and is only ever reached through this class — but the collision is real and is the reason the file is not called assets/subjects.json's neighbour.
  *
  *   ONLY THE AGENT WRITES HERE, through the command: a point edited by hand in two places diverges, which is exactly what the SUIVI table did against the artefact registry before it was moved out.
  */
@@ -28,6 +28,15 @@ class Backlog
      * UN STATUT S'ÉCRIT UNE FOIS, ICI, ET SE CITE PAR SA CONSTANTE (opérateur, 2026-08-08). A literal repeated across the code cannot be renamed, cannot be found, and a typo in one of its copies is
      * a silent no-match rather than an error — which is exactly how a guard came to test a ref that no longer existed.
      */
+    /**
+     * A SUBJECT THE AGENT OPENED HIMSELF, WAITING FOR THE OPERATOR TO VALIDATE IT — and it cannot be taken until he does (operator, 2026-08-08).
+     *
+     * Keeping the tracking and deciding what the project works on are two different things. The agent writes, updates, describes and closes freely, and adds
+     * without asking whatever the operator tells him to add. Opening a subject nobody asked for is another matter: "tu risques de t'enfoncer dans une mauvaise
+     * pratique sans vérification". An open point steers every session that follows, and an agent who fills his own pile ends up working on what he decided alone
+     * while believing he is following the project.
+     */
+    public const STATUS_PROPOSED = 'proposed';
     public const STATUS_TODO = 'todo';
     public const STATUS_IN_PROGRESS = 'in-progress';
     public const STATUS_PENDING_DEPENDENCY = 'pending-dependency';
@@ -43,13 +52,21 @@ class Backlog
     /** La série des questions. Un point qui attend une décision de l'opérateur en fait partie, et son code commence par cette lettre. */
     public const SERIES_QUESTION = 'Q';
 
+    /**
+     * The statuses a point can be TAKEN from — the only ones `next` may answer with. The three waiting statuses are open, so they are listed and counted, but a
+     * point that waits is not a point to take: proposing one makes the agent open it, read its whole analysis, find again that it cannot move, and put it back —
+     * every turn, until the wait ends. It also hides the first point that could actually be worked on. Observed on 2026-08-08.
+     */
+    public const STATUSES_TAKEABLE = [self::STATUS_IN_PROGRESS, self::STATUS_TODO];
+
     public const STATUSES = [
-        self::STATUS_TODO, self::STATUS_IN_PROGRESS, self::STATUS_PENDING_DEPENDENCY,
+        self::STATUS_PROPOSED, self::STATUS_TODO, self::STATUS_IN_PROGRESS, self::STATUS_PENDING_DEPENDENCY,
         self::STATUS_PENDING_DECISION, self::STATUS_WAITING_EXTERNAL, self::STATUS_DONE, self::STATUS_DISMISSED,
     ];
 
     /** Ce qu'un statut veut dire, en une phrase — la page l'affiche, pour que personne n'ait à deviner la nuance entre « fait » et « classé ». Le seul endroit où un statut se dit en français. */
     public const STATUS_LABELS = [
+        self::STATUS_PROPOSED => "À valider — proposé par l'agent, il ne s'y met pas avant votre accord",
         self::STATUS_TODO => "À faire — dû, personne n'y travaille",
         self::STATUS_IN_PROGRESS => 'En cours — engagé maintenant',
         self::STATUS_PENDING_DEPENDENCY => 'En attente — un autre point de la pile doit passer avant',
@@ -68,7 +85,7 @@ class Backlog
 
     /** Les statuts qui restent du travail. Le reste est de l'histoire, et la page les sépare. */
     public const OPEN_STATUSES = [
-        self::STATUS_TODO, self::STATUS_IN_PROGRESS, self::STATUS_PENDING_DEPENDENCY, self::STATUS_PENDING_DECISION, self::STATUS_WAITING_EXTERNAL,
+        self::STATUS_PROPOSED, self::STATUS_TODO, self::STATUS_IN_PROGRESS, self::STATUS_PENDING_DEPENDENCY, self::STATUS_PENDING_DECISION, self::STATUS_WAITING_EXTERNAL,
     ];
 
     private string $path;

@@ -44,11 +44,38 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **`GO` et `STOP` sont les deux seuls mots qui lancent et arrêtent le dépilement, et ils sont stricts.** Rien d'autre ne vaut reprise : aucune phrase ne s'interprète comme un feu vert, et le silence
   encore moins. **Tout arrêt met fin au `GO`** — une question de l'opérateur, un ordre ponctuel, une interruption : dès que l'agent s'arrête, l'autorisation est consommée et ne se reprend pas d'elle-
   même une fois la parenthèse refermée. Il en faut une neuve, donnée explicitement.
+- **UN `GO` OU UN `STOP` ENVOYÉ PENDANT QUE L'AGENT TRAVAILLE VAUT COMME ORDRE, MAIS N'ARME NI NE DÉSARME RIEN.** `UserPromptSubmit` ne se déclenche que sur un message qui **ouvre** un tour :
+  un message glissé en cours de tour est bien reçu et bien lu par l'agent, mais aucun hook ne le voit. Mesuré le 2026-08-08 — deux `GO` en cours de tour n'ont rien armé, le même `GO` en ouverture de
+  tour a armé dans la seconde. **L'agent obéit à l'ordre, dit que l'état ne le reflète pas, et n'y touche pas** ; à l'opérateur de renvoyer le mot en ouverture de tour s'il veut la garde armée.
+- **L'ÉTAT D'ARMEMENT DU DÉPILEMENT N'APPARTIENT PAS À L'AGENT, ET IL N'A JAMAIS À Y TOUCHER — NI POUR L'EFFACER, NI POUR L'ÉCRIRE.** `var/hooks/dequeue-armed` est écrit par le hook du prompt, et par
+  lui seul : le `GO` de l'opérateur l'arme, son `STOP` le désarme, il expire seul au bout de trois heures. Une garde qu'on peut retirer soi-même n'est pas une garde, et un armement qu'on peut écrire
+  soi-même est un ordre qu'on se donne à la place de l'opérateur. **Les deux gestes ont été faits le 2026-08-08**, et chacun tenait à une confusion que voici levée :
+  - **La règle d'arrêt ci-dessus est une règle de conduite, elle ne décrit pas un fichier.** « Tout arrêt met fin au `GO` » dit à l'agent de ne pas repartir de lui-même. Elle ne lui demande pas de
+    mettre l'état à jour pour le refléter — c'est cette lecture qui a fait supprimer le fichier, en croyant bien faire.
+  - **Un hook qui n'arme pas est un défaut à constater, pas à compenser.** Il s'inscrit à la pile avec ce qui a été observé. Le suppléer à la main donne une page qui a l'air juste et une garde qui ne
+    garde rien — soit exactement l'inconvénient qu'on croyait corriger, en pire, puisqu'il ne se voit plus.
+  - **L'empêchement est mécanique, pas moral** : `scripts/hook-guard-dequeue.sh`, déclaré en `PreToolUse`, refuse toute commande et toute écriture qui touche à cet état ou à la garde elle-même. La
+    lecture reste libre — l'agent doit pouvoir dire si le dépilement est armé. Ses essais : `bash local/scripts/essai-garde-depilement.sh`.
+  - **`.claude/settings.json` n'est PAS dans la liste des fichiers gardés, et c'est délibéré** (opérateur, 2026-08-08). Débrancher la garde en modifiant le fichier qui la déclare serait le chemin de
+    contournement évident, mais toute modification de ce fichier demande systématiquement l'autorisation de l'opérateur : la barrière existe déjà, en amont, et elle est humaine. L'y ajouter
+    coûterait plus qu'elle ne protège — l'agent ne pourrait plus déclarer aucun hook sans passer par l'opérateur. **Ne pas le reproposer.**
 - **Tant que le dépilement n'est pas lancé, l'agent ne modifie que le `SUIVI.md`** — aucun autre fichier, quelle qu'en soit l'évidence. Ce qui survient avant le `GO` entre dans la pile et y attend.
 - **Le suivi est le support de l'agent** : il l'écrit quand il veut, sans demander, et il doit permettre à tout moment d'être coupé et relancé de zéro **sans aucune perte**. Ce qui n'y est pas écrit
   n'existe pas.
+- **MAIS UN SUJET NEUF SE FAIT VALIDER — L'AGENT N'EN OUVRE PAS DE LUI-MÊME** (opérateur, 2026-08-08). Tenir le suivi et décider de ce sur quoi le projet travaille sont deux choses : l'agent écrit,
+  met à jour, décrit et ferme librement, et il ajoute sans demander **ce que l'opérateur lui dit d'ajouter**. Ouvrir un sujet que personne n'a demandé, non : « tu risques de t'enfoncer dans une
+  mauvaise pratique sans vérification ». Un point ouvert oriente le travail de toutes les séances suivantes, et un agent qui remplit lui-même sa propre pile finit par travailler sur ce qu'il a décidé
+  seul, en croyant suivre le projet.
+- **CE QUI SE FAIT À LA PLACE : on le fait, ou on le propose.** Un défaut trouvé en chemin se corrige dans la foulée — c'est déjà la règle, « ce qui manque se fait ». Ce qui est trop gros pour être
+  fait dans la foulée se **propose** à l'opérateur, avec ce qu'il coûte, et n'entre à la pile qu'une fois validé. Un défaut qu'on ne peut ni faire ni proposer tout de suite se dit dans le compte
+  rendu, il ne s'inscrit pas de force.
 - **Tout point ouvert porte un code et un numéro**, pour que l'opérateur réponde par lui seul : **Q** une question, **P** une proposition, **S** un sujet, **T** un test, **W** une alerte. Les séries
   sont indépendantes, continues tant qu'un point reste ouvert, et repartent à 1 quand la série se vide. Un point ouvert vit dans le suivi, jamais dans la conversation.
+- **CE QUI VIT DANS LE SUIVI, C'EST LE POINT — PAS LA QUESTION. UNE QUESTION SE POSE EN ENTIER, DANS LE MESSAGE.** Le code sert à répondre, il ne remplace pas ce qu'on demande : posée, une question
+  dit **ce qui est demandé**, **les options** quand il y en a, **ce qui dépend de la réponse** et **ce que l'agent recommande**. Ce qu'elle n'a pas à redire, c'est l'analyse — elle reste au point, et
+  `show <REF>` l'ouvre. Énumérer des libellés numérotés n'est pas poser des questions : un titre nomme un sujet, il n'appelle pas de réponse, et l'opérateur ne peut que demander à l'ouvrir — un
+  aller-retour de plus pour chaque point, ce que la numérotation existait justement pour éviter (constaté le 2026-08-08). Le format « code et trois mots » ne vaut que pour les **deux lignes de
+  récapitulatif** ; l'appliquer au corps du message revient à n'avoir rien demandé.
 - **Chaque message se termine par deux lignes de récapitulatif** : ce qui attend l'opérateur, ce qui attend l'agent. Code et trois mots par point, quatre points par ligne au plus, un compteur au-delà.
 - **Toute génération d'image part en tâche de fond** — on ne l'attend jamais. Plus généralement, tout ce dont l'agent n'a pas besoin pour continuer part en tâche de fond et rend la main aussitôt.
 - **On dépile, on ne commente pas la pile.** Constater ce qui manque et le dire n'est pas un travail : ce qui manque se fait. Une tâche ne remonte à l'opérateur que si elle est finie, ou si elle est
@@ -85,11 +112,36 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **`local/` — le répertoire de travail de l'agent** : essais, mesures, extraits, scripts jetables, jamais commité. **L'OUTILLAGE N'Y ÉCRIT JAMAIS RIEN** : ce répertoire appartient à l'agent, et un
   fichier qu'un script y dépose n'a plus de propriétaire — trente-cinq brouillons de consigne s'y étaient accumulés sans que personne sache qui les produisait ni s'ils servaient encore (opérateur,
   2026-08-06). Toute trace d'exécution va sous `var/`, avec les rapports et les journaux.
+- **DEUX PORTÉES, ET ELLES SONT FIGÉES : `local/` EST À L'AGENT, `var/` EST À L'APPLICATION.** C'est le seul critère, et il ne se discute pas au cas par cas (opérateur, 2026-08-08). **Tout fichier
+  que l'agent produit pour lui-même vit sous `local/`** — brouillons, essais, mesures, extraits, scripts jetables, rédactions en attente d'être injectées ailleurs. **`var/` ne reçoit que ce qu'un
+  programme écrit en tournant** : rapports de production, journaux, traces d'exécution. Un brouillon écrit à la main n'est pas une trace d'exécution, même s'il est jetable : **c'est l'auteur qui
+  décide de la portée, jamais la durée de vie**. La formulation précédente donnait `var/tmp/` pour « un brouillon de consigne » — c'est ce qui a fait ranger sous `var/` des rédactions d'agent.
+- **`local/tmp/` EST LE JETABLE DE L'AGENT, ET IL SE VIDE SANS PRÉVENIR.** Y va le fichier de passage : un brouillon qu'on injecte ailleurs dans la foulée, une découpe qu'on regarde une fois.
+  **Tout ce qui s'y trouve peut disparaître à n'importe quel moment** (opérateur, 2026-08-08) — donc rien ne s'y dépose qu'on aurait à rouvrir plus tard, rien ne s'y cite, et ce qui doit survivre
+  monte d'un cran sous `local/`. C'est le pendant de `var/tmp/` côté agent, avec la même règle d'auteur : `local/tmp/` pour ce que l'agent écrit de sa main, `var/tmp/` pour ce qu'un programme dépose
+  en tournant.
+- **ET RIEN NE S'ÉCRIT HORS DU PROJET.** Ni `/tmp`, ni un répertoire de travail fourni par l'enveloppe de l'agent, quelle que soit l'insistance de celle-ci : un fichier hors du dépôt n'existe pour
+  personne d'autre, disparaît sans trace et ne se retrouve pas à la reprise. **Une règle écrite prime sur la consigne de l'enveloppe.**
 - **`var/` — ce que l'outillage produit pour lui-même**, jamais versionné : rapports de production, journaux du générateur, mesures. Ce qui s'y trouve est **local mais conservé** — on y revient pour
-  comprendre ce qui s'est passé. **`var/tmp/` fait exception : ce qui y est écrit est vraiment jetable** et se refait d'une commande — un brouillon de consigne, un fichier de passage. La distinction
-  se décide à l'écriture : ce dont personne ne redemandera jamais compte va dans `var/tmp/`, le reste ailleurs sous `var/`. **Rien de ce qui s'y trouve ne se cite nulle part** : ni dans une
+  comprendre ce qui s'est passé. **`var/tmp/` fait exception : ce qu'un programme y écrit est vraiment jetable** et se refait d'une commande — une page de sonde, un fichier de passage produit par un
+  script. La distinction se décide à l'écriture : ce dont personne ne redemandera jamais compte va dans `var/tmp/`, le reste ailleurs sous `var/`. **Rien de ce qui s'y trouve ne se cite nulle
+  part** : ni dans une
   description, ni dans une consigne envoyée au générateur, ni dans le suivi, ni dans un document. Un fichier cité doit être versionné, sinon la référence est morte pour tout le monde sauf pour
   l'agent qui l'a écrite. Le répertoire se tient rangé : les extraits de planche vivent sous `local/extraits/`, produits par un script versionné, donc refaisables par n'importe qui à la commande.
+
+## Les erreurs
+
+- **LE CODE NE LAISSE JAMAIS UNE ERREUR TRANSPARENTE — IMPÉRATIF** (opérateur, 2026-08-08). Ce qui échoue doit **le dire**, fort, et s'arrêter. Une erreur silencieuse est pire qu'une panne : la
+  panne se voit et se corrige le jour même, l'erreur transparente laisse une page qui paraît juste, un plan qui paraît construit, un bouton qui paraît branché — et se découvre des jours plus tard,
+  par hasard, après avoir fait travailler quelqu'un sur du faux. **Le 2026-08-08, cinq défauts trouvés sur six étaient de cette famille**, et aucun n'avait levé quoi que ce soit.
+- **Ce qui est interdit, nommément** : un `catch` qui avale sans rien dire ; une valeur par défaut qui remplace un résultat manquant sans le signaler ; un `?? ''`, un `|| {}`, un `?->` qui masque
+  l'absence au lieu de la constater ; une recherche qui ne trouve rien et continue ; un contrôle qui rend « tout va bien » quand il n'a rien pu contrôler ; un message de succès émis sans avoir
+  vérifié le succès. **Les exemples ne ferment pas la liste** : toute construction qui transforme un échec en marche normale tombe sous la règle.
+- **Ce qu'on écrit à la place** : on lève, avec le nom de ce qui manquait et l'endroit où on le cherchait. Un outil qui ne peut pas conclure dit « je ne peux pas conclure » — ce n'est pas un verdict
+  favorable. Un repli n'est légitime que s'il est **décidé, écrit et annoncé** : la page qui n'enregistre rien quand le serveur est absent le dit dans son commentaire et dans le suivi, et c'est ce
+  qui la distingue d'une page qui perd les données en silence.
+- **Un défaut de cette famille se paie en outil, pas en vigilance.** Il ne se voit pas : aucun relecteur ne peut l'attraper à l'œil, puisqu'il n'y a rien à voir. À chaque fois qu'on en trouve un,
+  on se demande quel contrôle mécanique l'aurait vu, et on l'écrit — c'est ainsi que sont nés `check-page-selectors.php` et `diff-prompts.sh`.
 
 ## L'outillage
 
@@ -103,6 +155,14 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   `rsvg-convert` pour regarder un SVG produit (liste tenue à jour au tableau « Outils extérieurs et versions constatées » de `SUIVI.md`, à lire là plutôt qu'à recopier ici). Aucun autre langage, outil
   ou bibliothèque ne s'emploie sans l'accord de l'opérateur : un agent qui pense en avoir besoin **exprime le besoin et attend**, il n'essaie pas « juste pour voir ». Chaque outil introduit
   devient une dépendance que quelqu'un devra installer, comprendre et maintenir, sur toutes les machines où le projet tourne — ça ne se décide pas au détour d'un dépannage.
+- **UNE VALEUR OBSOLÈTE NE S'ÉCRIT JAMAIS DANS DU CODE NEUF — ET EN AVOIR BESOIN, C'EST LE MOMENT DE LA CHANGER PARTOUT.** Règle de l'opérateur, 2026-08-08. Un nom ou une valeur qu'on sait fautif
+  n'est toléré que dans **l'existant qu'on ne touche pas** : dès qu'on ajoute ou qu'on modifie du code qui s'en sert, on le corrige **dans tout le dépôt**, données et lecteurs dans le même geste.
+  **Il est strictement interdit d'écrire une ligne neuve avec la valeur fautive**, même pour « rester cohérent avec ce qui l'entoure » — c'est exactement ainsi qu'une faute devient le standard du
+  projet. Le besoin est le signal : si la valeur ressert, sa migration est due, et elle ne se met pas en pile pour plus tard.
+- **UN COMMENTAIRE DE CODE EST EN ANGLAIS AMÉRICAIN, PARTOUT — pas seulement sous `scripts/`.** `review-server/` est du code au même titre, et un commentaire y est
+  du code qui explique le code. La règle vaut pour tout ce qu'un développeur lit : commentaires, blocs d'usage et d'intention, noms. **Seuls les textes destinés à
+  l'opérateur restent en français** — messages affichés, libellés, descriptions, et les citations de sa parole, qui se rapportent mot pour mot. L'existant qu'on ne
+  touche pas est toléré ; ce qu'on écrit ou modifie, jamais (opérateur, 2026-08-08).
 - **Les clés des fichiers de données sont en anglais**, au même titre que le code — ce sont les mêmes noms que le code manipule. Une clé française oblige tout lecteur à mélanger les deux langues dans
   la même expression, et le mélange se propage par imitation au fichier suivant. Ne vaut que pour les clés : valeurs et textes destinés à l'opérateur — consignes de génération comprises — restent en
   français. Anglais américain, comme partout ailleurs (`doc/glossaire.md`).

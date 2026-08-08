@@ -14,6 +14,9 @@
   --card: #1b1f19;
   --card-sunk: #161a14;
   --line: #2e342b;
+  /* The world grid behind the page: markedly weaker than --line, or it carries the weight of a border and competes with the section rules, which then cannot be
+   * made out. It must be sensed, never read — the same requirement as the footprint grid drawn over the thumbnails. */
+  --grid: #1c2018;
   --muted: #9aa494;
   --faint: #6e7869;
   --accent: #e5b255;
@@ -26,7 +29,11 @@
   --state-dismissed: #8c1d18;
   --state-dismissed-edge: #e8776b;
   --state-to-produce-edge: #6e7869;
-  --state-to-judge-edge: #cfd6c8;
+  /* À JUGER SE VOIT, ET C'EST LE SEUL ÉTAT QUI RÉCLAME L'OPÉRATEUR (opérateur, 2026-08-08 : « je dois intervenir dessus et donc je dois bien le voir »). Il était
+   * en gris pâle, donc plus discret que « validé » ou « à reprendre », c'est-à-dire l'inverse de ce qu'il faut : les états réglés peuvent être calmes, celui qui
+   * attend un geste doit sauter aux yeux. Bleu franc, la seule teinte encore libre parmi les états. */
+  --state-to-judge: #16456b;
+  --state-to-judge-edge: #7ec2f0;
   --damier-a: #23271f;
   --damier-b: #171a14;
 }

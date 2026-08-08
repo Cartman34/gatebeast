@@ -17,6 +17,7 @@ require_once __DIR__ . '/lib/Favicon.php';
 require_once __DIR__ . '/lib/Reload.php';
 require_once __DIR__ . '/lib/Releve.php';
 require_once __DIR__ . '/lib/Theme.php';
+require_once __DIR__ . '/lib/Remarks.php';
 
 /**
  * For a command that produces a page: PHP errors become exceptions, and an uncaught exception stops the command with its message on the error output.

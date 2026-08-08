@@ -17,7 +17,7 @@ module exists to rule out — the same discipline the tile scale already holds f
 (tile_scale.py), which have not diverged since it became the one place that states them.
 
 WHAT THIS MODULE DOES NOT DO
-It never reads assets/sujets.json and never invents what it declares — which shapes a type actually
+It never reads assets/subjects.json and never invents what it declares — which shapes a type actually
 uses, or a sujet's own shape. It only says whether a shape NAME is well-formed and what it means as a
 set of edges. Whether that particular shape is the right one for a given sujet is the referentiel's
 call, never this module's.

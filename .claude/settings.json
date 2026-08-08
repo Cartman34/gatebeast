@@ -1,5 +1,52 @@
 {
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Write",
+      "Edit",
+      "Bash(php *)",
+      "Bash(python3 *)",
+      "Bash(bash *)",
+      "Bash(git *)",
+      "Bash(rg *)",
+      "Bash(grep *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(sort *)",
+      "Bash(wc:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(diff *)",
+      "Bash(mkdir -p *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(curl *)",
+      "Bash(rsvg-convert *)",
+      "Bash(codex *)",
+      "Bash(command -v *)",
+      "Bash(printenv *)",
+      "Bash(ps *)"
+    ]
+  },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/hook-guard-dequeue.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/hook-guard-scopes.sh\""
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [

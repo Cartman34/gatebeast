@@ -137,7 +137,7 @@ sont bien déclarés : un type n'a pas besoin d'un sujet produit pour exister.
 ## Le contrôleur
 
 ```
-python3 scripts/check-sujets.py
+python3 scripts/check-subjects.py
 ```
 
 Il **refuse** un fichier non conforme au modèle décidé (format, types inconnus, forme invalide, emprise

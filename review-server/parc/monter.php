@@ -34,15 +34,35 @@ $reloadScript = $route === null ? '' : $reload->script($route);
 // A source melted into another page has no route of its own: its remarks are those of the final page, which carries the link to the server.
 $notesScript = $route === null ? '' : Notes::get()->script($route);
 
-const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur par défaut du projet, tenue par scripts/tile_scale.py
-const GROUND_TYPES = ['sol', 'chemin', 'herbe'];
+// A PROJECTED TILE IS NOT SQUARE: 24 wide, 21 deep. Under the world's camera a ground depth is seen foreshortened, so a map laid on square cells was a map seen
+// from straight above — not from the camera every sprite is drawn for. Both figures are the project's, held by scripts/tile_scale.py, and the ladder scales
+// cleanly: at 32 the tile is 32 × 28, at 48 it is 48 × 42, so the zoom stays a plain scale factor and nothing is recomputed.
+const SCREEN_TILE_WIDTH = 24;
+const SCREEN_TILE_DEPTH = 21;
+const SCREEN_PIXELS_PER_TILE = SCREEN_TILE_WIDTH;
+/**
+ * THE FIVE LAYER FAMILIES, IN THEIR STACKING ORDER, as the design settles it (rendu-en-calques.md): the ground, the ground decor, the world, the overhead, the
+ * interface. This array decides nothing — it ORDERS what the referential declares, every type carrying its own `layer`.
+ *
+ * IT REPLACES A HARD-CODED LIST OF TYPES, `['sol', 'chemin', 'herbe']`, which guessed the layer instead of reading it and knew only two: the ground and the rest.
+ * It already filed two types the wrong way, and it showed on the mock-up. Grass declares the `monde` layer — it stands up, it must sort by depth alongside trees
+ * and characters — and ended up in the ground: a character standing behind a tuft would have been drawn in front of it. A stream declares `decor-au-sol` — one
+ * walks on it — and was sorted by depth alongside buildings. A second truth beside the referential always ends up contradicting it; this one already had.
+ */
+const LAYER_ORDER = ['sol', 'decor-au-sol', 'monde', 'dessus', 'interface'];
+// Depth sorting applies ONLY within the living world: that is where what stands and what moves are found. A ground sorted by depth means nothing, and an
+// overhead layer sorted by depth would fall behind what it is meant to cover.
+const DEPTH_SORTED_LAYER = 'monde';
 
 // THE PLAN AND THE OUTPUT ARE ARGUMENTS, the park being only the default: there will be other mock-ups — the 32 × 24 reference scene first (operator, 2026-08-06) — and a mounter that can only
 // mount one map forces you to copy it for the next. One mounter, as many mock-ups as needed.
 $planPath = $argv[1] ?? "$root/assets/maquette/plan-parc-a.json";
 $outputPath = $argv[2] ?? __DIR__ . '/maquette.html';
 $plan = json_decode(file_get_contents($planPath), true, 512, JSON_THROW_ON_ERROR);
-$sujets = json_decode(file_get_contents("$root/assets/sujets.json"), true, 512, JSON_THROW_ON_ERROR)['sujets'];
+$referential = json_decode(file_get_contents("$root/assets/subjects.json"), true, 512, JSON_THROW_ON_ERROR);
+$subjects = $referential['subjects'];
+// Each type's layer, read from the referential and never guessed: it is what decides the stacking order, and it has no second source.
+$layerOfType = array_map(fn (array $type): string => $type['layer'] ?? DEPTH_SORTED_LAYER, $referential['types']);
 
 /**
  * The name of the shape that joins these edges, in the project's own order.
@@ -67,20 +87,20 @@ function shapeKey(array $joins): string
  * Taking the first variant that came laid the same east-west line on a hundred and seventeen fence cells, corners included: the mock-up then showed a trace that joined nothing. Falling back on the
  * first variant is only ever right for a subject that has no shapes.
  */
-function currentImage(array $sujets, string $code, array $joins = []): ?string
+function currentImage(array $subjects, string $code, array $joins = [], array $fields = []): ?string
 {
-    $sujet = $sujets[$code] ?? null;
-    if (!$sujet) {
+    $subject = $subjects[$code] ?? null;
+    if (!$subject) {
         return null;
     }
     $wanted = $joins ? shapeKey($joins) : null;
 
     $fallback = null;
-    foreach ($sujet['variants'] as $variant) {
+    foreach ($subject['variants'] as $variant) {
         $representations = $variant['representations'] ?? [];
         $image = null;
         foreach (array_reverse($representations) as $representation) {
-            if (($representation['statut'] ?? '') === 'courante' && !empty($representation['path'])) {
+            if (($representation['status'] ?? '') === 'current' && !empty($representation['path'])) {
                 $image = $representation['path'];
                 break;
             }
@@ -88,51 +108,71 @@ function currentImage(array $sujets, string $code, array $joins = []): ?string
         if ($image === null) {
             continue;
         }
+        // WHAT THE CELL ASKS FOR BEYOND ITS SHAPE. A cell used to be able to name only its subject and the edges it joins, so a fence crossed by a path could not
+        // be told to carry a GATE — the four gate drawings existed, declared and current, and no plan could reach them. The cell now names the variant fields it
+        // wants; a variant matches only if it carries every one of them.
+        $matches = true;
+        foreach ($fields as $field => $value) {
+            if (($variant[$field] ?? null) !== $value) {
+                $matches = false;
+                break;
+            }
+        }
+        if (!$matches) {
+            continue;
+        }
         $shape = $variant['shape'] ?? null;
         if ($wanted !== null && $shape === $wanted) {
             return $image;
         }
-        $fallback = $fallback ?? $image;
+        // THE FALLBACK IS FOR A SUBJECT WITHOUT SHAPES, AND FOR NOTHING ELSE.
+        if ($wanted === null) {
+            $fallback = $fallback ?? $image;
+        }
     }
 
-    return $fallback;
+    // A SHAPE THAT WAS ASKED FOR AND IS NOT DRAWN IS A HOLE, NOT A NEIGHBOUR'S DRAWING. The fallback used to answer here too: an east-west end of a path, whose
+    // `e` shape has never been drawn, came back carrying the crossroads drawing instead — laid on the map without a word, while the page announced that every
+    // declared cell had its image. A substituted drawing is worse than a missing one: the hole is seen and fixed, the substitution is believed.
+    return $wanted === null ? $fallback : null;
 }
 
 $columns = $plan['grid']['columns'];
 $rows = $plan['grid']['rows'];
 $capture = new Capture();
 
-// Cells are laid in rendering order: the ground first, then what stands on it, top to bottom — a subject further down passes in front of the one behind it.
-$ground = [];
-$standing = [];
+// CELLS ARE LAID IN LAYER ORDER, AND ONLY THE WORLD SORTS BY DEPTH — the design's two-step stacking. A subject lower in the scene passes in front of the one
+// behind it, but only among its own kind: a path never passes in front of a building on the grounds of being lower, it belongs to a layer underneath.
+$byLayer = array_fill_keys(LAYER_ORDER, []);
 foreach ($plan['cells'] as $cell) {
-    $type = $sujets[$cell['subject']]['type'] ?? '';
-    if (in_array($type, GROUND_TYPES, true)) {
-        $ground[] = $cell;
-    } else {
-        $standing[] = $cell;
+    $type = $subjects[$cell['subject']]['type'] ?? '';
+    $layer = $layerOfType[$type] ?? DEPTH_SORTED_LAYER;
+    if (!isset($byLayer[$layer])) {
+        throw new RuntimeException("le type « {$type} » déclare le calque « {$layer} », qui n'est pas une des cinq familles : " . implode(', ', LAYER_ORDER));
     }
+    $byLayer[$layer][] = $cell;
 }
-usort($standing, fn ($one, $other) => $one['row'] <=> $other['row']);
+usort($byLayer[DEPTH_SORTED_LAYER], fn ($one, $other) => $one['row'] <=> $other['row']);
+$ordered = array_merge(...array_values($byLayer));
 
 $missing = [];
 $atlas = [];
 $placed = 0;
 
 $capture->start();
-foreach (array_merge($ground, $standing) as $cell) {
+foreach ($ordered as $cell) {
     $code = $cell['subject'];
-    $image = currentImage($sujets, $code, $cell['joins'] ?? []);
+    $image = currentImage($subjects, $code, $cell['joins'] ?? [], $cell['variant'] ?? []);
     $wide = $cell['columns'] ?? 1;
     $high = $cell['rows'] ?? 1;
     $left = ($cell['column'] - 1) * SCREEN_PIXELS_PER_TILE;
-    $top = ($cell['row'] - 1) * SCREEN_PIXELS_PER_TILE;
+    $top = ($cell['row'] - 1) * SCREEN_TILE_DEPTH;
     $width = $wide * SCREEN_PIXELS_PER_TILE;
 
     if ($image === null || !is_file("$root/assets/$image")) {
         $missing[$code] = ($missing[$code] ?? 0) + 1;
         ?>
-<div class="trou" style="left: <?= $left ?>px; top: <?= $top ?>px; width: <?= $width ?>px; height: <?= $high * SCREEN_PIXELS_PER_TILE ?>px"><?= htmlspecialchars($code, ENT_QUOTES) ?></div>
+<div class="trou" style="left: <?= $left ?>px; top: <?= $top ?>px; width: <?= $width ?>px; height: <?= $high * SCREEN_TILE_DEPTH ?>px"><?= htmlspecialchars($code, ENT_QUOTES) ?></div>
         <?php
         continue;
     }
@@ -141,13 +181,13 @@ foreach (array_merge($ground, $standing) as $cell) {
     // planted there. So it hangs from the bottom of its cell and is left to rise.
     // THE WIDTH ON SCREEN IS THE CANOPY'S, NOT THE FOOTPRINT'S. The image was ordered at the width of what the volume overhangs: laying it at the width of the foot would shrink the crown of a
     // six-cell oak down to two, and the whole park would look planted with bonsais. It is then centred on its footprint, which remains what touches the ground.
-    $spread = $sujets[$code]['couvert'] ?? $sujets[$code]['emprise'] ?? ['columns' => $wide, 'rows' => $high];
+    $spread = $subjects[$code]['cover'] ?? $subjects[$code]['footprint'] ?? ['columns' => $wide, 'rows' => $high];
     $width = $spread['columns'] * SCREEN_PIXELS_PER_TILE;
     $left -= ($width - $wide * SCREEN_PIXELS_PER_TILE) / 2;
 
     [$imageWidth, $imageHeight] = getimagesize("$root/assets/$image");
     $height = (int) round($width * $imageHeight / $imageWidth);
-    $bottom = $top + $high * SCREEN_PIXELS_PER_TILE;
+    $bottom = $top + $high * SCREEN_TILE_DEPTH;
     $placed++;
     // THE IMAGE IS CARRIED ONCE, NOT A THOUSAND TIMES. A cell carries only a class; the image itself lives in a style rule, in clear inside the page. Repeated on every cell it would weigh a
     // thousand times its own weight; left as a file path it would not show at all, an artifact being a single page.
@@ -159,7 +199,7 @@ foreach (array_merge($ground, $standing) as $cell) {
     // STACKING FOLLOWS DEPTH, AND NOTHING ELSE: what is planted closer to the camera is drawn OVER what is behind, whatever its type. Without this, a tuft of grass laid in front of a tree went
     // under its trunk (operator, 2026-08-06). The row of the FOOT decides — that is where the subject touches the ground — and it is exactly how the game will draw its map. The row is counted
     // from 1, so the order reads directly.
-    $depth = (int) ($bottom / SCREEN_PIXELS_PER_TILE);
+    $depth = (int) ($bottom / SCREEN_TILE_DEPTH);
     ?>
 <div class="pose s-<?= $token ?>" title="<?= htmlspecialchars($code, ENT_QUOTES) ?>"
      style="left: <?= $left ?>px; top: <?= $bottom - $height ?>px; width: <?= $width ?>px; height: <?= $height ?>px; z-index: <?= $depth ?>"></div>
@@ -176,7 +216,7 @@ foreach ($missing as $code => $count) {
 $manquants = $manquants ?: '<li>Aucun : toutes les cases déclarées ont leur image.</li>';
 
 // The ground of the scene: the sprite of the default cell, the one the plan declares, carried once and tiled over the whole scene.
-$defaultImage = currentImage($sujets, $plan['default_cell']);
+$defaultImage = currentImage($subjects, $plan['default_cell']);
 if ($defaultImage === null || !is_file("$root/assets/$defaultImage")) {
     throw new RuntimeException("la cellule par défaut {$plan['default_cell']} n'a aucune image courante — le sol de la scène serait inventé");
 }
@@ -232,7 +272,7 @@ $capture->start();
   .scene {
     position: relative; background-repeat: repeat;
     background-image: url(data:image/png;base64,<?= $defaultTile ?>);
-    background-size: <?= SCREEN_PIXELS_PER_TILE ?>px <?= SCREEN_PIXELS_PER_TILE ?>px;
+    background-size: <?= SCREEN_TILE_WIDTH ?>px <?= SCREEN_TILE_DEPTH ?>px;
   }
   .pose { position: absolute; background-size: 100% 100%; background-repeat: no-repeat; }
 <?= $styles ?>
@@ -313,11 +353,11 @@ $capture->start();
           // there was nothing left to scroll, and therefore no way to navigate (operator, 2026-08-06). A zoom is planned together with the means of moving inside it. ?>
     <div class="scene-cadre">
       <div class="scene-piste">
-      <div class="scene" id="scene" data-cote="<?= SCREEN_PIXELS_PER_TILE ?>" data-colonnes="<?= $columns ?>" data-lignes="<?= $rows ?>"
+      <div class="scene" id="scene" data-cote="<?= SCREEN_TILE_WIDTH ?>" data-profondeur="<?= SCREEN_TILE_DEPTH ?>" data-colonnes="<?= $columns ?>" data-lignes="<?= $rows ?>"
            data-defaut="<?= htmlspecialchars(NOMS[$plan['default_cell']] ?? $plan['default_cell'], ENT_QUOTES) ?>"
            data-cases="<?= htmlspecialchars(json_encode($occupancy, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>"
            data-noms="<?= htmlspecialchars(json_encode(NOMS, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>"
-           style="width: <?= $columns * SCREEN_PIXELS_PER_TILE ?>px; height: <?= $rows * SCREEN_PIXELS_PER_TILE ?>px">
+           style="width: <?= $columns * SCREEN_PIXELS_PER_TILE ?>px; height: <?= $rows * SCREEN_TILE_DEPTH ?>px">
 <?= $scene ?>
       </div>
       </div>
@@ -368,6 +408,9 @@ $capture->start();
   var effacer = document.querySelector('.effacer');
 
   var cote = Number(scene.dataset.cote);
+  // LA PROFONDEUR EST UN SECOND PAS, ET ELLE VAUT POUR L'AXE VERTICAL. Une case projetee fait 24 sur 21 : se servir de la largeur pour les deux axes decale la
+  // lecture d'une case tous les sept rangs, et un clic finit par designer la voisine du dessous.
+  var profondeur = Number(scene.dataset.profondeur);
   var colonnes = Number(scene.dataset.colonnes);
   var lignes = Number(scene.dataset.lignes);
   var cases = JSON.parse(scene.dataset.cases);
@@ -382,15 +425,15 @@ $capture->start();
     // The point of the map at the CENTRE of the window before zooming, in cells: it is what gets put back in the centre afterwards, otherwise a zoom sends the operator elsewhere on the map and he
     // has to find his way again every time.
     var centreX = (cadre.scrollLeft + cadre.clientWidth / 2) / (cote * echelle);
-    var centreY = (cadre.scrollTop + cadre.clientHeight / 2) / (cote * echelle);
+    var centreY = (cadre.scrollTop + cadre.clientHeight / 2) / (profondeur * echelle);
     echelle = pixels / cote;
     scene.style.transform = 'scale(' + echelle + ')';
     // THE TRACK reserves the room the scene REALLY takes once scaled — scaling does not change the room an element asks of its layout. THE FRAME keeps the size of the window and scrolls: that is
     // what makes it possible to move around a map larger than the screen.
     piste.style.width = (colonnes * cote * echelle) + 'px';
-    piste.style.height = (lignes * cote * echelle) + 'px';
+    piste.style.height = (lignes * profondeur * echelle) + 'px';
     cadre.scrollLeft = centreX * cote * echelle - cadre.clientWidth / 2;
-    cadre.scrollTop = centreY * cote * echelle - cadre.clientHeight / 2;
+    cadre.scrollTop = centreY * profondeur * echelle - cadre.clientHeight / 2;
     Array.prototype.forEach.call(document.querySelectorAll('.zoom'), function (bouton) {
       bouton.setAttribute('aria-pressed', Number(bouton.dataset.zoom) === pixels ? 'true' : 'false');
     });
@@ -444,8 +487,9 @@ $capture->start();
     var cadre = scene.getBoundingClientRect();
     // The cell reads at the current scale: the measured frame is already that of the scaled scene, so the size of a cell on screen is too.
     var pas = cote * echelle;
+    var pasProfond = profondeur * echelle;
     var colonne = Math.floor((x - cadre.left) / pas) + 1;
-    var ligne = Math.floor((y - cadre.top) / pas) + 1;
+    var ligne = Math.floor((y - cadre.top) / pasProfond) + 1;
     if (colonne < 1 || ligne < 1 || colonne > colonnes || ligne > lignes) {
       return null;
     }
@@ -465,9 +509,9 @@ $capture->start();
       var carre = document.createElement('div');
       carre.className = 'marque';
       carre.style.left = ((remarque.colonne - 1) * cote) + 'px';
-      carre.style.top = ((remarque.ligne - 1) * cote) + 'px';
+      carre.style.top = ((remarque.ligne - 1) * profondeur) + 'px';
       carre.style.width = cote + 'px';
-      carre.style.height = cote + 'px';
+      carre.style.height = profondeur + 'px';
       scene.appendChild(carre);
     });
   }

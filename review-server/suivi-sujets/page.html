@@ -14,6 +14,9 @@
   --bg: #101114;
   --card: #191b1f;
   --line: #2b2e34;
+  /* The world grid behind the page, markedly weaker than --line: it is sensed, not read. Declared in BOTH themes — a variable that exists in only one leaves the
+   * page bare in the other, with nothing to signal it. */
+  --grid: #1a1c20;
   --muted: #8e9299;
   --accent: #d9a441;
   /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte. */
@@ -74,196 +77,121 @@
   <h1>Suivi des sujets</h1>
   <p class="lede">Ce qui reste à faire, dans l'ordre où je le dépile. Les points ouverts d'abord, du plus prioritaire au moins prioritaire ; à priorité égale, le plus ancien passe devant.
   Cette page se lit, elle ne s'édite pas : une seule commande écrit les points, et elle reconstruit la page en sortant.</p>
-  <p class="compte">19 ouvert(s) · 27 fermé(s) · php scripts/backlog.php next</p>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">panneau-plein-ecran</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
-    <h2>Un panneau plein ecran rouvert par le rechargement ne se ferme plus</h2>
-    <div class="point-corps"><p><strong>FAIT — sortir d&#039;une comparaison sans sortir du sujet, et ne pas la retrouver en rouvrant.</strong> Fermer le panneau d&#039;un sujet décoche tout et quitte la comparaison : rouvrir la fiche la montre entière, pas dans l&#039;état laissé trois sujets plus tôt. Une sélection oubliée faisait croire à un sujet qui n&#039;a plus que deux variants.</p>
-<p><strong>RESTE — le bouton pour quitter la comparaison depuis l&#039;intérieur.</strong> L&#039;opérateur veut, pendant qu&#039;une comparaison est en cours, <strong>un bouton visible pour en sortir sans fermer le sujet</strong>. La fonction qui le fait existe déjà et est appelée à la fermeture ; il manque le bouton lui-même, à afficher seulement pendant la comparaison, en tête de la liste des variants.</p>
-<p><strong>RESTE — le panneau rouvert par le rechargement automatique ne se ferme plus.</strong> Quand un panneau est ouvert et que la page se reconstruit, il réapparaît mais le bouton de fermeture ne fait rien : la pile qui tient les panneaux ouverts est en mémoire et repart vide au chargement, alors que le panneau, lui, est visible. <strong>Deux corrections, la seconde étant la bonne</strong> : que la fermeture masque le panneau réellement visible au lieu de dépendre de la pile ; et que l&#039;état ouvert survive au rechargement par l&#039;adresse — une ancre portant le code du sujet, lue à l&#039;ouverture, rouvrirait le panneau et remplirait la pile du même geste.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">cds-propositions</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
-    <h2>Centre de soin CDS : propositions a refaire, et une version abimee a ecarter</h2>
-    <div class="point-corps"><p><strong>LA CAUSE DU POINT DE FUITE EST TROUVÉE, ET ELLE ÉTAIT DANS LA CONSIGNE.</strong> La clause de référence ordonnait de reprendre l&#039;image « à l&#039;identique » et d&#039;en extraire la pièce — or l&#039;image de référence converge. Elle demandait donc de recopier le défaut, et elle pesait plus lourd que le socle, qui interdit pourtant la perspective. <strong>Corrigé</strong> : la clause dit maintenant que la référence fait foi pour la matière, la couleur et la lumière, <strong>jamais pour la projection</strong>, et qu&#039;on redresse ce qu&#039;on y voit en axonométrie orthographique. La clause des planches le disait déjà ; c&#039;était un manque en creux sur l&#039;autre.</p>
-<p><strong>Le trouver a demandé de LIRE la consigne réellement envoyée</strong>, sur ordre de l&#039;opérateur : « tu dois inspecter la consigne générée et pas supposer ». Cinq générations avaient été consommées sur des hypothèses de rédaction.</p>
-<p><strong>Ce qui a été mis au socle, donc pour tous les sujets</strong> : l&#039;axonométrie orthographique nommée explicitement, l&#039;interdiction du point de fuite et de la convergence, et l&#039;absence de rotation autour de la verticale.</p>
-<p><strong>Ce qui a été mis sur la fiche du bâtiment, parce que c&#039;est propre à lui</strong> : ses ailes descendent en mur plein jusqu&#039;au sol sur toute la largeur de l&#039;emprise, et sa largeur au sol est la même en bas qu&#039;en haut. La clause de face qui y avait été écrite a été <strong>retirée</strong> : elle doublonnait le socle.</p>
-<p><strong>Mesuré</strong> : l&#039;irrégularité des côtés de la silhouette est passée de 53 pixels à 7,3 sur la vue principale. Ce n&#039;est pas une preuve de projection parfaite — l&#039;outil ne sait lire que le contour extérieur — mais c&#039;est l&#039;écart entre un contour qui s&#039;évase et un contour qui tombe droit.</p>
-<p><strong>RESTE — UN VERDICT QUI APPARTIENT À L&#039;OPÉRATEUR, ET IL BLOQUE LA SUITE.</strong> En faisant choisir la référence par la commande, j&#039;ai d&#039;abord fait prendre la <strong>vue principale</strong> comme référence de la proposition 2 : ses couleurs propres — celles de la scène de référence du monde — ont donc été remplacées par celles de la vue principale. <strong>C&#039;est une régression que j&#039;ai introduite.</strong> La commande prend désormais la version précédente du variant lui-même, mais <strong>la version courante de la proposition 2 est justement celle que j&#039;ai abîmée</strong> : la relancer propagerait la mauvaise palette.</p>
-<p><strong>Ce qu&#039;il faut faire, et l&#039;ordre compte</strong> : écarter la version abîmée de la proposition 2 pour que la précédente redevienne courante, PUIS relancer. Écarter est un verdict, donc c&#039;est l&#039;opérateur qui le donne — l&#039;agent ne se juge pas lui-même quitte de sa faute.</p>
-<p><strong>RESTE — les propositions 2 et 3 n&#039;ont pas encore été refaites</strong> sous la clause de référence corrigée. Seule la vue principale l&#039;a été.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">style-page-sprites</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
-    <h2>Le style de la page des sprites revient à celui du constructeur d&#039;origine</h2>
-    <div class="point-corps"><p><strong>LE STYLE DE LA PAGE DES SPRITES DOIT REVENIR À CELUI DU CONSTRUCTEUR D&#039;ORIGINE</strong>, et l&#039;opérateur l&#039;a redemandé trois fois. Découpé du point « Page des sprites », qui en portait trois à lui seul<br />
-(opérateur, 2026-08-08 : « vaut mieux avoir plusieurs petits sujets qu&#039;un trop gros qui bloquerait trop de choses »).</p>
-<p><strong>LA MÉTHODE EST DONNÉE ET NE CHANGE PAS</strong> : restaurer depuis le constructeur d&#039;origine, qui vit dans l&#039;historique du dépôt, <strong>sans casser ce qui a été ajouté depuis</strong> — grille d&#039;emprise, libellés<br />
-français, empilement des panneaux, champ replié, version et date, panneau latéral, versions antérieures à la même présentation que la courante.</p>
-<p><strong>CE QUI EST DÉJÀ REVENU</strong> : la palette, dans un thème dédié ; la barre fixe du bas ; l&#039;échelle des boutons d&#039;action ; et le 2026-08-08, l&#039;échelle typographique — chasse fixe à quinze pixels en base,<br />
-titre de page en clamp, sections espacées de cinquante-quatre pixels avec un titre de vingt et un pixels, nom de sujet de quinze pixels gras, comptes en petites capitales espacées, mesures dont<br />
-l&#039;intitulé est une étiquette de onze pixels et la valeur un chiffre tabulaire de treize et demi.</p>
-<p><strong>CE QUI RESTE, ET QUI SE JUGE À L&#039;ŒIL SUR LA PAGE</strong> :</p>
-<ul>
-<li><strong>L&#039;allure des sections et des cartes</strong> : le constructeur d&#039;origine posait un en-tête de section avec son compte à droite, une règle sous le titre, et des cartes resserrées à onze pixels de<br />
-  remplissage. La page actuelle empile des sections nues.</li>
-<li><strong>L&#039;en-tête de la page</strong> : l&#039;original portait un surtitre en petites capitales au-dessus du titre, et un chapeau en police à chasse variable sous lui. La page actuelle n&#039;a que son titre.</li>
-<li><strong>Le fond quadrillé du corps de page</strong> : une case du monde tous les quarante-quatre pixels, qui rappelait que la page se tient sur la grille du jeu.</li>
-</ul>
-<p><strong>CE QUI SE VÉRIFIE AVANT DE MONTRER</strong> : <code>php scripts/check-review-pages.php</code> pour les sept comportements, puis un tir d&#039;écran de la page — <code>php local/scripts/tirer-page.php</code> — parce qu&#039;un style ne<br />
-se juge pas dans une feuille de style.</p>
+  <p class="compte">23 ouvert(s) · 43 fermé(s) · php scripts/backlog.php next</p>
+  <article class="point" data-statut="in-progress">
+    <p class="point-tete"><span class="point-ref">etat-a-juger</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>L&#039;état « À juger » doit se voir en couleur : c&#039;est ce sur quoi l&#039;opérateur doit intervenir</h2>
+    <div class="point-corps"><p>L&#039;état « À juger » doit se voir en couleur : c&#039;est ce sur quoi l&#039;opérateur doit intervenir</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">verdicts-au-depot</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
-    <h2>Les verdicts et commentaires de la page des sprites quittent le navigateur</h2>
-    <div class="point-corps"><p><strong>DEMANDE DE L&#039;OPÉRATEUR, 2026-08-08</strong> : « je peux valider un sprite et pour autant faire des commentaires dessus, c&#039;est aussi à prendre en compte. Quand c&#039;est fait, tu supprimes le commentaire. »</p>
-<p><strong>LA PREMIÈRE MOITIÉ EST DÉJÀ VRAIE, VÉRIFIÉE LE JOUR MÊME</strong> : un verdict et un commentaire sont indépendants. Valider n&#039;efface rien, le bouton « ＋ » reste offert sur une carte validée, et le<br />
-commentaire n&#039;est vidé que par la croix, sous la main de l&#039;opérateur. La mise en exclusion des trois verdicts, faite le même jour, ne touche pas au commentaire.</p>
-<p><strong>LA SECONDE MOITIÉ EST IMPOSSIBLE EN L&#039;ÉTAT, ET C&#039;EST LE VRAI SUJET DE CE POINT</strong> : « quand c&#039;est fait, tu supprimes le commentaire » demande que <strong>je</strong> puisse effacer un commentaire une fois qu&#039;il<br />
-est traité. Or <strong>les verdicts et les commentaires de la page des sprites vivent dans le navigateur de l&#039;opérateur</strong>, dans son stockage local. Je ne peux ni les lire, ni les écrire, ni les effacer :<br />
-il doit me les recopier, et il doit les effacer lui-même.</p>
-<p><strong>LA PAGE CAMPAGNE A DÉJÀ RÉSOLU EXACTEMENT CE PROBLÈME, LE 2026-08-07</strong> : ses remarques ont quitté le navigateur pour des fichiers versionnés, que je lis directement. C&#039;est la même opération qu&#039;il<br />
-faut faire ici, et il n&#039;y a rien à inventer — le serveur de revue sait déjà recevoir et rendre des remarques par section.</p>
-<p><strong>CE QUE ÇA DONNE UNE FOIS FAIT</strong> :</p>
-<ul>
-<li>Les verdicts et les commentaires de la page des sprites vivent dans le dépôt, rangés par image — la clé est déjà le chemin de la version affichée, jamais le variant, pour qu&#039;une image regénérée ne<br />
-  reprenne pas le verdict de son ancêtre.</li>
-<li><strong>Je lis les commentaires sans qu&#039;il ait à les recopier</strong>, j&#039;agis, et <strong>j&#039;efface celui qui est traité</strong> — ce que la demande réclame.</li>
-<li>Ce qu&#039;il a coché survit à un changement de machine et à un vidage de navigateur, ce qui n&#039;est pas le cas aujourd&#039;hui.</li>
-</ul>
-<p><strong>ATTENTION À CE QUI EXISTE DÉJÀ CHEZ LUI</strong> : son navigateur porte des verdicts et des commentaires posés depuis des jours. La bascule doit les reprendre, pas les perdre — la page doit, à sa première<br />
-ouverture après le changement, verser ce qu&#039;elle trouve dans le stockage local vers le dépôt, puis cesser de s&#039;en servir.</p>
+    <p class="point-tete"><span class="point-ref">remarque-disparait</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
+    <h2>Une remarque de variant disparaît quand elle est notée, alors qu&#039;elle doit partir quand elle est traitée</h2>
+    <div class="point-corps"><p>Une remarque de variant disparaît quand elle est notée, alors qu&#039;elle doit partir quand elle est traitée</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">hooks-non-charges</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : opérateur</span><span class="point-rang">5</span></p>
-    <h2>Les hooks de GateBeast ne sont pas chargés : la session est ouverte depuis le dossier parent</h2>
-    <div class="point-corps"><p><strong>CONSTAT DE L&#039;OPÉRATEUR, 2026-08-08</strong> : « le hook de stop t&#039;a laissé t&#039;arrêter, pas normal ».</p>
-<p><strong>LA CAUSE EST TROUVÉE, ET ELLE N&#039;EST PAS DANS LE HOOK : IL N&#039;A JAMAIS ÉTÉ CHARGÉ.</strong> Les deux hooks de GateBeast — celui qui arme le dépilement sur le mot <code>GO</code> et celui qui refuse la fin de tour —<br />
-sont déclarés dans <code>gatebeast/.claude/settings.json</code>. Or <strong>la session est ouverte depuis <code>~/projects</code>, pas depuis <code>~/projects/gatebeast</code></strong> : le répertoire de projet de l&#039;agent est le dossier parent,<br />
-donc ce fichier-là n&#039;est jamais lu. Les hooks existent, sont corrects, et ne sont branchés sur rien.</p>
-<p><strong>TROIS FAITS LE PROUVENT, ET ILS CONCORDENT</strong> :</p>
-<p>1. Le hook de garde des commandes, lui, <strong>mord à chaque appel</strong> — il est déclaré au niveau de <code>~/projects</code>, dans les réglages de l&#039;espace de travail. Le mécanisme des hooks fonctionne donc.<br />
-2. <code>var/hooks/</code> <strong>est vide, et daté de la veille</strong> : ni le fichier d&#039;armement du <code>GO</code>, ni le compteur de refus n&#039;ont jamais été écrits aujourd&#039;hui. Le hook du prompt n&#039;a pas tourné une seule fois.<br />
-3. Les réglages de l&#039;espace de travail ne déclarent <strong>que</strong> le hook des commandes : ni <code>UserPromptSubmit</code>, ni <code>Stop</code>.</p>
-<p><strong>CE QUE ÇA A COÛTÉ</strong> : le <code>GO</code> de l&#039;opérateur n&#039;a rien armé, et la fin de tour n&#039;a jamais été refusée. Le dépilement n&#039;a tenu que sur ma propre discipline — exactement ce que ce hook existe pour ne<br />
-plus avoir à supposer, puisque la règle avait été enfreinte quatre fois en une soirée avant qu&#039;il soit écrit.</p>
-<p><strong>DEUX FAÇONS DE LE RÉPARER, ET C&#039;EST UNE DÉCISION DE L&#039;OPÉRATEUR parce qu&#039;elle touche son environnement, pas le dépôt :</strong></p>
-<ul>
-<li><strong>Ouvrir la session depuis <code>~/projects/gatebeast</code>.</strong> Rien à modifier, les hooks du dépôt sont chargés d&#039;eux-mêmes, et ils restent versionnés avec le projet qu&#039;ils gardent. C&#039;est ce que je<br />
-  recommande : un hook qui vit dans le dépôt suit le dépôt.</li>
-<li><strong>Déclarer les deux hooks dans les réglages de l&#039;espace de travail</strong>, à côté de celui des commandes, en pointant les scripts de GateBeast. Ça marche depuis le dossier parent, mais ça sort la<br />
-  garde du dépôt qu&#039;elle protège : un autre projet ouvert au même endroit hériterait d&#039;une règle qui ne le concerne pas.</li>
-</ul>
-<p><strong>Tant que ce n&#039;est pas tranché, aucun dépilement n&#039;est tenu par autre chose que moi.</strong></p>
+    <p class="point-tete"><span class="point-ref">hors-modele-perdus</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
+    <h2>Des images hors modèle ont disparu alors que rien ne se jette : SP-001-1 et un humain</h2>
+    <div class="point-corps"><p>Des images hors modèle ont disparu alors que rien ne se jette : SP-001-1 et un humain</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">types-en-francais</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
+    <h2>Les valeurs de type nomment des répertoires sur le disque et restent en français</h2>
+    <div class="point-corps"><p><strong>TRANCHÉ PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « à l&#039;affichage, ok en français ; mais dans le code, ça doit respecter les mêmes règles et être en anglais ». Les valeurs de type ne bénéficient d&#039;aucune<br />
+exception — elles sont du code.</p>
+<p><strong>CE QUI EST EN FAUTE</strong> : les onze valeurs de type du référentiel — <code>sol</code>, <code>batiment</code>, <code>cloture</code>, <code>vegetation</code>, <code>chemin</code>, <code>cours-d-eau</code>, <code>arbre</code>, <code>bosquet-arbres</code>, <code>humain</code>, <code>creature</code>, <code>pont</code>. Le<br />
+code les compare, les trie, les indexe. Seuls les <strong>libellés affichés</strong> restent français, et ils sont déjà séparés.</p>
+<p><strong>POURQUOI C&#039;EST PLUS LOURD QU&#039;UNE MIGRATION DE CLÉS</strong> : ces valeurs nomment des <strong>répertoires sur le disque</strong> — <code>assets/cutout/batiment/</code>, <code>assets/poc/vegetation/</code>, <code>assets/cutout/cloture/</code>. Les<br />
+traduire, c&#039;est déplacer les fichiers <strong>et</strong> réécrire tous les chemins enregistrés contre eux : le référentiel, les rapports de génération sous <code>var/</code>, et les consignes figées à côté de chaque image.</p>
+<p><strong>L&#039;ORDRE QUI TIENT, LE MÊME QUE POUR LA MIGRATION DU VOCABULAIRE</strong> : arrêter les mots anglais et les inscrire au glossaire ; renommer les répertoires ; réécrire les chemins du référentiel dans le<br />
+même geste ; suivre les lecteurs ; contrôler que la chaîne passe en entier — <code>check-subjects.py</code>, <code>check-asset-theme.php</code>, le monteur, les pages, et <code>diff-prompts.sh</code> qui dira si une consigne a bougé.</p>
+<p><strong>LES MOTS PROPOSÉS</strong> : <code>ground</code>, <code>building</code>, <code>fence</code>, <code>vegetation</code>, <code>path</code>, <code>stream</code>, <code>tree</code>, <code>grove</code>, <code>human</code>, <code>creature</code>, <code>bridge</code>. Aucun n&#039;entre en conflit avec un mot déjà employé.</p>
+<p><strong>CE QUI NE DOIT PAS ÊTRE OUBLIÉ</strong> : <code>assets/poc/</code> porte les maîtres, et chaque image y a sa consigne figée <code>.txt</code> à côté. Un renommage qui oublie l&#039;un des deux casse le lien entre une sprite et la<br />
+consigne qui l&#039;a produite — et ce lien est ce qui permet de comprendre une image ratée.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">pose-par-calque</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
-    <h2>Le monteur et le plan ignorent les calques déclarés : une case doit porter plusieurs sprites</h2>
-    <div class="point-corps"><p><strong>RÈGLE RAPPELÉE PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « tout personnage peut aller sur une case sans que ce soit un souci, c&#039;est le système de layer qui gère ça » ; puis « il y a différentes couches de<br />
-calque, c&#039;est déjà défini. Une case doit pouvoir avoir plein de sprites dessus, normalement ça a été conçu ».</p>
-<p><strong>IL A RAISON SUR TOUTE LA LIGNE : C&#039;EST CONÇU, C&#039;EST DÉCLARÉ, ET C&#039;EST MAL APPLIQUÉ.</strong> La conception arrête cinq familles de calques dans cet ordre — le sol, le décor au sol, le monde, le dessus,<br />
-l&#039;interface — avec un tri par profondeur à l&#039;intérieur du monde. Le référentiel les applique : <strong>chaque type déclare son calque</strong>, et onze types le portent.</p>
-<p><strong>PREMIER DÉFAUT — LE MONTEUR IGNORE LE CALQUE DÉCLARÉ ET LE REDEVINE.</strong> Il ne lit pas <code>layer</code> : il porte sa propre liste de « types de sol » écrite en dur dans le code, et range tout le reste dans un<br />
-second tas. Deux familles au lieu de cinq, et une seconde vérité à côté de celle du référentiel. <strong>Deux types sont déjà rangés à l&#039;envers, et ça se voit sur la maquette :</strong></p>
-<ul>
-<li><strong>L&#039;herbe déclare le calque <code>monde</code></strong> — elle se dresse, elle doit se trier par profondeur avec les arbres et les personnages. Le monteur la range dans le sol : elle ne passera jamais devant quoi<br />
-  que ce soit, et un personnage posé derrière une touffe d&#039;herbe haute lui passera devant au lieu d&#039;être caché.</li>
-<li><strong>Le cours d&#039;eau déclare le calque <code>decor-au-sol</code></strong> — on marche dessus, il est plat. Le monteur le range dans les volumes et le trie par profondeur avec les bâtiments.</li>
-</ul>
-<p><strong>SECOND DÉFAUT — UNE CASE NE PORTE QU&#039;UN SUJET DANS LE PLAN.</strong> Le constructeur du plan de composition range les sujets dans une table indexée par la case : <strong>un second sujet sur la même case écrase<br />
-le premier, en silence</strong>. C&#039;est exactement ce que la conception interdit — une case porte un sprite par famille de calque, plus les niveaux d&#039;élévation.</p>
-<p><strong>TROISIÈME DÉFAUT, LE MIEN, ET IL DÉCOULE DES DEUX AUTRES</strong> : le script qui a posé l&#039;humain et le renardeau refuse toute case déjà prise. J&#039;ai pris cette limite pour une règle du monde alors qu&#039;elle<br />
-n&#039;était que le reflet d&#039;un outillage incomplet, et les deux sujets sont posés une case plus loin qu&#039;ils ne devraient — les deux cases au bord du chemin ont été écartées pour rien.</p>
-<p><strong>CE QU&#039;IL FAUT FAIRE, DANS CET ORDRE :</strong></p>
-<p>1. <strong>Le monteur lit le calque déclaré</strong> et empile les cinq familles dans leur ordre, avec le tri par profondeur à l&#039;intérieur du monde. La liste de types écrite en dur disparaît : le référentiel est<br />
-   la source unique, la conception le dit déjà.<br />
-2. <strong>Le plan accepte plusieurs sujets sur une case</strong>, un par famille de calque, et le contrôle porte sur le calque : deux sujets du même calque sur la même case restent une faute, les autres non.<br />
-3. <strong>Reposer l&#039;humain et le renardeau au bord du chemin</strong>, là où ils devaient être.<br />
-4. <strong>Vérifier au tir d&#039;écran</strong> qu&#039;un personnage passe bien derrière ce qui doit le cacher et devant ce qui doit être caché.</p>
+    <p class="point-tete"><span class="point-ref">rune-creature</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
+    <h2>La rune de la créature doit être une demi-lune comme sur la référence DA, et il lui faut des variants de posture</h2>
+    <div class="point-corps"><p>La rune de la créature doit être une demi-lune comme sur la référence DA, et il lui faut des variants de posture</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">maquette-et-pont</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
-    <h2>Compléter la maquette d&#039;après la planche p1 v8, puis poser le pont au croisement</h2>
-    <div class="point-corps"><p><strong>LE POINT A CHANGÉ DE NATURE LE 2026-08-08 : ce n&#039;est plus une pose de pont, c&#039;est un rapprochement de la maquette avec sa planche de référence.</strong> L&#039;opérateur a tranché la question qui bloquait ce<br />
-point — la maquette <strong>n&#039;est pas complète</strong>, et c&#039;est pour ça que le pont n&#039;avait nulle part où aller.</p>
-<p><strong>LA RÉFÉRENCE FAIT FOI : <code>assets/revue-da/planche-p1-campagne-v8.png</code>.</strong> La Maquette Campagne doit s&#039;en rapprocher <strong>avec les éléments dont on dispose déjà</strong> — rien de neuf n&#039;est dessiné pour ça, on<br />
-pose ce qui existe. <strong>Il manque des chemins</strong>, et leur absence explique le constat mesuré qui avait bloqué ce point : aucune case ne porte à la fois un chemin et un cours d&#039;eau, donc rien à ponter.</p>
-<p><strong>Le croisement n&#039;est donc pas à créer, il est à retrouver.</strong> Une fois les chemins manquants posés d&#039;après la planche, le chemin croisera le cours d&#039;eau là où la planche le montre, et le pont en<br />
-pierre <code>CH-021</code> aura sa case sans que personne ait à déplacer un tracé. Le pont existe déjà dans ses deux formes.</p>
-<p><strong>Ce qu&#039;il reste à faire, dans l&#039;ordre :</strong></p>
-<p>1. <strong>Relever les chemins de la planche, case par case</strong>, et les comparer à ce que la maquette déclare aujourd&#039;hui. Le relevé se lit avant de poser quoi que ce soit : un chemin posé à l&#039;estime est un<br />
-   chemin à refaire.<br />
-2. <strong>Poser les chemins manquants</strong> avec les pièces existantes. Ce qui n&#039;a pas sa pièce disponible se note et rejoint le dessin qui reste à faire — le reste ne s&#039;arrête pas pour autant.<br />
-3. <strong>Poser le pont</strong> à la case où le chemin traverse alors le cours d&#039;eau.</p>
-<p><strong>L&#039;outil est prêt</strong> : <code>local/scripts/poser-pont.php</code> lit le plan et rapporte les croisements. Il ne modifie rien tant qu&#039;on ne le lui demande pas, délibérément — un script qui réécrit des cases qu&#039;il<br />
-a choisies lui-même est exactement ce qui a fait déplacer une rivière pour épargner un chêne.</p>
-<p><strong>Ce point n&#039;attend plus personne.</strong> Il était bloqué sur une décision de composition qui n&#039;en était pas une.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">controle-axonometrie</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
-    <h2>Contrôle d&#039;axonométrie : lire les arêtes intérieures, sur les bâtiments seulement</h2>
-    <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08 : « au moins sur les bâtiments ? améliorer l&#039;outil est possible ? (y accorder un temps max) ».</strong> Les deux réponses sont oui, et la seconde annule la demande<br />
-d&#039;outil extérieur.</p>
-<p><strong>OUI SUR LES BÂTIMENTS, ET C&#039;EST MÊME LE SEUL CAS FAVORABLE.</strong> Ce qui fait échouer le contrôle aujourd&#039;hui, c&#039;est que le contour extérieur d&#039;une sprite n&#039;est pas une arête : un feuillage dentelle<br />
-tout le bord, des fleurs dépassent, un toit déborde. <strong>Un bâtiment n&#039;a pas ce défaut là où ça compte</strong> : l&#039;angle d&#039;un mur, un montant de porte, l&#039;arête d&#039;un pignon sont des segments droits, longs et<br />
-francs, et ce sont exactement eux qui portent la projection. Un arbre n&#039;en a aucun et n&#039;en aura jamais — le contrôle ne doit donc pas prétendre le juger. <strong>Restreindre le contrôle aux bâtiments n&#039;est<br />
-pas un repli, c&#039;est la portée juste.</strong></p>
-<p><strong>OUI, L&#039;OUTIL S&#039;AMÉLIORE SANS RIEN INSTALLER — ET ÇA REND LA QUESTION DE <code>scikit-image</code> SANS OBJET.</strong> Vérifié le 2026-08-08 : <code>scipy</code> est déjà présent sur la machine, en version 1.11.4, à côté de<br />
-<code>numpy</code> et de la bibliothèque d&#039;images que l&#039;outillage utilise déjà. Le calcul des gradients y est, et l&#039;accumulation qui trouve les droites tient en quelques lignes de <code>numpy</code> — c&#039;est de<br />
-l&#039;arithmétique sur un tableau, pas un algorithme à emprunter. <strong>La bibliothèque demandée n&#039;apportait qu&#039;une commodité, pas une capacité</strong>, et la règle du dépôt est claire : un outil s&#039;introduit quand<br />
-il apporte ce qui n&#039;existe pas.</p>
-<p><strong>CE QUE JE FAIS, ET LE TEMPS QUE J&#039;Y ACCORDE.</strong> Une passe, et une seule :</p>
-<p>1. <strong>Lire les segments droits à l&#039;intérieur de l&#039;image</strong> au lieu de suivre la silhouette : gradients, puis accumulation des directions dominantes, sur la seule zone opaque de la sprite.<br />
-2. <strong>Ne garder que les segments longs et proches de la verticale</strong> — ce sont eux qui doivent rester parallèles en projection parallèle.<br />
-3. <strong>Rendre le même verdict qu&#039;aujourd&#039;hui</strong> : parallèles, donc juste ; convergents, donc point de fuite, donc faux ; trop peu de segments, donc aucun verdict — et ce dernier cas reste honnête, il ne<br />
-   se force jamais.</p>
-<p><strong>LA LIMITE, ÉCRITE D&#039;AVANCE POUR QU&#039;ELLE M&#039;ENGAGE</strong> : le contrôle est éprouvé sur les trois bâtiments déjà produits — maison de ferme, centre de soin, pont. <strong>Si deux des trois ne concluent pas,<br />
-j&#039;arrête et le point se classe</strong> : le contrôle d&#039;axonométrie reste à l&#039;œil, et on n&#039;y revient pas. Pas de deuxième méthode, pas de réglage à l&#039;aveugle, pas d&#039;outil demandé en rattrapage.</p>
-<p><strong>Ce qui change dans le contrôle lui-même</strong> : il ne s&#039;appliquera qu&#039;aux sujets bâtis, et il le dira au lieu de rendre un verdict mou sur un arbre.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">formes-de-trace</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 5</span><span class="point-attend">attend : agent</span><span class="point-rang">9</span></p>
-    <h2>Vingt et une formes de tracé manquent : tirer d&#039;abord celles que la planche p1 v8 emploie</h2>
-    <div class="point-corps"><p><strong>QUESTION DE L&#039;OPÉRATEUR, 2026-08-08 : « c&#039;est dans tes sujets ? » — OUI, TOUT EST DÉJÀ DÉCLARÉ, ET LE COMPTE DE CE POINT ÉTAIT FAUX.</strong></p>
-<p><strong>Ce que le référentiel déclare, relevé le 2026-08-08</strong> : le chemin et le cours d&#039;eau portent chacun <strong>quinze formes</strong> — les quatre extrémités, les deux lignes, les quatre angles, les quatre<br />
-embranchements à trois branches, le carrefour. Rien n&#039;est à inventer, rien n&#039;est à déclarer : les trente formes existent sur le papier, avec leur libellé et leur emprise.</p>
-<p><strong>CE QUI MANQUE N&#039;EST PAS SEPT PIÈCES, C&#039;EN EST VINGT ET UNE.</strong> Le chiffre de sept que ce point portait ne correspondait à rien de vérifiable ; le relevé, lui, se refait d&#039;une commande :</p>
-<ul>
-<li><strong>Chemin <code>CH-019</code> — dessinées : extrémité nord, extrémité sud, ligne nord-sud, ligne est-ouest, carrefour.</strong> Manquent les <strong>dix</strong> autres : extrémités est et ouest, les quatre angles, les quatre<br />
-  embranchements à trois branches.</li>
-<li><strong>Cours d&#039;eau <code>CH-020</code> — dessinées : extrémité nord, extrémité sud, ligne nord-sud, ligne est-ouest.</strong> Manquent les <strong>onze</strong> autres : extrémités est et ouest, les quatre angles, les quatre<br />
-  embranchements, le carrefour.</li>
-<li><strong>Pont <code>CH-021</code> — ses deux formes existent</strong>, et il n&#039;en manque aucune.</li>
-</ul>
-<p><strong>CE QUI CHANGE L&#039;ORDRE DE TIR, ET C&#039;EST LA RAISON DE NE PAS TOUT LANCER</strong> : vingt et une générations, ce n&#039;est plus un lot, c&#039;est une journée. Or la maquette n&#039;a pas besoin des vingt et une —<br />
-<strong>elle n&#039;a besoin que des formes que la planche <code>assets/revue-da/planche-p1-campagne-v8.png</code> emploie réellement</strong>, et c&#039;est précisément ce que le relevé du point « Compléter la maquette d&#039;après la<br />
-planche p1 v8 » va établir, case par case.</p>
-<p><strong>L&#039;ORDRE DE TIR SE DÉCIDE DONC APRÈS CE RELEVÉ, PAS AVANT.</strong> Tirer d&#039;abord ce que la planche demande, c&#039;est rendre la maquette complète au plus vite et n&#039;engager que des générations qui servent tout<br />
-de suite ; tirer les vingt et une, c&#039;est payer d&#039;avance des formes dont aucune scène ne se sert encore. Le reste se complètera au fil des maquettes qui en auront l&#039;usage.</p>
-<p><strong>Ce point attend donc l&#039;agent, plus l&#039;opérateur</strong> : il reprend dès que le relevé de la planche dit quelles formes manquent réellement à la maquette, et c&#039;est ce lot-là qui sera soumis.</p>
-<p><strong>Le relevé se refait d&#039;une commande</strong> : <code>php local/scripts/lister-formes-tracees.php</code> — il lit le référentiel et dit, pour chaque forme déclarée, si son image existe.</p>
+    <p class="point-tete"><span class="point-ref">pont-ns</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
+    <h2>Le pont nord-sud n&#039;est toujours pas corrigé</h2>
+    <div class="point-corps"><p>Le pont nord-sud n&#039;est toujours pas corrigé</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">bouton-copie-releve</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">10</span></p>
+    <p class="point-tete"><span class="point-ref">pieces-plates-96</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la décision demandée par reprise-plates</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
+    <h2>Refaire les huit pièces plates livrées en 96 x 96, la case en demande 96 x 84</h2>
+    <div class="point-corps"><p>Refaire les huit pièces plates livrées en 96 x 96, la case en demande 96 x 84</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="pending-decision">
+    <p class="point-tete"><span class="point-ref">reprise-plates</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : ta réponse : d&#039;un coup, ou au fil des reprises</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
+    <h2>Les huit pièces plates : toutes reprises d&#039;un coup, ou au fil des reprises ordinaires ?</h2>
+    <div class="point-corps"><p><strong>CE QUE JE DEMANDE</strong> : les huit pièces plates devenues non conformes se refont-elles <strong>d&#039;un coup</strong>, ou <strong>au fil des reprises ordinaires</strong> ?</p>
+<p><strong>CE QUI S&#039;EST PASSÉ</strong> : la case projetée est passée de carrée à <code>96 × 84 px</code> le 2026-08-08, par ta décision. Les pièces plates dessinées avant sont livrées en <code>96 × 96</code> — cinq du chemin <code>CH-019</code>,<br />
+trois du cours d&#039;eau <code>CH-020</code>. Ce ne sont pas de mauvais dessins : ce sont des dessins d&#039;une case vue de la verticale, faits sous l&#039;ancienne règle.</p>
+<p><strong>CE QUE COÛTE CHAQUE OPTION :</strong></p>
+<ul>
+<li><strong>Tout d&#039;un coup</strong> — huit générations. La maquette devient juste immédiatement, et le chemin comme le cours d&#039;eau cessent de déborder de 3 px sur leurs voisines.</li>
+<li><strong>Au fil de l&#039;eau</strong> — zéro génération aujourd&#039;hui. Chaque pièce se refait quand une autre raison la fait revenir. La maquette reste légèrement fausse en attendant, mais <strong>d&#039;une fausseté qui ne se<br />
+  voit pas</strong> : les pièces se recouvrent au lieu de laisser un trou.</li>
+</ul>
+<p><strong>CE QUI PENCHE POUR ATTENDRE</strong> : <code>Q5</code> a déjà établi que vingt et une formes de tracé manquent, et que l&#039;ordre de tir se décide d&#039;après ce que la planche emploie réellement. Trois des huit pièces<br />
+sont dans ce lot-là. Les refaire séparément, c&#039;est deux passages là où un suffirait.</p>
+<p><strong>CE QUI PENCHE POUR TOUT REPRENDRE</strong> : tant qu&#039;elles sont fausses, toute mesure prise sur la maquette est fausse aussi, et c&#039;est sur la maquette qu&#039;on juge si les sujets appartiennent au même monde.</p>
+<p><strong>MA RECOMMANDATION : attendre, et les inclure au lot de <code>Q5</code>.</strong> Le défaut ne se voit pas, il ne bloque rien, et le lot commun coûte une seule mise en route.</p>
+<p><strong>RIEN N&#039;EST REGÉNÉRÉ TANT QUE TU N&#039;AS PAS TRANCHÉ.</strong></p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">tri-profondeur</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">9</span></p>
+    <h2>Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</h2>
+    <div class="point-corps"><p>Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="pending-decision">
+    <p class="point-tete"><span class="point-ref">formes-de-trace</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : le lot de seize dessins à valider, formes manquantes et pièces plates réunies</span><span class="point-prio">priorité 5</span><span class="point-attend">attend : agent</span><span class="point-rang">10</span></p>
+    <h2>Vingt et une formes de tracé manquent : tirer d&#039;abord celles que la planche p1 v8 emploie</h2>
+    <div class="point-corps"><p><strong>LE RELEVÉ EST FAIT, 2026-08-08, ET IL DIVISE LE SUJET PAR TROIS.</strong> Il était bloqué parce que le plan de la maquette ne se construisait plus ; il se construit depuis aujourd&#039;hui, et le compte se<br />
+lit directement.</p>
+<p><strong>CE QUE LES DEUX COMPOSITIONS DEMANDENT RÉELLEMENT, ET QUI N&#039;EST PAS DESSINÉ :</strong></p>
+<p>| Sujet | Formes manquantes | Cases concernées |<br />
+|---|---|---|<br />
+| <code>CH-019</code> chemin | <code>e</code>, <code>w</code> | 2 — les deux extrémités du chemin est-ouest posé aujourd&#039;hui |<br />
+| <code>CH-020</code> cours d&#039;eau | <code>es</code>, <code>nw</code>, <code>ne</code>, <code>w</code> | 10 |<br />
+| <code>OB-010</code> clôture | <code>n</code>, <code>s</code> | 3 |</p>
+<p><strong>HUIT DESSINS, PAS VINGT ET UN.</strong> Aucun de ces trois sujets ne pivote — le référentiel le déclare —, donc chaque forme est un dessin. Les treize formes restantes des vingt et une existent bien<br />
+comme manques du modèle, mais <strong>aucune composition ne les emploie</strong> : les tirer aujourd&#039;hui, c&#039;est payer d&#039;avance des pièces dont aucune scène ne se sert. C&#039;est exactement ce que ce point disait<br />
+d&#039;éviter, et le relevé le confirme au lieu de le supposer.</p>
+<p><strong>CES HUIT-LÀ, ELLES, SE VOIENT</strong> : ce sont les trous de la maquette, et c&#039;est le monteur qui les montre depuis qu&#039;il ne substitue plus un dessin voisin en silence.</p>
+<p>## CE QUI DOIT ÊTRE DÉCIDÉ AVEC, ET QUI CHANGE LE LOT</p>
+<p><strong>Huit pièces plates déjà produites sont non conformes</strong> depuis que la case projetée est passée à <code>96 × 84</code> : cinq du chemin, trois du cours d&#039;eau, toutes livrées en <code>96 × 96</code>. Elles sont l&#039;objet de<br />
+<code>reprise-plates</code>.</p>
+<p><strong>LES DEUX LOTS SE RECOUVRENT ET DEVRAIENT N&#039;EN FAIRE QU&#039;UN.</strong> Les huit formes manquantes seront dessinées à la nouvelle case ; les huit pièces existantes doivent y revenir. Ce sont les mêmes deux<br />
+sujets, la même chaîne, la même mise en route. <strong>Seize dessins en un lot</strong> coûtent une seule montée en route et une seule planche-contact à juger ; en deux fois, c&#039;est deux passages sur les mêmes<br />
+pièces.</p>
+<p><strong>MA RECOMMANDATION : un seul lot de seize.</strong> Et il rend la maquette entièrement juste — plus un trou, plus une pièce hors norme.</p>
+<p><strong>RIEN N&#039;EST LANCÉ.</strong> Une génération est une dépense, et le lot se soumet.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="pending-dependency">
+    <p class="point-tete"><span class="point-ref">bouton-copie-releve</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">11</span></p>
     <h2>Le bouton de copie du relevé doit exister sur toutes les pages qui en portent un</h2>
     <div class="point-corps"><p><strong>Constat localisé le 2026-08-07, et il est pire que « recopié » : il l&#039;est deux fois.</strong> Le bouton de copie du relevé et toute sa mécanique existent <strong>en trois exemplaires</strong> — une fois dans le module partagé, qui sert la page des sprites, et <strong>deux fois à l&#039;identique dans les deux sources de la page Campagne</strong> : le plan et la maquette montée en portent chacun leur copie.</p>
 <p><strong>Ce que ça produit aujourd&#039;hui</strong> : la page des sprites a la barre fixe pleine largeur avec son compte, restaurée le 2026-08-07 ; la page Campagne, elle, n&#039;a que son bouton dans le corps de la page, sans barre fixe et sans compte. <strong>L&#039;opérateur doit donc redescendre chercher le bouton</strong> sur la page qu&#039;il relit tous les jours, alors qu&#039;il ne le fait plus sur l&#039;autre.</p>
@@ -275,7 +203,7 @@ de suite ; tirer les vingt et une, c&#039;est payer d&#039;avance des formes don
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">comparaison-variants</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">11</span></p>
+    <p class="point-tete"><span class="point-ref">comparaison-variants</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">12</span></p>
     <h2>La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</h2>
     <div class="point-corps"><p><strong>La comparaison de variants sélectionnés, à 48 pixels par case, dans la fiche du sujet.</strong></p>
 <p><strong>Le préalable est levé</strong> : la sélection multiple fonctionne depuis le 2026-08-07 — la comparaison n&#039;engage plus dès le premier variant coché, donc on peut enfin en retenir plusieurs. Avant, cocher le premier masquait tous les autres et la case du second n&#039;était plus là pour être cochée.</p>
@@ -287,7 +215,7 @@ de suite ; tirer les vingt et une, c&#039;est payer d&#039;avance des formes don
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">convergence-revue</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span><span class="point-rang">12</span></p>
+    <p class="point-tete"><span class="point-ref">convergence-revue</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span><span class="point-rang">13</span></p>
     <h2>Faire converger les deux outils de revue de la page Campagne</h2>
     <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08 : OUI, ON FAIT CONVERGER.</strong> Écrite ici plutôt que laissée dans la conversation, à sa demande expresse — une réponse qui ne vit que dans le fil se redemande à la<br />
 séance suivante. L&#039;accord porte sur le principe et sur la solution décrite plus bas ; il ne dispense pas de regarder la page à chaque étape.</p>
@@ -315,11 +243,24 @@ comportement n&#039;est engagé — migrer c&#039;est déplacer, on ne refait ni
 4. <strong>Supprimer la seconde copie</strong> une fois les deux branchés et contrôlés.</p>
 <p><strong>Ce qui reste hors de la portée</strong> : le style, la mise en page, les paliers de grossissement et le déplacement à la souris. Le seul écart de comportement assumé est le classement des remarques<br />
 traitées offert à la maquette, et il est décrit ci-dessus pour qu&#039;il ne surprenne personne.</p>
+<p>## ÉTAPE 1 — FAITE ET ÉPROUVÉE, 2026-08-08</p>
+<p><code>scripts/check-review-pages.php</code> couvre désormais la page Campagne : <strong>sept comportements figés</strong>, vérifiés sur les <strong>deux</strong> outils à la fois — le survol qui annonce la case, le clic qui ouvre la<br />
+saisie, l&#039;annulation, la liste des remarques, la copie du récapitulatif, l&#039;effacement. Le septième porte sur le plan seul : le classement d&#039;une remarque traitée et sa réouverture, que <strong>la maquette<br />
+n&#039;a pas</strong> et doit hériter de la convergence. L&#039;exiger des deux dès maintenant aurait fait échouer le contrôle avant qu&#039;on commence.</p>
+<p><strong>LE FILET A ÉTÉ ÉPROUVÉ, PAS SEULEMENT ÉCRIT</strong> : la classe <code>mq-copier</code> a été cassée exprès dans la page construite, le contrôle l&#039;a signalée nommément, et la page a été remise en état. Un contrôle<br />
+qu&#039;on n&#039;a pas vu mordre est une croyance.</p>
+<p>## ÉTAPE 2 — MESURÉE, PAS COMMENCÉE, ET VOICI POURQUOI</p>
+<p>L&#039;outil de remarques occupe <strong>environ 450 lignes</strong> dans <code>review-server/parc/build.php</code> — 150 de style, 300 de script — et autant, à peu de chose près, dans <code>review-server/parc/monter.php</code>. Le sortir<br />
+« à l&#039;identique de la copie du plan » demande de lire ces 450 lignes en entier et de les déplacer sans en perdre une : c&#039;est le geste même que les quatre pas cherchent à rendre sûr.</p>
+<p><strong>CE N&#039;EST PAS UN TRAVAIL À COMMENCER EN FIN DE SÉANCE.</strong> La page Campagne est relue tous les jours, et deux comportements ont déjà été perdus deux fois sur la page des sprites dans exactement ces<br />
+circonstances — un remaniement entamé sans que la tête soit fraîche. Le filet de l&#039;étape 1 rattraperait la perte, il ne rattraperait pas une demi-migration laissée en plan.</p>
+<p><strong>CE QUI EST PRÊT POUR LA SUITE</strong> : le filet tient, la solution est arrêtée — un outil, deux adaptateurs répondant à trois questions —, et l&#039;ordre des trois pas restants est écrit plus haut. La<br />
+reprise commence par sortir le module sans le brancher à personne : à ce stade, rien ne change sur aucune page, et c&#039;est vérifiable en reconstruisant les deux.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">commentaires-anglais</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">13</span></p>
+    <p class="point-tete"><span class="point-ref">commentaires-anglais</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
     <h2>Les commentaires français du code antérieur, à repasser en anglais au fil de l&#039;eau</h2>
     <div class="point-corps"><p><strong>LA RÈGLE EST FIGÉE ET INCHANGEABLE : le code et ses commentaires sont en ANGLAIS AMÉRICAIN</strong> (opérateur, 2026-08-08). Elle a été un instant énoncée à l&#039;envers puis reprise le jour même ; ce point<br />
 reprend donc exactement le sens qu&#039;il avait, et il ne se rediscute plus.</p>
@@ -341,7 +282,7 @@ en anglais. Les renommer touche la donnée et tout ce qui la lit, donc ce n&#039
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">largeur-du-suivi</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
+    <p class="point-tete"><span class="point-ref">largeur-du-suivi</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">15</span></p>
     <h2>Le suivi enfreint lui-même le standard de largeur</h2>
     <div class="point-corps"><p><strong>Le contrôle relève 108 écarts dans le document de suivi au 2026-08-07</strong> : des lignes de 200 à 1 080 caractères, et cinq paragraphes repliés trop court. <strong>Aucun n&#039;est de ce jour</strong> — tout ce qui a été écrit aujourd&#039;hui passe le contrôle.</p>
 <p><strong>Ce qui a changé la nature du point</strong> : les points ouverts ont quitté ce document le 2026-08-07 pour un fichier de données et une page. Une grande partie de ce que le document porte encore est donc <strong>de l&#039;histoire figée</strong> — l&#039;ancien tableau des points, des sections de séances passées, des analyses closes. Replier ligne par ligne un texte dont la moitié est destinée à disparaître serait du travail perdu deux fois.</p>
@@ -351,7 +292,7 @@ en anglais. Les renommer touche la donnée et tout ce qui la lit, donc ce n&#039
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-commit-seance</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">15</span></p>
+    <p class="point-tete"><span class="point-ref">regle-commit-seance</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
     <h2>Écrire à la méthode commune : le commit se fait en fin de séance, jamais à la reprise</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08 : « tu dois commit à la fin d&#039;une session, pas au début, sinon tu ne sais plus ce qui a été fait ».</strong> À écrire à la méthode commune, protocole de<br />
 collaboration, avec son intention.</p>
@@ -368,7 +309,7 @@ le message porte cette mention en dernière ligne.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">noms-des-composants</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
+    <p class="point-tete"><span class="point-ref">noms-des-composants</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
     <h2>Écrire la règle : tout composant porte un nom, standard, anglais, et inscrit au glossaire</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « donne toujours des noms à tes composants (cohérent et standard) et je dois pouvoir savoir quel nom ça a » ; puis, quand j&#039;ai baptisé<br />
 le panneau latéral « tiroir » : « un nom technique est en anglais et reste en anglais, même en FR. La description peut dire tiroir pour la compréhension ».</p>
@@ -388,7 +329,7 @@ le nom d&#039;un composant en fait partie et qu&#039;il ne se traduit pas en par
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-ordre-depilage</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
+    <p class="point-tete"><span class="point-ref">regle-ordre-depilage</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">18</span></p>
     <h2>Écrire la règle : un point engagé passe devant, et un gros point se découpe</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « ce qui est déjà in-progress est la prio ! Sauf si c&#039;est bloqué par un todo (mais là ça doit revenir en todo ou pending dependency) ».</p>
 <p><strong>L&#039;INTENTION</strong> : un point engagé porte un contexte que personne d&#039;autre n&#039;a — une page à moitié refaite, une décision à moitié appliquée —, et c&#039;est exactement ce qu&#039;un arrêt jette. Prendre un point<br />
@@ -407,7 +348,7 @@ plus prioritaire par-dessus ne gagne pas une journée, elle perd celle qui est d
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-constantes</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">18</span></p>
+    <p class="point-tete"><span class="point-ref">regle-constantes</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">19</span></p>
     <h2>Écrire la règle : des constantes préfixées, jamais de littéral recopié</h2>
     <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « utilise des constantes ou des constantes de classes, autant que tu peux ! Règle de code » ; puis « les constantes doivent être<br />
 préfixées ».</p>
@@ -426,8 +367,44 @@ les types de représentation, les noms de calques. Chacun est une famille qui m�
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">describe-arg-mute</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">20</span></p>
+    <h2>backlog.php describe accepte un texte en argument et l&#039;ignore en silence</h2>
+    <div class="point-corps"><p>Constaté le 2026-08-08 en écrivant le point <code>droits-parent</code>. <code>describe &lt;REF&gt;</code> lit son texte sur l&#039;entrée standard, comme son bloc d&#039;usage le dit. Mais appelé avec le texte en argument positionnel —<br />
+<code>describe &lt;REF&gt; &quot;...&quot;</code> —, il ne refuse pas : il lit une entrée standard vide, écrase la description par la chaîne vide, et annonce « description reprise, 0 caractères ». Le message se lit comme un<br />
+succès, et la description est perdue sans que personne le voie.</p>
+<p>Ce qui manque est un refus : un argument de trop après la ref est une erreur d&#039;appel, elle doit lever. Et une reprise à zéro caractère mérite au minimum de le dire autrement qu&#039;en comptant.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">bash-simple</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">21</span></p>
+    <h2>Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</h2>
+    <div class="point-corps"><p><strong>LA DOC FAIT AUTORITÉ, LA MÉMOIRE NE SERT PAS</strong> (opérateur, 2026-08-08) : une consigne rangée dans la mémoire de l&#039;agent ne serait pas mieux respectée qu&#039;une règle écrite, et elle échappe à tout<br />
+le monde — elle ne se relit pas, ne se corrige pas, ne suit pas le dépôt. Ce qui doit tenir s&#039;écrit dans la documentation. Deux consignes données ce jour-là avaient été mises en mémoire ; la mémoire<br />
+a été supprimée, et voici ce qui reste à écrire.</p>
+<p><strong>CE QUI EST À ÉCRIRE ICI — la commande bash reste simple.</strong> Un heredoc dans un pipeline, un <code>{ ... } | commande</code>, des accolades et des guillemets imbriqués : c&#039;est le signe qu&#039;on s&#039;y prend mal, pas<br />
+un tour de force. Le contenu s&#039;écrit dans un fichier avec l&#039;outil d&#039;écriture, puis se donne à la commande par une redirection simple. Pour reprendre un texte existant : le sortir dans un fichier par<br />
+une redirection simple, l&#039;éditer avec les outils d&#039;édition, le réinjecter.</p>
+<p><strong>POURQUOI</strong> : ces commandes déclenchent les gardes du harnais — « Contains brace with quote character (expansion obfuscation) » —, donc une demande d&#039;autorisation à chaque appel, c&#039;est-à-dire une<br />
+interruption de l&#039;opérateur pour un geste qu&#039;il a déjà approuvé. Elles sont illisibles au journal, et une erreur de guillemet y passe inaperçue jusqu&#039;à ce qu&#039;elle écrase quelque chose.</p>
+<p><strong>OÙ</strong> : à la méthode commune, <code>~/projects/conceptions/methode/execution.md</code>, qui porte déjà l&#039;outillage et le rapport aux scripts — la règle vaut au-delà de GateBeast. Elle rejoint ce qui y est<br />
+déjà écrit sur le script versionné qui s&#039;autorise une fois contre la commande tapée qui redemande à chaque appel.</p>
+<p><strong>CE QUI N&#039;EST PAS À ÉCRIRE, PARCE QUE C&#039;EST DÉJÀ ÉCRIT</strong> : la brièveté des réponses. <code>execution.md</code> dit « produire court, ne pas relire ce qui est connu, ne pas réexpliquer, ne pas énumérer ce qui<br />
+se montre » et <code>collaboration.md</code> « chaque échange doit être court, clair et décisif ». L&#039;opérateur a dû le redemander le 2026-08-08 — « si une phrase suffit, alors une phrase doit être dite ». Le<br />
+défaut est dans l&#039;application, pas dans la règle : il n&#039;y a rien à ajouter, et ajouter une redite affaiblirait ce qui est déjà là.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">locales-francaises</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">22</span></p>
+    <h2>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</h2>
+    <div class="point-corps"><p>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">19</span></p>
+    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">23</span></p>
     <h2>Monter à la méthode commune les règles d&#039;outillage et d&#039;écriture, et elles seules</h2>
     <div class="point-corps"><p><strong>DÉCISION DE L&#039;OPÉRATEUR, 2026-08-08, ET ELLE TRANCHE LE POINT : SEULE LA FAMILLE « OUTILLAGE ET ÉCRITURE » EST COMMUNE. Tout le reste est propre à ce projet et n&#039;en sort pas.</strong> Cette décision<br />
 annule le « non, pas encore » du 2026-08-07 : la question n&#039;était pas prématurée, elle était mal posée — elle demandait un tout ou rien, alors que le partage se fait famille par famille.</p>
@@ -543,6 +520,35 @@ aujourd&#039;hui dans une de ces règles — le nom des dossiers, le chiffre de 
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">panneau-plein-ecran</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Un panneau plein ecran rouvert par le rechargement ne se ferme plus</h2>
+    <div class="point-corps"><p><strong>FAIT — sortir d&#039;une comparaison sans sortir du sujet, et ne pas la retrouver en rouvrant.</strong> Fermer le panneau d&#039;un sujet décoche tout et quitte la comparaison : rouvrir la fiche la montre entière, pas dans l&#039;état laissé trois sujets plus tôt. Une sélection oubliée faisait croire à un sujet qui n&#039;a plus que deux variants.</p>
+<p><strong>RESTE — le bouton pour quitter la comparaison depuis l&#039;intérieur.</strong> L&#039;opérateur veut, pendant qu&#039;une comparaison est en cours, <strong>un bouton visible pour en sortir sans fermer le sujet</strong>. La fonction qui le fait existe déjà et est appelée à la fermeture ; il manque le bouton lui-même, à afficher seulement pendant la comparaison, en tête de la liste des variants.</p>
+<p><strong>RESTE — le panneau rouvert par le rechargement automatique ne se ferme plus.</strong> Quand un panneau est ouvert et que la page se reconstruit, il réapparaît mais le bouton de fermeture ne fait rien : la pile qui tient les panneaux ouverts est en mémoire et repart vide au chargement, alors que le panneau, lui, est visible. <strong>Deux corrections, la seconde étant la bonne</strong> : que la fermeture masque le panneau réellement visible au lieu de dépendre de la pile ; et que l&#039;état ouvert survive au rechargement par l&#039;adresse — une ancre portant le code du sujet, lue à l&#039;ouverture, rouvrirait le panneau et remplirait la pile du même geste.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">cds-propositions</span><span class="point-statut">Fait — le travail est allé au bout : la génération de la proposition 3, en cours</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Centre de soin CDS : propositions a refaire, et une version abimee a ecarter</h2>
+    <div class="point-corps"><p><strong>FAIT — LES TROIS VUES DU CENTRE DE SOIN SONT REFAITES SOUS LA CLAUSE DE RÉFÉRENCE CORRIGÉE</strong>, 2026-08-08. Aucune n&#039;est jugée : le verdict appartient à l&#039;opérateur.</p>
+<p><strong>PROPOSITION 2 — <code>BT-001_proposition-p2-v5</code>.</strong> v3 et v4 écartées avec leur motif : leur palette propre — pierre grise claire, vert profond mat de la scène de référence du monde — avait été<br />
+remplacée par l&#039;ocre doré et les faîtières orange de la vue principale, prise à tort comme référence. La v2 est redevenue courante, donc référence, et la v5 est partie d&#039;elle : le style est<br />
+conservé, la projection et les paramètres techniques sont corrigés. Hauteur 13,0 cases pour une fourchette de 11,4 à 13,9.</p>
+<p><strong>PROPOSITION 3 — <code>BT-001_proposition-p3-v5</code>, EN DEUX TEMPS.</strong> La v4 est sortie avec un défaut visible : <strong>la verrière au-dessus de la cour intérieure n&#039;avait plus ses vitres</strong>, seulement son<br />
+ossature de bois, alors que sa fiche exige des pans de verre. La reprise unique que la chaîne de production autorise a été employée, avec le motif exact du rejet cité en toutes lettres : la v5<br />
+porte ses vitres, reflets compris, et le reste de l&#039;image est inchangé. Hauteur 13,0 cases.</p>
+<p><strong>LA REPRISE UNIQUE N&#039;ÉTAIT PAS OUTILLÉE, ET C&#039;EST CE QUI A ÉTÉ AJOUTÉ POUR LA FAIRE.</strong> La chaîne l&#039;autorise depuis le début — « une reprise au plus, avec une consigne renforcée SUR LE MOTIF EXACT<br />
+DU REJET » — mais rien ne permettait de dire ce motif : relancer revenait à retirer la même consigne au hasard, ce qui est un second tirage, pas une reprise. <code>generate-sprite.py</code> prend désormais<br />
+<code>--rework &quot;&lt;motif&gt;&quot;</code>, qui ajoute la clause <strong>en toute fin de consigne</strong>, après le rappel de caméra, parce que ce que le générateur lit en dernier pèse le plus lourd. Elle nomme ce qui a manqué sans<br />
+redécrire le sujet — répéter la fiche ne corrigerait rien, puisque c&#039;est elle qui vient d&#039;être mal suivie. Vérifié : sans <code>--rework</code>, les 69 consignes sont inchangées.</p>
+<p><strong>CE QUE LE CONTRÔLE D&#039;AXONOMÉTRIE DIT DES TROIS</strong> : rien. « Côtés trop irréguliers pour conclure » sur la v5 de p2 (6,3 et 4,9 px), sur la v4 de p3 (6,2 et 6,4 px) comme sur toutes les versions<br />
+antérieures. C&#039;est la limite que <code>Q4</code> doit lever — l&#039;outil ne sait lire que le contour extérieur, jamais les arêtes intérieures, et c&#039;est précisément sur un bâtiment que les arêtes existent.</p>
+<p><strong>CE QUI RESTE, ET IL APPARTIENT À L&#039;OPÉRATEUR</strong> : juger les trois propositions. Elles sont côte à côte dans la fiche du sujet, sur la page des sprites.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">texte-a-cote-image</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
     <h2>Consigne et rapport se lisent à côté de l&#039;image, plus dans un panneau plein écran</h2>
     <div class="point-corps"><p><strong>CAPTURE DE L&#039;OPÉRATEUR, 2026-08-08, écrite en toutes lettres</strong> : dans la fiche d&#039;un sujet, sous les mesures d&#039;une version, les deux boutons « La consigne envoyée » et « Le rapport de génération »<br />
@@ -555,6 +561,24 @@ garde le titre du texte ouvert. Sur un écran étroit, il repasse sous l&#039;im
 <p><strong>Pourquoi pas un dépliage sous le bouton</strong> : la carte d&#039;un variant fait deux cent soixante pixels de large ; un texte de dix mille caractères y descend sur des mètres et repousse tout le reste de la<br />
 planche. Le panneau accolé est le seul endroit où le texte a la place de se lire sans déplacer l&#039;image.</p>
 <p><strong>Fermé le 2026-08-08</strong> — Le texte s&#039;ouvre dans un panneau accolé au bord droit, la fiche se resserre, l&#039;image reste visible. Vérifié au tir d&#039;écran.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">style-page-sprites</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le style de la page des sprites revient à celui du constructeur d&#039;origine</h2>
+    <div class="point-corps"><p><strong>FAIT — LES TROIS MANQUES DE STYLE SONT POSÉS</strong>, 2026-08-08, et chacun a été jugé sur un tir d&#039;écran, jamais dans la feuille de style.</p>
+<p><strong>L&#039;EN-TÊTE DE SECTION</strong> : titre et code à gauche, <strong>compte à droite</strong>, une règle dessous. C&#039;est la règle qui fait la section — sans elle les familles s&#039;empilaient sans séparation et la page se<br />
+lisait comme une liste unique, ce qui était le reproche exact fait à la reprise.</p>
+<p><strong>L&#039;EN-TÊTE DE PAGE</strong> : un surtitre en petites capitales espacées au-dessus du titre. Quatre pages se ressemblent de loin ; celle qu&#039;on a ouverte doit se nommer sans qu&#039;on lise le titre en entier.</p>
+<p><strong>LE FOND QUADRILLÉ</strong>, une case du monde tous les quarante-quatre pixels. Posé d&#039;abord avec <code>--line</code>, il avait le poids d&#039;une bordure et <strong>on ne distinguait plus les règles de section</strong> : il a sa<br />
+propre variable, <code>--grid</code>, nettement plus faible, déclarée dans <strong>les deux thèmes</strong> — une variable qui n&#039;existe que dans l&#039;un rend la page nue dans l&#039;autre sans que rien ne le signale.</p>
+<p>## UN DÉFAUT PLUS ANCIEN, RÉVÉLÉ PAR CE TRAVAIL ET CORRIGÉ</p>
+<p><strong>LA PAGE DÉBORDAIT DE 84 PIXELS SUR LA DROITE, DEPUIS TOUJOURS, ET PERSONNE NE POUVAIT LE VOIR.</strong> <code>.wrap</code> portait <code>width: min(100%, 1760px)</code> avec quarante-huit pixels de remplissage de chaque<br />
+côté, sans <code>box-sizing: border-box</code> : 1400 de fenêtre donnaient 1484 de contenu. Rien n&#039;était aligné à droite, donc rien ne sortait de l&#039;écran, donc le défaut était invisible.</p>
+<p><strong>LE COMPTE DE SECTION L&#039;A RÉVÉLÉ EN SE FAISANT COUPER</strong> : il affichait « 1 » au lieu de « 1 sujet ». Mesuré à la sonde — <code>php local/scripts/probe-debordement.php &lt;page&gt;</code>, qui dit de combien la page<br />
+déborde et <strong>nomme les éléments responsables</strong> — et non déduit de la feuille de style : c&#039;est <code>div.wrap</code>, 1484 px, qui portait tout le reste au-delà du bord. Corrigé, plus aucun élément ne dépasse.</p>
+<p><strong>LA SONDE RESTE</strong>, parce que ce défaut-là ne se voit jamais tant qu&#039;un élément n&#039;est pas aligné à droite, et qu&#039;aucun contrôle ne le regardait.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
@@ -586,6 +610,182 @@ elle ne réclame pas l&#039;œil comme un verdict.</p>
 <p><strong>Elle est posée à côté du nom, pas ailleurs</strong> : c&#039;est en lisant le nom qu&#039;on cherche à savoir lequel fait référence, et une pastille posée plus bas se cherche.</p>
 <p><strong>Vérifié au tir d&#039;écran</strong> sur la maison de ferme et sur le centre de soin, dont la vue principale porte bien la pastille et les propositions non.</p>
 <p><strong>Fermé le 2026-08-08</strong> — Fait le 2026-08-08 : pastille « principal » à côté du nom, vérifiée au tir d&#039;écran.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">verdicts-au-depot</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Les verdicts et commentaires de la page des sprites quittent le navigateur</h2>
+    <div class="point-corps"><p><strong>FAIT — LES VERDICTS ET LES COMMENTAIRES DE LA PAGE DES SPRITES VIVENT DANS LE DÉPÔT</strong>, 2026-08-08, dans <code>review-server/notes/sprites.json</code>. Le stockage du navigateur n&#039;est plus une source.</p>
+<p><strong>DEMANDE D&#039;ORIGINE DE L&#039;OPÉRATEUR</strong> : « je peux valider un sprite et pour autant faire des commentaires dessus (…) quand c&#039;est fait, tu supprimes le commentaire ». La seconde moitié est désormais<br />
+possible : <strong>je lis les commentaires sans qu&#039;il ait à les recopier, et j&#039;efface celui qui est traité.</strong></p>
+<p><strong>RIEN N&#039;A ÉTÉ INVENTÉ</strong> : c&#039;est le module <code>Notes</code> de la page Campagne, avec sa propre section <code>verdicts</code> sur la route <code>/sprites</code>. Le serveur reste le seul écrivain — une page est une copie sur un<br />
+écran, possiblement ancienne, et laisser chaque copie écrire ferait gagner le dernier rechargement.</p>
+<p><strong>CE QUI ÉTAIT DÉJÀ DANS LE NAVIGATEUR N&#039;EST PAS PERDU</strong> : à la première ouverture, si le dépôt n&#039;a encore rien pour cette page, la page verse ce que le stockage local contient, puis efface la clé<br />
+locale — elle ne doit plus jamais être une seconde source. Le versement ne se fait QUE si le dépôt est vide, sinon un vieux navigateur écraserait un jugement plus récent fait ailleurs.</p>
+<p><strong>ON N&#039;ÉCRIT RIEN AVANT D&#039;AVOIR LU</strong> : un drapeau garde la porte jusqu&#039;à la réponse du serveur. Sans lui, le premier rendu — qui coche les cases et remplit les champs — repartirait aussitôt vers le<br />
+serveur et écraserait ce qu&#039;on n&#039;a pas encore reçu.</p>
+<p><strong>ET SI LE SERVEUR NE RÉPOND PAS, LA PAGE N&#039;ENREGISTRE RIEN.</strong> C&#039;est délibéré : mieux vaut une page qui ne retient pas qu&#039;une page qui fait croire qu&#039;elle retient. <strong>La page des sprites a donc<br />
+maintenant besoin du serveur de revue</strong> — <code>php review-server/serve.php</code> — là où elle marchait seule avant.</p>
+<p>## LE DÉFAUT ANTÉRIEUR TROUVÉ EN CHEMIN, ET IL TOUCHAIT AUSSI LA PAGE CAMPAGNE</p>
+<p><strong>LA TOUTE PREMIÈRE REMARQUE DE N&#039;IMPORTE QUELLE PAGE ÉTAIT PERDUE, EN SILENCE.</strong> Quand le fichier de remarques est absent ou vide, le serveur rend <code>[]</code> — PHP encode un tableau vide ainsi, il n&#039;a<br />
+pas de type « objet vide ». Le module posait alors sa section sur un <strong>tableau</strong> : <code>all[&#039;plan&#039;] = …</code> s&#039;y écrit comme une propriété nommée, et <code>JSON.stringify</code> d&#039;un tableau ne sérialise que ses<br />
+index. La remarque partait donc au serveur dans un <code>[]</code> et disparaissait, sans erreur, sans trace.</p>
+<p><strong>INVISIBLE JUSQU&#039;ICI</strong> parce que les deux fichiers existants n&#039;avaient jamais été vides. Trouvé en branchant la page des sprites, dont le fichier n&#039;existait pas encore. Corrigé des deux côtés :<br />
+au chargement et à l&#039;enregistrement, un tableau est ramené à un objet.</p>
+<p>## CE QUI A ÉTÉ VÉRIFIÉ, ET COMMENT</p>
+<p><strong>PAS EN LISANT LE CODE.</strong> Les sondes ouvrent les pages comme des FICHIERS, et une origine <code>file://</code> ne peut pas appeler <code>http://localhost:8080</code> — la requête à observer est précisément celle que le<br />
+navigateur refuse. <code>php local/scripts/probe-verdicts.php</code> charge donc la page <strong>par le serveur</strong>, coche la première case et rapporte ce que le serveur garde dans la foulée.</p>
+<ul>
+<li>Le module est présent et chargé avant son emploi ; aucune erreur en console.</li>
+<li>Un clic sur un verdict atteint le fichier du dépôt : <code>{&quot;verdicts&quot;:{&quot;cutout/sol/CH-001.png&quot;:{&quot;approved&quot;:true}}}</code>.</li>
+<li><strong>Un état témoin écrit à la main survit à un chargement de page</strong> — c&#039;est le risque critique, celui d&#039;une page qui écrase au démarrage ce qu&#039;elle n&#039;a pas encore lu. Il est écarté.</li>
+</ul>
+<p><strong>UN PIÈGE DE LA SONDE, ÉCRIT DANS SA PROPRE INTENTION</strong> : la page se recharge quand sa source change, et la sonde voyage avec la page construite. Une reconstruction pendant le budget de temps du<br />
+navigateur fait recharger la page et <strong>cliquer une seconde fois</strong>, ce qui décoche et enregistre <code>false</code>. La ligne que la sonde imprime est prise juste après son clic : c&#039;est elle qui fait foi.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">hooks-non-charges</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : opérateur</span></p>
+    <h2>Les hooks de GateBeast ne sont pas chargés : la session est ouverte depuis le dossier parent</h2>
+    <div class="point-corps"><p><strong>LE POINT EST TRANCHÉ, ET LA CAUSE N&#039;ÉTAIT PAS CELLE QU&#039;IL ANNONÇAIT.</strong> Constaté le 2026-08-08 : session ouverte depuis <code>~/projects/gatebeast</code>, <code>GO</code> envoyé <strong>seul, en ouverture de tour</strong>, agent au<br />
+repos — <code>var/hooks/dequeue-armed</code> a été écrit dans la seconde. <strong>Les hooks du dépôt sont chargés et fonctionnent.</strong></p>
+<p><strong>CE QUI FAISAIT CROIRE LE CONTRAIRE</strong> : les deux <code>GO</code> précédents étaient arrivés <strong>en cours de tour</strong>, glissés pendant que l&#039;agent travaillait. Aucun des deux n&#039;a armé quoi que ce soit.</p>
+<p><strong>LA RÈGLE À RETENIR, ET ELLE EST OPÉRATIONNELLE</strong> : <code>UserPromptSubmit</code> ne se déclenche que sur un message qui <strong>ouvre</strong> un tour. Un message envoyé pendant que l&#039;agent travaille est bien reçu et bien<br />
+lu par l&#039;agent, mais <strong>aucun hook ne le voit</strong> — donc un <code>GO</code> glissé en cours de tour n&#039;arme rien, et un <code>STOP</code> glissé en cours de tour ne désarme rien. C&#039;est un piège réel, puisque c&#039;est exactement<br />
+ainsi qu&#039;on relance ou qu&#039;on coupe un agent occupé.</p>
+<p><strong>CE QUI EN DÉCOULE POUR L&#039;AGENT</strong> : quand un <code>GO</code> ou un <code>STOP</code> arrive en cours de tour, l&#039;ordre vaut — c&#039;est la parole de l&#039;opérateur, elle ne dépend pas d&#039;un hook — mais <strong>l&#039;état ne le reflète pas,<br />
+et l&#039;agent n&#039;y touche pas</strong> : il ne l&#039;écrit pas, il ne l&#039;efface pas, il le <strong>dit</strong>. C&#039;est à l&#039;opérateur de renvoyer le mot en ouverture de tour s&#039;il veut que la garde soit armée.</p>
+<p><strong>LA PREUVE QUE LES HOOKS TOURNENT, INDÉPENDAMMENT DE CELLE-CI</strong> : la garde <code>PreToolUse</code> écrite le même jour a refusé une modification de l&#039;agent sur elle-même, dans la session qui venait de la<br />
+déclarer. Un <code>settings.json</code> modifié est donc relu à chaud, sans redémarrage — ce qui contredit ce que l&#039;agent avait affirmé plus tôt dans la journée.</p>
+<p><strong>LA RECOMMANDATION DU POINT RESTE JUSTE</strong> : la session s&#039;ouvre depuis <code>~/projects/gatebeast</code>. Ce n&#039;est pas ce qui manquait ce jour-là, mais c&#039;est bien ce qui charge les hooks du dépôt.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">droits-parent</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Les droits d&#039;exécution du dossier parent ne suivent pas quand la session s&#039;ouvre dans le dépôt</h2>
+    <div class="point-corps"><p><strong>FAIT — LE PROJET DÉCLARE LUI-MÊME LES DROITS DE SON OUTILLAGE</strong>, 2026-08-08, dans <code>.claude/settings.json</code>, qui est <strong>versionné</strong>.</p>
+<p><strong>LE CONSTAT</strong> : la session doit s&#039;ouvrir depuis <code>~/projects/gatebeast</code> pour charger les hooks du dépôt. Ouverte là, elle ne lit plus <code>~/projects/.claude/settings.local.json</code>, le fichier personnel<br />
+de l&#039;opérateur, qui portait une soixantaine de droits d&#039;exécution — <code>php</code>, <code>git</code>, <code>python3</code>, <code>bash</code>, <code>curl</code>, <code>rg</code>, <code>codex</code>, <code>rsvg-convert</code>… Le dépôt, lui, ne déclarait que <code>Bash(php *)</code>.</p>
+<p><strong>LA PREMIÈRE RÉPONSE ÉTAIT UNE COPIE, ET ELLE ÉTAIT MAUVAISE.</strong> Recopier la liste du parent dans le <code>settings.local.json</code> du dépôt marchait le jour même et se périmait ensuite : chaque droit ajouté<br />
+au parent aurait dû être recopié à la main, sinon le dépôt redivergeait en silence — le mode de panne du point lui-même, à l&#039;envers.</p>
+<p><strong>LA VRAIE CAUSE ÉTAIT AILLEURS</strong> : ce dont l&#039;outillage d&#039;un projet a besoin pour tourner est une propriété <strong>du projet</strong>, pas de la machine de qui l&#039;ouvre. Un dépôt qui ne déclare pas ses propres<br />
+outils fait redécouvrir la liste à chaque intervenant, sur chaque machine, et la fait dépendre d&#039;un fichier personnel que personne d&#039;autre n&#039;a. Les droits sont donc dans le fichier versionné :<br />
+<code>php</code>, <code>python3</code>, <code>bash</code>, <code>git</code>, la lecture et l&#039;écriture de fichiers, les commandes de fouille, <code>curl</code> pour interroger le serveur de revue, <code>rsvg-convert</code> et <code>codex</code> pour la chaîne d&#039;images.</p>
+<p><strong>CE QUI RESTE DANS LE FICHIER PERSONNEL DE L&#039;OPÉRATEUR N&#039;A PAS ÉTÉ TOUCHÉ</strong> : <code>Artifact</code>, <code>gh</code>, <code>docker</code>, <code>composer</code>, <code>wsl</code>, <code>opencode</code>, <code>tmux</code>, <code>gum</code>, les domaines de récupération web, les<br />
+compétences. Ce sont ses outils à lui, pas ceux du projet, et ils n&#039;ont rien à faire dans un fichier versionné. Sa péremption n&#039;a plus d&#039;importance : plus rien de critique n&#039;en dépend.</p>
+<p><strong>LA COPIE FAITE LE MATIN RESTE EN PLACE</strong>, sous <code>gatebeast/.claude/settings.local.json</code>, ignorée par git. Elle ne sert plus à rien pour l&#039;outillage du projet et peut être supprimée par l&#039;opérateur<br />
+quand il veut ; elle ne gêne pas, un droit accordé deux fois restant un droit accordé.</p>
+<p><strong>CE QUI EST GAGNÉ AU PASSAGE</strong> : une session ouverte sur ce dépôt depuis n&#039;importe quelle machine a les droits de son outillage, sans rien installer et sans rien recopier.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">cds-ecarter-v2</span><span class="point-statut">Fait — le travail est allé au bout : la génération de la nouvelle version p2, lancée en tâche de fond et pas encore rendue</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Repartir de la v2 du centre de soin comme référence : garder son style, corriger projection et paramètres techniques</h2>
+    <div class="point-corps"><p><strong>L&#039;OPÉRATEUR A DÉJÀ DONNÉ CET ORDRE, ET IL A DÛ LE REDIRE. C&#039;EST LA FAUTE À RETENIR AVANT LE RESTE.</strong> Le 2026-08-08 : « Q7, j&#039;ai déjà demandé de revenir à la v2, tu dois impérativement enregistrer<br />
+ça et avoir un sujet pour ça. » L&#039;ordre avait été donné plus tôt, il n&#039;a été inscrit nulle part, et il a été reposé en question à l&#039;opérateur comme s&#039;il n&#039;existait pas.</p>
+<p><strong>LA RÈGLE ENFREINTE EST ÉCRITE MOT POUR MOT</strong> : « tout ce que l&#039;opérateur dit entre dans la pile du <code>SUIVI.md</code>, immédiatement et avant d&#039;être traité (…) le contexte se résume et se perd, la pile<br />
+non — une remarque perdue se paie en la faisant redire ». C&#039;est exactement ce qui s&#039;est produit : le contexte a été résumé, l&#039;ordre est parti avec, et l&#039;opérateur a payé la perte.</p>
+<p>## CE QUE « REVENIR À LA V2 » VEUT DIRE — PRÉCISÉ PAR L&#039;OPÉRATEUR, ET CE N&#039;EST PAS UN SIMPLE RETOUR EN ARRIÈRE</p>
+<p><strong>LA V2 DEVIENT LA BASE DE RÉFÉRENCE DE LA PROCHAINE VERSION.</strong> Mot de l&#039;opérateur, 2026-08-08 : « c&#039;est revenir à la v2 comme base de référence pour faire la prochaine version, on doit garder le<br />
+style de v2 mais avec la bonne projection et les bons paramètres techniques ».</p>
+<p><strong>CE QU&#039;ON GARDE DE LA V2 : SON STYLE.</strong> Sa palette propre — celle de la scène de référence du monde —, sa matière, sa lumière. C&#039;est précisément ce que j&#039;avais détruit en lui faisant prendre la vue<br />
+principale comme référence : ses couleurs avaient été remplacées par celles de la vue principale.</p>
+<p><strong>CE QU&#039;ON CORRIGE : LA PROJECTION ET LES PARAMÈTRES TECHNIQUES.</strong> L&#039;axonométrie orthographique, sans point de fuite ni convergence, telle que le socle l&#039;impose désormais ; et les paramètres<br />
+techniques de la sprite — toile, emprise, hauteur déclarée, fond.</p>
+<p><strong>POURQUOI LA DISTINCTION COMPTE</strong> : lue comme un simple retour en arrière, la consigne rendrait la v2 courante et l&#039;affaire serait close — or la v2 n&#039;est pas juste, elle est seulement <strong>juste de<br />
+style</strong>. Elle sert de référence, pas de résultat. Confondre les deux, c&#039;est soit livrer une image à la mauvaise projection, soit repartir d&#039;une image à la mauvaise palette : les deux erreurs ont<br />
+déjà été commises sur ce sujet.</p>
+<p><strong>LA VERSION ABÎMÉE EST ÉCARTÉE</strong>, et rien n&#039;est supprimé : une image écartée cesse d&#039;être montrée, elle reste sur le disque.</p>
+<p><strong>CE QUE ÇA DÉBLOQUE, ET DANS QUEL ORDRE</strong> : <code>cds-propositions</code> reprend. On écarte d&#039;abord pour que la v2 redevienne courante, on relance ensuite — la commande prend la version courante du variant<br />
+comme référence, donc relancer avant l&#039;écartement repartirait de l&#039;image abîmée et propagerait la mauvaise palette.</p>
+<p><strong>LES DEUX GESTES SE SUIVENT SANS RIEN REDEMANDER, ET C&#039;EST EXPRESSÉMENT AUTORISÉ.</strong> Mot de l&#039;opérateur, 2026-08-08 : « la v2 redevient l&#039;active mais juste derrière tu lances une nouvelle génération<br />
+pour corriger ses erreurs ». L&#039;écartement et la relance forment <strong>un seul geste en deux temps</strong> : la relance n&#039;est pas une génération neuve à soumettre, elle est comprise dans l&#039;ordre donné. Aucun<br />
+accord supplémentaire n&#039;est à demander — le redemander serait faire redire une décision déjà prise, ce qui est précisément la faute qui a ouvert ce point.</p>
+<p><strong>LE POINT RESTE OUVERT TANT QUE LES DEUX GESTES NE SONT PAS FAITS</strong> : la décision est enregistrée, l&#039;écartement et la relance ne le sont pas.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">vocabulaire-donnees</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le référentiel des sujets et son contrôle sont en français : clés et valeurs techniques à passer en anglais</h2>
+    <div class="point-corps"><p><strong>FAIT — LE RÉFÉRENTIEL ET SES LECTEURS SONT EN ANGLAIS AMÉRICAIN</strong>, données et code dans le même geste, 2026-08-08.</p>
+<p><strong>LE DÉCLENCHEUR EST UNE RÈGLE, PAS UN CHOIX DE PRIORITÉ</strong> : « une valeur obsolète ne s&#039;écrit jamais dans du code neuf, et en avoir besoin, c&#039;est le moment de la changer partout » (opérateur,<br />
+2026-08-08). Écrire <code>set-asset-verdict.py</code> demandait ce vocabulaire : la migration était donc due, immédiatement, et ne pouvait pas rester en pile.</p>
+<p><strong>CE QUI A BOUGÉ</strong> : <code>assets/sujets.json</code> devient <code>assets/subjects.json</code>, <code>scripts/check-sujets.py</code> devient <code>scripts/check-subjects.py</code>. Vingt-sept clés traduites — <code>statut</code> → <code>status</code>,<br />
+<code>libelle</code> → <code>label</code>, <code>principale</code> → <code>main</code>, <code>mesures</code> → <code>measures</code>, <code>maitre</code> → <code>master</code>, <code>numero_image</code> → <code>image_number</code>, <code>commentaire_operateur</code> → <code>operator_comment</code>, <code>emprise</code> → <code>footprint</code>,<br />
+<code>hauteur</code> → <code>height</code>, <code>couvert</code> → <code>cover</code>, <code>profil</code> → <code>profile</code>, <code>portillon</code> → <code>gate</code>, <code>densite</code> → <code>density</code>, <code>consigne_supplementaire</code> → <code>extra_prompt</code>, et les clés de commentaire qui les<br />
+accompagnent. Deux jeux de valeurs fermés : <code>courante</code>/<code>anterieure</code> → <code>current</code>/<code>previous</code>, et les verdicts <code>valider</code>/<code>a-reprendre</code>/<code>ecarter</code> → <code>approved</code>/<code>rework</code>/<code>discarded</code>. Treize lecteurs<br />
+suivis, plus les trois actes de la page des sprites, qui portent désormais les mots du référentiel — ce que la page enregistre se lit directement dans les données, sans table de correspondance.</p>
+<p><strong>CE QUI N&#039;A PAS BOUGÉ, ET POURQUOI</strong> : les valeurs de type — <code>sol</code>, <code>batiment</code>, <code>cloture</code>, <code>vegetation</code> — nomment des <strong>répertoires sur le disque</strong> sous <code>assets/cutout/</code>. Les migrer, c&#039;est déplacer<br />
+des fichiers et réécrire tous les chemins enregistrés contre eux ; ça ne se glisse pas dans une migration de vocabulaire. Elles restent, et le point qui les prendra reste à ouvrir.</p>
+<p>## LES TROIS FAUTES DE LA MIGRATION, ET CE QU&#039;ELLES APPRENNENT</p>
+<p><strong>UNE PASSE MOT À MOT A RÉÉCRIT DU FRANÇAIS EN FRANGLAIS</strong>, et pas seulement à l&#039;écran : « égal à l&#039;footprint » sur la page des sprites, mais surtout <strong>« le subject ENTRE par le bord NORD » dans le<br />
+texte de consigne envoyé au générateur d&#039;images</strong>, où une phrase abîmée coûte une génération. Correction : un mot ne se déplace que là où c&#039;est un <strong>jeton</strong> — un identifiant, ou une chaîne d&#039;un<br />
+seul mot sans espace. Tout ce qui contient une espace est une phrase et ne se touche pas.</p>
+<p><strong>L&#039;APOSTROPHE ÉCHAPPÉE A ÉTÉ PRISE POUR UN GUILLEMET</strong> : dans <code>&#039;égal à l\&#039;emprise&#039;</code>, le <code>\&#039;</code> ouvrait une chaîne aux yeux de l&#039;expression régulière, et la phrase a été réécrite. Une règle sur du<br />
+texte quoté doit refuser un guillemet précédé d&#039;une contre-oblique.</p>
+<p><strong>LE TOKENISEUR TRANCHE CE QU&#039;AUCUNE EXPRESSION RÉGULIÈRE NE TRANCHE</strong> : la deuxième passe, assez prudente pour être sûre, était trop étroite pour être complète — <code>subjects = data.get(...)</code> renommé<br />
+et <code>isinstance(sujets, dict)</code> deux lignes plus bas laissé, donc module cassé. Pour Python, <code>tokenize</code> répond exactement : un NAME est un nom, une STRING est une chaîne. C&#039;est ce qui a été fait.</p>
+<p>## LE PIÈGE DE NOMMAGE QUI ATTENDAIT AU BOUT, ET QUI N&#039;A RIEN À VOIR AVEC LE FRANÇAIS</p>
+<p><strong>LE CODE DÉDUISAIT LA CLÉ DE COLLECTION EN AJOUTANT UN <code>s</code> AU NOM DU CHAMP.</strong> <code>portillon</code> → <code>portillons</code>, <code>densite</code> → <code>densites</code> : le français est régulier, ça tenait. En anglais, <code>density</code> donne<br />
+<code>densities</code>, et <code>density</code> + <code>s</code> ne trouve rien. <strong>Les trois densités d&#039;herbe ont perdu leur description propre et sont toutes sorties en « clairsemée »</strong> — quatre sites de pluralisation naïve, dont<br />
+un dans la sélection même des descriptions.</p>
+<p><strong><code>bash scripts/diff-prompts.sh</code> L&#039;A ATTRAPÉ AVANT QU&#039;UNE SEULE GÉNÉRATION SOIT LANCÉE</strong>, en montrant 69 consignes modifiées puis 3 puis 0. C&#039;est exactement ce pour quoi cet outil existe, et c&#039;est<br />
+le seul contrôle qui pouvait le voir : aucun test de schéma, aucune construction de page ne regarde le texte assemblé.</p>
+<p><strong>CORRIGÉ PAR UNE TABLE, PAS PAR DE LA CHIRURGIE DE CHAÎNE</strong> : <code>collection_of()</code> et <code>field_of()</code> dans <code>generate-sprite.py</code>, avec les paires irrégulières déclarées une fois et lues dans les deux<br />
+sens. Une convention de nommage qui repose sur l&#039;ajout d&#039;une lettre n&#039;est pas une règle, c&#039;est un pari sur la langue.</p>
+<p>## CE QUI RESTE, ET CE QUI LE GARDE</p>
+<p><code>scripts/check-code-language.py</code> refuse le vocabulaire technique français dans le code. Il trouvait 306 occurrences avant, il en trouve 125 — le reste est constitué de <strong>variables locales<br />
+françaises</strong> dans des constructeurs de pages qui ne lisent pas le référentiel (<code>$lignes</code>, <code>$brouillon</code>, <code>consigne</code>). Elles sont tolérées tant que le code qui les porte n&#039;est pas touché, et la règle<br />
+dit ce qui se passe le jour où il l&#039;est.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">chemin-au-panneau</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>La consigne et le rapport affichés portent leur nom de fichier et leur chemin complet</h2>
+    <div class="point-corps"><p><strong>FAIT, 2026-08-08.</strong> Demande de l&#039;opérateur : « quand tu affiches la consigne ou le rapport, je dois aussi pouvoir voir le nom du fichier et son chemin complet, relatif à la racine du projet ».</p>
+<p><strong>LE CHEMIN APPARAÎT AUX DEUX ENDROITS OÙ IL SERT</strong> : sous le libellé du bouton, en chasse fixe et discret — c&#039;est une adresse qu&#039;on recopie, pas une phrase qu&#039;on lit — et dans le titre du panneau<br />
+une fois le texte ouvert, où l&#039;on ne voit plus la carte qui l&#039;a produit.</p>
+<p><strong>RELATIF À LA RACINE, JAMAIS ABSOLU</strong> : c&#039;est ce qui se recopie tel quel dans une commande, et ce qui veut encore dire quelque chose sur une autre machine.</p>
+<p><strong>POURQUOI ÇA MANQUAIT</strong> : sans son chemin, il faut deviner quel fichier on est en train de lire pour aller le corriger, l&#039;ouvrir ailleurs ou le citer — et deux consignes de deux versions du même<br />
+variant se ressemblent bien assez pour qu&#039;on se trompe.</p>
+<p>Vérifié à l&#039;écran, pas seulement dans le balisage : <code>assets/poc/batiment/BT-001_proposition-p2-v5.txt</code> s&#039;affiche sous « La consigne envoyée », et <code>var/generations/sprites/…-rapport.md</code> sous « Le<br />
+rapport de génération ».</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">case-projetee</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>La case projetée fait 24 x 21 px, pas 24 x 24 : modèle, monteur, consignes et pièces plates</h2>
+    <div class="point-corps"><p><strong>DÉCISION DE L&#039;OPÉRATEUR, 2026-08-08 — LA CASE PROJETÉE N&#039;EST PAS CARRÉE : <code>24 × 21 px</code> à l&#039;affichage, <code>96 × 84 px</code> en source ×4.</strong> Sous une caméra à 60° au-dessus du sol et un azimut de 0°, une<br />
+case de 24 unités de large mesure <code>24 × sin(60°) = 20,78</code> en profondeur, quantifiée à 21.</p>
+<p>## LA SOURCE DE VÉRITÉ, ET C&#039;EST LE POINT QUI SE SERAIT PERDU</p>
+<p><strong>L&#039;ÉCHELLE EN PIXELS FAIT FOI, PAS LE FACTEUR.</strong> <code>96 × 0,8660254 = 83,14</code>, alors que la case publiée fait 84 : le rapport réel est <code>7/8</code>, retenu parce qu&#039;il se divise proprement — 96×84, 48×42,<br />
+32×28, 24×21 tombent tous justes. <strong>Aucun code ne multiplie par <code>0,8660254</code> pour obtenir une taille</strong> : il retomberait sur 83,14, et une sprite rendue à 20,78 posée sur un pas de 21 laisse 0,22 px<br />
+par case, ce qui se voit comme un liseré à chaque raccord. Le 84 ne se « corrige » pas en 83.</p>
+<p><code>0,8660254</code> et <code>cos(60°) = 0,5</code> restent écrits comme l&#039;intention géométrique. Le second sert encore au calcul, lui : une hauteur dressée n&#039;a rien contre quoi s&#039;aligner, donc elle garde le facteur nu.</p>
+<p>## CE QUI A ÉTÉ FAIT, DANS L&#039;ORDRE — L&#039;APPLICATION AVANT LES IMAGES</p>
+<p>1. <strong>La conception</strong> — <code>rendu-en-calques.md</code> porte la section « La case projetée », avec les quatre nombres, la pose par le coin supérieur gauche, les ports de raccord au milieu des bords, et<br />
+   l&#039;avertissement sur le 84.<br />
+2. <strong>Le modèle</strong> — <code>tile_scale.py</code> déclare <code>DISPLAY_TILE_WIDTH/DEPTH</code> et <code>FILE_TILE_WIDTH/DEPTH</code> comme source unique. <code>delivery_size</code> rend <code>96 × 84</code> par case au lieu d&#039;un carré ; <code>master_definition</code><br />
+   prend la profondeur sur l&#039;échelle en pixels et la hauteur dressée sur <code>cos(60°)</code>. Vérifié : case plate <code>96 × 84</code>, centre de soin <code>1536 × 1224</code>, soit <code>10 × 0,875 + 8 × 0,5 = 12,75</code> cases.<br />
+3. <strong>Le monteur</strong> — <code>monter.php</code> posait tout sur un pas carré de 24. Il porte maintenant deux pas, 24 et 21, côté PHP <strong>et côté JavaScript</strong> : la taille de la scène, le défilement, le centrage du<br />
+   zoom, la case sous le curseur et les marques de remarque. Le zoom reste une simple mise à l&#039;échelle, l&#039;échelle étant propre — 32 donne 32×28, 48 donne 48×42.<br />
+4. <strong>Les consignes</strong> — la clause du rectangle au sol dit la profondeur dessinée, lue sur l&#039;échelle en pixels. Elle vaut désormais pour <strong>tous</strong> les sujets : l&#039;exemption qui gardait les pièces plates<br />
+   carrées était une case vue de la verticale, pas de la caméra du monde. Les 69 consignes sont cohérentes avec leur fourchette de hauteur — chemin : profondeur 0,88, fourchette 0,8 à 1,0.</p>
+<p>## CE QUI RESTE, ET CE N&#039;EST PAS RIEN</p>
+<p><strong>HUIT PIÈCES PLATES SONT DEVENUES NON CONFORMES</strong> — cinq du chemin <code>CH-019</code>, trois du cours d&#039;eau <code>CH-020</code> —, toutes livrées en <code>96 × 96</code> quand la case en demande <code>96 × 84</code>. Ce ne sont pas de<br />
+mauvais dessins : ce sont des dessins d&#039;une case vue de la verticale. <strong>Rien n&#039;a été regénéré</strong>, conformément à l&#039;ordre convenu : elles se referont au fil des reprises, maintenant que la chaîne sait<br />
+les poser.</p>
+<p><code>python3 local/scripts/lister-cases-carrees.py</code> les recompte à la demande. Il en trouve seize hors fourchette au total : les huit ci-dessus, plus huit qui l&#039;étaient <strong>déjà avant</strong> — des clôtures<br />
+trop basses et deux végétations, qui relèvent des sujets « trop bas » déjà connus.</p>
+<p><strong>LA MAQUETTE TIENT</strong> : 1267 sprites au parc, 310 à la campagne, aucun sujet sans image. Les pièces plates y débordent de 3 px vers le haut, ce qui se recouvre au lieu de laisser un trou — le défaut<br />
+ne se voit pas, et c&#039;est précisément pourquoi il fallait le compter plutôt que le regarder.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
@@ -661,6 +861,65 @@ premier appel. Le refus ne tombe que sur un thème <strong>autre</strong> qui se
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
   </article>
   <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">pose-par-calque</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le monteur et le plan ignorent les calques déclarés : une case doit porter plusieurs sprites</h2>
+    <div class="point-corps"><p><strong>FAIT — LE MONTEUR ET LE PLAN LISENT LES CALQUES DÉCLARÉS</strong>, 2026-08-08. L&#039;opérateur avait raison de bout en bout : « il y a différentes couches de calque, c&#039;est déjà défini. Une case doit pouvoir<br />
+avoir plein de sprites dessus, normalement ça a été conçu. » C&#039;était conçu, c&#039;était déclaré, et c&#039;était mal appliqué.</p>
+<p>## ÉTAPE 1 — LE MONTEUR</p>
+<p><code>review-server/parc/monter.php</code> empilait sur une liste de types écrite en dur, <code>[&#039;sol&#039;, &#039;chemin&#039;, &#039;herbe&#039;]</code> : deux familles au lieu de cinq, et deux types rangés à l&#039;envers. Remplacée par les <strong>cinq<br />
+familles dans leur ordre</strong> — sol, décor au sol, monde, dessus, interface — lues au référentiel, avec le tri par profondeur limité au monde. Un type qui déclarerait un calque inconnu fait échouer le<br />
+montage au lieu de tomber dans un tas par défaut.</p>
+<p>## ÉTAPE 2 — LE PLAN</p>
+<p><code>scripts/build-composition-plan.py</code> portait <strong>trois</strong> défauts qui se couvraient : <code>FLAT_TYPES</code> redevinait le calque avec la même erreur ; <code>is_flat</code> recevait la table des cases au lieu du référentiel<br />
+et rendait <strong>toujours faux</strong> ; et <code>subjects[(col, row)] = subject</code> écrasait en silence le sujet déjà là. L&#039;occupation se tient désormais <strong>par calque</strong> : deux sujets du même calque sur une case restent<br />
+une faute, les autres non.</p>
+<p>## ÉTAPE 3 — ET MON ANALYSE DE DÉPART ÉTAIT FAUSSE SUR CE POINT</p>
+<p>J&#039;avais écrit que « les deux cases au bord du chemin ont été écartées pour rien ». <strong>C&#039;est faux, et il faut le dire</strong> : les cases visées, <code>(14,18)</code> et <code>(15,18)</code>, portaient de l&#039;herbe haute et une<br />
+clôture, toutes deux dans le calque <code>monde</code> — comme l&#039;humain et la créature. Deux sujets qui <strong>se dressent</strong> ne peuvent pas partager une case, et le refus était juste. Ce n&#039;est pas l&#039;outillage qui<br />
+s&#039;était trompé là.</p>
+<p><strong>CE QUE LA CORRECTION LIBÈRE VRAIMENT EST AUTRE CHOSE</strong> : une case qui ne porte qu&#039;un sujet <strong>au sol</strong>. Le chemin est <code>decor-au-sol</code>, donc un personnage peut s&#039;y tenir — le cas qui était impossible<br />
+et celui que l&#039;opérateur décrivait. L&#039;humain est donc posé <strong>sur</strong> le chemin en <code>(9,18)</code>, la créature sur la case libre à côté en <code>(10,18)</code> : côte à côte, au bord du chemin, là où ils devaient être.</p>
+<p>## ÉTAPE 4 — CE QUE LE TIR D&#039;ÉCRAN PROUVE, ET CE QU&#039;IL NE PROUVE PAS</p>
+<p><strong>PROUVÉ</strong> : l&#039;humain se dessine <strong>par-dessus le chemin</strong>, qui reste visible sous lui. L&#039;empilement par famille de calque fonctionne, et la maquette monte ses 310 sprites sans manque.</p>
+<p><strong>NON PROUVÉ, ET C&#039;EST À DIRE</strong> : le <strong>tri par profondeur à l&#039;intérieur du monde</strong> — qu&#039;un personnage passe derrière ce qui doit le cacher et devant ce qui doit être caché. Cette scène ne le teste<br />
+pas : aucun personnage n&#039;y chevauche un arbre ni une clôture. Il faudrait une composition qui pose délibérément un personnage juste au nord d&#039;un tronc. <strong>Tant que ce n&#039;est pas fait, le tri par<br />
+profondeur est écrit mais pas vérifié.</strong></p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">raccords-plan</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le plan du parc ne se construit plus : huit raccords sont déclarés d&#039;un seul côté</h2>
+    <div class="point-corps"><p><strong>FAIT — LE PLAN DU PARC SE CONSTRUIT À NOUVEAU</strong>, 2026-08-08, pour la première fois depuis le 5 août. « COHERENCE OK: chaque connexion est déclarée des deux côtés », et le SVG est écrit.</p>
+<p>## LES HUIT RACCORDS : DES EXTRÉMITÉS ET DES ANGLES, PAS DES TROUS</p>
+<p>Le tracé se lit une fois posé à plat : une clôture en <strong>U</strong> — côté ouest sur la colonne 1, côté sud sur le rang 43, côté est sur la colonne 64 — <strong>ouverte au nord</strong>, là où passe le cours d&#039;eau.<br />
+Aucune des huit fautes n&#039;était un manque de composition ; toutes étaient des bords mal déclarés. Sept corrections, appliquées par <code>local/scripts/reparer-raccords.py</code>, qui <strong>vérifie l&#039;état de départ<br />
+de chaque case avant d&#039;écrire</strong> et refuse en bloc si le plan a bougé :</p>
+<ul>
+<li><code>(1,5) ns → s</code> — extrémité nord du côté ouest : rien au-dessus.</li>
+<li><code>(64,8) ns → s</code> — extrémité nord du côté est : au-dessus il y a le cours d&#039;eau, <strong>un autre sujet</strong>, qui ne rejoint pas la clôture.</li>
+<li><code>(1,43) nw → ne</code> — angle sud-ouest : il remonte au nord et part à l&#039;est ; le <code>w</code> sortait de la grille.</li>
+<li><code>(9,43) w → ew</code>, <code>(12,43) e → ew</code>, <code>(44,43) w → ew</code> — cases du milieu du côté sud dont le voisin tendait un raccord qu&#039;elles ne rendaient pas.</li>
+<li><code>(46,43) ew → w</code> — extrémité est du côté sud : <code>(47,43)</code> ne porte aucun tracé.</li>
+</ul>
+<p>## CE QUI ATTENDAIT DERRIÈRE, ET QUI EST LE VRAI ENSEIGNEMENT</p>
+<p><strong>Les raccords n&#039;étaient que la première couche.</strong> Une fois passés, trois autres fautes sont apparues dans le même fichier, toutes du même écrasement de variable que celui trouvé le matin — le<br />
+référentiel chargé dans <code>subjects</code>, puis <code>subjects</code> réutilisé vingt lignes plus bas pour la table des cases posées :</p>
+<p>1. <code>rotates_of(subjects, …)</code> recevait la table des cases : « CH-019 absent du référentiel », alors qu&#039;il y figure.<br />
+2. Un bloc entier réassignait <code>subjects</code>, itérait ses valeurs comme si c&#039;étaient des codes, et <strong>utilisait le dictionnaire du sujet comme clé de dictionnaire</strong> — ce que Python ne peut pas hacher.<br />
+   <strong>Trois fautes en cinq lignes, qui n&#039;avaient jamais pu s&#039;exécuter une seule fois.</strong><br />
+3. Le compte final butait sur le même point.</p>
+<p><strong>AUCUNE DE CES TROIS N&#039;ÉTAIT VISIBLE</strong>, parce que le contrôle d&#039;occupation faussé faisait échouer le plan bien avant de les atteindre. C&#039;est le mécanisme même des erreurs qui se couvrent l&#039;une<br />
+l&#039;autre : on n&#039;en voit jamais qu&#039;une, et chaque correction en découvre une nouvelle. Le seul remède est d&#039;aller jusqu&#039;à ce que la chaîne passe en entier, pas jusqu&#039;à ce que la première faute<br />
+disparaisse.</p>
+<p><strong>ET LE SVG SUR LE DISQUE A MASQUÉ LA PANNE TROIS JOURS</strong> : un plan qui échoue ne détruit pas le précédent, il ne le remplace pas. Le fichier était là, daté, d&#039;apparence juste. Rien ne disait qu&#039;il<br />
+ne correspondait plus à son plan.</p>
+<p>## CE QUE LE PLAN DIT MAINTENANT</p>
+<p><strong>17 dessins réellement à produire</strong> compte tenu des rotations — 3 pour le chemin, 7 pour la clôture, 7 pour le cours d&#039;eau — et <strong>six formes sur quinze jamais exercées</strong> par cette composition.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">le-centre-de-soin</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
     <h2>Le centre de soin (CDS) : descriptions à corriger, puis regénération en PA60</h2>
     <div class="point-corps"><p>La projection parallèle à 60 degrés de plongée (PA60) est désormais la valeur du projet, appliquée partout — y compris dans les deux phrases envoyées au générateur.</p>
@@ -703,6 +962,40 @@ déjà — une seule génération par version, aucune relance sans accord. Une i
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
   </article>
   <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">maquette-et-pont</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
+    <h2>Compléter la maquette d&#039;après la planche p1 v8, puis poser le pont au croisement</h2>
+    <div class="point-corps"><p><strong>FAIT — LE CHEMIN EST-OUEST EST POSÉ ET LE PONT A SA CASE</strong>, 2026-08-08. Le point s&#039;est révélé être trois choses, et la troisième est la plus importante.</p>
+<p>## LE RELEVÉ, PUIS LA POSE</p>
+<p>La planche <code>assets/revue-da/planche-p1-campagne-v8.png</code> montre un <strong>carrefour</strong> : un chemin est-ouest traversant toute la largeur, croisant le cours d&#039;eau nord-sud sur un pont de pierre. Mesuré sur<br />
+la planche à 48 px la case : le chemin court sur le <strong>rang 12</strong>, le pont est sur la <strong>colonne 16</strong> — exactement là où la maquette déclare déjà son cours d&#039;eau.</p>
+<p>La maquette n&#039;avait <strong>aucun chemin est-ouest</strong>. C&#039;est pour ça qu&#039;aucune case ne portait à la fois un chemin et un cours d&#039;eau, et donc que le pont n&#039;avait nulle part où aller. Le croisement n&#039;était<br />
+pas à créer, il était à retrouver — exactement ce que le point annonçait.</p>
+<p>Trente cases de chemin posées sur le rang 12, la case <code>(9,12)</code> passée de <code>ns</code> à <code>nesw</code> — le chemin nord-sud devient un carrefour —, et <code>CH-021</code> posé en <code>(16,12)</code> dans sa forme <code>ew</code>, qui existait déjà.<br />
+<strong>Rien de neuf n&#039;a été dessiné.</strong></p>
+<p>## DEUX DÉFAUTS DE MODÈLE TROUVÉS EN CHEMIN</p>
+<p><strong>LE TRACÉ SUBISSAIT LE MÊME ÉCRASEMENT QUE LA TABLE DES SUJETS</strong> : <code>traces[(colonne, rang)] = ...</code> ne gardait qu&#039;un jeu de raccords par case, alors qu&#039;une case peut porter deux tracés — un chemin<br />
+qui croise une ligne de clôture, un pont qui porte un chemin par-dessus un cours d&#039;eau. Le second effaçait le premier, et la clôture se déclarait cassée sur les six cases traversées. C&#039;est l&#039;union<br />
+maintenant.</p>
+<p><strong>LE TYPE <code>pont</code> NE DÉCLARAIT PAS S&#039;IL PIVOTE</strong>, et le contrôle a refusé de compter plutôt que de deviner — le bon comportement. Il ne pivote pas : ses deux sens sont deux dessins distincts, parce<br />
+que la lumière et les parapets ne se retournent pas avec la case.</p>
+<p>## ET LE PLUS GRAVE : LE MONTEUR SUBSTITUAIT UN DESSIN EN SILENCE</p>
+<p><strong>UNE FORME DEMANDÉE ET NON DESSINÉE NE FAISAIT PAS UN TROU : elle prenait le dessin d&#039;un autre variant.</strong> Une extrémité de chemin, dont la forme <code>e</code> n&#039;a jamais été dessinée, revenait avec le dessin<br />
+du carrefour, posée sur la carte sans un mot — pendant que la page annonçait « toutes les cases déclarées ont leur image ». <strong>Un dessin substitué est pire qu&#039;un dessin manquant</strong> : le trou se voit et<br />
+se corrige, la substitution se croit.</p>
+<p>Le repli ne vaut plus que pour un sujet <strong>sans formes</strong>, qui n&#039;a qu&#039;un variant et rien à choisir. Et ce que ça découvre est chiffré :</p>
+<ul>
+<li><strong>Le parc perdait 13 sprites</strong> — 1267 posées avant, 1254 maintenant. Treize cases y portaient un dessin qui n&#039;était pas le leur.</li>
+<li><strong>Formes réellement manquantes</strong> : pour le cours d&#039;eau <code>CH-020</code>, <code>nw</code> ×4, <code>es</code> ×4, <code>ne</code> ×1, <code>w</code> ×1 ; pour la clôture <code>OB-010</code>, <code>s</code> ×2, <code>n</code> ×1 ; pour le chemin <code>CH-019</code>, les deux extrémités <code>e</code> et<br />
+  <code>w</code> du nouveau rang.</li>
+</ul>
+<p><strong>CE SONT DES TROUS HONNÊTES, ET ILS SE VOIENT MAINTENANT SUR LA MAQUETTE.</strong> Ils rejoignent les vingt et une formes de tracé déjà connues comme à produire (<code>Q5</code>).</p>
+<p>## CE QUI RESTE À NOTER, ET QUE LE PLAN NE SAIT PAS DIRE</p>
+<p>Le chemin traverse la ligne de clôture en <code>(2,12)</code> et <code>(15,12)</code>. Il y faudrait un <strong>portillon</strong> — et la pièce existe, <code>OB-010_shape-ns_posts-1_portillon-gate-open</code>. Mais le format du plan ne déclare<br />
+qu&#039;un sujet et ses raccords : <strong>il ne sait pas dire quel variant une case porte</strong>. Tant que ce n&#039;est pas possible, un chemin qui coupe une clôture reste un chemin qui bute dans une clôture.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">prolonger-le-chemin</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : opérateur</span></p>
     <h2>Prolonger le chemin pour qu&#039;il croise le cours d&#039;eau, ou laisser le pont sans emploi</h2>
     <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08, ET ELLE DÉPLACE LA QUESTION : LA MAQUETTE N&#039;EST PAS COMPLÈTE.</strong> Il ne s&#039;agit pas de choisir entre prolonger un chemin et laisser le pont en réserve — les deux<br />
@@ -736,6 +1029,37 @@ fenêtre, lierre sur un pignon, cheminée ébréchée. La version d&#039;avant r
 <p><strong>Si la réponse est non</strong>, la version de face antérieure redevient la courante et la proposition se juge sur elle.</p>
 <p><strong>Le point qui la porte</strong> : « Maison de ferme, proposition p3 : trop proche de la vue principale ». Il repart dès que l&#039;ordre est donné.</p>
 <p><strong>Fermé le 2026-08-08</strong> — Répondu par l&#039;opérateur le 2026-08-08 : pas de relance. La v4 est restaurée comme version courante, la v5 passe en antérieure sans être supprimée.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">next-point-bloque</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
+    <h2>backlog.php next propose un point bloqué au lieu du premier point prenable</h2>
+    <div class="point-corps"><p><strong>FAIT, 2026-08-08.</strong> <code>next</code> ne rend plus qu&#039;un point <strong>prenable</strong> : <code>todo</code> ou <code>in-progress</code>. Les trois statuts d&#039;attente — <code>pending-dependency</code>, <code>pending-decision</code>, <code>waiting-external</code> — restent<br />
+ouverts, donc comptés et montrés par <code>list</code>, mais ne sont plus proposés.</p>
+<p><strong>LE CONSTAT</strong> : <code>next</code> triait par priorité sans regarder le statut, et rendait donc un point qui attendait l&#039;opérateur. En dépilement continu, l&#039;agent suit <code>next</code> : il rouvrait le point, relisait<br />
+son analyse entière, reconstatait qu&#039;il ne pouvait pas bouger, et le reposait — à chaque tour, tant que la décision ne venait pas. Le point bloqué masquait en plus le premier point réellement<br />
+prenable.</p>
+<p><strong>CE QUI NE CHANGE PAS, ET C&#039;EST VOULU</strong> : l&#039;ordre reste celui de <code>ordered()</code>, où un point engagé passe devant quelle que soit sa priorité. Vérifié sur un cas réel — avec <code>cds-propositions</code> (p1) en<br />
+attente d&#039;une génération, <code>next</code> rend <code>next-point-bloque</code> (p3, engagé), et non le p1 bloqué.</p>
+<p><strong>ET QUAND PLUS RIEN N&#039;EST PRENABLE</strong>, <code>next</code> le dit au lieu de rendre un point au hasard : « les N points ouverts attendent tous quelque chose, <code>list</code> dit quoi ». C&#039;est le seul cas où l&#039;agent doit<br />
+légitimement rendre la main, et il faut qu&#039;il soit distinguable d&#039;une pile vide.</p>
+<p><strong>LA LISTE DES STATUTS PRENABLES EST UNE CONSTANTE DU MODÈLE</strong>, <code>Backlog::STATUSES_TAKEABLE</code>, pas une condition écrite dans la commande : c&#039;est une propriété du statut, elle doit vivre là où les<br />
+statuts sont définis, et tout ce qui aura à trier des points la lira au même endroit.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">variant-au-plan</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le plan ne sait pas déclarer le variant d&#039;une case : pas de portillon là où un chemin coupe une clôture</h2>
+    <div class="point-corps"><p><strong>FAIT, 2026-08-08.</strong> Une case du plan peut nommer les <strong>champs de variant</strong> qu&#039;elle veut, en plus de son sujet et de ses raccords : <code>&quot;variant&quot;: {&quot;gate&quot;: &quot;gate-open&quot;}</code>.</p>
+<p><strong>CE QUI MANQUAIT</strong> : les quatre dessins de portillon existaient, déclarés et courants, et <strong>aucun plan ne pouvait les atteindre</strong> — le format ne connaissait que le sujet et les bords. Un chemin qui<br />
+coupe une clôture était donc condamné à y buter.</p>
+<p><strong>LE CHAMP EST VÉRIFIÉ, PAS AVALÉ</strong> : un champ que le type ne déclare pas, ou une valeur qu&#039;il n&#039;autorise pas, fait échouer le plan avec son nom. Le monteur ne retient un variant que s&#039;il porte<br />
+<strong>tous</strong> les champs demandés.</p>
+<p><strong>POSÉ</strong> : portillon <strong>ouvert</strong> en <code>(2,12)</code> et <code>(15,12)</code>, les deux croisements du chemin est-ouest. Ouvert et non fermé parce que le chemin passe — le référentiel le dit : <code>gate-open</code> « laisse<br />
+entrer sur la case, le passage s&#039;ouvre alors sur les deux côtés que la forme relie ».</p>
+<p>Vérifié à l&#039;écran : le battant se voit au croisement, et le chemin traverse.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
@@ -775,6 +1099,29 @@ les cases libres autour d&#039;un point, et le script de pose refuse d&#039;écr
 <p><strong>Fermé le 2026-08-08</strong> — Repris en entier par « Contrôle d&#039;axonométrie : lire les arêtes intérieures, sur les bâtiments seulement », qui porte la décision de l&#039;opérateur du 2026-08-08 et la limite de temps.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">controle-axonometrie</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span></p>
+    <h2>Contrôle d&#039;axonométrie : lire les arêtes intérieures, sur les bâtiments seulement</h2>
+    <div class="point-corps"><p><strong>FAIT, 2026-08-08.</strong> Le contrôle d&#039;axonométrie lit désormais les <strong>arêtes intérieures</strong> des bâtiments, et il conclut là où il ne concluait jamais.</p>
+<p><strong>RÉPONSE DE L&#039;OPÉRATEUR</strong> : « au moins sur les bâtiments ? améliorer l&#039;outil est possible ? (y accorder un temps max) » — les deux oui, et « un temps max » veut dire un <strong>délai maximum</strong> que je<br />
+m&#039;accorde, pas un temps de calcul.</p>
+<p><strong>AUCUNE BIBLIOTHÈQUE NEUVE</strong> : <code>scipy</code> était déjà installé, à côté de <code>numpy</code> et de Pillow. <code>scikit-image</code> avait été demandé ; il s&#039;est révélé inutile, il n&#039;a donc pas été introduit.</p>
+<p><strong>COMMENT</strong> : les gradients donnent les pixels d&#039;arête ; on ne garde que ceux à moins de 25° de la verticale ; on compare l&#039;inclinaison médiane de la moitié gauche et de la moitié droite. Sous une<br />
+projection parallèle, les deux moitiés lisent zéro et leur écart est nul. Sous une perspective, les montants s&#039;inclinent en éventail vers le point de fuite et l&#039;écart s&#039;ouvre.</p>
+<p>## LE PIÈGE, ET IL A FAILLI ME FAIRE CONDAMNER UNE SPRITE JUSTE</p>
+<p><strong>Mesurée sur le corps entier, la maison de ferme sortait à 19,6° d&#039;écart</strong> — « CONVERGENCE », donc à refaire. Elle est juste. Le coupable est le <strong>TOIT</strong> : vu de biais, ses joints de tuiles sont<br />
+d&#039;innombrables petites arêtes, inclinées par le plan sur lequel elles reposent et non par une perspective, et elles tombent dans la fenêtre des 25°. Elles noient les murs, qui sont les seules arêtes<br />
+portant la projection.</p>
+<p><strong>Mesuré, pas supposé</strong> : le même dessin donne 19,6° sur la bande 0,35–0,90, puis 10,4° sur 0,60–0,92, puis <strong>2,4° sur 0,72–0,94</strong>. L&#039;écart s&#039;effondre à mesure qu&#039;on descend vers les murs. La bande<br />
+est donc fixée à <strong>0,70–0,94</strong> — un mur est en bas d&#039;un bâtiment, c&#039;est là qu&#039;on regarde.</p>
+<p><strong>J&#039;ai regardé l&#039;image avant de conclure</strong>, et c&#039;est ce qui a déclenché le doute. Un outil qui rend un verdict chiffré est cru sur parole : il vaut mieux qu&#039;il se taise que qu&#039;il se trompe fort.</p>
+<p>## CE QUE ÇA DONNE</p>
+<p>Les quatre bâtiments produits concluent tous, et tous tiennent : vue principale 0,6°, proposition 2 <strong>0,0°</strong>, proposition 3 0,1°, maison de ferme 4,7°. L&#039;arbre continue de refuser de conclure, ce<br />
+qui est le bon comportement — il n&#039;a aucune arête droite et n&#039;en aura jamais.</p>
+<p><strong>La limite écrite d&#039;avance est tenue</strong> : une passe, éprouvée sur les bâtiments existants, sans outil demandé en rattrapage.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">les-cours-d-eau-et</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 5</span><span class="point-attend">attend : opérateur</span></p>

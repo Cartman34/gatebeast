@@ -10,6 +10,9 @@
   --bg: #101114;
   --card: #191b1f;
   --line: #2b2e34;
+  /* The world grid behind the page, markedly weaker than --line: it is sensed, not read. Declared in BOTH themes — a variable that exists in only one leaves the
+   * page bare in the other, with nothing to signal it. */
+  --grid: #1a1c20;
   --muted: #8e9299;
   --accent: #d9a441;
   /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte. */

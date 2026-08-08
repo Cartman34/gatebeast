@@ -19,6 +19,24 @@ Ce nœud couvre l'organisation de l'affichage et ce que chaque asset doit porter
 - **Un variant porte des représentations, pas des images** — la sprite n'est qu'une façon de représenter un variant ; un modèle en trois dimensions en serait une autre, et s'ajouterait à côté sans rien changer au reste. Le référentiel parle donc de variants et de leurs représentations, jamais de fichiers d'images au premier plan. Écarté : un référentiel construit autour de l'image — il faudrait le refaire au premier moteur qui ne consomme pas des sprites.
 - **Le premier catalogue est gelé, un fichier neuf le remplace** — `assets/catalogue.json` était construit autour de l'image et ne sait porter ni les types, ni les contraintes, ni les connexions. Il n'est plus alimenté ni lu, et n'est pas supprimé. Écarté : l'étendre — on aurait gardé sa structure orientée image en lui ajoutant des rustines.
 
+## La case projetée — dimensions et source de vérité
+
+- **UNE CASE PROJETÉE N'EST PAS CARRÉE : `24 × 21 px` à l'affichage, `96 × 84 px` en source ×4.** Sous une caméra à 60° au-dessus du plan du sol et un azimut de 0°, une case carrée de 24 unités de
+  largeur est-ouest mesure `24 × sin(60°) = 20,78` unités en profondeur projetée nord-sud, soit 21 px après quantification. Décision de l'opérateur, 2026-08-08.
+- **Les ratios de projection : `sin(60°) = 0,8660254` pour une profondeur au sol, `cos(60°) = 0,5` pour une hauteur verticale.** Un élément haut de 24 unités dépasse donc de 12 px à l'affichage,
+  48 px en source. Ces deux nombres disent l'**intention géométrique** et servent à la comprendre.
+- **L'ÉCHELLE EN PIXELS FAIT FOI, PAS LE FACTEUR — ET AUCUN CODE NE MULTIPLIE PAR `0,8660254` POUR OBTENIR UNE TAILLE.** `96 × 0,8660254 = 83,14`, alors que la case publiée fait 84 : l'échelle réelle
+  est `7/8`, retenue parce qu'elle se divise proprement — 96×84, 48×42, 32×28, 24×21 tombent tous justes. L'écart à la géométrie est de 1 % et il achète des entiers à tous les paliers. **Le 84 ne se
+  « corrige » pas en 83** : ce serait défaire un choix, pas réparer une erreur. Un bout de code qui recalculerait la taille avec le facteur retomberait sur 83,14, et une sprite rendue à 20,78 posée
+  sur un pas de 21 laisse 0,22 px par case — un liseré à chaque raccord, exactement ce que la quantification évite.
+- **Les cases se posent par leur coin supérieur gauche**, sur un pas entier de `24 × 21 px`, `96 × 84 px` en source. Leur centre géométrique vaut `(12 ; 10,5)` à l'affichage : c'est une frontière
+  entre pixels, pas une position à écrire — **rien ne se place par son centre**, ce qui rend la demi-coordonnée sans conséquence.
+- **Les ports de raccord sont centrés sur les quatre bords** — nord au milieu du bord supérieur, est au milieu du bord droit, sud en bas, ouest à gauche. Deux sprites raccordées doivent fournir sur
+  leurs ports opposés **exactement la même largeur, le même alpha, la même matière et la même valeur tonale**.
+- **Les calques de sol restent dans `96 × 84 px`.** Une sprite haute conserve **une empreinte de case et une ancre au sol**, mais son image reçoit le débordement vertical nécessaire **au-dessus** de
+  cette ancre ; le tri et le survol se rapportent toujours à la case de l'ancre, même si l'image masque des cases arrière.
+- **Le plan de composition peut afficher les deux** — la case carrée du plan et la case projetée du rendu.
+
 ## Questions ouvertes
 
 Aucune : le modèle est arrêté ; le contrat exact du port de rendu s'écrira au socle applicatif, sans rouvrir ces choix. Le **format du référentiel des sujets** reste à écrire, et il l'est en même temps que le fichier lui-même — il ne se décide plus, il se rédige.

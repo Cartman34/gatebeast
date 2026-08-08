@@ -68,13 +68,13 @@ foreach (scannedFiles($root) as $file) {
 
 // 2. TOUTE IMAGE INSCRITE VIT SOUS LE SOUS-ARBRE DU THÈME COURANT. Le thème historique n'en a pas : ses images sont sous leur type, directement.
 $subtree = $current === $legacy ? '' : $current;
-$data = json_decode(file_get_contents($root . '/assets/sujets.json'), true, 512, JSON_THROW_ON_ERROR);
+$data = json_decode(file_get_contents($root . '/assets/subjects.json'), true, 512, JSON_THROW_ON_ERROR);
 $recorded = 0;
 $offTheme = [];
 $variants = 0;
 $drawn = 0;
-foreach ($data['sujets'] as $code => $sujet) {
-    foreach ($sujet['variants'] ?? [] as $variant) {
+foreach ($data['subjects'] as $code => $subject) {
+    foreach ($subject['variants'] ?? [] as $variant) {
         $variants++;
         $has = false;
         foreach ($variant['representations'] ?? [] as $representation) {

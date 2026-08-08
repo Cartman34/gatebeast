@@ -70,13 +70,34 @@ STANDING_HEIGHT_FACTOR = math.cos(math.radians(CAMERA_ELEVATION_DEGREES))
 # all: they explained where a value came from, which nobody needs and which made the same number exist
 # in several places at once (operator, 2026-08-05).
 
+# A PROJECTED TILE IS NOT SQUARE, AND THESE FOUR NUMBERS ARE THE SOURCE OF TRUTH (operator, 2026-08-08).
+# Under a camera 60° above the ground plane at azimuth 0, a tile 24 units wide east-west measures
+# 24 × sin(60°) = 20.78 units deep north-south, quantised to 21.
+#
+# THE PIXEL LADDER IS AUTHORITATIVE, NOT THE FACTOR, and nothing here multiplies by GROUND_DEPTH_FACTOR
+# to obtain a size. 96 × 0.8660254 = 83.14 while the published tile is 84: the real ratio is 7/8, kept
+# because it divides cleanly — 96×84, 48×42, 32×28, 24×21 all land on integers. The 1 % departure from
+# the geometry buys whole pixels at every step, and a sprite rendered at 20.78 laid on a step of 21
+# leaves 0.22 px per tile, which reads as a seam at every join. The 84 is therefore not to be
+# "corrected" to 83: that would undo a decision, not repair a mistake.
+DISPLAY_TILE_WIDTH = 24
+DISPLAY_TILE_DEPTH = 21
+FILE_TILE_WIDTH = 96
+FILE_TILE_DEPTH = 84
+
 # What a tile measures on screen by default. The game varies it — zooming changes THIS value and
 # nothing else, never the files. Adjusting it costs nothing and reworks no image.
-DISPLAY_PIXELS_PER_TILE = 24
+DISPLAY_PIXELS_PER_TILE = DISPLAY_TILE_WIDTH
 
 # What a tile measures in the file itself, delivered and produced alike. Raising it later regenerates
 # nothing: the masters are kept and a re-export suffices — which is exactly why the masters are kept.
-FILE_PIXELS_PER_TILE = 96
+FILE_PIXELS_PER_TILE = FILE_TILE_WIDTH
+
+
+def projected_depth_tiles(rows):
+    """A ground depth of ROWS tiles, as it is DRAWN — in tiles of width. Read off the pixel ladder, so
+    it can never drift from the sizes: 84/96 tile of image per tile of depth."""
+    return rows * FILE_TILE_DEPTH / FILE_TILE_WIDTH
 
 # Kept as the display value under its old name so callers that mean "on screen" keep working. Anything
 # that means "how fine the file is" must go through delivery_size or master_definition instead.
@@ -124,13 +145,15 @@ def delivery_size(columns, rows):
     """The pixel box a GROUND MATERIAL is delivered at: an exact box on both axes, because a tile has
     to fill its footprint edge to edge — there is no proportion of its own to follow.
 
+    THE BOX IS NOT SQUARE, and that is the whole point of the projected tile: 96 wide by 84 deep per
+    tile. It used to be square on both axes, which was a tile seen from straight above rather than
+    from the world's camera — and it is what put every flat piece at 96 × 96 on disk.
+
     Sized on the STRONGEST ZOOM, never on the default display size: the file must still be sharp when
     the player zooms all the way in. Changing the default display size therefore changes nothing here,
     and no asset is ever re-exported because someone adjusted the on-screen tile.
     """
-    fineness = delivery_fineness()
-
-    return {"width": columns * fineness, "height": rows * fineness}
+    return {"width": columns * FILE_TILE_WIDTH, "height": rows * FILE_TILE_DEPTH}
 
 
 def delivery_width(columns):
@@ -184,10 +207,13 @@ def master_definition(columns, rows, height=None):
     if height is None or height <= 0:
         box = delivery_size(columns, rows)
     else:
-        fineness = delivery_fineness()
-        projected_depth = rows * fineness * GROUND_DEPTH_FACTOR
-        projected_height = max(height, 0) * fineness * STANDING_HEIGHT_FACTOR
-        box = {"width": columns * fineness, "height": projected_depth + projected_height}
+        # THE GROUND DEPTH COMES FROM THE PIXEL LADDER, THE STANDING HEIGHT FROM THE FACTOR. They are
+        # not symmetrical and must not be written as if they were: a tile of depth is a published size
+        # (84 px), quantised so that tiles meet without a seam, while a tile of standing height is a
+        # free projection with nothing to line up against — cos(60°) applies to it untouched.
+        projected_depth = rows * FILE_TILE_DEPTH
+        projected_height = max(height, 0) * FILE_TILE_WIDTH * STANDING_HEIGHT_FACTOR
+        box = {"width": columns * FILE_TILE_WIDTH, "height": projected_depth + projected_height}
     # The file's own fineness, and nothing beyond it — reduced only when the cap would otherwise be exceeded.
     factor = min(1.0, MASTER_CAP / max(box["width"], box["height"]))
 

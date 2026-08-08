@@ -4,59 +4,43 @@
 
 Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : seul l'état courant compte (le versionnage garde le reste).
 
-## FIN DE SÉANCE DU 2026-08-08 — CE QU'IL FAUT SAVOIR POUR REPRENDRE, ET RIEN D'AUTRE
+## FIN DE SÉANCE DU 2026-08-08 (SOIR) — CE QU'IL FAUT SAVOIR POUR REPRENDRE, ET RIEN D'AUTRE
 
-**LE DÉPÔT EST PROPRE ET RIEN N'EST EN COURS** : tout est commité, aucun point n'est `in-progress`, aucun fichier ne traîne. **Rien n'est poussé** — l'ordre n'a pas été donné, c'est la première chose
-à proposer.
+**OUVRE LA SESSION DEPUIS `~/projects/gatebeast`.** Les hooks du projet sont déclarés à la racine du dépôt, et ils fonctionnent : vérifié aujourd'hui de bout en bout.
 
-**OUVRE LA SESSION DEPUIS `~/projects/gatebeast`, PAS DEPUIS `~/projects`.** Les hooks du projet sont déclarés à la racine du dépôt : ouverte depuis le dossier parent, la session ne les charge pas, le
-`GO` n'arme rien, la fin de tour n'est jamais refusée. C'est ce qui s'est passé toute la journée du 2026-08-08 sans que personne le voie — le dépilement n'a tenu que sur la discipline de l'agent.
+**UN `GO` OU UN `STOP` ENVOYÉ PENDANT QUE L'AGENT TRAVAILLE N'ARME NI NE DÉSARME RIEN.** `UserPromptSubmit` ne se déclenche qu'à l'ouverture d'un tour — c'est la documentation qui le dit, et trois
+mesures le confirment. Le mot doit être envoyé **seul, en ouverture de tour**. Les deux hooks tracent désormais chacun de leurs passages sous `var/hooks/` : `prompt-log` et `stop-log`.
 
-**LE PREMIER POINT À PRENDRE EST CELUI DES CALQUES**, et il est plus large qu'il n'en a l'air. La conception arrête cinq familles de calques et le référentiel les déclare par type, mais **le monteur
-ne les lit pas** : il porte sa propre liste de types de sol écrite en dur, donc deux familles au lieu de cinq. L'herbe, déclarée dans le monde, est traitée comme du sol ; le cours d'eau, déclaré décor
-au sol, est trié parmi les volumes. **Et le plan ne retient qu'un sujet par case** : un second sujet sur la même case écrase le premier en silence, alors qu'une case doit porter un sprite par famille.
-Tout est écrit dans le point, avec les quatre étapes de correction.
+**LE HOOK DE FIN DE TOUR LAISSE PASSER AU BOUT DE CINQ REFUS CONSÉCUTIFS**, et c'est voulu — un point qui ne peut pas bouger ne doit pas enfermer l'agent en boucle. Il l'annonçait sur une sortie que
+personne ne voyait ; il l'écrit maintenant dans sa trace.
 
-**TROIS QUESTIONS ATTENDENT L'OPÉRATEUR, et elles sont dans la pile sous la série `Q`** : le contrôle d'axonométrie sur les bâtiments, l'ordre de tir des formes de tracé qui manquent, et la
-convergence des deux outils de revue de la page Campagne. Les deux premières sont prêtes à partir dès qu'il tranche.
+**UN SUJET QUE L'AGENT OUVRE DE LUI-MÊME PART EN `proposed` ET NE SE PREND PAS SANS VALIDATION** (opérateur, 2026-08-08). L'agent tient le suivi, il ne décide pas de ce sur quoi le projet travaille.
+`--demande` met un point directement à faire quand c'est l'opérateur qui l'a demandé. **Cinq points attendent sa validation.**
 
-**CE QUE LA JOURNÉE A CHANGÉ ET QUI NE SE DÉDUIT D'AUCUN FICHIER** : le vocabulaire du code repasse en anglais américain, noms de composants compris — un nom technique reste anglais même en parlant
-français, et il s'inscrit au glossaire ; les couleurs d'état sont des variables de thème ; les statuts de la pile sont des constantes préfixées ; un point engagé passe devant, quelle que soit sa
-priorité ; un gros point se découpe en plusieurs petits ; le commit se fait en fin de séance, et à la reprise s'il a été manqué.
+**CE QUI ATTEND L'OPÉRATEUR, ET RIEN NE PART SANS LUI :**
 
-### Le chemin est-ouest refait — les deux défauts sont corrigés, 2026-08-07
+1. **Le lot de seize dessins de tracé** — huit formes manquantes que les compositions emploient, et huit pièces plates à refaire à la nouvelle case. Les huit manquantes ont été lancées en fin de
+   séance sur son ordre ; les huit reprises attendent.
+2. **Juger les trois propositions du centre de soin**, côte à côte dans sa fiche.
+3. **Cinq sujets `proposed`** à valider ou à classer.
 
-**Sa largeur est réparée** : la pièce couvrait **25 %** de sa case quand sa description en demande les deux tiers, alors que sa pièce nord-sud en couvre 67 %. La neuve en couvre **65 %** — un chemin
-qui descend et un chemin qui traverse ont enfin la même largeur, et ils se raccorderont.
+**LA CASE PROJETÉE N'EST PLUS CARRÉE : `24 × 21 px`, `96 × 84` en source.** C'est la décision la plus structurante de la journée. **L'échelle en pixels fait foi, jamais le facteur** — `96 × 0,866`
+donne 83,14 et non 84, et un code qui recalculerait avec le facteur rouvrirait le liseré à chaque raccord. Tout est écrit à `doc/conception/referentiels/technique/rendu-en-calques.md`.
 
-**Et sa couleur aussi, sans que je l'aie demandé** : l'ancienne était le jaune d'or vif que l'opérateur avait relevé trois fois. La neuve est un beige sable pâle, très proche de la pièce nord-sud.
-La correction de la fiche du chemin et la consigne de type qui désamorce les clauses de volume et de saturation ont donc fait leur effet — c'est la première pièce de ce sujet à sortir juste du
-premier coup depuis qu'elles ont été écrites.
+**LE VOCABULAIRE DU RÉFÉRENTIEL EST PASSÉ EN ANGLAIS** : `assets/sujets.json` devient `assets/subjects.json`, vingt-sept clés et deux jeux de valeurs traduits, treize lecteurs suivis. **Les valeurs
+de type restent en français** — elles nomment des répertoires sur le disque, et l'opérateur a tranché qu'elles doivent y passer aussi : c'est `W14 types-en-francais`, en `proposed`.
 
-**Non jugée par l'opérateur** : ce verdict est le mien.
+**CINQ CONTRÔLES NEUFS, ET DEUX ONT TROUVÉ CE QUE PERSONNE NE VOYAIT :**
 
-### Les deux extrémités de clôture refaites — et une contradiction que la mesure met au jour, 2026-08-07
+- `php scripts/check-page-selectors.php` — un sélecteur qui ne trouve rien ne lève aucune erreur. Il a trouvé des marques qui s'accumulaient sans jamais s'effacer sur la page Campagne.
+- `python3 scripts/check-code-language.py` — le vocabulaire technique français dans le code.
+- `bash local/scripts/essai-garde-depilement.sh`, `essai-garde-portees.sh`, `essai-hook-prompt.sh`, `essai-hook-stop.sh` — les gardes et les hooks, éprouvés sur leurs propres charges.
 
-**La reprise a corrigé ce qu'elle devait corriger** : avec l'exemple d'usage de la clôture en référence au lieu d'une planche du monde, le bois retrouve le brun grisé des pièces existantes et les
-poteaux se sont affinés. Le premier essai donnait des rondins blonds et massifs, une autre clôture.
+**LA RÈGLE QUI COMMANDE LE RESTE : LE CODE NE LAISSE JAMAIS UNE ERREUR TRANSPARENTE.** Cinq défauts sur six trouvés aujourd'hui étaient de cette famille — un sélecteur muet, `is_flat` toujours faux,
+une section perdue dans un `[]`, un plan qui échoue en laissant son ancien SVG, un monteur qui substituait un dessin voisin en silence. Aucun n'avait levé quoi que ce soit.
 
-**Les hauteurs ne concordent pas, et il n'y a rien à arbitrer là-dedans.** La pièce est-ouest existante fait **0,42 case de haut**, les deux extrémités neuves **1,31**. L'inventaire déclare pour la
-clôture **1,1 à 1,4 case** : les neuves sont dedans, l'ancienne est très loin dessous. **La hauteur déclarée est la règle, et ce qui s'en écarte est à refaire** — c'est un calcul, pas une décision à
-demander.
-
-**LA VALIDATION EXISTE BIEN, ET ELLE NE DIT RIEN DE LA HAUTEUR.** Elle est inscrite ici au 2026-08-03 : « validée par l'opérateur. Fond transparent, halo contenu, lumière dans la bande. » Trois
-critères, et **pas un mot de la hauteur** — pour la bonne raison que la fourchette de hauteur n'existait pas : elle a été introduite le 2026-08-06, trois jours plus tard, quand le validateur s'est
-mis à contrôler la hauteur.
-
-**Il n'y avait donc aucune contradiction à arbitrer.** Une validation porte sur ce qu'elle a jugé, à la date où elle a été donnée ; une règle écrite après ne l'annule pas, elle s'y ajoute. La pièce
-reste validée sur sa transparence, son halo et sa lumière, **et elle est hors norme sur une hauteur qu'on ne lui avait pas demandée**. Elle se refait, sans que personne ait à trancher quoi que ce
-soit.
-
-**Ce que j'aurais dû faire, et qui prend une minute** : chercher la validation, lire **ses commentaires** et **sa date**, regarder ce qui a changé depuis. C'est exactement ce que l'opérateur m'a
-demandé de faire au lieu de le déranger — « si l'historique te dit que j'ai validé une pièce, je l'ai validé. Mais avec quels commentaires ? dans quel contexte ? est-ce que des choses ont changé
-entre temps ? » **J'ai fait pire que demander : j'ai nié sa validation** parce qu'elle contredisait un chiffre, au lieu d'aller lire ce qu'elle disait.
-
-**Ce qui reste à faire, sans rien demander** : la pièce est-ouest de la clôture, et toutes celles produites à la même hauteur, se refont à la hauteur déclarée. Elles rejoignent les sujets trop bas.
+**CE QUI EST ENGAGÉ ET NON FINI** : `Q1 convergence-revue`, aux étapes 3 et 4. Le module commun `review-server/lib/Remarks.php` existe et **le plan y est branché** ; la maquette garde encore sa copie.
+La suite est écrite dans le point : brancher la maquette, contrôler, regarder, puis supprimer la seconde copie.
 
 ## POUR REPRENDRE À FROID — LIRE CECI EN ENTIER, RIEN D'AUTRE N'EST NÉCESSAIRE POUR DÉMARRER
 
@@ -82,16 +66,24 @@ l'opérateur — réservé à la série `Q`) et `waiting-external` (quelque chos
 **UN HOOK EMPÊCHE L'AGENT DE S'ARRÊTER.** Le `GO` de l'opérateur l'arme, son `STOP` le désarme, il expire seul au bout de trois heures, et tant qu'une tâche est `todo` ou `in-progress` il refuse la
 fin de tour en renvoyant la première. Sans `GO`, aucune session n'est retenue. État sous `var/hooks/`, jamais sous `local/`.
 
+**LA PAGE DES SPRITES A BESOIN DU SERVEUR POUR ENREGISTRER** depuis le 2026-08-08 : ses verdicts et ses commentaires vivent dans `review-server/notes/sprites.json`, plus dans le navigateur. Ouverte
+comme un fichier, elle reste lisible mais **ne retient rien** — c'est délibéré, mieux vaut une page qui ne retient pas qu'une page qui fait croire qu'elle retient. Je lis ces verdicts directement.
+
 **LA REVUE SE REGARDE EN LOCAL** : `php review-server/serve.php`, puis `http://localhost:8080/`. Quatre pages — l'Index, le suivi des sujets, le suivi des sprites, la Maquette Campagne. Une page se
 reconstruit par sa route : `php review-server/build.php /sprites`. **Les remarques de l'opérateur sont dans `review-server/notes/`** — elles se lisent directement.
 
 **LES SIX OUTILS DE CONTRÔLE, à lancer après avoir touché à ce qu'ils gardent :**
 
 - `php scripts/check-text-width.php <fichiers>` — le standard de 200 caractères. **Dans un fichier de code, seuls les commentaires sont jugés** ; le reste est instruction et exempt.
-- `php scripts/check-review-pages.php` — les dix comportements de la page des sprites, figés parce qu'ils avaient été perdus deux fois.
+- `php scripts/check-review-pages.php` — les quatorze comportements de la page des sprites, figés parce qu'ils avaient été perdus deux fois.
+- `php scripts/check-page-selectors.php` — chaque classe, identifiant et attribut `data-` que le script d'une page cherche existe-t-il dans son balisage ? **Un sélecteur qui ne trouve rien ne lève
+  aucune erreur** : le bouton ne fait simplement plus rien. Il a trouvé, dès sa première passe, des marques de la page Campagne qui s'accumulaient sans jamais être effacées.
 - `php scripts/check-asset-theme.php` — aucun nom de thème hors de son module, toute image inscrite sous le sous-arbre du thème courant, et la complétude rapportée.
-- `python3 scripts/check-sujets.py` — le référentiel contre les fichiers réellement livrés.
-- `bash scripts/diff-prompts.sh` — réassemble les 69 consignes et dit ce qui a bougé depuis la référence figée. Ne dessine rien, ne coûte aucune génération. `--freeze` refige.
+- `python3 scripts/check-subjects.py` — le référentiel contre les fichiers réellement livrés.
+- `bash scripts/diff-prompts.sh` — réassemble les 69 consignes et dit ce qui a bougé depuis la référence figée. Ne dessine rien, ne coûte aucune génération. `--freeze` refige. **C'est le seul
+  contrôle qui regarde le texte assemblé** : il a rattrapé, le 2026-08-08, une migration de vocabulaire qui faisait sortir les trois densités d'herbe avec la description de la clairsemée.
+- `python3 scripts/check-code-language.py [fichiers]` — refuse le vocabulaire technique français dans les noms et les valeurs comparées. Commentaires et textes affichés restent français.
+- `php scripts/backlog.php next` — ne rend qu'un point **prenable** (`todo` ou `in-progress`) ; les trois statuts d'attente restent listés par `list` mais ne sont plus proposés.
 - `python3 local/scripts/mesurer-hauteurs.py` — la hauteur dessinée de chaque sprite contre sa fourchette.
 
 **QUATRE SONDES POUR REGARDER AU LIEU DE SUPPOSER, et elles ont chacune tranché un cas que la lecture du code avait raté :**
@@ -100,12 +92,20 @@ reconstruit par sa route : `php review-server/build.php /sprites`. **Les remarqu
 - `php local/scripts/probe-fsp.php <CODE>` — ouvre le panneau d'un sujet et en fait un tir d'écran.
 - `php local/scripts/cliquer-bouton.php <page> <sélecteur>` — clique un bouton pour de vrai et rapporte ce que la page devient.
 - `php local/scripts/console-page.php <page>` — ce que dit la console du navigateur.
+- `php local/scripts/probe-comparaison.php <CODE> [hold]` — joue la comparaison en entier : ouvre, coche deux variants, quitte, et rapporte l'état à chaque étape.
+  `hold` s'arrête avant de quitter, pour que le tir d'écran montre la comparaison au lieu de son absence.
+- `php local/scripts/probe-fermeture.php <CODE>` — reproduit le panneau visible sans pile derrière lui, clique la fermeture et dit si la page se débloque.
+- `php local/scripts/probe-debordement.php <page construite>` — dit si la page déborde en largeur, de combien, et **nomme les éléments responsables**. Un débordement ne se voit pas tant que rien
+  n'est aligné à droite : celui de la page des sprites, 84 px, était là depuis toujours.
 
-**TOUT EST ENREGISTRÉ ET RIEN N'EST EN COURS** au 2026-08-08 : le dépôt est propre, aucun point n'est `in-progress`, et rien n'attend d'être commité. **Rien n'est poussé** — l'ordre n'a pas été donné.
+**UNE SONDE S'AJOUTE EN FIN DE FICHIER, JAMAIS AVANT `</body>`** : la page construite ne porte aucune balise `</body>`, donc un `str_replace` dessus ne change rien — la sonde rapporte alors un
+essai propre sur une page qu'elle n'a jamais touchée. Constaté le 2026-08-08, premier essai de `probe-comparaison.php`.
+
+**TOUT EST ENREGISTRÉ, POUSSÉ, ET RIEN N'EST EN COURS** au 2026-08-08 : le dépôt est propre, aucun point n'est `in-progress`, rien n'attend d'être commité, et `origin/main` est à jour.
 
 ## POUR REPRENDRE À FROID — 2026-08-07, fin de journée
 
-**CE QUI RESTE À FAIRE N'EST PLUS DANS CE DOCUMENT.** Les points ouverts vivent dans `review-server/sujets.json`, la page `/sujets` du serveur de revue (RS) les montre par priorité, et **une seule
+**CE QUI RESTE À FAIRE N'EST PLUS DANS CE DOCUMENT.** Les points ouverts vivent dans `review-server/subjects.json`, la page `/sujets` du serveur de revue (RS) les montre par priorité, et **une seule
 commande les lit et les écrit** : `php scripts/backlog.php`. `next` dit le prochain point à prendre, `list` les range, `show <REF>` en ouvre un en entier. Toute écriture reconstruit la page.
 
 **Ce document garde ce qui n'est pas de la donnée** : les constats, les décisions et leurs raisons. Son ancien tableau de points est figé et ne se tient plus.
@@ -208,7 +208,7 @@ donc ce qui a été produit avant elle sera à réexaminer.
 
 **Nouvel outil — le plan de composition** ([sa fiche](doc/outils/plan-de-composition.md)) : `scripts/build-composition-plan.py` rend un plan à plat depuis un JSON déclaratif qui *est* le plan, avec des contrôles qui bloquent. Le moteur partagé est `scripts/composition_plan.py`. Premier plan produit : `assets/poc/cloture/plan-composition-OB-010-usage.json` — carré fermé, croix centrale, quatre antennes, les quinze formes de tracé exercées.
 
-**Les deux dettes sont soldées** (2026-08-04) : le **catalogue** est **gelé** — ni lu, ni écrit, ni supprimé — et remplacé par `assets/sujets.json`, le référentiel des sujets ; la **page de suivi des sprites** part désormais du disque, montre toute image existante, et pèse 0,47 Mo au lieu de 10,3.
+**Les deux dettes sont soldées** (2026-08-04) : le **catalogue** est **gelé** — ni lu, ni écrit, ni supprimé — et remplacé par `assets/subjects.json`, le référentiel des sujets ; la **page de suivi des sprites** part désormais du disque, montre toute image existante, et pèse 0,47 Mo au lieu de 10,3.
 
 **La chaîne tient de bout en bout** (2026-08-04) : plan de composition déclaratif et contrôlé → consigne assemblée par outil, jamais à la main → génération → **export** à la définition de livraison → référentiel des sujets → suivi publié. Le **rognage est abandonné** : on corrige la consigne, jamais l'image.
 
@@ -274,7 +274,7 @@ donc ce qui a été produit avant elle sera à réexaminer.
 
 ## Les points ouverts ONT QUITTÉ CE DOCUMENT — 2026-08-07
 
-**Ils vivent dans `review-server/sujets.json`, et la page `/sujets` du serveur de revue (RS) les montre**, dans l'ordre des priorités, les ouverts d'abord. Demande de l'opérateur : une page RS de
+**Ils vivent dans `review-server/subjects.json`, et la page `/sujets` du serveur de revue (RS) les montre**, dans l'ordre des priorités, les ouverts d'abord. Demande de l'opérateur : une page RS de
 suivi des sujets, adossée à un fichier plutôt qu'à de la prose.
 
 **Une seule commande les écrit**, `php scripts/backlog.php`, et elle **reconstruit la page en sortant** — une page qui retarde sur ses données est pire que pas de page, parce qu'elle a l'air à jour.
@@ -282,7 +282,7 @@ Ses sous-commandes : `next` dit le prochain point à prendre et rien d'autre, `l
 
 **La priorité est un nombre, pas un rang** : deux points peuvent la partager, et intercaler un point n'oblige à renuméroter personne. À priorité égale, le plus ancien passe devant.
 
-**LE MOT « SUJET » EST CELUI DE L'OPÉRATEUR, ET IL EN EXISTE DÉJÀ UN AUTRE DANS CE PROJET** : un sujet du jeu — une créature, un décor — vit dans `assets/sujets.json`. Les deux ne se croisent
+**LE MOT « SUJET » EST CELUI DE L'OPÉRATEUR, ET IL EN EXISTE DÉJÀ UN AUTRE DANS CE PROJET** : un sujet du jeu — une créature, un décor — vit dans `assets/subjects.json`. Les deux ne se croisent
 jamais, celui-ci vivant sous `review-server/` et ne se lisant qu'à travers son service, mais la collision est réelle et je la signale plutôt que de la laisser se découvrir.
 
 **Ce que ce document garde, et qui n'est pas de la donnée** : les constats, les raisonnements, les décisions et leurs raisons. Le tableau ci-dessous n'est plus tenu à jour — il reste le temps que
@@ -1125,7 +1125,7 @@ l'autre de l'image ».
 - **Toute règle donnée s'écrit, immédiatement, au niveau où elle s'applique** — la conversation ne conserve rien.
 - **La documentation porte l'information, jamais la donnée** — elle dit comment ça marche et où lire ; la donnée vit à un seul endroit, celui d'où les outils la lisent. Bascule **au fil de
   l'eau**, jamais en refonte, chaque déplacement proposé.
-- **L'inventaire des sujets, c'est `assets/sujets.json`, et il fait foi** — la documentation cesse de recopier ses valeurs. Divergence déjà constatée : l'herbe clairsemée est haute d'une case
+- **L'inventaire des sujets, c'est `assets/subjects.json`, et il fait foi** — la documentation cesse de recopier ses valeurs. Divergence déjà constatée : l'herbe clairsemée est haute d'une case
   dans la documentation et de trois dixièmes dans l'inventaire, qui cite pourtant la documentation comme source.
 - **On dit toujours de quel référentiel on parle** — le mot seul ne désigne rien. Il n'est pas banni, il est à qualifier.
 - **Une donnée sortie de la documentation reste consultable** — une commande la rend lisible sans ouvrir le fichier ni écrire de code.
@@ -1532,7 +1532,7 @@ Six générations ont été lancées **en parallèle**. Cinq sont allées jusqu'
 échoué à l'export. Les deux défauts qui suivent sont des **propositions**, rien n'a été touché.
 
 1. **Deux générations qui tournent ensemble peuvent s'effacer l'une l'autre au référentiel.** Chaque inscription
-   relit `assets/sujets.json` en entier au moment où elle démarre, puis le réécrit en entier quand elle finit : tout
+   relit `assets/subjects.json` en entier au moment où elle démarre, puis le réécrit en entier quand elle finit : tout
    ce qui a été écrit entre-temps — par une autre génération ou à la main — disparaîtrait sans un mot. **Rien de tel
    n'a été constaté** : les cinq inscriptions du 2026-08-05 sont toutes en place. C'est un risque du mécanisme, pas
    un dégât observé — j'ai d'abord cru le couvert du sapin perdu ainsi, il ne l'était pas. **Proposition :** relire
@@ -1705,7 +1705,7 @@ sapin est qu'il veut celui de la planche de campagne, en haut à gauche. **Leço
 - **La toile demandée au générateur épouse la forme réelle du sujet.** Elle se calculait sur le seul sol : un pommier haut de trois cases recevait un carré et s'écrasait. La profondeur au sol se projette presque en vraie grandeur, la hauteur s'écrase au tiers — la caméra est à soixante-dix degrés **sous l'horizontale**, donc près de la verticale. Cette convention est la source d'une erreur commise et corrigée aujourd'hui : elle est désormais écrite noir sur blanc dans le service qui détient les tailles.
 
 - **Le portillon** `OB-010_shape-ew-avec-portillon.png` est **rattaché** au référentiel le 2026-08-04, sur un axe `ouverture` proposé. Deux points attendent l'opérateur : le nom de l'axe, et **le passage** — un portillon se traverse, ce qui renverse la fermeture du type sur les deux côtés reliés.
-- **`check-sujets.py` a deux défauts** : il réclame qu'un variant revendique aussi les **maîtres** de `assets/poc/`, alors qu'un variant ne pointe que le livrable de `assets/cutout/` ; et il compte en faute les sondes pourtant déclarées `_hors_referentiel`. Il sort donc en erreur alors que le référentiel est sain.
+- **`check-subjects.py` a deux défauts** : il réclame qu'un variant revendique aussi les **maîtres** de `assets/poc/`, alors qu'un variant ne pointe que le livrable de `assets/cutout/` ; et il compte en faute les sondes pourtant déclarées `_hors_referentiel`. Il sort donc en erreur alors que le référentiel est sain.
 - **`reference-OB-010.png`** est une copie de la clôture est-ouest, déposée par l'ancien mécanisme de cascade. Elle traîne au recensement ; proposé de l'exclure comme les `usage-*`.
 - **Le bouton œil a disparu** de la page au lieu d'être déplacé hors de l'image ; tout l'encart est devenu la cible. À confirmer ou à rétablir.
 - **`cut-asset.py`** existe encore mais n'est plus appelé — le rognage est abandonné.
@@ -1786,7 +1786,7 @@ Les cinq premières tiennent la cible de lumière et l'échelle humaine. Détail
 | Mesurer une planche | `analyze-plate.py` (mesures + verdict lumière) |
 | Convertir case ↔ pixels, dimensionner | `tile_scale.py` — **seul détenteur** des deux valeurs : case d'écran à 24 px, finesse de livraison dimensionnée sur le zoom maximum |
 | Exporter un livrable | `export-asset.py` — redimensionne, ne rogne rien, mesure l'emprise et le point de pose |
-| Lire ou contrôler le référentiel des sujets | `check-sujets.py` — affiche la valeur résolue du passage, niveau par niveau |
+| Lire ou contrôler le référentiel des sujets | `check-subjects.py` — affiche la valeur résolue du passage, niveau par niveau |
 | Commander une sprite, quelle qu'elle soit | `generate-sprite.py <ref du sujet> <ref du variant>` — tout est lu au référentiel ; elle exporte, inscrit et écrit son rapport |
 | Commander tout un jeu de pièces | `run-fence-campaign.py` — une seule campagne, une seule référence |
 | Commander un exemple d'usage | `generate-usage-sample.py` depuis un plan de composition |
@@ -1801,7 +1801,7 @@ Les `generate-planche-*.py` et `generate-humans-calibration-*.py` sont conservé
 
 | Outil | Version | Usage |
 |---|---|---|
-| Codex (`codex`) | codex-cli 0.146.0 | le générateur d'images, enveloppé par `generate-image.php` |
+| Codex (`codex`) | codex-cli 0.147.0 | le générateur d'images, enveloppé par `generate-image.php` |
 | PHP | 8.4.24 | le wrapper du générateur |
 | Python | 3.12.3 | tout le reste de l'outillage |
 | `rsvg-convert` | 2.58.0 | SVG → PNG, pour que l'agent puisse regarder ce qu'il produit |

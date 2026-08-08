@@ -3,7 +3,7 @@
  * Usage: php review-server/suivi-sujets/build.php [sortie.html] — builds the open-points page of the review server (RS), served at /sujets.
  *
  * Intention: what is left to do had no page. It lived as prose in SUIVI.md, where nothing could sort it or count it, and the operator had to read a long document to know what came next. The data
- * lives in review-server/sujets.json now, written only by scripts/backlog.php; this page is its reading, in priority order, open points first.
+ * lives in review-server/subjects.json now, written only by scripts/backlog.php; this page is its reading, in priority order, open points first.
  *
  * The long description is Markdown and is rendered as such — a point that cannot say what it means in more than a label is a point nobody can pick up cold.
  */

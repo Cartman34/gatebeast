@@ -45,12 +45,12 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from plate_metrics import DARK_MAX, LUMINANCE_MAX, LUMINANCE_MIN
 
-# check-sujets.py is hyphenated, so it is loaded by path rather than imported by name (the same
+# check-subjects.py is hyphenated, so it is loaded by path rather than imported by name (the same
 # mechanism record-asset.py already uses for cut-asset.py).
-CHECK_SUJETS = Path(__file__).resolve().parent / "check-sujets.py"
-spec = importlib.util.spec_from_file_location("check_sujets", CHECK_SUJETS)
-check_sujets = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(check_sujets)
+CHECK_SUBJECTS = Path(__file__).resolve().parent / "check-subjects.py"
+spec = importlib.util.spec_from_file_location("check_subjects", CHECK_SUBJECTS)
+check_subjects = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(check_subjects)
 
 REPOSITORY = Path(__file__).resolve().parents[1]
 ASSETS = REPOSITORY / "assets"
@@ -201,30 +201,30 @@ def light_block(rgb, mask):
 def find_profile(data, path, forced=None):
     """The referentiel's sujet for a file: forced code, a code whose representation claims that file,
     or a code equal to the file's stem."""
-    sujets = data["sujets"]
+    subjects = data["subjects"]
     if forced:
-        if forced not in sujets:
+        if forced not in subjects:
             raise KeyError(f"unknown profile: {forced}")
-        return _profile_of(forced, sujets[forced])
+        return _profile_of(forced, subjects[forced])
     try:
         relative = path.resolve().relative_to(ASSETS).as_posix()
     except ValueError:
         relative = None
     if relative:
-        for code, sujet in sujets.items():
-            for variant in sujet["variants"]:
+        for code, subject in subjects.items():
+            for variant in subject["variants"]:
                 for representation in variant.get("representations", []):
                     if representation["path"] == relative:
-                        return _profile_of(code, sujet)
+                        return _profile_of(code, subject)
     stem = path.stem
-    if stem in sujets:
-        return _profile_of(stem, sujets[stem])
+    if stem in subjects:
+        return _profile_of(stem, subjects[stem])
 
     return None
 
 
-def _profile_of(code, sujet):
-    return Profile(code, sujet["type"], sujet["emprise"], sujet.get("hauteur"))
+def _profile_of(code, subject):
+    return Profile(code, subject["type"], subject["footprint"], subject.get("height"))
 
 
 def report(path, profile, data):
@@ -345,9 +345,9 @@ def variant_ref(data, profile, path):
     """
     if profile is None:
         return None
-    sujet = (data.get("sujets") or {}).get(profile.code) or {}
+    subject = (data.get("subjects") or {}).get(profile.code) or {}
     wanted = str(path.relative_to(ASSETS)) if path.is_relative_to(ASSETS) else path.name
-    for variant in sujet.get("variants", []):
+    for variant in subject.get("variants", []):
         for representation in variant.get("representations", []):
             if representation.get("path") == wanted:
                 return variant.get("ref")
@@ -363,7 +363,7 @@ def write_evaluation(path, profile, marks, passed, ref):
     folder.mkdir(parents=True, exist_ok=True)
     evaluation = {
         "image": path.name,
-        "sujet": profile.code if profile else None,
+        "subject": profile.code if profile else None,
         "variant": ref,
         "score": {"met": passed, "total": len(marks)},
         # Chaque critère porte ce qui a été MESURÉ et ce qui était ATTENDU : un verdict sans ses deux nombres oblige à rouvrir l'image pour comprendre ce qui cloche.
@@ -385,8 +385,8 @@ def main(arguments):
         return 2
 
     try:
-        data = check_sujets.load()
-    except check_sujets.Fault as fault:
+        data = check_subjects.load()
+    except check_subjects.Fault as fault:
         print(f"FAULT {fault}")
         return 1
     missing = 0

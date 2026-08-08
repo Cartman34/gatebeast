@@ -9,7 +9,7 @@
  * deliberately want a sapling under a big tree one day. So this tool REPORTS AND NEVER BLOCKS, and it is run by hand — after a new plan, or after a large edit — rather than
  * wired into the drawing chain (operator, 2026-08-05).
  *
- * It reads the couvert from assets/sujets.json, never from the plan: what a subject overhangs is a property of the subject.
+ * It reads the couvert from assets/subjects.json, never from the plan: what a subject overhangs is a property of the subject.
  *
  * Why PHP and not Python: PHP is this project's default language for lasting tooling, and this needs nothing Python alone provides.
  */
@@ -21,7 +21,7 @@ if ($plans === []) {
     exit(2);
 }
 
-$sujets = json_decode(file_get_contents("$root/assets/sujets.json"), true, 512, JSON_THROW_ON_ERROR)['sujets'];
+$subjects = json_decode(file_get_contents("$root/assets/subjects.json"), true, 512, JSON_THROW_ON_ERROR)['subjects'];
 $faults = 0;
 
 foreach ($plans as $file) {
@@ -46,8 +46,8 @@ foreach ($plans as $file) {
                 $ground["$c,$r"] = $code;
             }
         }
-        $sujet = $sujets[$code] ?? null;
-        $spread = $sujet['couvert'] ?? null;
+        $subject = $subjects[$code] ?? null;
+        $spread = $subject['cover'] ?? null;
         if ($spread === null || ($spread['columns'] <= $wide && $spread['rows'] <= $high)) {
             continue;
         }
@@ -68,16 +68,16 @@ foreach ($plans as $file) {
                 if ($other === null || $other === $canopy['code']) {
                     continue;
                 }
-                if (in_array($sujets[$other]['type'] ?? '', $flat, true)) {
+                if (in_array($subjects[$other]['type'] ?? '', $flat, true)) {
                     continue;
                 }
                 // LE TYPE DE CHACUN EST DIT, ET C'EST CE QUI PERMET DE JUGER. « TR-063 sous TR-060 » n'apprend rien à qui ne connaît pas les codes par cœur ; « un arbre sous
                 // un arbre » se juge tout de suite, et « un cours d'eau sous un arbre » se reconnaît comme un faux problème — c'est exactement l'erreur que ce contrôle a
                 // faite une fois, en rangeant une rivière parmi les sujets qui se dressent.
                 printf("  DANS LE COUVERT  %s (%s) en (%d,%d) est sous le couvert %d × %d de %s (%s) posé en (%d,%d)\n",
-                    $other, $sujets[$other]['type'] ?? 'type inconnu', $c, $r,
-                    $sujets[$canopy['code']]['couvert']['columns'], $sujets[$canopy['code']]['couvert']['rows'],
-                    $canopy['code'], $sujets[$canopy['code']]['type'] ?? 'type inconnu',
+                    $other, $subjects[$other]['type'] ?? 'type inconnu', $c, $r,
+                    $subjects[$canopy['code']]['cover']['columns'], $subjects[$canopy['code']]['cover']['rows'],
+                    $canopy['code'], $subjects[$canopy['code']]['type'] ?? 'type inconnu',
                     $canopy['column'], $canopy['row']);
                 $faults++;
             }

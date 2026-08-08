@@ -86,6 +86,10 @@ function prefixClasses(string $text, string $prefix): string
         $text = preg_replace('/(?<![\w\-\)\]])\.' . preg_quote($name, '/') . '(?![\w-])/', '.' . $prefix . $name, $text);
         $text = str_replace(["classList.toggle('" . $name . "'", 'classList.add(\'' . $name . '\'', 'classList.remove(\'' . $name . '\''],
             ["classList.toggle('" . $prefix . $name . "'", 'classList.add(\'' . $prefix . $name . '\'', 'classList.remove(\'' . $prefix . $name . '\''], $text);
+        // `className = '...'` IS A THIRD WAY OF SETTING A CLASS, AND IT WAS FORGOTTEN. The mock-up's markers are created that way: their class stayed `marque`
+        // while the style and the cleanup moved to `.mq-marque`. A visible consequence that nothing ever reported — the cleanup no longer found them, and the
+        // markers PILED UP on the scene at every refresh. Found on 2026-08-08 by scripts/check-page-selectors.php, on its very first pass.
+        $text = preg_replace('/(?<=className = \')' . preg_quote($name, '/') . '(?=\')/', $prefix . $name, $text);
     }
 
     return $text;
@@ -165,6 +169,7 @@ $page = <<<'HTML'
 <!-- LE LIEN AVEC LE SERVEUR VIENT AVANT LES OUTILS DE REVUE, et l'ordre n'est pas indifférent : l'un des deux outils s'exécute dès qu'il est lu, sans attendre la fin de la page. Placé après lui,
      ce lien n'existait pas encore au moment où il cherchait ses remarques, et la page s'ouvrait vide en affirmant qu'il n'y en avait aucune. -->
 {$notesScript}
+{$remarksScript}
 
 <script>
 {$scripts}
@@ -196,6 +201,9 @@ HTML;
 $page = strtr($page, ['{$styles}' => $allStyles . "\n" . $reload->styles(), '{$scripts}' => $allScripts, '{$blocks}' => $blocks,
     '{$favicon}' => $favicon->tag(), '{$reloadMarkup}' => $reload->markup(), '{$reloadScript}' => $reload->script('/maquette-campagne'),
     // The two views melted here each carry their own review tool; the link to the server is written ONCE, and each tool keeps its remarks in its own section of the file.
+    // THE REMARKS TOOL, ONCE FOR THE WHOLE PAGE: the plan calls for it through this marker and the mock-up will join it. Two inclusions would define the same
+    // module twice, the second overwriting the first without a word.
+    '{$remarksScript}' => Remarks::get()->script(),
     '{$notesScript}' => Notes::get()->script('/maquette-campagne')]);
 file_put_contents("$here/page.html", $page);
 printf("review-server/maquette-campagne/page.html — %d section(s) fusionnée(s), %.1f Ko\n", count($sources), strlen($page) / 1024);

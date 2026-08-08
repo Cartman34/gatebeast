@@ -56,7 +56,15 @@ if ($command === 'next') {
         echo "Rien à dépiler : aucun point ouvert.\n";
         exit(0);
     }
-    $point = $open[0];
+    // `next` ONLY ANSWERS WITH A TAKEABLE POINT: "the first one to take" means nothing if it cannot be taken. The three waiting statuses stay open, and so stay
+    // counted and shown by `list`, but they are not offered — otherwise the agent reopens a point waiting on the operator every single turn, reads its whole
+    // analysis, finds again that it cannot move, and puts it back. The order itself does not change: it is `ordered()`'s, where an engaged point comes first.
+    $takeable = array_values(array_filter($open, fn (array $p) => in_array($p['status'], Backlog::STATUSES_TAKEABLE, true)));
+    if (!$takeable) {
+        printf("Rien à dépiler : les %d point(s) ouverts attendent tous quelque chose. `list` dit quoi.\n", count($open));
+        exit(0);
+    }
+    $point = $takeable[0];
     printf("%s\n\n%s\n", line($point), $point['description']);
     $waiting = array_values(array_filter($open, fn (array $p) => $p['status'] === Backlog::STATUS_PENDING_DECISION));
     if ($waiting) {
@@ -118,7 +126,9 @@ if ($command === 'add') {
         'code' => $code,
         'label' => $label,
         'description' => $description !== '' ? $description : $label,
-        'status' => Backlog::STATUS_TODO,
+        // UN SUJET NEUF EST PROPOSÉ, PAS À FAIRE (opérateur, 2026-08-08). L'agent tient le suivi, il ne décide pas de ce sur quoi le projet travaille : ce qu'il
+        // ouvre de lui-même attend la validation, et `next` ne le proposera pas. Quand c'est l'opérateur qui demande le point, `--demande` le met directement à faire.
+        'status' => in_array('--demande', $argv, true) ? Backlog::STATUS_TODO : Backlog::STATUS_PROPOSED,
         'priority' => (int) $priority,
         'waiting' => Backlog::WAITING_AGENT,
         'created' => today(),

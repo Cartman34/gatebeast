@@ -63,7 +63,7 @@ const STATE_LABELS = [
 // THE VERDICTS THE REFERENTIEL STORES, in French, and the state each one means. This table is the only bridge between the stored wording and the page's vocabulary.
 const VERDICT_STATES = [
     'validee' => STATE_VALIDATED,
-    'a-reprendre' => STATE_TO_REWORK,
+    'rework' => STATE_TO_REWORK,
     'ecartee' => STATE_DISMISSED,
 ];
 
@@ -96,18 +96,18 @@ $missing = [];
 $compte = [];
 
 foreach ($inventory->types() as $typeName => $type) {
-    $codes = $inventory->sujetsOfType($typeName);
+    $codes = $inventory->subjectsOfType($typeName);
     if (!$codes) {
         continue;
     }
     $tiles = '';
     foreach ($codes as $code) {
-        $sujet = $inventory->sujet($code);
-        $spread = $inventory->spread($sujet);
-        $main = $inventory->mainVariant($sujet);
+        $subject = $inventory->subject($code);
+        $spread = $inventory->spread($subject);
+        $main = $inventory->mainVariant($subject);
         $current = $main ? $inventory->currentRepresentation($main) : null;
         $produced = 0;
-        foreach ($sujet['variants'] as $variant) {
+        foreach ($subject['variants'] as $variant) {
             $produced += $variant['representations'] ? 1 : 0;
         }
         $picture = '<span class="tile-empty">à produire</span>';
@@ -119,21 +119,25 @@ foreach ($inventory->types() as $typeName => $type) {
                 $missing[] = $current['path'];
             }
         }
-        $etat = subjectState($inventory, $sujet);
+        $etat = subjectState($inventory, $subject);
         $compte[$etat] = ($compte[$etat] ?? 0) + 1;
         // THE STATE SHOWS ON THE TILE, AND IT IS THE FIRST THING ONE LOOKS FOR THERE (operator, 2026-08-08): does this subject need judging, is it fully validated,
         // fully produced, or is something left to rework? The tile carried its state as an attribute, so the filters knew it and the eye did not.
         $tiles .= sprintf(
-            '        <button type="button" class="tile" data-sujet="%s" data-etat="%s"><span class="tile-image">%s</span>'
+            '        <button type="button" class="tile" data-subject="%s" data-etat="%s"><span class="tile-image">%s</span>'
             . '<span class="tile-name">%s</span><span class="tile-state">%s</span><span class="tile-count">%d/%d variant%s</span></button>' . "\n",
             escape($code), escape($etat), $picture, escape(capitalize($inventory->label($code))), escape(STATE_LABELS[$etat]),
-            $produced, count($sujet['variants']), count($sujet['variants']) > 1 ? 's' : ''
+            $produced, count($subject['variants']), count($subject['variants']) > 1 ? 's' : ''
         );
-        $popins .= popin($inventory, $thumbnails, $root, $code, $sujet);
+        $popins .= popin($inventory, $thumbnails, $root, $code, $subject);
     }
+    // THE SECTION HEADER OF THE ORIGINAL BUILDER: title and code on the left, THE COUNT ON THE RIGHT, a rule underneath. The count on the right is what gives the
+    // page the look of a survey rather than a pile — one reads at a glance how many subjects each family carries, without counting them by eye.
     $sections .= sprintf(
-        "    <section class=\"type\">\n      <h2>%s <span class=\"slug\">%s</span></h2>\n      <div class=\"grid\">\n%s      </div>\n    </section>\n",
-        escape(TYPE_LABELS[$typeName] ?? $typeName), escape($typeName), $tiles
+        "    <section class=\"type\">\n      <header class=\"type-head\"><h2>%s <span class=\"slug\">%s</span></h2>"
+        . "<span class=\"type-count\">%d sujet%s</span></header>\n      <div class=\"grid\">\n%s      </div>\n    </section>\n",
+        escape(TYPE_LABELS[$typeName] ?? $typeName), escape($typeName),
+        count($codes), count($codes) > 1 ? 's' : '', $tiles
     );
 }
 
@@ -153,10 +157,10 @@ foreach ($inventory->types() as $typeName => $type) {
  *
  * A subject declared without a single variant reads as "to produce": it owes every image it has, which is all of them.
  */
-function subjectState(Inventory $inventory, array $sujet): string
+function subjectState(Inventory $inventory, array $subject): string
 {
     $states = [];
-    foreach ($sujet['variants'] ?? [] as $variant) {
+    foreach ($subject['variants'] ?? [] as $variant) {
         $states[] = variantState($inventory, $variant);
     }
     if (!$states) {
@@ -174,7 +178,7 @@ function subjectState(Inventory $inventory, array $sujet): string
 /**
  * The state of one variant, in the page's own vocabulary.
  *
- * THE REFERENTIEL STILL SPELLS ITS VERDICTS IN FRENCH — "validee", "a-reprendre", "ecartee" — and this is the one place that translates them. Renaming the stored
+ * THE REFERENTIEL STILL SPELLS ITS VERDICTS IN FRENCH — "validee", "rework", "ecartee" — and this is the one place that translates them. Renaming the stored
  * values is a data migration of its own, with its own point in the pile; until then, the French stays where it is written and never leaks into the code around it.
  */
 function variantState(Inventory $inventory, array $variant): string
@@ -192,18 +196,18 @@ function variantState(Inventory $inventory, array $variant): string
  * TOUTES les mensurations d'une image, et pas une sélection : ce que le sujet déclare — emprise, couvert, hauteur — et ce que l'export a mesuré sur le fichier.
  * Choisir trois chiffres à montrer, c'est décider à la place de l'opérateur lequel compte, et c'est justement ce qu'il regarde quand une image lui paraît fausse.
  */
-function measurements(array $representation, array $sujet): string
+function measurements(array $representation, array $subject): string
 {
     $lignes = [];
-    $emprise = $sujet['emprise'];
-    $couvert = $sujet['couvert'] ?? null;
+    $footprint = $subject['footprint'];
+    $cover = $subject['cover'] ?? null;
     // CHAQUE MESURE SUR SA LIGNE, et l'emprise, le couvert et la hauteur d'abord : ce sont les trois seuils contre lesquels une image se juge. Groupées sur une
     // ligne, elles se lisaient comme une phrase et il fallait les chercher au milieu.
-    $lignes[] = ['Emprise au sol', sprintf('%d × %d case%s', $emprise['columns'], $emprise['rows'], $emprise['columns'] > 1 ? 's' : '')];
-    $lignes[] = ['Couvert', $couvert ? sprintf('%d × %d cases', $couvert['columns'], $couvert['rows']) : 'égal à l\'emprise'];
-    $lignes[] = ['Hauteur déclarée', sprintf('%s case%s', $sujet['hauteur'] ?? '—', ($sujet['hauteur'] ?? 0) > 1 ? 's' : '')];
+    $lignes[] = ['Emprise au sol', sprintf('%d × %d case%s', $footprint['columns'], $footprint['rows'], $footprint['columns'] > 1 ? 's' : '')];
+    $lignes[] = ['Couvert', $cover ? sprintf('%d × %d cases', $cover['columns'], $cover['rows']) : 'égal à l\'emprise'];
+    $lignes[] = ['Hauteur déclarée', sprintf('%s case%s', $subject['height'] ?? '—', ($subject['height'] ?? 0) > 1 ? 's' : '')];
 
-    $measures = $representation['mesures'] ?? null;
+    $measures = $representation['measures'] ?? null;
     if ($measures) {
         if (isset($measures['delivered_px'])) {
             $lignes[] = ['Livrée', sprintf('%d × %d px', $measures['delivered_px']['width'], $measures['delivered_px']['height'])];
@@ -223,8 +227,8 @@ function measurements(array $representation, array $sujet): string
         if (isset($measures['anchor_px'])) {
             $lignes[] = ['Point de pose', sprintf('%s, %s px', $measures['anchor_px']['x'], $measures['anchor_px']['y'])];
         }
-        if (isset($measures['hauteur'])) {
-            $lignes[] = [$measures['hauteur']['tenue'] ? 'Hauteur tenue' : 'HAUTEUR HORS FOURCHETTE', $measures['hauteur']['constat']];
+        if (isset($measures['height'])) {
+            $lignes[] = [$measures['height']['tenue'] ? 'Hauteur tenue' : 'HAUTEUR HORS FOURCHETTE', $measures['height']['constat']];
         }
     }
 
@@ -243,9 +247,28 @@ function measurements(array $representation, array $sujet): string
  * l'une des trois seule est ce qui a fait chercher la mauvaise cause plus d'une fois. Absentes, elles se taisent : les premières images du projet sont
  * antérieures à la règle qui fige une consigne.
  */
+/**
+ * The button that opens a text, and the text itself, folded into the page.
+ *
+ * THE TITLE CARRIES THE FILE PATH, RELATIVE TO THE PROJECT ROOT (operator, 2026-08-08). Without it, one has to guess which file is being read in order to correct
+ * it, open it elsewhere or quote it — and two prompts from two versions of the same variant look alike enough to be confused. Relative rather than absolute: that
+ * is what copies straight into a command, and what still means something on another machine.
+ */
+function textButton(string $label, string $path, string $root): string
+{
+    $relative = str_replace($root . '/', '', $path);
+
+    return sprintf(
+        '<button type="button" class="open-text" data-titre="%s — %s">%s <span class="text-path">%s</span></button>'
+        . '<script type="text/plain" class="text-source">%s</script>',
+        escape($label), escape($relative), escape($label), escape($relative),
+        str_replace('</script', '<\/script', file_get_contents($path))
+    );
+}
+
 function frozenPrompt(string $root, array $representation): string
 {
-    $master = $representation['maitre'] ?? null;
+    $master = $representation['master'] ?? null;
     if (!$master) {
         return '';
     }
@@ -255,13 +278,14 @@ function frozenPrompt(string $root, array $representation): string
     $blocks = '';
     // UN TEXTE SE LIT EN GRAND ET SE COPIE : replié dans une carte de deux cent soixante pixels, il ne sert à rien. Le résumé ouvre la FSP du texte, où il tient
     // toute la page et se sélectionne d'un bouton.
+    // A DISPLAYED TEXT SAYS WHERE IT COMES FROM (operator, 2026-08-08). Without its path, one has to guess which file is being read in order to correct it, open
+    // it in an editor or quote it — and two prompts from two versions of the same variant look alike enough to be confused. The path is given RELATIVE TO THE
+    // PROJECT ROOT: that is what copies straight into a command, where an absolute path only means something on this machine.
     if (is_file($frozen)) {
-        $blocks .= '<button type="button" class="open-text" data-titre="La consigne envoyée">La consigne envoyée</button>'
-            . '<script type="text/plain" class="text-source">' . str_replace('</script', '<\/script', file_get_contents($frozen)) . '</script>';
+        $blocks .= textButton('La consigne envoyée', $frozen, $root);
     }
     if (is_file($report)) {
-        $blocks .= '<button type="button" class="open-text" data-titre="Le rapport de génération">Le rapport de génération</button>'
-            . '<script type="text/plain" class="text-source">' . str_replace('</script', '<\/script', file_get_contents($report)) . '</script>';
+        $blocks .= textButton('Le rapport de génération', $report, $root);
     }
 
     return $blocks;
@@ -300,9 +324,9 @@ function version(string $root, ?array $current): string
         escape(basename($current['path'])), escape($when));
 }
 
-function grid(array $sujet, array $spread, int $width, int $height): string
+function grid(array $subject, array $spread, int $width, int $height): string
 {
-    $footprint = $sujet['emprise'];
+    $footprint = $subject['footprint'];
     $covers = ($spread['columns'] !== $footprint['columns']) || ($spread['rows'] !== $footprint['rows']);
     // La case, en pourcentage de la vignette : la largeur porte les colonnes du couvert, et la hauteur suit la même échelle puisque l'image n'est jamais déformée.
     $tile = 100 / $spread['columns'];
@@ -333,11 +357,11 @@ function grid(array $sujet, array $spread, int $width, int $height): string
  * which is enough to know one exists and not enough to judge it — and judging one against the current is the only reason to open them. Two renderings of the same thing also drift: the footprint
  * grid, the date and the measurements were all added to the current one alone, and the gap widened at every addition. One function, called twice, cannot drift.
  */
-function representation(Thumbnail $thumbnails, string $root, array $sujet, array $spread, array $representation): string
+function representation(Thumbnail $thumbnails, string $root, array $subject, array $spread, array $representation): string
 {
-    // L'ÉCHELLE EST FIXE ET LA MÊME POUR TOUS LES SUJETS : quarante-huit pixels par case dans la fiche, la case restant une case d'un sujet à l'autre.
-    // Un grand chêne occupe donc quatre fois la largeur d'une clôture, ce qui est la vérité du monde ; des vignettes toutes de même largeur ne
-    // permettaient ni de comparer deux sujets, ni de voir qu'une sprite déborde — ce que l'emprise et le couvert servent justement à montrer.
+    // THE SCALE IS FIXED AND THE SAME FOR EVERY SUBJECT: forty-eight pixels per tile in the panel, a tile staying a tile from one subject to the next. A large oak
+    // therefore takes four times the width of a fence, which is the truth of the world; thumbnails all of one width let you neither compare two subjects nor see
+    // that a sprite overflows — which is precisely what the footprint and the cover are there to show.
     $shot = image($thumbnails, $representation, COMPARE_PIXELS_PER_TILE * $spread['columns']);
     // LA GRILLE SE POSE SUR L'IMAGE, À L'ÉCHELLE OÙ ELLE EST MONTRÉE (opérateur, 2026-08-07) : sans elle, une sprite se juge dans le vide — on ne voit ni ce
     // qu'elle occupe au sol, ni ce qu'elle surplombe, ni où sont ses axes. Les trois se lisent à des couleurs différentes, et les valeurs sont celles du
@@ -345,7 +369,7 @@ function representation(Thumbnail $thumbnails, string $root, array $sujet, array
     // L'IMAGE ET SA GRILLE SONT ENFERMÉES ENSEMBLE : sans cette enveloppe qui épouse l'image, la grille se cale sur la carte entière et son cadre d'emprise
     // s'étire sur toute la largeur, en annonçant une sprite bien plus large qu'elle n'est.
     $picture = $shot
-        ? sprintf('<span class="picture"><img src="%s" width="%d" height="%d" alt="">%s</span>', $shot[0], $shot[1], $shot[2], grid($sujet, $spread, $shot[1], $shot[2]))
+        ? sprintf('<span class="picture"><img src="%s" width="%d" height="%d" alt="">%s</span>', $shot[0], $shot[1], $shot[2], grid($subject, $spread, $shot[1], $shot[2]))
         : '<p class="to-produce">Image illisible</p>';
     $state = VERDICT_STATES[$representation['verdict'] ?? ''] ?? null;
 
@@ -354,7 +378,7 @@ function representation(Thumbnail $thumbnails, string $root, array $sujet, array
         $picture,
         // THE VERDICT IS SHOWN THROUGH THE SAME VOCABULARY AS EVERYTHING ELSE: the stored French value is translated once, and the page speaks one language to itself.
         $state ? sprintf('<p class="verdict verdict--%s">%s</p>', escape($state), escape(STATE_LABELS[$state])) : '',
-        measurements($representation, $sujet),
+        measurements($representation, $subject),
         // LES VERSIONS ANTÉRIEURES PASSENT SOUS LA CONSIGNE ET LE RAPPORT DE LA VERSION COURANTE (opérateur, 2026-08-07) : intercalées entre les mesures et
         // eux, elles séparaient une version de ses propres pièces justificatives et l'on ne savait plus à laquelle se rapportait quoi.
         frozenPrompt($root, $representation)
@@ -362,24 +386,26 @@ function representation(Thumbnail $thumbnails, string $root, array $sujet, array
 }
 
 /** La FSP d'un sujet : ses variants, la version courante de chacun en grand, les antérieures, les mesures, la consigne, le verdict et les actions. */
-function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string $code, array $sujet): string
+function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string $code, array $subject): string
 {
-    $spread = $inventory->spread($sujet);
+    $spread = $inventory->spread($subject);
     $blocks = '';
-    foreach ($sujet['variants'] as $variant) {
+    foreach ($subject['variants'] as $variant) {
         $ref = $variant['ref'];
         $current = $inventory->currentRepresentation($variant);
-        $courante = $current
-            ? representation($thumbnails, $root, $sujet, $spread, $current)
+        // TWO NAMES BECAUSE THEY ARE TWO THINGS: $current is the current representation, a piece of data; $rendered is its markup. They shared one name for a
+        // moment, during a vocabulary migration, and the page stopped building — the markup arrived where the data was expected.
+        $rendered = $current
+            ? representation($thumbnails, $root, $subject, $spread, $current)
             : '<div class="variant-image"><p class="to-produce">À produire</p></div>';
-        $comment = $current['commentaire_operateur'] ?? '';
+        $comment = $current['operator_comment'] ?? '';
         $previous = $inventory->previousRepresentations($variant);
         $identifier = $code . ' ' . $ref;
         $anciennes = '';
         foreach ($previous as $old) {
             // MÊME PRÉSENTATION QUE LA COURANTE, AUCUNE SPÉCIFICITÉ (opérateur, 2026-08-07) : son image à la même échelle avec sa grille d'emprise, son nom de
             // fichier, sa date, son verdict, ses mesures et sa consigne. C'est en la mettant en regard de la courante qu'on décide si la reprise a servi.
-            $anciennes .= sprintf('<article class="previous">%s</article>', representation($thumbnails, $root, $sujet, $spread, $old));
+            $anciennes .= sprintf('<article class="previous">%s</article>', representation($thumbnails, $root, $subject, $spread, $old));
         }
         $key = reviewKey($identifier, $current);
         // LE BLOC DE JUGEMENT SE CONSTRUIT AVANT, ET C'EST UNE LEÇON PAYÉE : je l'avais rendu conditionnel À L'INTÉRIEUR du gabarit, en laissant des marques de
@@ -409,14 +435,14 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
             . '%s</article>' . "\n",
             escape(variantState($inventory, $variant)),
             // COMPARER N'APPARAÎT QUE S'IL Y A DE QUOI COMPARER : un sujet à variant unique n'offre pas une case qui ne peut rien faire, et un variant qui n'a pas d'image non plus.
-            count($sujet['variants']) > 1 && $current
+            count($subject['variants']) > 1 && $current
                 ? sprintf('<label class="variant-pick"><input type="checkbox" class="compare" data-ref="%s"> Comparer</label>', escape($ref))
                 : '',
             // LE VARIANT PRINCIPAL SE VOIT (opérateur, 2026-08-07) : le constructeur d'origine distinguait la vue principale, la reprise l'avait perdue, et une planche de quinze formes où rien
             // ne dit laquelle fait référence oblige à ouvrir le référentiel pour le savoir. L'information y est déjà, chaque sujet portant un variant marqué principal.
-            escape($variant['libelle'] ?? 'Vue principale'),
-            ($variant['principale'] ?? false) ? '<span class="variant-main" title="Le variant de référence du sujet">principal</span>' : '',
-            $courante,
+            escape($variant['label'] ?? 'Vue principale'),
+            ($variant['main'] ?? false) ? '<span class="variant-main" title="Le variant de référence du sujet">principal</span>' : '',
+            $rendered,
             $anciennes ? '<details class="fold"><summary>' . count($previous) . ' version' . (count($previous) > 1 ? 's' : '')
                 . ' antérieure' . (count($previous) > 1 ? 's' : '') . '</summary><div class="previous-list">' . $anciennes . '</div></details>' : '',
             $review
@@ -426,7 +452,8 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
     return sprintf(
         "      <div class=\"fsp\" id=\"fsp-%s\" hidden>\n        <div class=\"fsp-bar\"><p class=\"fsp-title\">%s <span class=\"slug\">%s</span></p>"
         . "<button type=\"button\" class=\"fsp-close\" aria-label=\"Fermer\">✕</button></div>\n"
-        . "        <div class=\"fsp-body\">\n          <div class=\"variants\">\n%s          </div>\n        </div>\n      </div>\n",
+        . "        <div class=\"fsp-body\">\n          <div class=\"variants\">\n"
+        . "            <button type=\"button\" class=\"quit-comparison\">Quitter la comparaison</button>\n%s          </div>\n        </div>\n      </div>\n",
         escape($code), escape(capitalize($inventory->label($code))), escape($code), $blocks
     );
 }
@@ -448,7 +475,9 @@ function actions(string $identifier): string
     // administratif, et l'opérateur l'a dit dès qu'elle est apparue. La case reste dessous — c'est elle qui porte l'état — mais elle est masquée et c'est le
     // libellé qui devient le bouton.
     $markup = '';
-    foreach (['valider' => 'Valider', 'reprendre' => 'À reprendre', 'ecarter' => 'Écarter'] as $key => $label) {
+    // THE THREE ACTS CARRY THE REFERENTIAL'S OWN WORDS, AND THAT IS THE WHOLE POINT: approved, rework and discarded are the values `verdict` takes in the data, so
+    // what the page records reads straight against it, with no lookup table to keep in step. The displayed labels stay French.
+    foreach (['approved' => 'Valider', 'rework' => 'À reprendre', 'discarded' => 'Écarter'] as $key => $label) {
         $markup .= sprintf('<label class="act act--%s"><input type="checkbox" data-id="%s" data-acte="%s"><span>%s</span></label>',
             $key, escape($identifier), $key, escape($label));
     }
@@ -467,16 +496,36 @@ $page = <<<'HTML'
   /* L'ÉCHELLE TYPOGRAPHIQUE VIENT DU CONSTRUCTEUR D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS (opérateur, redemandée trois fois). Chasse fixe en base, quinze pixels,
      interligne 1,55 : c'est une page d'atelier, où l'on lit des noms de fichiers, des mesures et des codes bien plus que des phrases. La reprise avait pris la
      police du système à seize pixels, ce qui aplatissait toute la hiérarchie — un titre de section ne se distinguait plus d'un nom de sujet. */
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; -webkit-font-smoothing: antialiased; }
+  /* THE BACKGROUND CARRIES THE WORLD GRID, ONE TILE EVERY FORTY-FOUR PIXELS. It is not an ornament: this page judges sprites that will be laid on a grid, and
+     seeing it under them is a standing reminder of what these images are for. Two one-pixel lines, barely visible — the grid must never compete with the images
+     it carries, the same rule as the footprint grid drawn over the thumbnails. */
+  body {
+    margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; -webkit-font-smoothing: antialiased;
+    background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px), linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  /* THE OVERLINE SAYS WHERE ONE IS BEFORE SAYING WHAT ONE IS LOOKING AT: small letter-spaced capitals, quiet, above the title. Four pages look alike from afar,
+     and the one that is open must name itself without the title having to be read in full. */
+  .overline { margin: 0 0 8px; font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
   /* LA PAGE GRANDIT AVEC L'ÉCRAN au lieu de tenir une largeur fixe, mais jamais bord à bord : un plafond garde la lecture confortable et les marges délibérées. */
-  .wrap { width: min(100%, 1760px); margin: 0 auto; padding: 40px clamp(12px, 3vw, 48px) 132px; }
+  /* BORDER-BOX, OR THE WIDTH LIES: `width: 100%` plus twice forty-eight pixels of padding gave a 1484 px page inside a 1400 px window, so an 84 px horizontal
+     overflow. It had been there from the start and could not be seen — nothing was right-aligned. The section count revealed it by running off the screen, cut
+     down to « 1 » instead of « 1 sujet ». Measured with a probe, not deduced from the stylesheet. */
+  .wrap { box-sizing: border-box; width: min(100%, 1760px); margin: 0 auto; padding: 40px clamp(12px, 3vw, 48px) 132px; }
   h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; max-width: 21ch; }
   /* LE TEXTE COURANT GARDE SA PROPRE MESURE, plus étroite que la page : rien ne se lit sur toute la largeur d'un grand écran. Et il passe en police à chasse
      variable — c'est de la phrase, pas de la donnée. */
   .lede { margin: 14px 0 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 62ch; }
   /* LES SECTIONS RESPIRENT : cinquante-quatre pixels au-dessus de chacune. Serrées à vingt-huit, la planche se lisait comme une seule liste continue. */
   .type { margin-top: 54px; }
-  .type h2 { margin: 0 0 14px; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+  /* THE SECTION HEADER: title on the left, count on the right, a rule underneath. It is the rule that makes the section — without it the families pile up with no
+     separation and the page reads as a single list, which was exactly the reproach made to the rewrite. */
+  .type-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .type-count { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .type h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
   .slug { font-family: ui-monospace, monospace; font-size: .8rem; color: var(--muted); font-weight: 400; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; }
@@ -506,6 +555,15 @@ $page = <<<'HTML'
   .variants { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-items: start; }
   .variants.comparison { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
   .variants.comparison .variant:not(.picked) { display: none; }
+  /* THE EXIT BUTTON EXISTS ONLY WHILE A COMPARISON RUNS, and it is the list's own `comparison` class that shows it — never a state kept beside it in JavaScript.
+     A button whose display is computed twice goes out of step once: here it cannot, there is a single source. It spans the whole grid width so it stays at the
+     head instead of being stuck in a column, but does not stretch itself — that would give the full-width bar the operator has already objected to. */
+  .quit-comparison { display: none; }
+  .variants.comparison .quit-comparison {
+    display: inline-block; grid-column: 1 / -1; justify-self: start;
+    padding: 6px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 4px;
+    color: inherit; font: inherit; font-size: .8rem; cursor: pointer;
+  }
   .variant { padding: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
   .variant-name { margin: 6px 0 2px; font-size: 19px; font-weight: 700; letter-spacing: -.012em; }
   /* LE VARIANT PRINCIPAL PORTE SA MARQUE À CÔTÉ DE SON NOM, pas ailleurs : c'est en lisant le nom qu'on cherche à savoir lequel fait référence, et une pastille
@@ -565,7 +623,10 @@ $page = <<<'HTML'
   .tile[data-etat="to-rework"] { --state-edge: var(--state-rework-edge); }
   .tile[data-etat="dismissed"] { --state-edge: var(--state-dismissed-edge); }
   .tile[data-etat="to-produce"] { --state-edge: var(--state-to-produce-edge); }
+  /* À JUGER EST LE SEUL ÉTAT PLEIN, ET C'EST VOULU : c'est le seul qui réclame un geste de l'opérateur, et il doit se repérer sans être cherché (opérateur,
+     2026-08-08). Les autres disent où en est une image ; celui-ci dit qu'on attend quelqu'un. Un contour de plus au milieu de quatre contours se confond. */
   .tile[data-etat="to-judge"] { --state-edge: var(--state-to-judge-edge); }
+  .tile[data-etat="to-judge"] .tile-state { background: var(--state-to-judge); color: #eaf4fd; border-color: var(--state-to-judge-edge); }
   .tile[data-etat="validated"] { --state-edge: var(--state-validated-edge); }
   /* L'ÉCHELLE VIENT DU CONSTRUCTEUR PYTHON D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS : chasse fixe, dix pixels, remplissage 3/6, rayon 2. La version PHP avait pris la
      taille du texte courant — seize pixels — et des remplissages larges, ce qui grossissait toute la carte d'un tiers sans que personne l'ait décidé. */
@@ -586,9 +647,9 @@ $page = <<<'HTML'
      laissait un champ vidé continuer d'annoncer un texte qui n'existait plus. */
   .open-comment[data-filled="true"] { border-color: var(--accent); color: var(--accent); }
   .open-comment[aria-expanded="true"][data-filled="false"] { border-color: var(--muted); color: var(--ink); }
-  .act--valider input:checked + span { background: #2f5c3a; border-color: #4e8a5e; color: #eaf6ec; }
-  .act--reprendre input:checked + span { background: #6b4a1c; border-color: #a4762c; color: #fbf1e0; }
-  .act--ecarter input:checked + span { background: #5c2f2f; border-color: #8a4e4e; color: #f6eaea; }
+  .act--approved input:checked + span { background: #2f5c3a; border-color: #4e8a5e; color: #eaf6ec; }
+  .act--rework input:checked + span { background: #6b4a1c; border-color: #a4762c; color: #fbf1e0; }
+  .act--discarded input:checked + span { background: #5c2f2f; border-color: #8a4e4e; color: #f6eaea; }
   /* LE CHAMP TIENT DANS SA CARTE : sans box-sizing, ses bordures et son remplissage s'ajoutent aux cent pour cent de largeur et il déborde de quelques pixels — ce
      qui se voit tout de suite sur une grille de cartes. */
   /* LA CROIX EST COLLÉE AU CHAMP, en haut à droite : c'est le geste courant pour vider une saisie, et un bouton posé à côté avec son mot écrit prenait la place
@@ -617,6 +678,8 @@ $page = <<<'HTML'
   .open-text { display: block; width: 100%; margin-top: 6px; padding: 5px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit;
                 font: inherit; font-size: .78rem; text-align: left; cursor: pointer; }
   .open-text:hover { border-color: var(--accent); color: var(--accent); }
+  /* The path under the label: monospaced and quiet — it is an address to copy, not a sentence to read. */
+  .text-path { display: block; font-family: ui-monospace, monospace; font-size: .68rem; color: var(--faint, var(--muted)); word-break: break-all; }
   .fsp-tools { display: flex; gap: 8px; }
   .fsp-tools button { padding: 4px 12px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
   #drawer-body { white-space: pre-wrap; font-size: .82rem; line-height: 1.5; }
@@ -667,6 +730,7 @@ $page = <<<'HTML'
 </style>
 
 <div class="wrap">
+  <p class="overline">GateBeast — revue</p>
   <h1>Suivi des sprites</h1>
   <div class="fsp" id="fsp-image" hidden>
     <div class="fsp-bar"><p class="fsp-title" id="fsp-image-titre"></p>
@@ -694,14 +758,63 @@ $page = <<<'HTML'
 
 {$popins}
 
+{$notesScript}
+
 <script>
 (function () {
+  /* VERDICTS AND COMMENTS HAVE LEFT THE BROWSER FOR THE REPOSITORY (operator, 2026-08-08: « quand c'est fait, tu supprimes le commentaire »). While they lived in
+     local storage the agent could neither read them nor erase them: the operator had to copy them out by hand, and nothing survived — not a change of machine,
+     not a cleared browser, not even a renamed key, which happened the same day when the three acts moved to English. The Campagne page had already solved exactly
+     this: its remarks are versioned files, and the server is the only writer. Same mechanism here, same module. */
+  var SECTION = 'verdicts';
   var MEMOIRE = 'gatebeast-suivi-sprites';
   var etat = {};
-  try { etat = JSON.parse(localStorage.getItem(MEMOIRE)) || {}; } catch (error) { etat = {}; }
+  var pret = false;
 
+  /* LOCAL STORAGE NOW SERVES ONE PURPOSE ONLY: handing back what it already holds. The operator has verdicts sitting in it from days past; the switch must take
+     them over, not lose them. They are poured over ONLY if the repository holds nothing yet for this page — otherwise an old browser would overwrite a more
+     recent judgement made elsewhere. Once poured, the local key is erased: it must never again be a second source. */
+  function versementUnique() {
+    var ancien = null;
+    try { ancien = JSON.parse(localStorage.getItem(MEMOIRE)); } catch (error) { ancien = null; }
+    if (!ancien || !Object.keys(ancien).length) { return false; }
+    etat = ancien;
+    window.gatebeastNotes.save(SECTION, etat);
+    try { localStorage.removeItem(MEMOIRE); } catch (error) { /* nothing to do: the hand-over has already landed in the repository */ }
+    return true;
+  }
+
+  /* THE REPOSITORY IS THE ONLY COPY, SO NOTHING IS WRITTEN BEFORE IT HAS BEEN READ: `pret` holds the door. Without that guard the first render — which ticks the
+     boxes and fills the fields — would head straight back to the server and overwrite what has not arrived yet. */
   function retenir() {
-    try { localStorage.setItem(MEMOIRE, JSON.stringify(etat)); } catch (error) { /* un cadre peut refuser le stockage : la page marche quand même, pour la visite en cours */ }
+    if (!pret) { return; }
+    window.gatebeastNotes.save(SECTION, etat);
+  }
+
+  /* WHAT ARRIVES FROM THE REPOSITORY IS RENDERED ONTO THE PAGE, AND THAT IS A FUNCTION OF ITS OWN. The first render happens at wiring time, over a still-empty
+     state, because the repository answers afterwards; when it answers, everything has to be laid down again — boxes, fields, unfolded zones, filled markers.
+     Without that second pass the operator would see a blank page and believe his verdicts lost, while they are right there. */
+  function rendre() {
+    Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
+      var id = box.getAttribute('data-id');
+      box.checked = Boolean(etat[id] && etat[id][box.getAttribute('data-acte')]);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (field) {
+      var id = field.getAttribute('data-id');
+      var texte = (etat[id] && etat[id].comment) || '';
+      field.value = texte;
+      var zone = document.querySelector('.comment-zone[data-more="' + id + '"]');
+      var ouvrir = document.querySelector('.open-comment[data-open="' + id + '"]');
+      if (zone && texte) { zone.hidden = false; }
+      if (ouvrir) {
+        ouvrir.setAttribute('data-filled', texte.trim() ? 'true' : 'false');
+        ouvrir.setAttribute('aria-expanded', zone && !zone.hidden ? 'true' : 'false');
+      }
+      var vider = document.querySelector('.clear-comment[data-id="' + id + '"]');
+      if (vider) { vider.hidden = !texte.trim(); }
+    });
+    /* The survey count keeps itself up to date on `change`: it need not know where the state came from, only that it moved. */
+    document.dispatchEvent(new Event('change'));
   }
 
   Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
@@ -725,7 +838,7 @@ $page = <<<'HTML'
       retenir();
       /* REFUSER UNE IMAGE, C'EST DIRE POURQUOI : cocher « À reprendre » ou « Écarter » ouvre la zone de saisie et lui donne le clavier. Sans le motif, la reprise
          repart à l'aveugle — c'est ce qui a coûté trois tentatives sur le sapin. « Valider » n'ouvre rien : un accord n'a rien à justifier. */
-      if (box.checked && (acte === 'reprendre' || acte === 'ecarter')) {
+      if (box.checked && (acte === 'rework' || acte === 'discarded')) {
         var zone = document.querySelector('.comment-zone[data-more="' + id + '"]');
         var ouvrir = document.querySelector('.open-comment[data-open="' + id + '"]');
         if (zone) {
@@ -780,13 +893,28 @@ $page = <<<'HTML'
     });
   });
 
+  /* THE BUTTON THAT LEAVES A COMPARISON FROM THE INSIDE (operator, 2026-08-07). Without it, leaving meant unticking each variant one by one, or closing the panel
+     — and so losing the subject being judged. It calls exactly the function the close button already called: one single way out of a comparison, correctable in
+     one single place. */
+  Array.prototype.forEach.call(document.querySelectorAll('.quit-comparison'), function (button) {
+    button.addEventListener('click', function () {
+      var list = button.closest('.variants');
+      if (list) { quitterComparaison(list); }
+    });
+  });
+
   /* LA COMPARAISON : cocher plusieurs variants ne garde qu'eux à l'écran, côte à côte et plus grands. Décocher tout revient à la liste entière. */
   Array.prototype.forEach.call(document.querySelectorAll('.compare'), function (box) {
     box.addEventListener('change', function () {
       var liste = box.closest('.variants');
       var retenus = liste.querySelectorAll('.compare:checked');
+      /* A VARIANT WITH NO IMAGE HAS NO CHECKBOX, AND THAT IS DELIBERATE — but the loop read `.checked` off the result of querySelector without checking it exists.
+         On OB-010, thirteen boxes for twenty variants: on the eighth turn the read threw, the handler stopped there, and the NEXT line — the one that sets the
+         `comparison` class — was never reached. So comparison engaged on NO subject carrying a variant still to produce, while the variants were marked all the
+         same: two boxes ticked, two `picked` set, and nothing on screen. Found with a probe on 2026-08-08; three readings of the code had missed it. */
       Array.prototype.forEach.call(liste.querySelectorAll('.variant'), function (variant) {
-        variant.classList.toggle('picked', variant.querySelector('.compare').checked);
+        var pick = variant.querySelector('.compare');
+        variant.classList.toggle('picked', !!pick && pick.checked);
       });
       /* LA COMPARAISON N'ENGAGE QU'À PARTIR DE DEUX : à un seul variant coché, elle masquait tous les autres, donc la case du second n'était plus là pour être cochée.
          On ne pouvait jamais comparer que le premier avec lui-même (opérateur, 2026-08-07). */
@@ -927,8 +1055,15 @@ $page = <<<'HTML'
   function fermer() {
     /* LE TEXTE APPARTIENT À LA FICHE OUVERTE : la laisser derrière une fiche fermée montrerait la consigne d'un sujet qu'on ne regarde plus. */
     closeDrawer();
+    /* CLOSING HIDES WHAT IS VISIBLE, NOT WHAT THE STACK BELIEVES (operator, 2026-08-08). The stack lives in memory: if it starts empty while a panel is on screen
+       — storage cleared under the tab, a partial restore — the close button does nothing any more and the panel NEVER closes, page stuck. So we fall back on what
+       the eye can see, which is the only truth at that moment. This is not the normal path: it is the net under the normal path. */
     var haut = pile.pop();
-    if (!haut) { return; }
+    if (!haut) {
+      haut = document.querySelector('.fsp:not([hidden])');
+      if (haut) { haut.hidden = true; haut.style.zIndex = ''; document.body.style.overflow = ''; retenirPile(); }
+      return;
+    }
     haut.hidden = true;
     haut.style.zIndex = '';
     if (!pile.length) { document.body.style.overflow = ''; }
@@ -943,7 +1078,7 @@ $page = <<<'HTML'
   } catch (error) { /* stockage refusé ou illisible : la page s'ouvre simplement fermée */ }
   Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
     tile.addEventListener('click', function () {
-      empiler(document.getElementById('fsp-' + tile.getAttribute('data-sujet')));
+      empiler(document.getElementById('fsp-' + tile.getAttribute('data-subject')));
     });
   });
   Array.prototype.forEach.call(document.querySelectorAll('.fsp-close'), function (button) { button.addEventListener('click', fermer); });
@@ -955,9 +1090,22 @@ $page = <<<'HTML'
   });
 
   /* CE QUE LA PAGE MET DANS LE RELEVÉ ; le module dit comment il se copie. */
+  /* THE REPOSITORY IS READ LAST, ONCE EVERYTHING IS WIRED. If it holds something, it is authoritative. If it holds nothing, what the browser still keeps is poured
+     over once, and never touched again. And if the server does not answer — page opened as a file, server stopped — the page stays usable but RECORDS NOTHING:
+     better a page that does not remember than a page that pretends to. */
+  window.gatebeastNotes.load(SECTION, function (recu) {
+    if (recu && Object.keys(recu).length) {
+      etat = recu;
+    } else {
+      versementUnique();
+    }
+    pret = true;
+    rendre();
+  });
+
   window.construireReleve = function () {
     var lignes = ['SUIVI DES SPRITES — RELEVÉ OPÉRATEUR', new Date().toISOString().slice(0, 10), ''];
-    var actes = {valider: 'VALIDÉES', reprendre: 'À REPRENDRE', ecarter: 'ÉCARTÉES'};
+    var actes = {approved: 'VALIDÉES', rework: 'À REPRENDRE', discarded: 'ÉCARTÉES'};
     Object.keys(actes).forEach(function (acte) {
       var pris = Object.keys(etat).filter(function (id) { return etat[id] && etat[id][acte]; });
       if (!pris.length) { return; }
@@ -981,8 +1129,8 @@ HTML;
 // LES ORPHELINS : toute image livrée sous assets/cutout/ que l'inventaire ne réclame pas. Une image qui existe sans être inscrite n'existe pour personne — elle
 // n'apparaît nulle part, personne ne peut la juger, et elle se refait. La page les montre plutôt que de laisser croire que tout est rangé.
 $reclamees = [];
-foreach ($inventory->sujets() as $sujet) {
-    foreach ($sujet['variants'] as $variant) {
+foreach ($inventory->subjects() as $subject) {
+    foreach ($subject['variants'] as $variant) {
         foreach ($variant['representations'] ?? [] as $representation) {
             $reclamees[$representation['path']] = true;
         }
@@ -1009,9 +1157,11 @@ foreach ($orphelines as $orphan) {
         escape($orphan));
 }
 $horsModele = $orphelines
-    ? '  <section class="type"><h2>Hors modèle <span class="slug">' . count($orphelines) . ' image(s) livrée(s) qu\'aucun variant ne réclame</span></h2>'
+    ? '  <section class="type"><header class="type-head"><h2>Hors modèle <span class="slug">image(s) livrée(s) qu\'aucun variant ne réclame</span></h2>'
+      . '<span class="type-count">' . count($orphelines) . ' image' . (count($orphelines) > 1 ? 's' : '') . '</span></header>'
       . '<div class="orphans">' . $orphanCards . '</div></section>'
-    : '  <section class="type"><h2>Hors modèle <span class="slug">rien</span></h2><p class="lede">Chaque image livrée est réclamée par un variant.</p></section>';
+    : '  <section class="type"><header class="type-head"><h2>Hors modèle</h2><span class="type-count">rien</span></header>'
+      . '<p class="lede">Chaque image livrée est réclamée par un variant.</p></section>';
 
 $filtres = '';
 // THE FILTERS CARRY THE SAME STATES AS THE TILES, in the same order and in the same words: "to judge" replaced "produced", which did not say what was left to do.
@@ -1029,6 +1179,9 @@ $page = strtr($page, [
     '{$reloadStyles}' => $reload->styles(),
     '{$reloadMarkup}' => $reload->markup(),
     '{$reloadScript}' => $reload->script('/sprites'),
+    // THE SAME MODULE AS THE CAMPAGNE PAGE, AND THAT IS THE WHOLE POINT: this page's verdicts reach the repository through the road that already exists, rather
+    // than a second mechanism to keep in step beside it. The route names the file — review-server/notes/sprites.json.
+    '{$notesScript}' => Notes::get()->script('/sprites'),
     // THE STATE THAT MEANS "NO FILTER" IS WRITTEN ONCE, in the constant, and handed to the script rather than retyped in it: a filter button and the code that
     // reads it must agree on the word, and two spellings of it would silently show nothing.
     '{$stateAll}' => STATE_ALL,
@@ -1042,7 +1195,7 @@ $page = strtr($page, [
 ]);
 
 file_put_contents($outputPath, $page);
-printf("%s — %d sujets, %.1f ko%s\n", $outputPath, count($inventory->sujets()), strlen($page) / 1024,
+printf("%s — %d sujets, %.1f ko%s\n", $outputPath, count($inventory->subjects()), strlen($page) / 1024,
     $missing ? ', ' . count($missing) . ' image(s) illisible(s)' : '');
 if ($inventory->sansLibelle) {
     fwrite(STDERR, 'SANS LIBELLÉ : ' . implode(', ', $inventory->sansLibelle) . "\n");

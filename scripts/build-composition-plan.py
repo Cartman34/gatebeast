@@ -34,7 +34,7 @@ import plan_svg as composition_plan
 import shape_vocab
 
 REPO = Path(__file__).resolve().parent.parent
-SUJETS = REPO / "assets" / "sujets.json"
+SUBJECTS = REPO / "assets" / "subjects.json"
 
 # The fifteen shapes the design defines, in its own order — shape_vocab's, not a copy of its own:
 # reported so a plan says out loud which shapes it exercises and which it leaves out (a missing shape
@@ -43,7 +43,7 @@ EVERY_SHAPE = shape_vocab.edge_combinations()
 
 # A quarter turn, applied to one edge: n becomes e, e becomes s, and so on. Used only to tell whether
 # two SHAPES are the same drawing seen at a different rotation — nothing here decides whether a given
-# subject is actually allowed to rotate, that is assets/sujets.json's call (see rotates_of below).
+# subject is actually allowed to rotate, that is assets/subjects.json's call (see rotates_of below).
 _QUARTER_TURN = {"n": "e", "e": "s", "s": "w", "w": "n"}
 
 
@@ -69,26 +69,26 @@ def rotation_class(shape: str) -> str:
     return min(seen)
 
 
-def rotates_of(sujets: dict, code: str) -> bool:
+def rotates_of(subjects: dict, code: str) -> bool:
     """Whether CODE's type is drawn once and rotated by the engine, or drawn separately per shape.
 
-    Never guessed from the code's own letters — assets/sujets.json is the one place that knows, and a
+    Never guessed from the code's own letters — assets/subjects.json is the one place that knows, and a
     plan that cannot ask it FAILS LOUDLY rather than assume either answer: a wrong guess here would
     either short the piece count for a volumed subject (fence, wall) or double-produce a flat one
     (path, water) for nothing.
     """
-    sujet = sujets.get("sujets", {}).get(code)
-    if sujet is None:
-        raise SystemExit(f"FAULT {code} absent de {SUJETS.relative_to(REPO)} — rien ne se compte "
+    subject = subjects.get("subjects", {}).get(code)
+    if subject is None:
+        raise SystemExit(f"FAULT {code} absent de {SUBJECTS.relative_to(REPO)} — rien ne se compte "
                           f"sans fiche")
-    type_name = sujet["type"]
-    type_entry = sujets.get("types", {}).get(type_name)
+    type_name = subject["type"]
+    type_entry = subjects.get("types", {}).get(type_name)
     if type_entry is None:
         raise SystemExit(f"FAULT type {type_name} (sujet {code}) absent de "
-                          f"{SUJETS.relative_to(REPO)}")
+                          f"{SUBJECTS.relative_to(REPO)}")
     if "rotates" not in type_entry:
         raise SystemExit(f"FAULT le type {type_name} (sujet {code}) ne déclare pas s'il pivote "
-                          f"(clé 'rotates' absente) — {SUJETS.relative_to(REPO)}")
+                          f"(clé 'rotates' absente) — {SUBJECTS.relative_to(REPO)}")
 
     return type_entry["rotates"]
 
@@ -100,30 +100,47 @@ def _load_sujets() -> dict:
     LOUDLY here rather than falling back on a guess (a name ending in a shape-bearing family, say),
     which is exactly the shortcut that would make the count wrong for the one subject where it matters.
     """
-    if not SUJETS.is_file():
-        raise SystemExit(f"FAULT référentiel des sujets introuvable : {SUJETS.relative_to(REPO)}")
+    if not SUBJECTS.is_file():
+        raise SystemExit(f"FAULT référentiel des sujets introuvable : {SUBJECTS.relative_to(REPO)}")
     try:
-        return json.loads(SUJETS.read_text(encoding="utf-8"))
+        return json.loads(SUBJECTS.read_text(encoding="utf-8"))
     except json.JSONDecodeError as error:
-        raise SystemExit(f"FAULT référentiel des sujets illisible ({SUJETS.relative_to(REPO)}) : "
+        raise SystemExit(f"FAULT référentiel des sujets illisible ({SUBJECTS.relative_to(REPO)}) : "
                           f"{error}")
 
 
 # Ce qui se pose À PLAT sur le sol, par opposition à ce qui s'y dresse. Le rendu du jeu empile déjà les deux dans cet ordre : le calque du sol, puis les volumes.
-FLAT_TYPES = {"sol", "chemin", "herbe", "cours-d-eau"}
+# THE LAYER A SUBJECT BELONGS TO IS READ FROM ITS TYPE, NEVER FROM A LIST KEPT HERE. What stood here was `FLAT_TYPES = {"sol", "chemin", "herbe", "cours-d-eau"}`,
+# a second truth beside the referential, and it was already wrong on two of its four entries: grass declares the `monde` layer because it stands up, and a stream
+# declares `decor-au-sol` because one walks on it. Two subjects clash on a cell when they share a LAYER — that is the whole rule, and it is the same one the
+# mounter uses to stack them.
+DEFAULT_LAYER = "monde"
+
+# A variant field and the type key that declares it are the same word, singular and plural — and the plural is not built by adding an "s" once the vocabulary is
+# English: `density` gives `densities`. The irregular pairs are declared once, as they are in generate-sprite.py, and never derived by string surgery.
+IRREGULAR_PLURAL = {"density": "densities"}
 
 
-def is_flat(sujets, subject):
-    """Whether a subject lies flat on the ground — read from the referentiel, never guessed from its code."""
-    sujet = (sujets.get("sujets") or {}).get(subject) if isinstance(sujets, dict) else None
+def collection_of(field):
+    """The type key that declares a variant field: its irregular plural if it has one, else the field plus an s."""
+    return IRREGULAR_PLURAL.get(field, field + "s")
 
-    return bool(sujet) and sujet.get("type") in FLAT_TYPES
+
+def layer_of(referential, code):
+    """The layer a subject is drawn in, read from its type in the referential. Unknown subject or type falls back to the world, the layer that sorts by depth."""
+    subject = (referential.get("subjects") or {}).get(code) or {}
+    type_ = (referential.get("types") or {}).get(subject.get("type")) or {}
+
+    return type_.get("layer", DEFAULT_LAYER)
 
 
 def build(source: Path) -> int:
     plan = json.loads(source.read_text(encoding="utf-8"))
-    # Le référentiel est lu d'emblée : il faut connaître le type de chaque sujet dès le contrôle d'occupation, pour savoir lequel se pose à plat et lequel se dresse.
-    sujets = _load_sujets()
+    # The referential is read straight away: the layer of every subject has to be known from the occupancy check onwards. IT CARRIES ITS OWN NAME, `referential`,
+    # and that is a fix: it used to be called `subjects`, and twenty lines below the table of placed cells took the same name and shadowed it. `is_flat(subjects,
+    # ...)` therefore received the cell table instead of the referential and ALWAYS returned false — the exemption that lets a path run under a building never
+    # worked, and any second placement on a cell was refused. That refusal is what had been mistaken for a rule of the world.
+    referential = _load_sujets()
     if plan.get("format") != "gatebeast-composition-plan":
         print(f"FAULT {source.name} is not a composition plan")
         return 1
@@ -134,27 +151,43 @@ def build(source: Path) -> int:
     # A declared cell is one placed subject. It covers one cell unless it says otherwise — a
     # building, a wide tree, a bridge take several — and it joins its neighbours only where it says
     # so. Both are optional and default to the common case: one cell, no connection.
-    traces, subjects, placed, occupied = {}, {}, [], {}
+    traces, subjects, placed, occupied, trace_subject = {}, {}, [], {}, {}
     for cell in plan["cells"]:
         column, row = cell["column"], cell["row"]
         width, height = cell.get("columns", 1), cell.get("rows", 1)
         subject = cell["subject"]
         footprint = composition_plan.tiles(column, row, column + width - 1, row + height - 1)
+        layer = layer_of(referential, subject)
         for key in sorted(footprint):
-            # DEUX CALQUES, ET C'EST CE QUI PERMET AU CHEMIN D'ATTEINDRE UNE PORTE. Le monde se dessine en couches : le sol d'abord, ce qui se dresse par-dessus. Une case
-            # peut donc porter les deux — un chemin qui passe SOUS un bâtiment, une herbe sous un arbre —, et c'est même nécessaire : la porte d'un bâtiment ne tombe jamais
-            # sur le bord bas de sa sprite, si bien qu'un chemin arrêté au ras de l'emprise resterait à deux cases d'elle. Ce qui reste interdit est deux sujets qui SE
-            # DRESSENT sur la même case : là, il y en a forcément un de trop.
-            if key in occupied and not (is_flat(sujets, subject) or is_flat(sujets, occupied[key])):
-                print(f"FAULT ({key[0]},{key[1]}) is taken by {occupied[key]} and by {subject}")
+            # A CELL CARRIES ONE SPRITE PER LAYER FAMILY, AND THE DESIGN SAYS SO: the ground, the ground decor, the world, the overhead. A cell may therefore
+            # carry several subjects — a path running UNDER a building, grass at the foot of a tree, a character on a path — and it is even necessary: a
+            # building's door never falls on the bottom edge of its sprite, so a path stopped at the edge of the footprint would stay two tiles short of it.
+            # WHAT REMAINS A FAULT, AND NOTHING ELSE: two subjects of the SAME layer on the same cell. There, one of them is certainly one too many.
+            if occupied.get(key, {}).get(layer):
+                print(f"FAULT ({key[0]},{key[1]}) carries {occupied[key][layer]} and {subject}, "
+                      f"both in layer '{layer}' — a cell holds one sprite per layer")
                 return 1
             if not (1 <= key[0] <= columns and 1 <= key[1] <= rows):
                 print(f"FAULT {subject} at ({column},{row}) reaches ({key[0]},{key[1]}), "
                       f"outside the grid")
                 return 1
-            occupied[key] = subject
+            occupied.setdefault(key, {})[layer] = subject
         placed.append((subject, column, row, column + width - 1, row + height - 1))
-        subjects[(column, row)] = subject
+        # THE TABLE OF PLACED CELLS NOW HOLDS A LIST, and that is the point's second defect: `subjects[(col, row)] = subject` SILENTLY overwrote whatever was
+        # already there. A cell carrying grass and a fox cub declared only one of them, and which one depended on the order of the plan.
+        subjects.setdefault((column, row), []).append(subject)
+        # A CELL MAY NAME THE VARIANT FIELDS IT WANTS, and every one of them is checked against the type — a field the type does not declare, or a value it does
+        # not allow, is a fault here rather than a cell that silently comes back with the ordinary drawing. This is what lets a fence crossed by a path carry a
+        # GATE: the four gate drawings existed, declared and current, and no plan could reach them until now.
+        for field, value in (cell.get("variant") or {}).items():
+            type_name = (referential["subjects"].get(subject) or {}).get("type")
+            declaration = (referential["types"].get(type_name) or {}).get(collection_of(field))
+            if not isinstance(declaration, dict) or "values" not in declaration:
+                print(f"FAULT {subject} at ({column},{row}) asks for '{field}', which type {type_name} does not declare")
+                return 1
+            if value not in declaration["values"]:
+                print(f"FAULT {subject} at ({column},{row}) asks for {field}={value!r}, not among {declaration['values']}")
+                return 1
         if cell.get("joins"):
             if (width, height) != (1, 1):
                 print(f"FAULT {subject} at ({column},{row}) spans several cells and declares "
@@ -165,7 +198,12 @@ def build(source: Path) -> int:
                 print(f"FAULT {subject} at ({column},{row}) joins unknown edge(s) {unknown} — "
                       f"expected among {list(shape_vocab.EDGES)}")
                 return 1
-            traces[(column, row)] = set(cell["joins"])
+            # THE UNION, NOT THE LAST WRITER. A cell may carry two traced subjects — a path crossing a fence line, a bridge carrying a path over a stream — and
+            # plain assignment erased the first: the fence's own north-south run then reported itself as broken on every cell the path crossed.
+            traces.setdefault((column, row), set()).update(cell["joins"])
+            # THE SUBJECT THAT CARRIES THE TRACE, kept apart from the cell's list of subjects: a trace cell carries exactly one — a trace piece fits on one cell,
+            # the check just above enforces it — whereas the cell itself may carry several now that one layer no longer evicts another.
+            trace_subject[(column, row)] = subject
 
     faults = composition_plan.check_traces(traces, columns, rows)
     for key, joined in traces.items():
@@ -174,9 +212,10 @@ def build(source: Path) -> int:
             neighbour = (key[0] + dx, key[1] + dy)
             # Two subjects that meet is a real case — a path reaching a gate — but never a silent
             # one: it is worth seeing on the plan.
-            if neighbour in subjects and subjects[neighbour] != subjects[key]:
-                print(f"NOTE ({key[0]},{key[1]}) {subjects[key]} joins {edge} onto "
-                      f"{subjects[neighbour]}")
+            others = [code for code in subjects.get(neighbour, []) if code != trace_subject[key]]
+            if others:
+                print(f"NOTE ({key[0]},{key[1]}) {trace_subject[key]} joins {edge} onto "
+                      f"{', '.join(others)}")
     if faults:
         for fault in faults:
             print(f"FAULT {fault}")
@@ -191,14 +230,14 @@ def build(source: Path) -> int:
     # WHAT THE COMPOSITION EXERCISES is not what has to be DRAWN: a flat type (path, water) is drawn
     # once per rotation class and turned by the engine for the rest, while a volumed type (fence, wall)
     # needs one drawing per shape — rotating it would put the sun on the wrong side. Asking
-    # assets/sujets.json is the only way to tell the two apart; guessing from the subject's own name
+    # assets/subjects.json is the only way to tell the two apart; guessing from the subject's own name
     # would be exactly the shortcut the operator flagged.
     shapes_by_subject = {}
     for key, joined in traces.items():
         shape = composition_plan.shape_of(joined).replace("shape-", "")
-        shapes_by_subject.setdefault(subjects[key], set()).add(shape)
+        shapes_by_subject.setdefault(trace_subject[key], set()).add(shape)
     drawings_by_subject = {
-        subject: (len({rotation_class(shape) for shape in shapes}) if rotates_of(sujets, subject)
+        subject: (len({rotation_class(shape) for shape in shapes}) if rotates_of(referential, subject)
                   else len(shapes))
         for subject, shapes in shapes_by_subject.items()
     }
@@ -208,18 +247,23 @@ def build(source: Path) -> int:
 
     # LE COUVERT DE CHAQUE SUJET POSÉ, LU AU RÉFÉRENTIEL ET JAMAIS DEVINÉ. Le couvert est ce que le volume surplombe ; à défaut d'être déclaré il vaut l'emprise, et rien
     # n'est alors dessiné, puisqu'il n'y a pas de débord à montrer. Le référentiel n'est chargé qu'une fois : il l'était déjà pour savoir quels types pivotent.
-    sujets = sujets or _load_sujets()
+    # THIS BLOCK HAD NEVER RUN. It reassigned `subjects` — the table of placed cells — to the referential, then iterated its values as if they were codes, then
+    # used the looked-up subject DICT as a dictionary key, which Python cannot hash. Three faults in five lines, all hidden behind an earlier one that made the
+    # plan fail before reaching them. The referential now has its own name throughout, the codes are gathered as codes, and `spreads` is keyed by the code —
+    # which is how plan_svg reads it.
     spreads = {}
-    for subject in set(subjects.values()) | {name for name, *_ in placed}:
-        sujet = sujets.get("sujets", {}).get(subject) if isinstance(sujets, dict) else None
-        if not sujet:
+    codes = {code for placed_codes in subjects.values() for code in placed_codes}
+    codes |= {name for name, *_ in placed}
+    for code in sorted(codes):
+        subject = referential.get("subjects", {}).get(code)
+        if not subject:
             continue
         # LE COUVERT SE COMPARE À L'EMPRISE DÉCLARÉE DU SUJET, jamais à ce que sa case occupe dans ce plan-ci : c'est une propriété du sujet, pas de son emplacement. Le
         # nombre de cases n'influence que la FORME du cercle, il ne décide pas de son existence (opérateur, 2026-08-05).
-        ground = sujet.get("emprise")
-        spread = sujet.get("couvert") or ground
+        ground = subject.get("footprint")
+        spread = subject.get("cover") or ground
         if spread and ground:
-            spreads[subject] = ((spread["columns"], spread["rows"]), (ground["columns"], ground["rows"]))
+            spreads[code] = ((spread["columns"], spread["rows"]), (ground["columns"], ground["rows"]))
 
     # A short key per DISTINCT piece — same subject, same shape, same subject composition (e.g. same
     # posts variant). The same key is reused wherever that piece is laid, so the plan says at a
@@ -228,7 +272,7 @@ def build(source: Path) -> int:
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     pieces, keys = {}, {}
     for key in sorted(traces, key=lambda item: (item[1], item[0])):
-        signature = (subjects[key], composition_plan.shape_of(traces[key]))
+        signature = (trace_subject[key], composition_plan.shape_of(traces[key]))
         if signature not in pieces:
             pieces[signature] = alphabet[len(pieces) % len(alphabet)]
         keys[key] = pieces[signature]
@@ -276,13 +320,14 @@ def build(source: Path) -> int:
     out = source.with_suffix(".svg")
     out.write_text(svg, encoding="utf-8")
 
-    print(f"cases {len(traces)} · sujets {', '.join(sorted(set(subjects.values())))} · "
+    # Une case peut porter plusieurs sujets depuis qu'un calque ne chasse plus l'autre : la table en garde une LISTE, et le compte se fait sur les codes aplatis.
+    print(f"cases {len(traces)} · sujets {', '.join(sorted(codes))} · "
           f"cellule par défaut {default_cell}")
     for shape in EVERY_SHAPE:
         print(f"  shape-{shape:<6} {f'x{tally[shape]}' if shape in tally else 'ABSENTE'}")
     print(f"formes exercées : {len(tally)}/{len(EVERY_SHAPE)}")
     for subject, count in drawings_by_subject.items():
-        pivote = "pivote" if rotates_of(sujets, subject) else "ne pivote pas"
+        pivote = "pivote" if rotates_of(referential, subject) else "ne pivote pas"
         print(f"  {subject} ({pivote}) : {count} dessin(s) réellement à produire, pour "
               f"{len(shapes_by_subject[subject])} forme(s) exercée(s)")
     if drawings_by_subject:

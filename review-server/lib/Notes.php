@@ -84,6 +84,12 @@ window.gatebeastNotes = (function () {
     // A server that cannot be reached leaves the page usable with no remarks rather than dead: what matters is that nothing is invented, never that everything works.
     call.onload = function () {
       all = call.status === 200 ? (JSON.parse(call.responseText) || {}) : {};
+      /* AN ARRAY IS NOT A TABLE OF SECTIONS, AND THE DIFFERENCE COST EVERY PAGE ITS FIRST REMARK. A missing or emptied file makes the server answer `[]` — PHP
+         encodes an empty array that way, it has no "empty object" type. The module then set its section on an ARRAY: `all['plan'] = …` lands there as a named
+         property, and JSON.stringify of an array serialises its indices only. So the remark went back to the server inside a `[]` and vanished, with no error and
+         no trace. Invisible until now because the two existing files were never empty; found on 2026-08-08 while wiring up the sprites page, whose file did not
+         exist yet. */
+      if (Array.isArray(all)) { all = {}; }
       next(all[section] || []);
     };
     call.onerror = function () { next([]); };
@@ -91,6 +97,8 @@ window.gatebeastNotes = (function () {
   }
 
   function save(section, notes) {
+    /* The same guard as on load: `save` may be called before the load has answered, and it would set its section on the initial array. */
+    if (Array.isArray(all) || all === null || typeof all !== 'object') { all = {}; }
     all[section] = notes;
     var call = new XMLHttpRequest();
     call.open('POST', '/notes?page=' + encodeURIComponent(route), true);

@@ -71,8 +71,17 @@ def shape_of(joined):
 def check_traces(traces, columns, rows):
     """Neighbour agreement, by calculation: what joins an edge must be joined back from the other side.
 
-    traces maps (column, row) to the set of edges the trace joins in that cell. Returns the faults,
-    empty when the layout holds.
+    traces maps (column, row) to the set of edges joined in that cell — the UNION of what every traced
+    subject on it joins, because a cell may now carry more than one. Returns the faults, empty when the
+    layout holds.
+
+    ONE CELL, SEVERAL TRACES, AND THE UNION IS THE ONLY HONEST READING. A path crossing a fence line and
+    a bridge carrying a path over a stream both put two traced subjects on one cell — the design allows
+    it, one sprite per layer. Keyed by the cell alone, the second subject silently erased the first: on
+    2026-08-08 an east-west path laid across a fence made the fence's own north-south run report itself
+    as broken, on six cells at once. What this check can state is that SOMETHING joins back; that it is
+    the RIGHT something — a fence meeting a fence rather than a path — needs the subject, and belongs to
+    a check that has it.
     """
     faults = []
     for (column, row), joined in sorted(traces.items()):

@@ -4,7 +4,7 @@
  *   Read the subject inventory — types, subjects, variants, versions — whenever a page has to show what the project has produced.
  *
  * INTENTION
- *   Reads THE inventory of subjects — assets/sujets.json — and nothing else, for every page that shows what the project has produced. Three pages read it today, each with its own copy of the same
+ *   Reads THE inventory of subjects — assets/subjects.json — and nothing else, for every page that shows what the project has produced. Three pages read it today, each with its own copy of the same
  *   twenty lines, and the copies had already drifted: one knew about a variant field the others ignored. One reader, one behaviour.
  *
  *   IT READS, IT NEVER INVENTS. A name comes from the inventory documents, where a human wrote it; a subject the documents cannot name is reported rather than given a made-up label. A ref is read on
@@ -23,7 +23,7 @@ class Inventory
 
     public function __construct(private string $root = __DIR__ . '/../..')
     {
-        $path = $this->root . '/assets/sujets.json';
+        $path = $this->root . '/assets/subjects.json';
         if (!is_file($path)) {
             throw new RuntimeException("FAULT {$path} est introuvable — aucune page ne se construit sans l'inventaire des sujets.");
         }
@@ -36,20 +36,20 @@ class Inventory
         return $this->data['types'];
     }
 
-    public function sujets(): array
+    public function subjects(): array
     {
-        return $this->data['sujets'];
+        return $this->data['subjects'];
     }
 
-    public function sujet(string $code): ?array
+    public function subject(string $code): ?array
     {
-        return $this->data['sujets'][$code] ?? null;
+        return $this->data['subjects'][$code] ?? null;
     }
 
     /** The subjects of one type, in code order — the order a page lists them in, and the only one the inventory itself implies. */
-    public function sujetsOfType(string $type): array
+    public function subjectsOfType(string $type): array
     {
-        $codes = array_keys(array_filter($this->data['sujets'], fn (array $sujet) => $sujet['type'] === $type));
+        $codes = array_keys(array_filter($this->data['subjects'], fn (array $subject) => $subject['type'] === $type));
         sort($codes);
 
         return $codes;
@@ -100,7 +100,7 @@ class Inventory
     {
         $representations = $variant['representations'] ?? [];
         foreach ($representations as $representation) {
-            if (($representation['statut'] ?? '') === 'courante') {
+            if (($representation['status'] ?? '') === 'current') {
                 return $representation;
             }
         }
@@ -112,25 +112,25 @@ class Inventory
     public function previousRepresentations(array $variant): array
     {
         return array_values(array_filter($variant['representations'] ?? [],
-            fn (array $representation) => ($representation['statut'] ?? '') === 'anterieure'));
+            fn (array $representation) => ($representation['status'] ?? '') === 'previous'));
     }
 
     /** The variant a subject shows first: the one it marks `principale`, or its first — a subject always has one (sujets-et-variantes.md). */
-    public function mainVariant(array $sujet): ?array
+    public function mainVariant(array $subject): ?array
     {
-        foreach ($sujet['variants'] as $variant) {
-            if ($variant['principale'] ?? false) {
+        foreach ($subject['variants'] as $variant) {
+            if ($variant['main'] ?? false) {
                 return $variant;
             }
         }
 
-        return $sujet['variants'][0] ?? null;
+        return $subject['variants'][0] ?? null;
     }
 
     /** What the subject covers on screen: its couvert when it declares one, its emprise otherwise — the same reading the generation and the export do. */
-    public function spread(array $sujet): array
+    public function spread(array $subject): array
     {
-        return $sujet['couvert'] ?? $sujet['emprise'];
+        return $subject['cover'] ?? $subject['footprint'];
     }
 
     private function readLabels(): array
@@ -141,7 +141,7 @@ class Inventory
             $texts[] = file_get_contents($path);
         }
         $labels = [];
-        foreach (array_keys($this->data['sujets']) as $code) {
+        foreach (array_keys($this->data['subjects']) as $code) {
             foreach ($texts as $text) {
                 if (preg_match('/\*\*' . preg_quote($code, '/') . '\s+([^*]+)\*\*/u', $text, $found)) {
                     $labels[$code] = trim($found[1]);

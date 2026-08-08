@@ -148,9 +148,11 @@ Deux murs opposés d'un même bâtiment ne penchent JAMAIS l'un vers l'autre, et
 bas. C'est le rendu d'un plan technique, pas celui d'un appareil photo.
 AUCUNE ROTATION AUTOUR DE LA VERTICALE : on regarde droit dans l'axe de la grille du monde, jamais en
 biais et jamais de trois quarts. Un sujet qui a une face avant la présente DE FRONT, entière, et son
-corps s'enfonce derrière elle vers le haut de l'image. Ce n'est donc pas une vue isométrique.
+corps s'enfonce derrière elle vers le haut de l'image. Ce que tu produis EST une projection parallèle, exactement
+comme une vue isométrique : ce qui change est seulement l'orientation, sans la rotation de 45 degrés autour de la
+verticale qu'une isométrie classique applique. La projection, elle, est bien parallèle, et sans aucune exception.
 Forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
-rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+rôle. On regarde le sujet d'en haut ET un peu de face : ses
 faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
 volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
 venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
@@ -343,26 +345,26 @@ def taille_clause(footprint: tuple, height: float) -> str:
 EXTRA_MARKER = "Consigne supplémentaire de génération :"
 
 
-def extra_instructions(code: str, sujet: dict = None, type_: dict = None) -> dict:
+def extra_instructions(code: str, subject: dict = None, type_: dict = None) -> dict:
     """The extra generation instructions that apply here, from the three places they may live.
 
     All three are optional and none is required (operator, 2026-08-05): a subject may carry one, two,
     all or none. Whatever is found is quoted to the generator and shown in the report — the report
     holds every one of them, so nothing is silently preferred.
 
-    - the TYPE, under its own "consigne_supplementaire" key: what every subject of that family needs said, and what the common base must NOT say. The base is used by every generation there is, so a
+    - the TYPE, under its own "extra_prompt" key: what every subject of that family needs said, and what the common base must NOT say. The base is used by every generation there is, so a
       need proper to one family put there contaminates all the others — a clause forbidding grass in the image, written for a tree that kept sprouting some at its foot, made every grass subject
       contradict its own description (operator, 2026-08-06). A type is exactly the level where such a clause belongs, and it is also where two families can
       want opposite things: a tree wants nothing at its foot, a fence wants grass at the foot of its posts.
     - the INVENTORY ENTRY, after the marker above, in italics like every other quoted text there;
-    - the subject's own "consigne_supplementaire" key in the inventory of subjects.
+    - the subject's own "extra_prompt" key in the inventory of subjects.
 
     Returns a dict keyed by the human name of each source, empty values dropped: it is passed straight
     to the report and iterated to build the prompt block.
     """
     found = {}
-    if type_ and type_.get("consigne_supplementaire"):
-        found["Consigne supplémentaire — le type"] = type_["consigne_supplementaire"]
+    if type_ and type_.get("extra_prompt"):
+        found["Consigne supplémentaire — le type"] = type_["extra_prompt"]
     for folder in (Path(__file__).resolve().parents[1] / "doc" / "conception" / "referentiels"
                    / "visuel" / "inventaire",):
         for path in sorted(folder.glob("*.md")):
@@ -373,8 +375,8 @@ def extra_instructions(code: str, sujet: dict = None, type_: dict = None) -> dic
                 match = DESCRIPTION_PATTERN.search(after)
                 if match:
                     found["Consigne supplémentaire — fiche d'inventaire"] = match.group(1).strip()
-    if sujet and sujet.get("consigne_supplementaire"):
-        found["Consigne supplémentaire — le sujet"] = sujet["consigne_supplementaire"]
+    if subject and subject.get("extra_prompt"):
+        found["Consigne supplémentaire — le sujet"] = subject["extra_prompt"]
 
     return found
 
@@ -441,7 +443,7 @@ def prompt(type_asset: str, code: str, footprint: tuple = None, reference_name: 
     THE STYLE BASE IS ALWAYS FIRST AND ALWAYS VERBATIM. STYLE_FR is imported from plate_common, the
     very object the plates use — not a copy — so an asset and a plate can never drift apart on style.
     """
-    famille, libelle = TYPES[type_asset]
+    famille, label = TYPES[type_asset]
     taille, description = fiche(code)
     footprint = footprint or FOOTPRINTS.get(code, DEFAULT_FOOTPRINT)
     cadrage = {"tuile": CADRAGE_TUILE, "trace": CADRAGE_TRACE}.get(famille, CADRAGE_CUTOUT)
@@ -449,7 +451,7 @@ def prompt(type_asset: str, code: str, footprint: tuple = None, reference_name: 
                    if famille == "tuile" else
                    "SEUL SUJET DE L'IMAGE, destiné à être détouré et posé comme sprite sur une carte "
                    "vue de dessus")
-    entete = (f"ASSET DE JEU — {libelle}, {destination}.\nÉCHELLE ANNONCÉE : {taille}.\n"
+    entete = (f"ASSET DE JEU — {label}, {destination}.\nÉCHELLE ANNONCÉE : {taille}.\n"
               f"{definition(footprint, famille)}")
 
     blocs = [STYLE_FR, CAMERA_FR, entete, cadrage]

@@ -371,287 +371,68 @@ HTML;
 
 $page .= <<<'HTML'
 
+{$remarksScript}
+
 <script>
 document.querySelectorAll('.plan').forEach(function (section) {
   var dessin = section.querySelector('.dessin');
   var svg = dessin.querySelector('svg');
-  var saisie = section.querySelector('.saisie');
-  var saisieOu = section.querySelector('.saisie-ou');
-  var saisieTexte = section.querySelector('textarea');
-  var supprimer = section.querySelector('.supprimer');
-  var rouvrir = section.querySelector('.rouvrir');
-  var liste = section.querySelector('.remarques ul');
-  var vide = section.querySelector('.remarques-vides');
-  // TOUS les boutons de copie, pas le premier venu : la page en porte deux — un en tête du plan, un sous les remarques —, et n'en câbler qu'un laissait l'autre inerte. L'opérateur a cliqué celui du
-  // bas, sous le compte des cases déclarées, et rien ne s'est produit : le bouton existait, il n'écoutait rien.
-  var copiers = Array.prototype.slice.call(section.querySelectorAll('.copier'));
-  var effacer = section.querySelector('.effacer');
   var taille = section.querySelector('.taille');
-
-  var survol = section.querySelector('.survol');
-  var titre = section.getAttribute('data-plan');
-  var memoire = 'gatebeast-remarques-' + dessin.dataset.cle;
   var cote = Number(dessin.dataset.cote);
   var haut = Number(dessin.dataset.haut);
   var cases = JSON.parse(dessin.dataset.cases);
   var noms = JSON.parse(dessin.dataset.noms);
   var defaut = dessin.dataset.defaut;
-  var remarques = [];
-  var vise = null;
 
-  /* UNE REMARQUE TRAITÉE SE RANGE, ELLE NE DISPARAÎT PAS. Le plan publié porte la liste des cases dont je me suis occupé ; la page les marque résolues : leur croix passe au
-     gris pâle sur le dessin, elles sortent du récapitulatif, et le texte reste consultable d'un clic. L'opérateur peut en rouvrir une : elle redevient active chez lui, et
-     ce choix ne vit que dans son navigateur — moi je ne sais que ce que le plan déclare. */
-  var traitees = {};
-  JSON.parse(dessin.dataset.resolus || '[]').forEach(function (cle) { traitees[cle] = true; });
+  /* L'ADAPTATEUR DU PLAN : les trois seules choses qui dépendent du support. Tout le reste — l'état des remarques, la saisie, la liste, le classement des traitées,
+     la copie, l'effacement, les raccourcis, le dialogue avec le stockage — vit une seule fois dans review-server/lib/Remarks.php. */
+  window.gatebeastRemarks.attach(section, {
+    prefix: '.',
+    section: 'plan',
+    surface: dessin,
+    zone: section.querySelector('.zone'),
+    titre: section.getAttribute('data-plan'),
+    resolues: JSON.parse(dessin.dataset.resolus || '[]'),
 
-  var MEMOIRE_ROUVERTES = memoire + '-rouvertes';
-  var rouvertes = {};
-  try {
-    rouvertes = JSON.parse(localStorage.getItem(MEMOIRE_ROUVERTES)) || {};
-  } catch (erreur) {
-    rouvertes = {};
-  }
-
-  function resolue(remarque) {
-    var cle = remarque.colonne + ',' + remarque.ligne;
-
-    return Boolean(traitees[cle]) && !rouvertes[cle] && !remarque.neuve;
-  }
-
-  /* La case sous un point de l'écran, dans le repère du dessin : le dessin est affiché à la largeur que la page lui laisse, donc tout passe par son échelle du moment. Rend
-     null hors de la grille — les marges, le titre et les notes ne sont pas des cases. */
-  function caseSous(x, y) {
-    var cadre = svg.getBoundingClientRect();
-    var echelle = cadre.width / svg.viewBox.baseVal.width;
-    var colonne = Math.floor((x - cadre.left) / echelle / cote) + 1;
-    var ligne = Math.floor(((y - cadre.top) / echelle - haut) / cote) + 1;
-    if (colonne < 1 || ligne < 1 || colonne > Number(dessin.dataset.colonnes) || ligne > Number(dessin.dataset.lignes)) {
-      return null;
-    }
-
-    return {colonne: colonne, ligne: ligne};
-  }
-
-  function nature(ou) {
-    var code = cases[ou.colonne + ',' + ou.ligne];
-
-    return code ? (noms[code] || code) + ' · ' + code : defaut;
-  }
-
-  /* LES REMARQUES VIVENT DANS LE DÉPÔT, PAS DANS LE NAVIGATEUR (opérateur, 2026-08-07) : elles s'y perdaient au moindre changement d'adresse, personne d'autre que leur auteur ne pouvait les
-     lire, et il fallait les recopier à la main. Le serveur les tient ; la page les demande en s'ouvrant et lui rend la liste entière à chaque changement. */
-  function retenir() {
-    if (window.gatebeastNotes) { window.gatebeastNotes.save('plan', remarques); }
-  }
-
-  /* Les cases commentées se marquent SUR le dessin, dans son propre repère : le repère suit l'ajustement et la taille réelle tout seul, là où une pastille posée par-dessus
-     en pixels se décalerait dès que la largeur change. */
-  function marquer() {
-    svg.querySelectorAll('[data-marque]').forEach(function (ancien) { ancien.remove(); });
-    remarques.forEach(function (remarque) {
-      var carre = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      carre.setAttribute('x', (remarque.colonne - 1) * cote);
-      carre.setAttribute('y', (remarque.ligne - 1) * cote + haut);
-      carre.setAttribute('width', cote);
-      carre.setAttribute('height', cote);
-      // Une remarque traitée reste visible, mais discrète : gris pâle et trait fin, elle ne réclame plus l'œil comme celles qui attendent encore.
-      var reglee = resolue(remarque);
-      carre.setAttribute('fill', reglee ? '#8a8f88' : '#c2410c');
-      carre.setAttribute('fill-opacity', reglee ? '0.15' : '0.4');
-      carre.setAttribute('stroke', reglee ? '#8a8f88' : '#c2410c');
-      carre.setAttribute('stroke-width', Math.max(1, cote * (reglee ? 0.06 : 0.15)));
-      carre.setAttribute('data-marque', '1');
-      svg.appendChild(carre);
-    });
-  }
-
-  function afficher() {
-    liste.innerHTML = '';
-    vide.hidden = remarques.length > 0;
-    remarques.forEach(function (remarque) {
-      var ligne = document.createElement('li');
-      var ou = document.createElement('span');
-      ou.className = 'ou';
-      ou.textContent = '(' + remarque.colonne + ',' + remarque.ligne + ')';
-      var quoi = document.createElement('span');
-      quoi.className = 'quoi';
-      quoi.textContent = remarque.texte;
-      if (resolue(remarque)) {
-        ligne.className = 'remarque--reglee';
+    /* La case sous un point de l'écran, dans le repère du dessin : le dessin est affiché à la largeur que la page lui laisse, donc tout passe par son échelle du
+       moment. Rend null hors de la grille — les marges, le titre et les notes ne sont pas des cases. */
+    caseSous: function (x, y) {
+      var cadre = svg.getBoundingClientRect();
+      var echelle = cadre.width / svg.viewBox.baseVal.width;
+      var colonne = Math.floor((x - cadre.left) / echelle / cote) + 1;
+      var ligne = Math.floor(((y - cadre.top) / echelle - haut) / cote) + 1;
+      if (colonne < 1 || ligne < 1 || colonne > Number(dessin.dataset.colonnes) || ligne > Number(dessin.dataset.lignes)) {
+        return null;
       }
-      var retirer = document.createElement('button');
-      retirer.type = 'button';
-      retirer.textContent = 'Retirer';
-      retirer.addEventListener('click', function () {
-        remarques.splice(remarques.indexOf(remarque), 1);
-        retenir();
-        marquer();
-        afficher();
+
+      return {colonne: colonne, ligne: ligne};
+    },
+
+    nature: function (ou) {
+      var code = cases[ou.colonne + ',' + ou.ligne];
+
+      return code ? (noms[code] || code) + ' · ' + code : defaut;
+    },
+
+    /* Les cases commentées se marquent SUR le dessin, dans son propre repère : le repère suit l'ajustement et la taille réelle tout seul, là où une pastille posée
+       par-dessus en pixels se décalerait dès que la largeur change. */
+    marquer: function (marques) {
+      svg.querySelectorAll('[data-marque]').forEach(function (ancien) { ancien.remove(); });
+      marques.forEach(function (marque) {
+        var carre = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        carre.setAttribute('x', (marque.colonne - 1) * cote);
+        carre.setAttribute('y', (marque.ligne - 1) * cote + haut);
+        carre.setAttribute('width', cote);
+        carre.setAttribute('height', cote);
+        /* Une remarque traitée reste visible, mais discrète : gris pâle et trait fin, elle ne réclame plus l'œil comme celles qui attendent encore. */
+        carre.setAttribute('fill', marque.reglee ? '#8a8f88' : '#c2410c');
+        carre.setAttribute('fill-opacity', marque.reglee ? '0.15' : '0.4');
+        carre.setAttribute('stroke', marque.reglee ? '#8a8f88' : '#c2410c');
+        carre.setAttribute('stroke-width', Math.max(1, cote * (marque.reglee ? 0.06 : 0.15)));
+        carre.setAttribute('data-marque', '1');
+        svg.appendChild(carre);
       });
-      ligne.appendChild(ou);
-      ligne.appendChild(quoi);
-      ligne.appendChild(retirer);
-      liste.appendChild(ligne);
-    });
-    // Les deux commandes restent OFFERTES, même sans remarque : un bouton qui apparaît et disparaît selon l'état oblige à deviner s'il existe, et l'opérateur a constaté
-    // l'écart avec la page des sprites, où ils sont toujours là. Copier un récapitulatif vide ne coûte rien ; ne pas trouver le bouton, si.
-    copiers.forEach(function (bouton) { bouton.disabled = false; });
-    effacer.disabled = false;
-  }
-
-  dessin.addEventListener('mousemove', function (evenement) {
-    var ou = caseSous(evenement.clientX, evenement.clientY);
-    if (!ou) {
-      survol.hidden = true;
-      return;
     }
-    var zone = section.querySelector('.zone').getBoundingClientRect();
-    survol.textContent = '(' + ou.colonne + ',' + ou.ligne + ') ' + nature(ou);
-    survol.hidden = false;
-    survol.style.left = Math.max(4, Math.min(evenement.clientX - zone.left + 14, zone.width - survol.offsetWidth - 4)) + 'px';
-    survol.style.top = Math.max(4, evenement.clientY - zone.top - survol.offsetHeight - 10) + 'px';
-  });
-
-  dessin.addEventListener('mouseleave', function () {
-    survol.hidden = true;
-  });
-
-  dessin.addEventListener('click', function (evenement) {
-    var ou = caseSous(evenement.clientX, evenement.clientY);
-    if (!ou) {
-      return;
-    }
-    var colonne = ou.colonne;
-    var ligne = ou.ligne;
-    vise = ou;
-    saisieOu.textContent = 'Case (' + colonne + ',' + ligne + ') — ' + nature(ou);
-    // Une case déjà commentée rouvre SA remarque, pour la corriger ou la compléter : un champ vide inviterait à la réécrire, et on se retrouverait avec deux avis sur la
-    // même case sans savoir lequel est le bon.
-    var deja = remarques.filter(function (remarque) {
-      return remarque.colonne === colonne && remarque.ligne === ligne;
-    })[0];
-    saisieTexte.value = deja ? deja.texte : '';
-    // Le bouton de suppression n'apparaît que là où il y a quelque chose à supprimer : sur une case vierge il ne voudrait rien dire.
-    supprimer.hidden = !deja;
-    // Une remarque réglée se rouvre d'un clic : elle redevient active, ressort au récapitulatif, et sa marque reprend sa couleur.
-    rouvrir.hidden = !(deja && resolue(deja));
-    saisie.hidden = false;
-
-    // La carte s'ouvre à l'endroit cliqué, puis se rabat dans la zone si elle en sortirait : une saisie qui déborde du plan est une saisie qu'on va chercher au lieu de la lire.
-    var zone = section.querySelector('.zone').getBoundingClientRect();
-    var gauche = evenement.clientX - zone.left + 14;
-    var dessus = evenement.clientY - zone.top + 14;
-    saisie.style.left = Math.max(8, Math.min(gauche, zone.width - saisie.offsetWidth - 8)) + 'px';
-    saisie.style.top = Math.max(8, Math.min(dessus, zone.height - saisie.offsetHeight - 8)) + 'px';
-    // preventScroll : sans lui, donner le clavier au champ ramène la page sur lui, et le plan disparaît de l'écran au moment précis où on le commente.
-    saisieTexte.focus({preventScroll: true});
-  });
-
-  section.querySelector('.poser').addEventListener('click', function () {
-    var texte = saisieTexte.value.trim();
-    if (!vise || !texte) {
-      return;
-    }
-    // Une case ne porte qu'une remarque : celle qu'on vient d'écrire remplace la précédente au lieu de s'ajouter à côté d'elle.
-    remarques = remarques.filter(function (remarque) {
-      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
-    });
-    // NEUVE : écrite APRÈS la résolution que le plan déclare. Sans cette marque, une remarque posée sur une case déjà traitée naissait grise, donc lue comme réglée alors qu'elle venait d'être écrite
-    // — l'opérateur l'a constaté sur « (47,43) Herbe rase ». Ce que le plan déclare résolu, ce sont les remarques d'avant lui, jamais celles qui suivront.
-    remarques.push({colonne: vise.colonne, ligne: vise.ligne, texte: texte, neuve: true});
-    retenir();
-    saisie.hidden = true;
-    vise = null;
-    marquer();
-    afficher();
-  });
-
-  rouvrir.addEventListener('click', function () {
-    if (!vise) {
-      return;
-    }
-    rouvertes[vise.colonne + ',' + vise.ligne] = true;
-    try {
-      localStorage.setItem(MEMOIRE_ROUVERTES, JSON.stringify(rouvertes));
-    } catch (erreur) {
-      // Sans mémoire, la réouverture ne survit pas au rechargement : le texte, lui, n'est jamais en jeu.
-    }
-    rouvrir.hidden = true;
-    marquer();
-    afficher();
-  });
-
-  supprimer.addEventListener('click', function () {
-    if (!vise) {
-      return;
-    }
-    remarques = remarques.filter(function (remarque) {
-      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
-    });
-    retenir();
-    saisie.hidden = true;
-    vise = null;
-    marquer();
-    afficher();
-  });
-
-  section.querySelector('.annuler').addEventListener('click', function () {
-    saisie.hidden = true;
-    vise = null;
-  });
-
-  saisieTexte.addEventListener('keydown', function (evenement) {
-    if (evenement.key === 'Enter' && (evenement.metaKey || evenement.ctrlKey)) {
-      section.querySelector('.poser').click();
-    }
-  });
-
-  copiers.forEach(function (copier) {
-  copier.addEventListener('click', function () {
-    // Le récapitulatif ne porte QUE ce qui attend encore : renvoyer une remarque déjà traitée la ferait refaire.
-    var vivantes = remarques.filter(function (remarque) { return !resolue(remarque); });
-    var texte = titre + '\n' + (vivantes.length ? vivantes.map(function (remarque) {
-      return '(' + remarque.colonne + ',' + remarque.ligne + ') : ' + remarque.texte;
-    }).join('\n') : 'Aucune remarque.');
-    // LA COPIE PASSE PAR UN CHAMP CACHÉ, comme sur la page des sprites où elle a toujours fonctionné. L'appel direct au presse-papiers est refusé dans le cadre où vit cet
-    // artefact : il échoue sans rien dire, et le bouton paraît cassé. Sélectionner le texte dans un champ et le copier marche partout.
-    var holder = document.createElement('textarea');
-    holder.value = texte;
-    holder.setAttribute('readonly', 'readonly');
-    holder.style.position = 'fixed';
-    holder.style.opacity = '0';
-    document.body.appendChild(holder);
-    holder.select();
-    var done = false;
-    try {
-      done = document.execCommand('copy');
-    } catch (erreur) {
-      done = false;
-    }
-    document.body.removeChild(holder);
-
-    if (done) {
-      copier.textContent = 'Copié';
-      setTimeout(function () { copier.textContent = 'Copier le récapitulatif'; }, 1600);
-      return;
-    }
-    // Rien n'a pu être copié : le texte est mis sous les yeux et déjà sélectionné, plutôt que laissé à reconstituer.
-    saisieOu.textContent = 'Récapitulatif — à copier à la main';
-    saisieTexte.value = texte;
-    saisie.hidden = false;
-    supprimer.hidden = true;
-    saisie.style.left = '8px';
-    saisie.style.top = '8px';
-    saisieTexte.select();
-  });
-  });
-
-  effacer.addEventListener('click', function () {
-    remarques = [];
-    retenir();
-    marquer();
-    afficher();
   });
 
   /* LA TAILLE DE CASE COMMANDE LA LARGEUR DU DESSIN, et elle est fixe : vingt-quatre, trente-deux ou quarante-huit pixels, comme sur la maquette montée, pour que
@@ -686,24 +467,6 @@ document.querySelectorAll('.plan').forEach(function (section) {
   });
 
   zoomer(24);
-
-  document.addEventListener('keydown', function (evenement) {
-    if (evenement.key === 'Escape' && !saisie.hidden) {
-      saisie.hidden = true;
-      vise = null;
-    }
-  });
-
-  /* Les remarques arrivent du serveur, donc après l'ouverture : on dessine une première fois sans elles, puis de nouveau quand elles sont là. */
-  marquer();
-  afficher();
-  if (window.gatebeastNotes) {
-    window.gatebeastNotes.load('plan', function (chargees) {
-      remarques = chargees;
-      marquer();
-      afficher();
-    });
-  }
 });
 </script>
 {$notesScript}
