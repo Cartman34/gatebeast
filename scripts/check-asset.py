@@ -401,7 +401,7 @@ def main(arguments):
         report(path, find_profile(data, path, forced), data)
 
     print("\nNote — the footprint is confronted on the shape ratio, not on an absolute count of tiles. "
-          "The world is seen under a 70° camera, which foreshortens the vertical; turning a horizontal "
+          "The world is seen under a 60° camera, which foreshortens the vertical; turning a horizontal "
           "ground extent into tiles with a scale read off a standing height would therefore be wrong, "
           "and the design fixes no projection for it. Settling that belongs to the render port.")
 

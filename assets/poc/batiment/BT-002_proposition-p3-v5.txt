@@ -1,0 +1,95 @@
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette.
+
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : PROJECTION PARALLÈLE, forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — maison de ferme, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT 5 case(s) de large, et sa hauteur tient ENTRE 5,1 ET 6,3 case(s).
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
+la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 5 case(s) de large sur
+4 case(s) de profondeur : ce rectangle occupe le BAS de l'image, sa profondeur se respecte case pour case, et la dernière rangée tolère un léger débord pour que la
+matière se raccorde à ce qui l'entoure. TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
+ce que la description demande appartient au sujet et se dessine, quelle que soit la matière dont il est fait.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+
+
+LE SUJET EST SEUL DANS SA CASE : il ne rejoint aucun bord, rien ne se prolonge hors de lui, et il ne s'assemble avec rien.
+
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/revue-da/planche-p1-campagne-v8.png. C'est une scène du
+monde, déjà validée, où maison de ferme apparaît PARMI D'AUTRES éléments — pas une image de ce seul sujet.
+Elle donne le style, la matière et la lumière à reprendre pour CE SUJET précis, repéré dans l'image ; le reste de la scène ne se copie pas et n'apparaît pas dans le résultat.
+ELLE NE DONNE PAS LA PRISE DE VUE. C'est une scène unique, rendue avec un point de fuite : les bâtiments y montrent la face tournée vers le centre de l'image. Une sprite se dessine une fois et se
+pose n'importe où, donc elle ne peut pas dépendre d'une position : tu reprends l'angle décrit plus haut, en projection parallèle, et tu ignores la convergence de la scène de référence.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et 96 PIXELS
+dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
+cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
+l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+BT-002 : Une petite maison de ferme vue de dessus, en profondeur, son corps aux murs crépis clairs sous une ossature de bois apparente, coiffé d'un toit à deux pans de tuiles orange qui occupe l'essentiel
+de ce qu'on voit ; le pignon, tourné vers le sud, porte une petite ouverture triangulaire près du faîte et une cheminée de pierre grise perçant le toit sur un côté ; en façade, une porte de
+bois en plein cintre encadrée de pierre, de petites fenêtres à volets de bois avec un bac fleuri sous l'une d'elles, et un appentis bas accolé sur un flanc, sous son propre pan de toit, abritant
+un tonneau et une réserve de bois ; au-delà de cette façade, le corps du bâtiment et sa toiture s'étirent vers le nord sur toute la profondeur de l'emprise. SON USURE SE VOIT, ET ELLE EST PLUS FRANCHE QUE CELLE DU CENTRE DE SOIN : c'est une ferme de travail, pas un bâtiment public. QUATRE tuiles manquent ou sont brisées sur le versant exposé, laissant voir la volige en dessous ; le crépi des murs est TOMBÉ PAR PLAQUES en trois endroits, découvrant la pierre et le torchis ; une FISSURE court du linteau d'une fenêtre jusqu'au bas du mur ; du LIERRE grimpe sur un pignon et gagne le bord du toit ; les volets de bois sont écaillés, l'un d'eux DÉGONDÉ pend de travers ; la souche de cheminée a perdu deux pierres à son sommet ; le seuil et le bas des murs sont tachés d'humidité verte. La ferme tient debout et sert tous les jours, mais personne ne l'a repeinte depuis longtemps. L'ÉCHELLE SE LIT SUR SON ENTRÉE, ET C'EST LE POINT LE PLUS SOUVENT MANQUÉ : un humain debout mesure DEUX CASES, et il doit pouvoir franchir cette porte sans se baisser. LA PORTE D'ENTRÉE FAIT DONC DEUX CASES DE HAUT POUR UNE CASE DE LARGE — deux fois plus haute que large, nettement, et non une ouverture presque carrée. Les fenêtres font UNE CASE de haut, les lucarnes UN DEMI. Tout le reste du bâtiment se dimensionne d'après cette porte : si l'entrée paraît petite, c'est le bâtiment entier qui devient une maquette et tout ce qui l'entoure paraît géant.
+Une maison de ferme de FORME FRANCHEMENT DIFFÉRENTE des deux autres propositions, et c'est tout l'objet de celle-ci — la palette rustique ne suffit pas, c'est la silhouette qui doit changer. CE
+QU'IL NE FAUT SURTOUT PAS : le grand pignon triangulaire en façade sud, avec son ouverture près du faîte, qui est la silhouette des deux autres propositions et qu'on a déjà trois fois. Ici, aucun
+triangle ne se dresse face à nous. Son corps est BAS ET LARGE plutôt que profond, et sa toiture est de TUILES comme celle des autres propositions — jamais de chaume, ce n'est pas une chaumière.
+Ce qui change est le VOLUME : un toit en croupe, à quatre pans, dont les versants se rejoignent sur un faîte court, sans le grand pignon triangulaire des deux autres ; une souche de cheminée de
+pierre en perce un versant. Un APPENTIS OUVERT court sur toute la façade sud, soutenu par des poteaux de bois bruts, formant une galerie abritée devant la porte ; sous cet auvent, un banc, des
+paniers et des bottes de paille. Murs de torchis beige entre des colombages bruns bien marqués, volets d'un vert éteint, lierre grimpant sur un flanc.
+
+
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à SOIXANTE DEGRÉS sous l'horizontale, en projection parallèle. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

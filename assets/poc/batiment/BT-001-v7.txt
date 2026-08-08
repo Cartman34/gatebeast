@@ -1,0 +1,96 @@
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette.
+
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : PROJECTION PARALLÈLE, forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — centre de soin, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT 16 case(s) de large, et sa hauteur tient ENTRE 11,4 ET 13,9 case(s).
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
+la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 16 case(s) de large sur
+10 case(s) de profondeur : ce rectangle occupe le BAS de l'image, sa profondeur se respecte case pour case, et la dernière rangée tolère un léger débord pour que la
+matière se raccorde à ce qui l'entoure. TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
+ce que la description demande appartient au sujet et se dessine, quelle que soit la matière dont il est fait.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+
+
+LE SUJET EST SEUL DANS SA CASE : il ne rejoint aucun bord, rien ne se prolonge hors de lui, et il ne s'assemble avec rien.
+
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/cutout/batiment/BT-001-v6.png. C'est une image
+déjà produite de ce même sujet, montrant plusieurs de ses pièces assemblées, dont celle qu'on te
+demande ici. Elle donne la matière, la couleur et la lumière à reprendre à l'identique. On te demande
+d'extraire cette pièce précise et de la dessiner seule, pas d'en inventer une nouvelle.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et 96 PIXELS
+dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
+cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
+l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+BT-001 : Un centre de soin bâti pour ce qu'il fait : on y accueille, on y soigne, et les bêtes qu'on y soigne ont besoin d'air et d'abri. Rien de cubique ni de sévère — le bâtiment est CHALEUREUX et
+vivant. IL FAIT FACE À LA CAMÉRA, et cela vaut pour toutes ses propositions : son aile d'entrée arrondie et son porche sont tournés vers nous, pleinement visibles et de front, le corps du
+bâtiment s'enfonçant derrière eux vers le haut de l'image ; on ne le voit ni de biais, ni de côté, ni de dos. Son aile d'entrée, au sud, s'ARRONDIT en une avancée en demi-cercle, un porche bas
+et large aux angles adoucis vers lequel le chemin monte doucement ; la porte de bois en plein cintre s'y ouvre sous un arc de pierre, un médaillon en feuille sculpté au-dessus, une bannière verte
+de part et d'autre, une lanterne au flanc, des massifs fleuris et des bacs de plantes au pied du mur. Le corps du bâtiment, en pierre claire sous un toit de tuiles vertes, s'étire vers le nord et se
+referme sur UNE COUR INTÉRIEURE ouverte au centre de son emprise : une cour de soin, couverte d'une VERRIÈRE en pans de verre entre des fermes de bois qui la protège de la pluie sans lui prendre sa
+lumière, et qu'on traverse pour rejoindre le parc par le nord. Sous la verrière, un sol de dalles claires, un bassin peu profond, des auges et des bottes de paille, et le long d'un côté un
+APPENTIS bas et ouvert où une bête peut se mettre à l'abri. Le toit lui-même n'est jamais nu : plusieurs PUITS DE LUMIÈRE vitrés y sont posés, quelques lucarnes, des faîtières de terre cuite,
+une souche de cheminée et de la végétation qui grimpe sur un pan. LA COUVERTURE EST ORDONNÉE, ET C'EST UNE EXIGENCE : les faîtières suivent exactement les arêtes du toit — le faîte et les
+croupes — sans jamais couper un versant en travers ni s'arrêter en plein milieu d'un pan, et les descentes d'eau tombent à la VERTICALE, d'un seul trait, du bord du toit jusqu'au sol. Un toit dont
+les tuyaux partent dans tous les sens ne se lit plus comme un toit. LA SOUCHE DE CHEMINÉE PERCE UN SEUL VERSANT, franchement d'un côté : elle ne s'assoit jamais à cheval sur une arête ni sur le
+faîte, et sa maçonnerie sort du toit d'un bloc, verticale, sans se partager entre deux pans. SON USURE SE VOIT, ET C'EST ELLE QUI LUI DONNE SON ÂGE : le bâtiment est ENTRETENU MAIS ANCIEN, tenu par des gens qui l'occupent depuis longtemps. SEPT tuiles de la couverture sont fendues ou légèrement déplacées, deux d'entre elles d'un ton plus clair parce qu'elles ont été remplacées ; de la MOUSSE vert sombre s'installe dans les noues du toit et au bas du versant nord ; la pierre des murs porte des JOINTS CREUSÉS par la pluie sous les descentes d'eau, avec deux traînées claires de ruissellement ; le seuil de la porte est USÉ ET CREUSÉ EN SON MILIEU par les passages ; UNE des vitres de la verrière est fêlée en étoile, réparée d'une baguette de bois ; les ferrures de la porte et la lanterne sont PIQUÉES DE ROUILLE ; le bois du porche est grisé et fendillé sur ses faces exposées. Rien n'est ruiné, rien n'est neuf. L'ÉCHELLE SE LIT SUR SON ENTRÉE, ET C'EST LE POINT LE PLUS SOUVENT MANQUÉ : un humain debout mesure DEUX CASES, et il doit pouvoir franchir cette porte sans se baisser. LA PORTE D'ENTRÉE FAIT DONC DEUX CASES DE HAUT POUR UNE CASE DE LARGE — deux fois plus haute que large, nettement, et non une ouverture presque carrée. Les fenêtres font UNE CASE de haut, les lucarnes UN DEMI. Tout le reste du bâtiment se dimensionne d'après cette porte : si l'entrée paraît petite, c'est le bâtiment entier qui devient une maquette et tout ce qui l'entoure paraît géant.
+
+
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à SOIXANTE DEGRÉS sous l'horizontale, en projection parallèle. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

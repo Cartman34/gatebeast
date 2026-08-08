@@ -48,3 +48,11 @@ Un **variant** d'un type reçoit son propre code, jamais un suffixe : deux maiso
 - Une famille par fichier ; si un fichier dépasse deux cents lignes, il se scinde par sous-famille et le README l'indique.
 - Les numéros ne se réutilisent jamais, même après retrait. Un élément retiré reste listé avec la mention **retiré** et la raison.
 - Un élément n'entre dans l'inventaire qu'avec sa description anglaise complète : une entrée sans description ne sert à rien, puisqu'elle n'est pas reproductible.
+- **UNE DESCRIPTION IMPOSE UNE ESQUISSE ; LE GÉNÉRATEUR LA CONCRÉTISE** (opérateur, 2026-08-07). Elle porte **tous les détails qui comptent**, et pas seulement le sujet en un mot : son **âge** —
+  jeune, adulte, ancien —, sa **densité** — touffu ou clairsemé —, ses **comptes exacts**, son **usure**, et les **accidents qui le rendent particulier** : une branche morte tombée au sol à son pied,
+  une pierre déchaussée, un volet dégondé. Ce qui n'est pas écrit est tiré au sort par le générateur, et il tire différemment à chaque fois — c'est exactement ce qui fait qu'une même fiche donne
+  deux arbres qui n'ont rien à voir. **Décider à sa place n'est pas le brider** : on lui laisse la matière, la lumière et la main du dessin, on ne lui laisse pas le sujet.
+- **UN NOMBRE SE DIT EXACTEMENT, JAMAIS PAR APPROXIMATION** (opérateur, 2026-08-07). On écrit « quatre pommes », pas « quatre au plus », pas « quelques », pas « environ quatre », pas « une poignée ».
+  Une borne laisse le générateur choisir dans une plage, et il choisit toujours — le pommier est sorti chargé de fruits face à un « quatre au plus » que rien n'obligeait à atteindre. La règle vaut
+  pour toute grandeur chiffrée d'une description : un compte d'objets, une fraction de case, une hauteur. **Si la valeur exacte importe peu, elle se choisit quand même** : c'est la description qui
+  tranche, pas le dessin.

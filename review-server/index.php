@@ -105,9 +105,9 @@ function faultPage(string $message): never
     $reload = Reload::get();
     http_response_code(500);
     header('Content-Type: text/html; charset=utf-8');
-    printf('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>GateBeast — Index des artefacts</title><style>%s
+    printf('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>GateBeast — Index</title><style>%s
 body { margin: 0; padding: 2rem 1.5rem; background: #17151d; color: #eeecf3; font-family: system-ui, sans-serif; }</style></head>
-<body><h1>Index des artefacts</h1><p>%s</p><p>Cette page se recharge d\'elle-même dès que la faute est levée.</p>%s%s</body></html>',
+<body><h1>Index</h1><p>%s</p><p>Cette page se recharge d\'elle-même dès que la faute est levée.</p>%s%s</body></html>',
         $reload->styles(), escape($message), $reload->markup(), $reload->script('/'));
     exit;
 }
@@ -177,7 +177,8 @@ function loadArtifacts(string $registryPath): array
  */
 function localRoutes(): array
 {
-    $routes = ['Index des artefacts' => '/'];
+    // LE NOM DE L'INDEX EST ÉCRIT ICI ET AU REGISTRE, et le rapprochement se fait dessus : les deux se renomment dans le même geste, sinon la card perd son lien local sans un mot.
+    $routes = ['Index' => '/'];
     foreach (require __DIR__ . '/pages.php' as $page) {
         $routes[$page['title']] = $page['route'];
     }
@@ -279,7 +280,7 @@ header('Content-Type: text/html; charset=utf-8');
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>GateBeast — Index des artefacts</title>
+<title>GateBeast — Index</title>
 <?= $favicon->tag() ?>
 <style>
   :root {
@@ -344,10 +345,11 @@ header('Content-Type: text/html; charset=utf-8');
     font-size: 1.6rem;
     margin: 0 0 0.25rem;
   }
+  /* PAS DE PLAFOND DE LARGEUR SUR L'INTRODUCTION (opérateur, 2026-08-07) : bridée à 65 caractères, elle se repliait au tiers de l'écran et se lisait comme un retour forcé, alors que
+     c'était un plafond de lisibilité hérité de la page d'origine. Elle suit désormais la largeur du contenu, comme les cards en dessous. */
   .page-intro {
     color: var(--muted);
     margin: 0 0 2.5rem;
-    max-width: 65ch;
   }
   .group {
     margin: 0 0 2.5rem;
@@ -503,10 +505,10 @@ header('Content-Type: text/html; charset=utf-8');
 </style>
 </head>
 <body>
-<h1>Index des artefacts</h1>
-<p class="page-intro">Une seule adresse à retenir : la porte d'entrée vers tous les artefacts publiés du projet
-GateBeast. Construite depuis le registre <code>review-server/artefacts.json</code>, seule
-source de vérité — rien ici n'est ajouté à la main.</p>
+<h1>Index</h1>
+<p class="page-intro">Une seule adresse à retenir : la porte d'entrée vers toutes les pages de revue du projet
+GateBeast — celles qui sont servies ici et celles qui ont été publiées. Construite depuis le registre
+<code>review-server/artefacts.json</code>, seule source de vérité — rien ici n'est ajouté à la main.</p>
 <?= $groupsHtml ?>
 
 <?= $anomaliesHtml ?>

@@ -39,12 +39,24 @@ class Releve
   .releve-etat { margin: 0; font-size: .85rem; color: var(--muted, #9aa192); }
   /* LE BOUTON FIXE, EN BAS À DROITE : le relevé se copie de n'importe où dans la page, sans avoir à redescendre jusqu'à lui. C'est ce que l'opérateur a demandé, et
      c'est ce qui manquait à deux des trois pages. */
-  .releve-fixe {
-    position: fixed; right: 18px; bottom: 18px; z-index: 200; padding: 10px 16px;
-    background: var(--card, #1c211a); border: 1px solid var(--line, #333a2f); border-radius: 4px; color: inherit; font: inherit; cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .35);
+  /* LES BOUTONS PORTENT L'HABILLAGE DU PROJET, ILS NE SONT PLUS NUS. Sans règle à eux, « Copier le relevé » et « Voir le texte » tombaient sur le bouton par défaut du
+     navigateur — deux pavés gris au milieu d'une page sombre. L'échelle est celle du constructeur d'origine : chasse fixe, douze pixels, remplissage 6/11, rayon 3. */
+  .releve-copier, .releve-deplier, .releve-fixe {
+    font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: .04em; padding: 6px 11px;
+    background: var(--card, #1c211a); border: 1px solid var(--line, #333a2f); border-radius: 3px; color: var(--ink, inherit); cursor: pointer;
   }
-  .releve-fixe:hover { border-color: var(--accent, #8fbf9a); color: var(--accent, #8fbf9a); }
+  .releve-copier:hover, .releve-deplier:hover, .releve-fixe:hover { border-color: var(--accent, #8fbf9a); color: var(--accent, #8fbf9a); }
+  /* UNE BARRE FIXE PLEINE LARGEUR, PAS UN BOUTON FLOTTANT — c'est ce que posait le constructeur d'origine, et la migration l'avait réduite à son seul bouton (opérateur,
+     2026-08-07 : « l'encart fixe en bas… là y'a que le bouton, avant, y'avait un panel dédié »). Elle porte le compte de ce qui est relevé, ce qu'un bouton seul ne dit pas :
+     on sait d'un coup d'œil s'il reste quelque chose à copier. */
+  .releve-barre {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+    padding: 9px 18px; background: var(--card, #1c211a); border-top: 1px solid var(--line, #333a2f);
+    font-size: 12px;
+  }
+  .releve-compte { flex: 1 1 auto; margin: 0; font-variant-numeric: tabular-nums; color: var(--muted, #9aa192); }
+  .releve-compte strong { color: var(--ink, inherit); font-size: 14px; }
 CSS;
     }
 
@@ -64,7 +76,10 @@ CSS;
     <p class="releve-intro">{$intro}</p>
     <pre class="releve-texte" hidden></pre>
   </section>
-  <button type="button" class="releve-fixe">Copier le relevé</button>
+  <div class="releve-barre">
+    <p class="releve-compte" id="releve-compte"></p>
+    <button type="button" class="releve-fixe">Copier le relevé</button>
+  </div>
 HTML;
     }
 
@@ -109,6 +124,22 @@ HTML;
   Array.prototype.forEach.call(document.querySelectorAll('.releve-copier, .releve-fixe'), function (button) {
     button.addEventListener('click', copier);
   });
+
+  /* LE COMPTE SE TIENT À JOUR TOUT SEUL : la barre ne sert à rien si elle n'annonce pas ce qu'il y a à copier. Le relevé se reconstruit à chaque frappe et à chaque clic —
+     il tient dans un souffle —, et on n'y lit que son nombre de lignes utiles. */
+  var compte = document.getElementById('releve-compte');
+  function dire_compte() {
+    if (!compte) { return; }
+    var utiles = contenu().split('\n').filter(function (ligne) { return ligne.trim().startsWith('- '); }).length;
+    compte.textContent = '';
+    var chiffre = document.createElement('strong');
+    chiffre.textContent = String(utiles);
+    compte.appendChild(chiffre);
+    compte.appendChild(document.createTextNode(utiles > 1 ? ' points relevés' : ' point relevé'));
+  }
+  document.addEventListener('input', dire_compte);
+  document.addEventListener('change', dire_compte);
+  dire_compte();
 
   if (deplier && texte) {
     deplier.addEventListener('click', function () {

@@ -141,7 +141,15 @@ aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exce
 s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette."""
 
 CAMERA_FR = """\
-Caméra : forte plongée, environ SOIXANTE-DIX DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+Caméra : AXONOMÉTRIE ORTHOGRAPHIQUE — une PROJECTION PARALLÈLE, et surtout PAS une perspective. AUCUN POINT DE
+FUITE, AUCUNE CONVERGENCE : les arêtes verticales sont verticales et parallèles entre elles d'un bout à l'autre
+de l'image, et les arêtes qui s'enfoncent vers le fond restent parallèles entre elles au lieu de se rapprocher.
+Deux murs opposés d'un même bâtiment ne penchent JAMAIS l'un vers l'autre, et une façade ne s'évase pas vers le
+bas. C'est le rendu d'un plan technique, pas celui d'un appareil photo.
+AUCUNE ROTATION AUTOUR DE LA VERTICALE : on regarde droit dans l'axe de la grille du monde, jamais en
+biais et jamais de trois quarts. Un sujet qui a une face avant la présente DE FRONT, entière, et son
+corps s'enfonce derrière elle vers le haut de l'image. Ce n'est donc pas une vue isométrique.
+Forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
 rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
 faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
 volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
@@ -155,7 +163,7 @@ bas restent lisibles, l'ombrage se fait en deux bandes claires."""
 # word and came out drawn flat anyway. Positive prescription: it says what to draw, never what to avoid.
 RAPPEL_CAMERA_FR = """\
 RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
-plongée à environ SOIXANTE-DIX DEGRÉS sous l'horizontale. On voit le sujet d'en haut ET un peu de face :
+plongée à SOIXANTE DEGRÉS sous l'horizontale, en projection parallèle. On voit le sujet d'en haut ET un peu de face :
 ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
 dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face."""
 
@@ -205,39 +213,9 @@ l'image.
 Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
 signature, pas de grille, pas de bordure."""
 
-# Element sheets for things that are not creatures or humans. A series never starts without the sheet:
-# the same rule as for inhabitants, for the same reason — without it every generation reinvents.
-ELEMENTS = {
-    # Quoted WORD FOR WORD from referentiels/visuel/inventaire/sols-et-chemins.md, "Campagne et parc".
-    # The sheet carries the edge-to-edge requirement itself, which is what makes it reproducible.
-    "CH-001": ("tuile", "1 case",
-               "Close-cropped lawn seen from straight above, a dense mat of short blades in a bright "
-               "fresh green, unevenly lighter in a few soft patches, with a scattering of small "
-               "clover leaves and a handful of paler dried blades; no flower, no stone, no bare "
-               "earth, no tall tuft. Fine even texture, almost flat relief. The grass is cropped "
-               "short and stops cleanly at the edge of the image, no blade crossing it; the texture "
-               "at each edge matches the opposite edge, so that copies laid side by side show no "
-               "seam."),
-    # Quoted WORD FOR WORD from referentiels/visuel/inventaire/vegetation.md, "Campagne et parc".
-    "TR-060": ("cutout", "2 cases sur 2",
-               "A broad solitary oak with a thick furrowed trunk and a wide rounded crown of deep "
-               "green lobed leaves, its lowest branches reaching out almost level, a ring of exposed "
-               "roots at its foot and moss creeping up one side of the trunk."),
-    "TR-062": ("cutout", "1 case au sol",
-               "A knee-high tuft of long meadow grass, its blades arching outward in every "
-               "direction, pale seed heads nodding at their tips, a few blades bent and bleached "
-               "where they have dried."),
-    # Quoted WORD FOR WORD from referentiels/visuel/inventaire/objets.md.
-    "OB-010": ("cutout", "1 case au sol",
-               "A waist-high fence of split logs, two horizontal rails pegged between stout round "
-               "posts, the bark still on the wood and silvered by weather, moss at the foot of every "
-               "post and the grass grown long against it."),
-    "SOL-001": ("tuile", "1 case",
-                "Une PRAIRIE RASE d'herbe verte vive et fraîche, tondue court, telle qu'on la voit du "
-                "dessus : un tapis dense de brins courts, d'un vert franc et lumineux légèrement plus "
-                "clair par endroits, sans fleur, sans caillou, sans touffe haute, sans terre nue. La "
-                "texture est fine et régulière, le relief presque nul."),
-}
+# LES DESCRIPTIONS D'ÉLÉMENTS NE VIVENT PLUS DANS LE CODE. Cinq d'entre elles étaient recopiées ici à la main, en anglais, chacune annoncée « citée mot
+# pour mot » de l'inventaire — une promesse qu'aucun contrôle ne tenait. Elles vivent dans assets/descriptions/, un fichier par description, lu en entier.
+# Le doublon n'avait jamais été demandé et plus personne ne le lisait (opérateur, 2026-08-07).
 
 # The player character. DRAFT, written here to unblock the capability probe the lead asked for; it is
 # NOT a design sheet, and it will not become one: there is no "player character" subject. There are
@@ -450,9 +428,9 @@ def fiche(code: str) -> tuple:
                         f"corps au lieu d'être plaquée à plat.")
     if code in HUMANS:
         return "entre 1,75 et 2 cases debout", HUMANS[code]
-    if code in ELEMENTS:
-        _, taille, description = ELEMENTS[code]
-        return taille, description
+    # LES ÉLÉMENTS NE SONT PLUS SERVIS D'ICI : leurs descriptions vivent dans assets/descriptions/, un fichier par description, lu en entier. La copie qui
+    # se trouvait ici — cinq sujets recopiés à la main en anglais, chacun annoncé « cité mot pour mot » de l'inventaire — n'avait jamais été demandée et
+    # n'était plus lue par personne (opérateur, 2026-08-07 : « le doublon n'a jamais été demandé, c'est une erreur d'un agent »).
     raise KeyError(f"unknown sheet code: {code}")
 
 

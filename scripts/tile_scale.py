@@ -34,13 +34,17 @@ import math
 # THE CAMERA'S ANGLE, THE ONE FACT EVERY PROJECTION BELOW IS BUILT ON. Convention, fixed here so it is
 # never re-guessed at a call site: 0° is a flat, eye-level view (the horizon — you stand level with the
 # ground and look straight across it), 90° is a pure top-down view (straight overhead, no perspective
-# at all). The world's camera sits at 70°, i.e. close to straight overhead but "un peu de face" (see
-# CAMERA_FR in asset_common.py) — the ten degrees short of 90 are exactly that little bit of front-on
-# view. Getting this convention backwards is the one mistake this constant exists to rule out: it was
-# made once, while drafting this very feature, before scripts/check-asset.py ("the world is seen under
-# a 70° camera, which foreshortens the vertical") and the note above asset_common.CADRAGE_CUTOUT ("la
-# plongée l'écrase") settled it the other way.
-CAMERA_ELEVATION_DEGREES = 70
+# at all). The world's camera sits at 60°, "un peu de face" (see CAMERA_FR in asset_common.py) — the
+# thirty degrees short of 90 are exactly that bit of front-on view. Getting this convention backwards is
+# the one mistake this constant exists to rule out: it was made once, while drafting this very feature,
+# before scripts/check-asset.py ("the world is seen under this camera, which foreshortens the vertical")
+# and the note above asset_common.CADRAGE_CUTOUT ("la plongée l'écrase") settled it the other way.
+#
+# 60 AND NOT 70, DECIDED BY THE OPERATOR ON 2026-08-07 AND NOT TO BE ASKED AGAIN. The project says
+# "projection parallèle à 60 degrés de plongée", PA60 for short, and it holds for every subject — it is
+# not an exception granted to one of them. Raising the camera from 70 to 60 shows half of a subject's
+# true height on screen instead of a third, so every height band this module computes widens with it.
+CAMERA_ELEVATION_DEGREES = 60
 
 # GROUND DEPTH — a span lying flat on the ground, receding away from the camera (a footprint's ROWS) —
 # projects onto the screen scaled by sin(θ). At θ=90° (straight overhead) the ground is seen in true
@@ -155,7 +159,7 @@ def master_definition(columns, rows, height=None):
     HEIGHT IS OPTIONAL AND CHANGES ONLY THE CANVAS SHAPE, NOT THE RULE ABOVE. Left at its default
     (None), the canvas follows the footprint alone, rows included at their flat, unforeshortened
     extent — correct for a GROUND MATERIAL, which is a flat plan texture the camera never looks at
-    obliquely. Pass the subject's own height, in tiles, and the canvas becomes what the 70° camera
+    obliquely. Pass the subject's own height, in tiles, and the canvas becomes what the world's camera
     actually SEES of that subject standing on its footprint: its ground depth (rows) foreshortened by
     GROUND_DEPTH_FACTOR, plus its own standing height foreshortened by STANDING_HEIGHT_FACTOR — the two
     project at very different scales under this camera, so simply adding a bare height in tiles to the
@@ -173,7 +177,11 @@ def master_definition(columns, rows, height=None):
     neighbours edge to edge. So only a RISING height (max(height, 0)) ever adds to the canvas; a
     recessed one leaves it exactly at the footprint's own projected depth, same as height=0 would.
     """
-    if height is None:
+    # UNE PIÈCE PLATE GARDE LA TOILE DE SON EMPRISE, CARRÉE — même raisonnement que pour une hauteur négative, juste en dessous, et il vaut aussi pour la hauteur zéro.
+    # Un sol, un chemin, un cours d'eau sont des pièces d'assemblage : elles doivent remplir leur case bord à bord pour rejoindre leurs voisines, donc leur toile ne
+    # se raccourcit pas en profondeur. Écraser leur toile déclarait toute pièce plate « trop haute » dès que la caméra est passée à 60 degrés — un verdict faux porté
+    # sur des images justes, et sur exactement les pièces de réseau qu'on est en train de produire.
+    if height is None or height <= 0:
         box = delivery_size(columns, rows)
     else:
         fineness = delivery_fineness()

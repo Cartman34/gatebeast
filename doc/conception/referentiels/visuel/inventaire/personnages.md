@@ -14,6 +14,14 @@ Les humains reflètent l'humanité réelle : toutes origines, tous genres, toute
 
 Tous de type **humain**, emprise 1 × 1.
 
+## L'humain de référence
+
+**`HU-000` est l'humain de référence du projet** — celui sur lequel toute échelle se vérifie, celui qui se pose sur les maquettes, et celui qu'on regarde quand on doute d'une proportion. Décidé
+par l'opérateur le 2026-08-07, d'après une image de style qu'il a fournie. **Il se produit d'abord DE FACE**, orientation `south` : c'est la vue principale du monde, et c'est précisément celle qui
+n'avait jamais été dessinée.
+
+- **HU-000 l'humain de référence** — `reference-human-01`, type humain, 1 × 1, hauteur 1,8 case. *Un jeune humain à la silhouette compacte et ronde du monde, la tête large par rapport au corps. SES CHEVEUX SONT RAIDES ET TIENNENT SEULS, C'EST SON TRAIT LE PLUS RECONNAISSABLE : bruns, épais, coiffés en mèches dressées et nettes qui ne retombent pas, formant une LÉGÈRE CRÊTE BASSE sur le sommet du crâne — jamais une chevelure souple, jamais des boucles, jamais une mèche plaquée. Il porte une TUNIQUE BLEUE SANS MANCHES par-dessus un vêtement clair à manches courtes, une ceinture sombre à la taille, un pantalon court beige s'arrêtant sous le genou, et des chaussures brunes montantes. Peau claire et chaude, visage rond aux traits simples et ouverts, deux yeux sombres bien lisibles. IL EST DEBOUT, DE FACE, LES BRAS LE LONG DU CORPS, tourné vers nous : on voit son visage entier, sa tunique de face et ses deux chaussures. Rien dans les mains, aucun accessoire, aucune rune.*
+
 ## Campagne et bourg
 
 - **HU-001 le fermier** — hauteur 1,85 case. *Un fermier dans la quarantaine, peau brun foncé, cheveux noirs courts et ras, carrure large, une tunique de travail brun terre unie aux manches retroussées, des bottes robustes. Visage ouvert et buriné.*

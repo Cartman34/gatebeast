@@ -1,6 +1,6 @@
 # Agents — GateBeast
 
-**Usage :** aiguilleur. Ce fichier ne porte aucune règle — il dit seulement lesquelles te concernent, et où elles vivent.
+**Usage :** ce fichier ne porte aucune règle — il oriente. Selon le rôle qu'on t'a confié, il te dit quelles règles te concernent et dans quel fichier elles vivent.
 
 **Intention :** se protéger lui-même. Tout agent qui approche ce dépôt lit ce fichier, y compris ceux à qui ses règles ne s'adressent pas : le générateur d'images l'a lu, y a trouvé la règle des modes
 de travail, et a répondu « mode lot : cette génération nécessite votre validation » au lieu de dessiner — deux générations perdues le 2026-08-06. Un fichier de règles qui s'adresse à tout le monde

@@ -1,0 +1,619 @@
+<title>Suivi des sujets</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAALGElEQVRYhXWXa4xd11mGn3XZl7PPmTPnnLl57LHHdh3bGWKS2E4lU1AclRAhQlsKcaWWNg1SQRUIFIHUH4BcS0T9xa9KQS0pqFyEoBSVpInSgqjsljSNEzuu4/huz33GM2fO/bYvay1+HNtKkfpJa21paUnvu7/v/d5vb7H0/FOU9tW+IVTz80FxrCXyO18Ue468IK+83RuofJg2qq/UF879qscAP5D4vkR7CiEcUgqcc5jUYDJBmhiSxNLrG9oD6FhNK849e2hm1z/MnPhiZFbO/BlbV/6kt7VWajd56WL15h+I+RcePGpMcrbBCAW7ya7pPHhj18Kphz7bWV3/7Prtc3+k6ZMLBEEg8XyFUhKpQEiBMxabGbIUstSSJJZBbOl0LZ0U2kb1dj380ef2THVO2sbtuevzbRquzKTfZ7MpjmgZdz6Ve+Q4SdewcHsZs7LA3l3N/a3rZ37YHoQ6HXTxQgEIhHMIHEKAkHJ4JgHpAIO1DmMdzjqEBAlMT01G24Nb/+paXd670WXV38fM7DbK02Xcm689o61fOB5NbEfme3Q7XeaXYyqNLUYj64dxD1uqkPXrOOswmUMpgRACACHAOYuzDucAwFowDqxzVGZ2MlECjzbLqzG33QwT5QJT28aIyhW2wrFflt7o2H4tIYoCds5OUxircHlDgfYIQoGmj5crYBAYd2+BdRJjFcZqrJUYJ0gNZAaMhWh8mko+waNDljku3AkZKReZ2TFJcbSIVpKoXN4vCbyi9n2UVpQqZbZtq9DNTbC22kJ5mlwksUmMlXl0ZQ9BeR86GAcRYIwkSyHJFJn1MCLAKh8RFikEDm06SODGzRZUppkaLzCxbRLP91BaIaQa1wKQWiOUBCSV8XEKK5ssrflURmKUkgS+Y5A5Qu3I2ssIl+CcQwiLulsKKUF5Ak8rUhEgTRupod9NWBqMUJ6OKFdKBLnc/TI6Z9A2SRpCqhJCgTWEkY8f+FRlicbWAqPFEM+TBEGK662hpRlqQCpwAiEc1jisAWsM0hiEyVCexFjB6vqAXm4XU1FAVMgPBaw0AGm/35Jxo3XDOQdCg1AoAVJAmPPYrBuS1KC1IPBBSYvyFFLLu+qXoBRCKZSn0L5Ga4GnLdZaej3DYkPgBz5S3n0qCVhwhkG9Nq97tfqbSWPzqF+aBCkwxuEpyYdYYZBTSAGeAiUdUmsQYLXHwuzjXNr7NMIkPHLlW0yvnkNYA1Li4hSbOuLYEGpD1LqFdRM458AB1jGordNq1N+S6w1e7dy4gDUpLh0gBOREgjOGqfGAXCiRUiDUXZ14Pjcf/hzfP/YVip01wrTPtz/6dZZnP4KQEiEkQmoEltCXzE76YB0YgzEGY1KsyWhde5etrv4vfXNh5L+ndlQXR+biXUoP06P7WwQa1F23u7cQgs7oDn4690WePvPH7Fg/h3MwVb/K/z72JX5r5Rxe1kEIh1IKZSwax6ga0G1UMekMJkkxOFYW7lSv3xl/TZoDl7Pbt6ovrJw9w6DXp9/t4TotfI+h60nJ0GMETkhWZ47jV88zvXERqQRSwf6brzLQeWqVfTg7vHtvV9KR84BOjX5vwKAfs/CTH7Kw2vnqjuhiT712Fp554OCFWu3Wcduuzg7qdcL2Er4n0J5CSRDyrutJzfm532Vy/S1mti7etT4QWcrSxCG8LGF89QLOWIyxYN19Y8p6XZp9R3v5Jjffu36rJUvPfuZf6okE+O3/eCeL09HPXL44v9Gcv4pw9r7nu2H5yIzFWMdaNEWlcR1nDFjAWFxmGGkuUQ0nMc6RphZrBRZxLxkoHO1bV7h0/kbSdJVno/7hzvD8bnzlmWOdsFDYimTr476yaCWQUsLoNGrfMUxuClNbpT0yye7lH5OL27jM4IzFGUPiJKpbp9jrEB78CBQmiLc2MGlGmg0zITxF0xb/tlmMvvbcN0+7+wTcyZOMHNh8zsuap+JOrehJUFogKjPIPUdYrvYxQRGtPHZdfZVc0gE7fHNnwWSWwp3bBOuLREeeYmGjgwzzqMoU8doiJnNk1oEQTBbVwUNllT01N372n9/eMgrgWHAaY+r/pl1zN9YO/SXwkPuP8Vd//xanXnqTxf4kWdxmVlbR0g772TmcGzphHGc0ol389WtVTn3tNK+cucGjByYpFUNMe4vMQOhB3jN+uz94/PJW8NVXLtb7EqD18S9zp517faue4GlQSqLLk6w0LR0zihISz9P8zctXSWSIySw2szgH1liy1BAPDP/5Th1/fC9e4DNZHuXMpTbR9CxKiKGopWCzmXFl0b1ciG/W7pfg+T2rD+0o9f4u8J0IAk2uOEJu536iqR2Upg9y4Y0f89alm3R6MZ86XGBEpwghQbj7Io0Tx79fMnz39HkwGU89doDf+LUj7JgMYdBGpv3hAJOC6bKYk3riJ7NPN28ogMrEoQ0vXj0mMfuCKGLkw08TTe8hNzLKnj3j+FbTv7PEw/u38eQDhnzg0IGHyuVQSiGFIDOWlhyjUevxxINjPPv7n2ZuTw4vl0eOz5LkygzW5ukNLAs11n+6GX3pL77eiMW9LvjGx2Yqgdf93vT+2aP7P3yYcqVEWCggwgi0R9zrEZAQn/02OmsjtEIogUstWWIZ9A3eQ0+SFSfxR0oEfoCL+yT9Hu1mi0atwfK751m5tdwauNyvl9SdN058636XDuM7n/vFo6v1hbP7f+koO3dNMTY2QlQYQXsa6fkI5YFNWDz7A350FdqxolNf4XeORsw89Bg2X8EYg5QK5xzxIKHZ6FBrdNjYqLH89juklhd7vfof/un3h5j6Hrg7Cd+b39qnbMLFN96l3XmQ7dsrjI/1CEOPIBcS5AvkiiU2S0d56dV/JNCKTpzwK09+gu2FCdrNJr1uH2cMWWbo9RO2WgNqtTZ3rt0g6Q7wQ3/yHvjPGNHx42AbuUdmxsQntxoDVubX6SaGfuYY9BPiOGZ5aZMoVMxuL3Nw7wSLS+s8/3tP8OiD26lX61y+skyj2aPV6rNZ67JR67K2sMr6+1fRcZdAC5Tnv334RP87p0//PwLfPA2fnhsNK0X7hemSptZOabf7pELRGVi6/QzfV6yubFKr1vCFYSySjBdD1taq3Lp9h8xYeoOUVjem1e5Tr9ZpLy4wogx5bzhTnAr/qbXUffP0teGM03wgNvvBueIgWR8viW2Hd4ecW0ixcQwFaLb7dHoxUejT68V4EqYnR9jcqNIfGJTvkSWWODHEicFZi7QZkTSMBMNvQJNhB0n08qnvYu9hyg8S6CS3s2rHXWt1DYEH+yYkWXUDXwmiQKGEo9cb0Oom1Dspi6stGl1DP4VWJ6Hby3DWEXqCQFqSWpW8dijhsM6RCdWovvL5ax/E/BkCG4+Bc66x1jA0OhbnHHmVsnr9JhJLFHhEgST0BFoOfz6stQgsvoacL8kFEk9JVq/PI3ptpBiO4ySzSMwGj39Z/lwCv8lhOTU7vg0cta6h1bdIoF+vMX9l7UVr7S2tJJ4WhB5EPuQDQT6QhL5CSQfOVtur3b90vZbVAlLjSDIDDvxcEAajv8DPJZB/4EPjOw49eni64uFJyKxgkDk8JXDWXGpXzaE0k1+wqftRlrlEOKwSWJyxLsve10L9uU3UgbjZ+Z985AMOT0LgSXKBYHT7zO7dD++c+yDmfREuvf48eWU+EeRCXRn/JOPvnmX+9jpZM0NMlGxKFN26ogcnTsy99PqNGy9V2lkkwnivFcb3ZLA8IYONoBjzfn0Lm4/2jo7ukl5thXJgiEKPcGYPaXkHuZSP/eDk4+89cWrYh/8HULqwLB0sUaIAAAAASUVORK5CYII=">
+
+<style>
+/* Thème « encre » — le sombre par défaut des pages de revue.
+ *
+ * Intention : une page de revue ne sert qu'à juger des images, donc l'interface s'efface. Un fond presque noir légèrement bleuté, un texte qui ne brûle pas les yeux, une seule couleur d'accent —
+ * ambre — réservée à ce qui appelle une action. Aucune teinte proche de celles des sprites, pour qu'aucune couleur de l'interface ne fausse le jugement d'une image.
+ */
+
+:root {
+  color-scheme: dark;
+  --ink: #e6e4e0;
+  --bg: #101114;
+  --card: #191b1f;
+  --line: #2b2e34;
+  --muted: #8e9299;
+  --accent: #d9a441;
+  --valider: #2f5c3a;
+  --valider-bord: #4e8a5e;
+  --reprendre: #6b4a1c;
+  --reprendre-bord: #a4762c;
+  --ecarter: #5c2f2f;
+  --ecarter-bord: #8a4e4e;
+  --damier-a: #202329;
+  --damier-b: #1a1d22;
+}
+
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 ui-sans-serif, system-ui, sans-serif; }
+  .wrap { width: min(100%, 1100px); margin: 0 auto; padding: 24px 16px 96px; }
+  h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  .lede { margin: 0 0 8px; color: var(--muted); max-width: 90ch; }
+  .compte { margin: 0 0 24px; font-family: ui-monospace, monospace; font-size: .8rem; color: var(--muted); }
+  .point { margin: 0 0 10px; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
+  .point h2 { margin: 6px 0 8px; font-size: 1.05rem; font-weight: 600; }
+  .point-tete { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0;
+                font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .03em; color: var(--muted); }
+  .point-ref { padding: 2px 7px; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; color: var(--ink); font-weight: 700; }
+  .point-rang { margin-left: auto; padding: 2px 7px; border: 1px solid var(--accent); border-radius: 2px; color: var(--accent); }
+  .point-corps { font-size: .92rem; }
+  .point-corps p { margin: 0 0 8px; }
+  .point-corps ul { margin: 0 0 8px; padding-left: 20px; }
+  .point-corps code { font-family: ui-monospace, monospace; font-size: .85em; color: var(--accent); }
+  .point-pied { margin: 8px 0 0; font-size: .72rem; color: var(--muted); }
+  /* LE STATUT SE VOIT AVANT D'ÊTRE LU : une pile où tout se ressemble oblige à lire chaque carte pour savoir laquelle bouge. */
+  .point[data-statut="in-progress"] { border-left: 3px solid var(--accent); }
+  .point[data-statut="pending-decision"] { border-left: 3px solid var(--reprendre-bord, #a4762c); }
+  .point[data-statut="blocked"] { border-left: 3px solid var(--ecarter-bord, #8a4e4e); }
+  .point[data-statut="done"], .point[data-statut="dismissed"] { opacity: .55; }
+  .clos { margin-top: 40px; }
+  .clos summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+  .reload { position: fixed; right: 18px; bottom: 18px; z-index: 200; display: none; align-items: center; gap: 14px; padding: 12px 14px 12px 18px;
+            background: #191b1f; border: 1px solid #3a3546; border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45); color: #e6e4e0;
+            font-family: system-ui, sans-serif; font-size: .88rem; }
+  .reload[data-open="yes"] { display: flex; }
+  .reload-word { margin: 0; max-width: 15rem; line-height: 1.35; }
+  .reload-ring { position: relative; width: 46px; height: 46px; flex: none; }
+  .reload-ring svg { width: 46px; height: 46px; transform: rotate(-90deg); }
+  .reload-ring circle { fill: none; stroke-width: 3; }
+  .reload-track { stroke: #3a3546; }
+  /* The ring empties over five seconds: it is what tells how much time is left, with no figure to read. */
+  .reload-gauge { stroke: #d9a441; stroke-linecap: round; stroke-dasharray: 125.66370614359; stroke-dashoffset: 0; transition: stroke-dashoffset linear; }
+  .reload-button { position: absolute; inset: 8px; border: none; border-radius: 50%; background: #d9a441; color: #191b1f; font: inherit; font-size: .95rem;
+                   line-height: 1; cursor: pointer; }
+  .reload-button:hover { background: #eab853; }
+  .reload-button:focus-visible { outline: 2px solid #e6e4e0; outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <h1>Suivi des sujets</h1>
+  <p class="lede">Ce qui reste à faire, dans l'ordre où je le dépile. Les points ouverts d'abord, du plus prioritaire au moins prioritaire ; à priorité égale, le plus ancien passe devant.
+  Cette page se lit, elle ne s'édite pas : une seule commande écrit les points, et elle reconstruit la page en sortant.</p>
+  <p class="compte">16 ouvert(s) · 19 fermé(s) · php scripts/backlog.php next</p>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">page-des-sprites----</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>Page des sprites : boutons de texte morts, variant principal non mis en avant, style Python non restauré</h2>
+    <div class="point-corps"><p><strong>FAIT — les deux boutons de texte sont réparés, et ils n&#039;étaient pas morts.</strong> « La consigne envoyée » et « Le rapport de génération » ouvraient bien leur panneau : une sonde qui clique pour de vrai l&#039;a montré ouvert, avec ses 9 520 caractères. <strong>Il s&#039;ouvrait DERRIÈRE le panneau du sujet</strong> — tous les panneaux partageaient le même plan, et celui du texte est écrit avant les panneaux de sujet dans la page, donc il passait dessous. Rien ne se voyait. Chaque panneau empilé monte maintenant d&#039;un cran au-dessus du précédent, et redescend en se fermant.</p>
+<p><strong>LA LEÇON, ET ELLE A COÛTÉ TROIS DEMANDES DE L&#039;OPÉRATEUR</strong> : j&#039;ai lu le code trois fois sans rien trouver, parce qu&#039;il n&#039;y avait rien à y trouver — le balisage était juste, le gestionnaire était juste, la console était muette. Un clic simulé a tranché en une commande. <strong>Un bouton qui ne réagit pas se clique, il ne se relit pas.</strong> L&#039;outil est là : <code>php local/scripts/cliquer-bouton.php &lt;page&gt; &lt;sélecteur&gt;</code>.</p>
+<p><strong>FAIT — les versions antérieures passent sous la consigne et le rapport de la version courante.</strong> Intercalées entre les mesures et eux, elles séparaient une version de ses propres pièces justificatives.</p>
+<p><strong>RESTE — les versions antérieures n&#039;ont pas encore l&#039;affichage de la version courante.</strong> Demande de l&#039;opérateur : même présentation, aucune spécificité — donc pour chacune, son image avec sa grille d&#039;emprise, son nom de fichier, sa date et ses mesures, comme la courante. Aujourd&#039;hui elles ne montrent qu&#039;une vignette à demi-taille et leur nom de fichier. <strong>Ce que ça demande</strong> : sortir le rendu d&#039;une représentation dans une fonction unique, appelée pour la courante comme pour chaque antérieure — c&#039;est le même bloc, il n&#039;a pas à exister deux fois.</p>
+<p><strong>RESTE — le variant principal n&#039;est plus mis en avant.</strong> Le constructeur Python distinguait la vue principale ; le référentiel porte l&#039;information, chaque sujet ayant un variant marqué principal.</p>
+<p><strong>RESTE — le style de la page n&#039;est toujours pas celui du Python</strong>, et l&#039;opérateur l&#039;a redit trois fois. La palette a été restaurée dans un thème dédié, la barre fixe du bas est revenue, l&#039;échelle des boutons aussi. <strong>Ce qui n&#039;a pas été repris</strong> : l&#039;échelle typographique de la grille des sujets, l&#039;allure des sections et des cards. La méthode reste celle qu&#039;il a donnée : restaurer depuis le constructeur d&#039;origine, qui vit dans l&#039;historique du dépôt, sans casser ce qui a été ajouté depuis — grille d&#039;emprise, libellés français, empilement des panneaux, champ replié, version et date.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">un-panneau-plein----</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
+    <h2>Un panneau plein ecran rouvert par le rechargement ne se ferme plus</h2>
+    <div class="point-corps"><p><strong>FAIT — sortir d&#039;une comparaison sans sortir du sujet, et ne pas la retrouver en rouvrant.</strong> Fermer le panneau d&#039;un sujet décoche tout et quitte la comparaison : rouvrir la fiche la montre entière, pas dans l&#039;état laissé trois sujets plus tôt. Une sélection oubliée faisait croire à un sujet qui n&#039;a plus que deux variants.</p>
+<p><strong>RESTE — le bouton pour quitter la comparaison depuis l&#039;intérieur.</strong> L&#039;opérateur veut, pendant qu&#039;une comparaison est en cours, <strong>un bouton visible pour en sortir sans fermer le sujet</strong>. La fonction qui le fait existe déjà et est appelée à la fermeture ; il manque le bouton lui-même, à afficher seulement pendant la comparaison, en tête de la liste des variants.</p>
+<p><strong>RESTE — le panneau rouvert par le rechargement automatique ne se ferme plus.</strong> Quand un panneau est ouvert et que la page se reconstruit, il réapparaît mais le bouton de fermeture ne fait rien : la pile qui tient les panneaux ouverts est en mémoire et repart vide au chargement, alors que le panneau, lui, est visible. <strong>Deux corrections, la seconde étant la bonne</strong> : que la fermeture masque le panneau réellement visible au lieu de dépendre de la pile ; et que l&#039;état ouvert survive au rechargement par l&#039;adresse — une ancre portant le code du sujet, lue à l&#039;ouverture, rouvrirait le panneau et remplirait la pile du même geste.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">centre-de-soin-cds--</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
+    <h2>Centre de soin CDS : propositions a refaire, et une version abimee a ecarter</h2>
+    <div class="point-corps"><p><strong>LA CAUSE DU POINT DE FUITE EST TROUVÉE, ET ELLE ÉTAIT DANS LA CONSIGNE.</strong> La clause de référence ordonnait de reprendre l&#039;image « à l&#039;identique » et d&#039;en extraire la pièce — or l&#039;image de référence converge. Elle demandait donc de recopier le défaut, et elle pesait plus lourd que le socle, qui interdit pourtant la perspective. <strong>Corrigé</strong> : la clause dit maintenant que la référence fait foi pour la matière, la couleur et la lumière, <strong>jamais pour la projection</strong>, et qu&#039;on redresse ce qu&#039;on y voit en axonométrie orthographique. La clause des planches le disait déjà ; c&#039;était un manque en creux sur l&#039;autre.</p>
+<p><strong>Le trouver a demandé de LIRE la consigne réellement envoyée</strong>, sur ordre de l&#039;opérateur : « tu dois inspecter la consigne générée et pas supposer ». Cinq générations avaient été consommées sur des hypothèses de rédaction.</p>
+<p><strong>Ce qui a été mis au socle, donc pour tous les sujets</strong> : l&#039;axonométrie orthographique nommée explicitement, l&#039;interdiction du point de fuite et de la convergence, et l&#039;absence de rotation autour de la verticale.</p>
+<p><strong>Ce qui a été mis sur la fiche du bâtiment, parce que c&#039;est propre à lui</strong> : ses ailes descendent en mur plein jusqu&#039;au sol sur toute la largeur de l&#039;emprise, et sa largeur au sol est la même en bas qu&#039;en haut. La clause de face qui y avait été écrite a été <strong>retirée</strong> : elle doublonnait le socle.</p>
+<p><strong>Mesuré</strong> : l&#039;irrégularité des côtés de la silhouette est passée de 53 pixels à 7,3 sur la vue principale. Ce n&#039;est pas une preuve de projection parfaite — l&#039;outil ne sait lire que le contour extérieur — mais c&#039;est l&#039;écart entre un contour qui s&#039;évase et un contour qui tombe droit.</p>
+<p><strong>RESTE — UN VERDICT QUI APPARTIENT À L&#039;OPÉRATEUR, ET IL BLOQUE LA SUITE.</strong> En faisant choisir la référence par la commande, j&#039;ai d&#039;abord fait prendre la <strong>vue principale</strong> comme référence de la proposition 2 : ses couleurs propres — celles de la scène de référence du monde — ont donc été remplacées par celles de la vue principale. <strong>C&#039;est une régression que j&#039;ai introduite.</strong> La commande prend désormais la version précédente du variant lui-même, mais <strong>la version courante de la proposition 2 est justement celle que j&#039;ai abîmée</strong> : la relancer propagerait la mauvaise palette.</p>
+<p><strong>Ce qu&#039;il faut faire, et l&#039;ordre compte</strong> : écarter la version abîmée de la proposition 2 pour que la précédente redevienne courante, PUIS relancer. Écarter est un verdict, donc c&#039;est l&#039;opérateur qui le donne — l&#039;agent ne se juge pas lui-même quitte de sa faute.</p>
+<p><strong>RESTE — les propositions 2 et 3 n&#039;ont pas encore été refaites</strong> sous la clause de référence corrigée. Seule la vue principale l&#039;a été.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="in-progress">
+    <p class="point-tete"><span class="point-ref">un-theme-regroupe---</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
+    <h2>Un thème regroupe tous les sprites, et il se change dans le code</h2>
+    <div class="point-corps"><p>Un <strong>thème regroupe tous les sprites du jeu</strong> sous un nom : un ensemble complet et cohérent, couvrant chaque sujet et chaque variant. En changer change les images que montent les maquettes, celles qu&#039;affichent les pages de revue et celles que le jeu chargerait — rien d&#039;autre. Ce n&#039;est ni un filtre, ni un axe de variante, ni une chaîne de repli : un thème répond pour tout le jeu, ou il n&#039;est pas le thème courant.</p>
+<p><strong>Le thème courant se choisit DANS LE CODE, à un seul endroit</strong>, exactement comme la taille des cases. Aucune variable d&#039;environnement, aucun argument de commande, aucune valeur dans un plan. Voir un nom de thème écrit ailleurs est un défaut.</p>
+<p><strong>Par défaut c&#039;est <code>gb-gen</code></strong>, qui nomme tout ce que le générateur a dessiné jusqu&#039;ici. <strong>Il ne porte pas son nom dans les chemins</strong>, délibérément : ses images sont antérieures à la notion, et lui en donner un obligerait à déplacer chaque fichier déjà produit et à réinscrire chaque chemin au référentiel, pour ne rien gagner. Un second thème, lui, aura son sous-dossier.</p>
+<p>## Où en est le travail</p>
+<p><strong>FAIT — le service qui détient la valeur</strong>, avec la description de chaque thème et le calcul de son sous-dossier, le fragment étant vide pour le thème d&#039;origine.</p>
+<p><strong>FAIT — la notion est écrite à la conception</strong>, au niveau des assets, avec ce qu&#039;elle exclut : ni filtre, ni axe de variante, ni repli d&#039;un thème sur un autre — un thème incomplet qui se rabattrait sur un autre pour ses trous rendrait toute image imprévisible.</p>
+<p><strong>FAIT — le premier branchement</strong> : la commande qui produit une sprite décide où l&#039;image se pose en passant par le service. Éprouvé à vide, le chemin est inchangé sous <code>gb-gen</code>.</p>
+<p><strong>RESTE — les autres endroits où un chemin d&#039;image se résout</strong> : l&#039;export vers les livrables, le référentiel des sujets, le monteur de maquette, les pages de revue. <strong>Aucun de ces branchements ne déplace un fichier tant que <code>gb-gen</code> est le thème courant</strong>, ce qui rend la bascule vérifiable de bout en bout : les pages construites doivent sortir identiques avant et après, et les 67 consignes aussi.</p>
+<p><strong>RESTE — la question qu&#039;un second thème posera</strong>, et qu&#039;il vaut mieux voir venir : que fait-on d&#039;un thème auquel il manque des sujets ? La conception répond déjà « il n&#039;est pas le thème courant », mais rien ne le contrôle. Un contrôleur qui refuse un thème incomplet est le pendant naturel de cette règle.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="in-progress">
+    <p class="point-tete"><span class="point-ref">maison-de-ferme-----</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
+    <h2>Maison de ferme, proposition p3 : trop proche de la vue principale</h2>
+    <div class="point-corps"><p><strong>Relevé de l&#039;opérateur, 2026-08-07</strong> : la proposition <code>p3</code> était « trop similaire à la vue principale. On veut une idée originale, dans le style et sans que ce soit une chaumière. »</p>
+<p><strong>RÉSOLU SUR LE FOND</strong> : la silhouette est maintenant franchement différente — toit en croupe à quatre pans sans le grand pignon triangulaire, galerie ouverte sur poteaux courant le long de la façade sud, banc, paniers et bottes de paille dessous. Ce n&#039;est ni la vue principale, ni une chaumière : la couverture est en tuiles, comme la description l&#039;exige.</p>
+<p><strong>RÉSOLU AUSSI SUR L&#039;USURE</strong> : tuiles manquantes laissant voir la volige, crépi tombé par plaques, fissure courant sous une fenêtre, lierre gagnant un pignon, cheminée ébréchée à son sommet.</p>
+<p><strong>UN DÉFAUT NEUF, ET C&#039;EST UNE RÉGRESSION DE LA DERNIÈRE GÉNÉRATION</strong> : la version <code>v5</code>, produite après l&#039;ajout de la clause d&#039;échelle humaine, sort <strong>vue de trois quarts, le bâtiment tourné en biais</strong> — alors que la <code>v4</code> était de face. La conception l&#039;interdit en toutes lettres : « aucune rotation autour de la verticale, on regarde droit dans l&#039;axe de la grille ; les murs suivent les axes de la carte, un bâtiment fait face à la caméra, jamais en biais ». Un bâtiment en biais ne se pose pas sur une grille droite.</p>
+<p><strong>La cause probable, à vérifier avant de relancer</strong> : la clause d&#039;échelle insiste sur la porte et ses proportions, ce qui pousse le générateur à montrer la façade sous un angle qui la met en valeur. <strong>Le socle de la consigne porte déjà l&#039;interdiction de rotation</strong> — c&#039;est donc la description du sujet qui doit la redire, comme elle redit déjà que le bâtiment fait face à la caméra pour le centre de soin.</p>
+<p><strong>À faire</strong> : ajouter à la description de la maison de ferme la clause de face — celle du centre de soin est déjà écrite et éprouvée, elle se reprend mot pour mot — puis regénérer et comparer aux deux versions précédentes. La <code>v4</code> reste sur le disque et fait référence pour la silhouette et l&#039;usure.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">poser-le-pont-sur-la</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
+    <h2>Compléter la maquette d&#039;après la planche p1 v8, puis poser le pont au croisement</h2>
+    <div class="point-corps"><p><strong>LE POINT A CHANGÉ DE NATURE LE 2026-08-08 : ce n&#039;est plus une pose de pont, c&#039;est un rapprochement de la maquette avec sa planche de référence.</strong> L&#039;opérateur a tranché la question qui bloquait ce<br />
+point — la maquette <strong>n&#039;est pas complète</strong>, et c&#039;est pour ça que le pont n&#039;avait nulle part où aller.</p>
+<p><strong>LA RÉFÉRENCE FAIT FOI : <code>assets/revue-da/planche-p1-campagne-v8.png</code>.</strong> La Maquette Campagne doit s&#039;en rapprocher <strong>avec les éléments dont on dispose déjà</strong> — rien de neuf n&#039;est dessiné pour ça, on<br />
+pose ce qui existe. <strong>Il manque des chemins</strong>, et leur absence explique le constat mesuré qui avait bloqué ce point : aucune case ne porte à la fois un chemin et un cours d&#039;eau, donc rien à ponter.</p>
+<p><strong>Le croisement n&#039;est donc pas à créer, il est à retrouver.</strong> Une fois les chemins manquants posés d&#039;après la planche, le chemin croisera le cours d&#039;eau là où la planche le montre, et le pont en<br />
+pierre <code>CH-021</code> aura sa case sans que personne ait à déplacer un tracé. Le pont existe déjà dans ses deux formes.</p>
+<p><strong>Ce qu&#039;il reste à faire, dans l&#039;ordre :</strong></p>
+<p>1. <strong>Relever les chemins de la planche, case par case</strong>, et les comparer à ce que la maquette déclare aujourd&#039;hui. Le relevé se lit avant de poser quoi que ce soit : un chemin posé à l&#039;estime est un<br />
+   chemin à refaire.<br />
+2. <strong>Poser les chemins manquants</strong> avec les pièces existantes. Ce qui n&#039;a pas sa pièce disponible se note et rejoint le dessin qui reste à faire — le reste ne s&#039;arrête pas pour autant.<br />
+3. <strong>Poser le pont</strong> à la case où le chemin traverse alors le cours d&#039;eau.</p>
+<p><strong>L&#039;outil est prêt</strong> : <code>local/scripts/poser-pont.php</code> lit le plan et rapporte les croisements. Il ne modifie rien tant qu&#039;on ne le lui demande pas, délibérément — un script qui réécrit des cases qu&#039;il<br />
+a choisies lui-même est exactement ce qui a fait déplacer une rivière pour épargner un chêne.</p>
+<p><strong>Ce point n&#039;attend plus personne.</strong> Il était bloqué sur une décision de composition qui n&#039;en était pas une.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="in-progress">
+    <p class="point-tete"><span class="point-ref">la-maquette-doit----</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
+    <h2>La maquette doit porter un humain et une créature</h2>
+    <div class="point-corps"><p><strong>Demande de l&#039;opérateur, 2026-08-07</strong> : « Un personnage humain doit être présent sur la maquette, une créature aussi. Utilise ceux de référence. »</p>
+<p><strong>Vérifié au référentiel, et c&#039;est là que ça bloque : ni l&#039;un ni l&#039;autre n&#039;est un sujet produit.</strong></p>
+<ul>
+<li><strong>La créature de référence <code>SP-001</code> est à l&#039;inventaire</strong> mais <strong>sa fiche est incomplète</strong> : elle n&#039;a pas d&#039;emprise chiffrée, ce que le contrôleur signale depuis un moment. Une image existe pourtant — c&#039;est elle qui sert de favicon aux pages de revue, sa face en ayant été extraite. Elle n&#039;est donc pas déclarée comme un sujet du référentiel, seulement comme une sonde.</li>
+<li><strong>Côté humain, il n&#039;y a aucun sujet produit.</strong> L&#039;inventaire réunit les humains sous <code>HU-nnn</code>, et le seul code qui traîne est un brouillon de personnage-joueur écrit dans l&#039;outillage, absent de l&#039;inventaire — le contrôleur le signale lui aussi comme hors référentiel. Rappel de l&#039;opérateur du 2026-08-04 : <strong>il n&#039;y a pas de sujet « personnage-joueur »</strong>, il n&#039;y a que des humains.</li>
+</ul>
+<p><strong>Ce qu&#039;il faut donc faire avant de poser quoi que ce soit sur la maquette :</strong></p>
+<p>1. <strong>Compléter la fiche de la créature de référence</strong> — son emprise chiffrée et sa hauteur —, la déclarer au référentiel comme un sujet à part entière, et lui produire sa sprite si celle qui existe n&#039;est pas exportable telle quelle.<br />
+2. <strong>Choisir l&#039;humain de référence à l&#039;inventaire</strong> et le déclarer de même. C&#039;est un choix de sujet, donc il appartient à l&#039;opérateur : créer un sujet est sa décision, jamais celle de l&#039;agent.<br />
+3. Poser les deux cases sur le plan de la maquette.</p>
+<p><strong>Statut : bloqué sur le choix de l&#039;humain.</strong> Le reste — compléter la fiche de la créature — peut se faire sans lui, mais poser une créature seule ne répond qu&#039;à la moitié de la demande.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">autoriser-scikit-ima</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
+    <h2>Contrôle d&#039;axonométrie : lire les arêtes intérieures, sur les bâtiments seulement</h2>
+    <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08 : « au moins sur les bâtiments ? améliorer l&#039;outil est possible ? (y accorder un temps max) ».</strong> Les deux réponses sont oui, et la seconde annule la demande<br />
+d&#039;outil extérieur.</p>
+<p><strong>OUI SUR LES BÂTIMENTS, ET C&#039;EST MÊME LE SEUL CAS FAVORABLE.</strong> Ce qui fait échouer le contrôle aujourd&#039;hui, c&#039;est que le contour extérieur d&#039;une sprite n&#039;est pas une arête : un feuillage dentelle<br />
+tout le bord, des fleurs dépassent, un toit déborde. <strong>Un bâtiment n&#039;a pas ce défaut là où ça compte</strong> : l&#039;angle d&#039;un mur, un montant de porte, l&#039;arête d&#039;un pignon sont des segments droits, longs et<br />
+francs, et ce sont exactement eux qui portent la projection. Un arbre n&#039;en a aucun et n&#039;en aura jamais — le contrôle ne doit donc pas prétendre le juger. <strong>Restreindre le contrôle aux bâtiments n&#039;est<br />
+pas un repli, c&#039;est la portée juste.</strong></p>
+<p><strong>OUI, L&#039;OUTIL S&#039;AMÉLIORE SANS RIEN INSTALLER — ET ÇA REND LA QUESTION DE <code>scikit-image</code> SANS OBJET.</strong> Vérifié le 2026-08-08 : <code>scipy</code> est déjà présent sur la machine, en version 1.11.4, à côté de<br />
+<code>numpy</code> et de la bibliothèque d&#039;images que l&#039;outillage utilise déjà. Le calcul des gradients y est, et l&#039;accumulation qui trouve les droites tient en quelques lignes de <code>numpy</code> — c&#039;est de<br />
+l&#039;arithmétique sur un tableau, pas un algorithme à emprunter. <strong>La bibliothèque demandée n&#039;apportait qu&#039;une commodité, pas une capacité</strong>, et la règle du dépôt est claire : un outil s&#039;introduit quand<br />
+il apporte ce qui n&#039;existe pas.</p>
+<p><strong>CE QUE JE FAIS, ET LE TEMPS QUE J&#039;Y ACCORDE.</strong> Une passe, et une seule :</p>
+<p>1. <strong>Lire les segments droits à l&#039;intérieur de l&#039;image</strong> au lieu de suivre la silhouette : gradients, puis accumulation des directions dominantes, sur la seule zone opaque de la sprite.<br />
+2. <strong>Ne garder que les segments longs et proches de la verticale</strong> — ce sont eux qui doivent rester parallèles en projection parallèle.<br />
+3. <strong>Rendre le même verdict qu&#039;aujourd&#039;hui</strong> : parallèles, donc juste ; convergents, donc point de fuite, donc faux ; trop peu de segments, donc aucun verdict — et ce dernier cas reste honnête, il ne<br />
+   se force jamais.</p>
+<p><strong>LA LIMITE, ÉCRITE D&#039;AVANCE POUR QU&#039;ELLE M&#039;ENGAGE</strong> : le contrôle est éprouvé sur les trois bâtiments déjà produits — maison de ferme, centre de soin, pont. <strong>Si deux des trois ne concluent pas,<br />
+j&#039;arrête et le point se classe</strong> : le contrôle d&#039;axonométrie reste à l&#039;œil, et on n&#039;y revient pas. Pas de deuxième méthode, pas de réglage à l&#039;aveugle, pas d&#039;outil demandé en rattrapage.</p>
+<p><strong>Ce qui change dans le contrôle lui-même</strong> : il ne s&#039;appliquera qu&#039;aux sujets bâtis, et il le dira au lieu de rendre un verdict mou sur un arbre.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">donner-l-ordre-de-ti</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 5</span><span class="point-attend">attend : agent</span><span class="point-rang">9</span></p>
+    <h2>Vingt et une formes de tracé manquent : tirer d&#039;abord celles que la planche p1 v8 emploie</h2>
+    <div class="point-corps"><p><strong>QUESTION DE L&#039;OPÉRATEUR, 2026-08-08 : « c&#039;est dans tes sujets ? » — OUI, TOUT EST DÉJÀ DÉCLARÉ, ET LE COMPTE DE CE POINT ÉTAIT FAUX.</strong></p>
+<p><strong>Ce que le référentiel déclare, relevé le 2026-08-08</strong> : le chemin et le cours d&#039;eau portent chacun <strong>quinze formes</strong> — les quatre extrémités, les deux lignes, les quatre angles, les quatre<br />
+embranchements à trois branches, le carrefour. Rien n&#039;est à inventer, rien n&#039;est à déclarer : les trente formes existent sur le papier, avec leur libellé et leur emprise.</p>
+<p><strong>CE QUI MANQUE N&#039;EST PAS SEPT PIÈCES, C&#039;EN EST VINGT ET UNE.</strong> Le chiffre de sept que ce point portait ne correspondait à rien de vérifiable ; le relevé, lui, se refait d&#039;une commande :</p>
+<ul>
+<li><strong>Chemin <code>CH-019</code> — dessinées : extrémité nord, extrémité sud, ligne nord-sud, ligne est-ouest, carrefour.</strong> Manquent les <strong>dix</strong> autres : extrémités est et ouest, les quatre angles, les quatre<br />
+  embranchements à trois branches.</li>
+<li><strong>Cours d&#039;eau <code>CH-020</code> — dessinées : extrémité nord, extrémité sud, ligne nord-sud, ligne est-ouest.</strong> Manquent les <strong>onze</strong> autres : extrémités est et ouest, les quatre angles, les quatre<br />
+  embranchements, le carrefour.</li>
+<li><strong>Pont <code>CH-021</code> — ses deux formes existent</strong>, et il n&#039;en manque aucune.</li>
+</ul>
+<p><strong>CE QUI CHANGE L&#039;ORDRE DE TIR, ET C&#039;EST LA RAISON DE NE PAS TOUT LANCER</strong> : vingt et une générations, ce n&#039;est plus un lot, c&#039;est une journée. Or la maquette n&#039;a pas besoin des vingt et une —<br />
+<strong>elle n&#039;a besoin que des formes que la planche <code>assets/revue-da/planche-p1-campagne-v8.png</code> emploie réellement</strong>, et c&#039;est précisément ce que le relevé du point « Compléter la maquette d&#039;après la<br />
+planche p1 v8 » va établir, case par case.</p>
+<p><strong>L&#039;ORDRE DE TIR SE DÉCIDE DONC APRÈS CE RELEVÉ, PAS AVANT.</strong> Tirer d&#039;abord ce que la planche demande, c&#039;est rendre la maquette complète au plus vite et n&#039;engager que des générations qui servent tout<br />
+de suite ; tirer les vingt et une, c&#039;est payer d&#039;avance des formes dont aucune scène ne se sert encore. Le reste se complètera au fil des maquettes qui en auront l&#039;usage.</p>
+<p><strong>Ce point attend donc l&#039;agent, plus l&#039;opérateur</strong> : il reprend dès que le relevé de la planche dit quelles formes manquent réellement à la maquette, et c&#039;est ce lot-là qui sera soumis.</p>
+<p><strong>Le relevé se refait d&#039;une commande</strong> : <code>php local/scripts/lister-formes-tracees.php</code> — il lit le référentiel et dit, pour chaque forme déclarée, si son image existe.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="blocked">
+    <p class="point-tete"><span class="point-ref">le-bouton-de-copie--</span><span class="point-statut">Bloqué — attend quelque chose d&#039;extérieur</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">10</span></p>
+    <h2>Le bouton de copie du relevé doit exister sur toutes les pages qui en portent un</h2>
+    <div class="point-corps"><p><strong>Constat localisé le 2026-08-07, et il est pire que « recopié » : il l&#039;est deux fois.</strong> Le bouton de copie du relevé et toute sa mécanique existent <strong>en trois exemplaires</strong> — une fois dans le module partagé, qui sert la page des sprites, et <strong>deux fois à l&#039;identique dans les deux sources de la page Campagne</strong> : le plan et la maquette montée en portent chacun leur copie.</p>
+<p><strong>Ce que ça produit aujourd&#039;hui</strong> : la page des sprites a la barre fixe pleine largeur avec son compte, restaurée le 2026-08-07 ; la page Campagne, elle, n&#039;a que son bouton dans le corps de la page, sans barre fixe et sans compte. <strong>L&#039;opérateur doit donc redescendre chercher le bouton</strong> sur la page qu&#039;il relit tous les jours, alors qu&#039;il ne le fait plus sur l&#039;autre.</p>
+<p><strong>Ce qu&#039;il faut faire</strong> : faire porter le relevé de la page Campagne par le module partagé, comme la page des sprites, et supprimer les deux copies. Le module sait déjà tout faire — la barre fixe, le compte, le repli du texte, la copie qui passe par un champ caché parce que l&#039;appel direct est refusé dans certains cadres.</p>
+<p><strong>LE POINT DÉLICAT, ET C&#039;EST POURQUOI CE N&#039;EST PAS UN SIMPLE COPIER-COLLER</strong> : la page Campagne <strong>fond deux vues en une</strong> et renomme les classes de la seconde pour que leurs outils cessent de se marcher dessus. Un module partagé inséré deux fois y verrait ses propres classes renommées d&#039;un côté et pas de l&#039;autre. C&#039;est exactement le mécanisme qui avait rendu la maquette invisible pendant sept contrôles le 2026-08-07 : l&#039;élément prenait le nouveau nom et sa règle gardait l&#039;ancien.</p>
+<p><strong>Donc l&#039;ordre est imposé</strong> : ce point ne se fait qu&#039;<strong>après</strong> la convergence des deux outils de revue de la page Campagne, qui supprime le renommage en supprimant la duplication des vues. Le faire avant reviendrait à insérer un troisième exemplaire dans un mécanisme qu&#039;on s&#039;apprête à démonter.</p>
+<p><strong>Statut : bloqué par la convergence</strong>, pas par une décision de l&#039;opérateur — celle-ci est donnée depuis le 2026-08-07.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="blocked">
+    <p class="point-tete"><span class="point-ref">la-comparaison-de---</span><span class="point-statut">Bloqué — attend quelque chose d&#039;extérieur</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">11</span></p>
+    <h2>La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</h2>
+    <div class="point-corps"><p><strong>La comparaison de variants sélectionnés, à 48 pixels par case, dans la fiche du sujet.</strong></p>
+<p><strong>Le préalable est levé</strong> : la sélection multiple fonctionne depuis le 2026-08-07 — la comparaison n&#039;engage plus dès le premier variant coché, donc on peut enfin en retenir plusieurs. Avant, cocher le premier masquait tous les autres et la case du second n&#039;était plus là pour être cochée.</p>
+<p><strong>Ce qui existe déjà</strong> : cocher deux variants ou plus ne garde qu&#039;eux à l&#039;écran, côte à côte, dans une grille plus large. Les versions antérieures s&#039;agrandissent sur place d&#039;un clic.</p>
+<p><strong>CE QUI RESTE, ET POURQUOI C&#039;EST BLOQUÉ</strong> : la demande porte sur une comparaison <strong>à 48 pixels par case</strong>, c&#039;est-à-dire à l&#039;échelle où l&#039;on juge — la même que la maquette au zoom moyen. Aujourd&#039;hui les vignettes de la fiche sont déjà tirées à cette échelle, mais elles sont <strong>fondues dans la page</strong> au moment de la construction : leur taille est décidée une fois pour toutes, elle ne se règle pas à l&#039;affichage.</p>
+<p><strong>Le rendre réglable touche à la fabrique de vignettes, partagée avec la page Campagne</strong> — la même que la convergence des deux outils de revue va remanier. Engager les deux en même temps sur un module partagé, c&#039;est se garantir de ne plus savoir laquelle des deux modifications a cassé quoi.</p>
+<p><strong>Statut : bloqué par la convergence</strong>, comme le bouton de copie du relevé, et pour la même raison — pas par une décision de l&#039;opérateur, qui est donnée.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="in-progress">
+    <p class="point-tete"><span class="point-ref">faire-converger-l-q1</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span><span class="point-rang">12</span></p>
+    <h2>Faire converger les deux outils de revue de la page Campagne</h2>
+    <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08 : OUI, ON FAIT CONVERGER.</strong> Écrite ici plutôt que laissée dans la conversation, à sa demande expresse — une réponse qui ne vit que dans le fil se redemande à la<br />
+séance suivante. L&#039;accord porte sur le principe et sur la solution décrite plus bas ; il ne dispense pas de regarder la page à chaque étape.</p>
+<p><strong>Ce qui existe aujourd&#039;hui.</strong> La page Campagne porte <strong>deux fois le même outil de remarques</strong>, une fois pour le plan de composition et une fois pour la maquette montée. Les deux font la même chose :<br />
+survol qui annonce la case sous le curseur, clic qui ouvre la saisie, liste des remarques posées, marque sur la case commentée, bouton de retrait, copie du récapitulatif, effacement, échappement qui<br />
+referme. Le stockage est déjà commun depuis le 2026-08-07 : les deux rangent leurs remarques au même endroit, par leur section. <strong>Restent l&#039;affichage et la saisie, écrits deux fois.</strong></p>
+<p><strong>Ce qui diffère réellement entre les deux copies, et rien d&#039;autre :</strong></p>
+<ul>
+<li><strong>Le support.</strong> Le plan est un dessin vectoriel, ses marques se posent dans le repère du dessin ; la maquette est une scène en éléments, ses marques se posent par-dessus, et elle seule se déplace à<br />
+  la souris.</li>
+<li><strong>Le classement des remarques traitées.</strong> Le plan sait ranger une remarque dont je me suis occupé — marque pâle, sortie du récapitulatif, réouverture possible par l&#039;opérateur. <strong>La maquette ne sait<br />
+  pas le faire</strong>, alors que le besoin y est le même.</li>
+<li><strong>Les libellés</strong> : le titre du récapitulatif et les paliers de grossissement diffèrent, sans raison décidée.</li>
+</ul>
+<p><strong>LA SOLUTION PROPOSÉE : UN SEUL OUTIL, DEUX ADAPTATEURS.</strong> L&#039;outil tient tout ce qui ne dépend pas du support — l&#039;état des remarques, la saisie, la liste, le classement des traitées, la copie,<br />
+l&#039;effacement, les raccourcis, le dialogue avec le stockage. Chaque support fournit un adaptateur qui répond à trois questions, et à trois seulement : quelle case est sous ce point de l&#039;écran, comment<br />
+on marque une case, sous quel nom cette section range ses remarques. Le déplacement à la souris et le grossissement restent propres à chaque support : ils ne sont pas de l&#039;outil de remarques.</p>
+<p><strong>Ce que la convergence apporte au passage</strong> : la maquette hérite du classement des remarques traitées et de la réouverture, qu&#039;elle n&#039;a jamais eus. Le plan ne perd rien. Aucun autre changement de<br />
+comportement n&#039;est engagé — migrer c&#039;est déplacer, on ne refait ni le balisage, ni le style, ni le comportement.</p>
+<p><strong>COMMENT ON S&#039;Y PREND SANS ABÎMER LA PAGE QUE L&#039;OPÉRATEUR RELIT TOUS LES JOURS.</strong> C&#039;est un remaniement à risque, donc il se fait en quatre pas, chacun vérifié avant le suivant :</p>
+<p>1. <strong>Figer les comportements avant de toucher quoi que ce soit.</strong> Le contrôle des pages de revue ne garde aujourd&#039;hui que la page des sprites ; il est étendu à la page Campagne, sur les deux outils,<br />
+   avec les comportements listés plus haut. Sans ce filet, la convergence se contrôle à l&#039;œil et deux comportements repartent — c&#039;est déjà arrivé deux fois sur la page des sprites.<br />
+2. <strong>Sortir l&#039;outil commun sans brancher personne</strong>, à l&#039;identique de la copie du plan, la plus complète des deux.<br />
+3. <strong>Brancher le plan, contrôler, regarder la page. Puis brancher la maquette, contrôler, regarder la page.</strong> Jamais les deux dans le même pas : si quelque chose casse, on doit savoir lequel.<br />
+4. <strong>Supprimer la seconde copie</strong> une fois les deux branchés et contrôlés.</p>
+<p><strong>Ce qui reste hors de la portée</strong> : le style, la mise en page, les paliers de grossissement et le déplacement à la souris. Le seul écart de comportement assumé est le classement des remarques<br />
+traitées offert à la maquette, et il est décrit ci-dessus pour qu&#039;il ne surprenne personne.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">les-commentaires----</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">13</span></p>
+    <h2>Les commentaires français du code antérieur</h2>
+    <div class="point-corps"><p><strong>La règle est écrite et je l&#039;ai enfreinte toute la soirée</strong> : le code du projet est en anglais, commentaires compris. J&#039;ai ouvert cette dette ce matin en la constatant sur deux constructeurs anciens — puis j&#039;ai passé la journée à en écrire de nouveaux en français, dans les fichiers que je touchais.</p>
+<p><strong>Ce qui reste à reprendre, et c&#039;est plus large que ce matin :</strong></p>
+<ul>
+<li>Le constructeur de la page des sprites et celui des plans, qui portaient déjà des commentaires français avant aujourd&#039;hui.</li>
+<li><strong>Tout ce que j&#039;ai écrit le 2026-08-07</strong> : le service des tâches, la commande du backlog, le constructeur de la page des tâches, les deux hooks, et une bonne part des blocs ajoutés au constructeur des sprites.</li>
+</ul>
+<p><strong>LA FAÇON DE FAIRE EST DÉJÀ ÉPROUVÉE, elle ne se réinvente pas</strong> : le commentaire passe en anglais, et <strong>la parole de l&#039;opérateur reste citée en français entre guillemets</strong>, avec sa date. Le code parle anglais, la source garde sa langue. C&#039;est ce qui a été fait sur le monteur et le fondeur, et sur la fonction qui affiche la version.</p>
+<p><strong>Pourquoi ça se corrige au fil de l&#039;eau et pas en une passe</strong> : ces fichiers sont touchés tous les jours en ce moment, et une passe de traduction entrerait en collision avec le travail en cours. Chaque fichier rouvert se traduit en le rouvrant.</p>
+<p><strong>Ce que ça dit de plus important, et qui vaut au-delà de ce point</strong> : j&#039;ai ouvert une dette le matin et je l&#039;ai alimentée toute la journée sans m&#039;en apercevoir. Constater un écart ne suffit pas à cesser de le commettre — c&#039;est exactement le raisonnement qui a fait poser un contrôle mécanique sur la largeur du texte et sur les comportements de la page.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">le-suivi-enfreint---</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
+    <h2>Le suivi enfreint lui-même le standard de largeur</h2>
+    <div class="point-corps"><p><strong>Le contrôle relève 108 écarts dans le document de suivi au 2026-08-07</strong> : des lignes de 200 à 1 080 caractères, et cinq paragraphes repliés trop court. <strong>Aucun n&#039;est de ce jour</strong> — tout ce qui a été écrit aujourd&#039;hui passe le contrôle.</p>
+<p><strong>Ce qui a changé la nature du point</strong> : les points ouverts ont quitté ce document le 2026-08-07 pour un fichier de données et une page. Une grande partie de ce que le document porte encore est donc <strong>de l&#039;histoire figée</strong> — l&#039;ancien tableau des points, des sections de séances passées, des analyses closes. Replier ligne par ligne un texte dont la moitié est destinée à disparaître serait du travail perdu deux fois.</p>
+<p><strong>La bonne façon de le refermer n&#039;est donc pas de replier, c&#039;est d&#039;élaguer</strong> : retirer ce que le backlog porte désormais, garder les constats, les décisions et leurs raisons, et replier ce qui reste. Ça se fait d&#039;un seul geste, quand le document sera relu à froid — pas en corrigeant 108 lignes une par une.</p>
+<p><strong>Statut : bloqué au sens propre</strong>, comme les commentaires français — pas par une décision de l&#039;opérateur, mais parce que la seule façon correcte de le faire dépend d&#039;un élagage qui n&#039;a pas encore eu lieu. La règle du dépôt le dit déjà : correction au fil de l&#039;eau, à mesure qu&#039;une section est retouchée.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">-crire-la-m-thode-co</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">15</span></p>
+    <h2>Écrire à la méthode commune : le commit se fait en fin de séance, jamais à la reprise</h2>
+    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08 : « tu dois commit à la fin d&#039;une session, pas au début, sinon tu ne sais plus ce qui a été fait ».</strong> À écrire à la méthode commune, protocole de<br />
+collaboration, avec son intention.</p>
+<p><strong>L&#039;intention, telle qu&#039;il l&#039;a dite</strong> : à la fin d&#039;une session, l&#039;agent a encore en tête ce qu&#039;il vient de faire, et le message du commit peut le dire fidèlement. Au début de la session suivante, ce<br />
+contexte est perdu : le commit se rédige d&#039;après les fichiers modifiés, ce qui donne une liste et non un récit, et ce qui a été tenté puis abandonné n&#039;y figure plus du tout.</p>
+<p><strong>Ce que ça impose concrètement</strong> : l&#039;agent propose le commit <strong>avant de clore sa séance</strong>, pas à la reprise de la suivante. Un travail qui traverse la nuit sans commit est un travail dont personne ne<br />
+saura dire ce qu&#039;il contenait.</p>
+<p><strong>Ce qui reste à trancher, et c&#039;est le cas présent</strong> : que faire du travail déjà orphelin — celui d&#039;une séance passée, non commité, dont le contexte est justement perdu. Il ne s&#039;efface pas et il ne se<br />
+recommence pas ; il se commite au mieux, en disant que le message a été reconstitué d&#039;après les fichiers.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">deplacer-vers-la--q2</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">16</span></p>
+    <h2>Monter à la méthode commune les règles d&#039;outillage et d&#039;écriture, et elles seules</h2>
+    <div class="point-corps"><p><strong>DÉCISION DE L&#039;OPÉRATEUR, 2026-08-08, ET ELLE TRANCHE LE POINT : SEULE LA FAMILLE « OUTILLAGE ET ÉCRITURE » EST COMMUNE. Tout le reste est propre à ce projet et n&#039;en sort pas.</strong> Cette décision<br />
+annule le « non, pas encore » du 2026-08-07 : la question n&#039;était pas prématurée, elle était mal posée — elle demandait un tout ou rien, alors que le partage se fait famille par famille.</p>
+<p><strong>CE QUI MONTE À LA MÉTHODE COMMUNE — la famille « outillage et écriture », et rien d&#039;autre :</strong></p>
+<ul>
+<li><strong>Tout script s&#039;ouvre par un bloc « Usage » et « Intention », en anglais</strong>, quel que soit son langage. L&#039;usage dit à quoi il sert et comment on l&#039;appelle ; l&#039;intention dit pourquoi il existe et<br />
+  pourquoi il fait ainsi. Un script écrit dans un langage de second choix ajoute à son intention pourquoi ce langage-là, en nommant la bibliothèque ou l&#039;outil qui n&#039;existe que là.</li>
+<li><strong>Un langage par défaut pour l&#039;outillage pérenne</strong>, et aucun remplacement brut de l&#039;existant : ce qui tourne et fait son travail y reste jusqu&#039;à ce qu&#039;une raison propre le fasse bouger.</li>
+<li><strong>Un outil non validé se demande, il ne s&#039;essaie pas.</strong> Chaque outil introduit devient une dépendance que quelqu&#039;un devra installer, comprendre et maintenir sur toutes les machines où le projet<br />
+  tourne. Un agent qui pense en avoir besoin exprime le besoin et attend.</li>
+<li><strong>Les clés des fichiers de données sont en anglais</strong>, au même titre que le code — ce sont les mêmes noms que le code manipule. Valeurs et textes destinés à l&#039;opérateur restent en français.</li>
+<li><strong>Tout rapport destiné à être lu est en Markdown</strong> ; ce qui se relit par machine reste du JSON, et les deux coexistent plutôt que l&#039;un n&#039;imite l&#039;autre.</li>
+<li><strong>Aucune écriture d&#039;historique sans ordre explicite de l&#039;opérateur</strong>, et jamais de mention d&#039;auteur nommant l&#039;agent : l&#039;opérateur est l&#039;unique auteur de ses commits.</li>
+<li><strong>Une seule largeur de ligne, qui remplace et annule tout autre standard de longueur</strong>, quelle qu&#039;en soit la provenance. Le chiffre reste celui que chaque projet fixe ; c&#039;est la règle de<br />
+  substitution qui est commune, pas la valeur.</li>
+</ul>
+<p><strong>CE QUI RESTE À GATEBEAST</strong> : la conduite entre l&#039;opérateur et l&#039;agent, la pile et le suivi, la rigueur de l&#039;agent. Ces trois familles restent écrites dans les règles du dépôt et ne se recopient<br />
+nulle part. Le rangement des répertoires de travail reste ici aussi — il nomme des chemins, il ne vaut que pour ce dépôt.</p>
+<p><strong>CE QU&#039;IL RESTE À FAIRE, ET CE N&#039;EST PLUS UNE QUESTION :</strong> déplacer les sept règles ci-dessus vers <code>~/projects/conceptions/methode/</code>, les retirer des règles du dépôt, et laisser à leur place le<br />
+renvoi qui existe déjà vers la méthode commune. <strong>Migrer c&#039;est déplacer</strong> : pas une reformulation, pas un remaniement, les mêmes phrases à un autre endroit. Ce qui est propre à GateBeast et vit<br />
+aujourd&#039;hui dans une de ces règles — le nom des dossiers, le chiffre de la largeur, la liste des outils validés — reste ici, nommément.</p>
+<p><strong>Attention à l&#039;historique de l&#039;autre dépôt</strong> : la méthode commune est un dépôt distinct, et je n&#039;en gère pas les enregistrements. Le déplacement s&#039;y fait, l&#039;enregistrement s&#039;y demande à part.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+
+  <details class="clos">
+    <summary>Les points fermés</summary>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">la-page-des-sprites-</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>La page des sprites doit reprendre la palette et la typographie du constructeur Python</h2>
+    <div class="point-corps"><p>Le thème <code>origine</code> est écrit d&#039;après le constructeur d&#039;origine, mais <strong>la page ne s&#039;en habille pas encore</strong> : elle porte toujours <code>encre</code>.</p>
+<p>La règle est celle que l&#039;opérateur a donnée : <strong>migrer, c&#039;est déplacer</strong> — on ne refait ni le HTML, ni le style, ni le JS. Ce qui a été changé sans être demandé se restaure depuis l&#039;historique, jamais depuis mon goût.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">l-encart-fixe-du-bas</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>L&#039;encart fixe du bas a disparu : il ne reste qu&#039;un bouton</h2>
+    <div class="point-corps"><p>Le constructeur Python posait une <strong>barre fixe pleine largeur</strong> en bas de page, portant le compte des points relevés et ses boutons. La version PHP n&#039;a gardé qu&#039;un bouton flottant.</p>
+<p>Le bouton est ramené à sa taille d&#039;origine ; <strong>la barre reste à restaurer</strong>.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">les-fsp-s-empilent--</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Les FSP s&#039;empilent, et une version s&#039;agrandit sur place</h2>
+    <div class="point-corps"><p><strong>Fait le 2026-08-07, sur trois remarques de l&#039;opérateur.</strong></p>
+<p><strong>Une FSP s&#039;ouvre par-dessus une autre, elle ne la remplace plus.</strong> Une pile tient les panneaux ouverts : en fermer un fait réapparaître celui du dessous, et on remonte ainsi jusqu&#039;à la page. Avant, ouvrir un texte faisait perdre le sujet qu&#039;on jugeait — il fallait rouvrir la vignette et refaire défiler jusqu&#039;au variant.</p>
+<p><strong>Une version antérieure s&#039;agrandit sur place</strong>, et ne s&#039;ouvre plus en plein écran : un clic la double, un second la rend à sa taille. On compare des versions entre elles, donc on les veut côte à côte ; une popin pleine page montrait une version seule et cachait justement ce à quoi on la compare.</p>
+<p><strong>Ce qui reste sur ce sujet</strong> : la comparaison de variants sélectionnés à 48 pixels par case (<code>S5</code>), qui est la suite naturelle maintenant que la sélection multiple tient.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Vérifié sur la page construite, et le contrôle des sept comportements passe toujours.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">sortir-les-descripti</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Sortir les descriptions du Markdown : un fichier par description, lu en entier</h2>
+    <div class="point-corps"><p><strong>Le défaut n&#039;est pas la largeur des lignes, c&#039;est qu&#039;on PARSE un document.</strong> La description envoyée au générateur est extraite du Markdown de l&#039;inventaire par reconnaissance de forme : on cherche l&#039;italique sur la ligne qui porte le code du sujet. Une entrée repliée fait échouer la génération sans dire pourquoi — deux générations refusées le 2026-08-07 pour cette seule raison.</p>
+<p><strong>Décision de l&#039;opérateur, 2026-08-07</strong> : « soit tu prends tout, soit t&#039;en fais un autre. » <strong>La forme retenue : un fichier par description, lu EN ENTIER.</strong> L&#039;outil ne cherche rien dedans, ne reconnaît aucune marque, ne peut donc rien manquer.</p>
+<p><strong>LE DOUBLON TOMBE SANS DISCUSSION.</strong> L&#039;outillage porte un second jeu de descriptions codé en dur dans <code>scripts/asset_common.py</code>, en anglais, annoncé « cité mot pour mot ». L&#039;opérateur : « le doublon n&#039;a jamais été demandé, c&#039;est une erreur d&#039;un agent. » L&#039;inventaire fait foi ; ce que la copie disait de différent se rapporte comme une dérive, jamais comme une variante à garder.</p>
+<p>## Où en est le travail</p>
+<p><strong>FAIT — les vingt et une descriptions sont extraites</strong> dans <code>assets/descriptions/</code>, une par sujet et une par valeur propre : <code>TR-063.md</code>, <code>OB-010_gate-closed.md</code>, <code>TR-064_dense.md</code>, et ainsi de suite. <strong>Elles ont été extraites par le lecteur actuel lui-même</strong>, jamais retapées : ce qu&#039;elles contiennent est donc exactement ce que le générateur reçoit aujourd&#039;hui, au caractère près, et la bascule ne peut rien changer.</p>
+<p><strong>FAIT — la preuve de non-régression est posée et éprouvée</strong> : <code>bash scripts/diff-prompts.sh</code> réassemble les soixante-sept consignes de tous les variants déclarés et dit ce qui a bougé depuis une référence figée. Elle a tourné sur la référence du jour : aucun changement. Elle ne dessine rien et ne coûte aucune génération.</p>
+<p><strong>RESTE — la bascule de la lecture.</strong> Faire lire <code>scripts/generate-sprite.py</code> dans <code>assets/descriptions/&lt;CODE&gt;.md</code> et <code>&lt;CODE&gt;_&lt;valeur&gt;.md</code> au lieu d&#039;aller chercher l&#039;italique dans l&#039;inventaire ; l&#039;absence de fichier devient une erreur claire. Puis relancer la comparaison : elle doit dire « aucun changement ».</p>
+<p><strong>RESTE — la suppression du doublon</strong>, le dictionnaire <code>ELEMENTS</code> de <code>scripts/asset_common.py</code> et la fonction <code>fiche()</code> qui le sert, en rapportant sujet par sujet ce qu&#039;il disait de différent de l&#039;inventaire.</p>
+<p><strong>RESTE — le repli des fichiers, ET C&#039;EST UNE ÉTAPE À PART.</strong> Les descriptions extraites font une seule ligne de mille à deux mille caractères, héritée du format qu&#039;on quitte. Les replier à deux cents est tout l&#039;intérêt de l&#039;opération, <strong>mais ça ajoute des retours à la ligne dans le texte envoyé au générateur</strong> : la comparaison signalera donc des différences, et c&#039;est normal. Cette étape se fait <strong>seule</strong>, après la bascule, pour qu&#039;on ne confonde jamais un repli voulu avec une régression — se vérifie en comparant les textes espaces normalisés.</p>
+<p><strong>RESTE — l&#039;inventaire lui-même</strong> : il garde le code, le profil, le type, l&#039;emprise, la hauteur, les formes, les décisions et leurs raisons, et il renvoie à la description au lieu de la porter.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Les 21 descriptions vivent dans leurs fichiers et sont lues en entier, le doublon codé en dur est supprimé, les fichiers sont repliés à 200 caractères. Prouvé deux fois : aucun mot n&#039;a bougé sur les 67 consignes.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">poser-chaque--------</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Poser chaque vignette de variant à 24 px par case, avec sa grille d&#039;emprise et de couvert</h2>
+    <div class="point-corps"><p><strong>Constat de l&#039;opérateur, 2026-08-07</strong> : sur le pont, le rectangle orange de l&#039;emprise couvre toute la largeur de la vignette alors que « ce sprite n&#039;est pas aussi large ». Et sa demande de fond : <strong>l&#039;affichage d&#039;un variant doit être complet pour une case de 24 pixels</strong>, l&#039;échelle étant dite en cases ou en pixels.</p>
+<p><strong>LE RECTANGLE N&#039;EST PAS BUGUÉ, IL EST INUTILE — ET C&#039;EST PIRE.</strong> La vignette est fabriquée à la largeur du <strong>couvert</strong>, et pour ce sujet le couvert égale l&#039;emprise : une case. Le rectangle de l&#039;emprise fait donc, correctement, toute la largeur de l&#039;image. Il ne montre rien qu&#039;on ne sache déjà, et il donne l&#039;impression fausse que la sprite occupe toute cette largeur.</p>
+<p><strong>LE VRAI DÉFAUT EST EN AMONT</strong> : la vignette est posée à une largeur qui dépend du sujet, pas à une échelle connue. On ne peut donc ni comparer deux sujets entre eux, ni lire une taille à l&#039;œil, ni juger si une sprite déborde — ce qui est justement ce que l&#039;emprise et le couvert servent à montrer.</p>
+<p><strong>Ce qu&#039;il faut faire</strong> : poser chaque vignette à <strong>24 pixels par case</strong>, échelle fixe et affichée, la case restant une case d&#039;un sujet à l&#039;autre. Un grand chêne occupe alors quatre fois la largeur d&#039;une clôture, ce qui est la vérité du monde. La grille se dessine dessus au même pas, l&#039;emprise au sol en rectangle plein ancré en bas, le couvert en pointillé quand il déborde, et les deux axes.</p>
+<p><strong>Ce que ça implique et qu&#039;il faut regarder</strong> : un bâtiment de seize cases fera 384 pixels de large dans la fiche, un brin d&#039;herbe 24. Les cartes ne peuvent donc plus être toutes de la même largeur — c&#039;est le prix d&#039;une échelle vraie, et c&#039;est ce qui est demandé.</p>
+<p><strong>Une leçon de la soirée à ne pas répéter ici</strong> : la première version de cette grille a disloqué la page entière parce que sa classe portait un nom déjà pris. Toute reprise se regarde à l&#039;écran avant d&#039;être montrée.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Chaque vignette est posée à 48 px par case dans la fiche, échelle fixe et commune. La grille, l&#039;emprise au sol ancrée en bas et le couvert en pointillé se dessinent dans une enveloppe qui épouse l&#039;image.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">le-centre-de-soi-s34</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le centre de soin converge, et la grille d ecrit mal la profondeur</h2>
+    <div class="point-corps"><p><strong>Deux constats de l&#039;opérateur sur le centre de soin (CDS), 2026-08-07, sur la grille d&#039;emprise fraîchement posée.</strong></p>
+<p><strong>PREMIER — LE PARALLÉLISME N&#039;EST PAS TENU.</strong> Les murs et les pans de toit des deux ailes penchent l&#039;un vers l&#039;autre : le bâtiment converge vers un point de fuite au lieu de rester en projection parallèle. La grille le rend visible d&#039;un coup d&#039;œil, ce qui est exactement ce pour quoi elle a été posée — le défaut existait avant, personne ne le voyait.</p>
+<p><strong>Et la clause est DÉJÀ dans la description</strong> : « il fait face à la caméra… ses arêtes verticales restent verticales et parallèles entre elles, les arêtes qui fuient vers le fond restent parallèles entre elles ». Elle est écrite, elle est envoyée, et le générateur ne la suit pas sur ce sujet-là. <strong>Redire la même phrase une fois de plus ne réglera rien</strong> : l&#039;épreuve du 2026-08-06 montre qu&#039;il tient la projection quand on la lui demande, donc ce qui bloque ici est ailleurs — probablement la planche de campagne donnée en référence, qui porte elle-même un point de fuite, et que le socle lui demande d&#039;ignorer. <strong>À éprouver : produire ce bâtiment SANS référence de planche</strong>, sa description étant assez détaillée pour se suffire, et comparer.</p>
+<p><strong>SECOND — DEUX CASES DE VIDE DEVANT LE BÂTIMENT.</strong> Le rectangle d&#039;emprise descend jusqu&#039;au bas de l&#039;image alors que le bâtiment s&#039;arrête au-dessus : il y a du transparent entre son parvis et le bord bas. Deux lectures, et il faut mesurer avant de trancher :</p>
+<ul>
+<li><strong>Le maître porte réellement du vide en bas</strong> — le sujet n&#039;a pas été dessiné jusqu&#039;au bord. C&#039;est un défaut de production, et l&#039;export le mesure déjà : le point de pose et la hauteur de silhouette le diraient.</li>
+<li><strong>Ou la profondeur d&#039;emprise projetée est plus courte que ce que la grille dessine</strong> : dix cases de profondeur vues sous 60 degrés ne couvrent pas dix cases de hauteur à l&#039;écran, et c&#039;est peut-être la grille qui a tort, pas l&#039;image.</li>
+</ul>
+<p><strong>La seconde est la plus probable et c&#039;est un défaut de MA grille</strong> : je dessine la profondeur d&#039;emprise au même pas que la largeur, sans lui appliquer le raccourci de la caméra. Une case de profondeur ne se projette pas comme une case de largeur — le service qui détient l&#039;échelle porte ce facteur et je ne le lui ai pas demandé.</p>
+<p><strong>Fermé le 2026-08-07</strong> — La grille applique le raccourci de profondeur, l&#039;emprise forme une bande au pied du sujet. Et la convergence venait de la planche donnée en référence : le même bâtiment produit avec sa propre sprite tient la projection parallèle. Écrit à la conception.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">la-cloture-est-trop-</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>La clôture est trop basse et doit être refaite à la hauteur déclarée</h2>
+    <div class="point-corps"><p><strong>FAIT — les trois pièces sont refaites à la hauteur déclarée, avec la même référence.</strong> La ligne est-ouest et les deux extrémités ont été regénérées avec l&#039;exemple d&#039;usage de la clôture — pas une planche du monde, qui est l&#039;erreur qui avait produit trois objets différents bout à bout.</p>
+<p><strong>Mesuré sous la caméra à 60 degrés (PA60)</strong> : la ligne sort à <strong>1,3 case</strong> et l&#039;extrémité est à <strong>1,3</strong> également, pour une fourchette de <strong>1,2 à 1,4</strong>. Elles étaient à 1,00 avant, sous un plancher de 1,18. Le défaut que l&#039;opérateur voyait — une barrière écrasée en un trait invisible sur l&#039;herbe — est corrigé, et il est corrigé de la même façon sur les trois pièces, ce qui est le vrai point : elles se raccorderont.</p>
+<p><strong>Ce qui a rendu la reprise possible</strong> : la fiche ne disait rien de la hauteur. Elle dit maintenant que le sommet des poteaux atteint les neuf dixièmes d&#039;une case, que les lisses occupent la moitié haute, et que les poteaux dépassent la lisse haute d&#039;un travers de main. Elle nomme aussi la faute à ne pas refaire.</p>
+<p><strong>MA RÉSERVE, ET ELLE ATTEND LE VERDICT DE L&#039;OPÉRATEUR</strong> : les trois pièces sont maintenant des rondins ronds et pleins, d&#039;un brun blond chaud, là où les pièces d&#039;avant montraient des lisses plus minces et plus grisées. <strong>Elles sont cohérentes entre elles</strong>, ce qui est l&#039;essentiel pour un assemblage — mais l&#039;ensemble a changé d&#039;allure par rapport à ce qui avait été validé le 2026-08-03. C&#039;est un jugement de style, il appartient à l&#039;opérateur.</p>
+<p><strong>Second point à regarder</strong> : l&#039;herbe au pied des poteaux ne se voit pas alors que la consigne du type la demande explicitement, et c&#039;est le seul reproche que l&#039;opérateur ait jamais fait à ce sujet.</p>
+<p><strong>Reste</strong> : l&#039;extrémité ouest, lancée, à mesurer et regarder comme les deux autres.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Les trois pièces sont refaites à 1,3 case pour une fourchette de 1,2 à 1,4, avec la même référence, donc cohérentes entre elles. Reste le verdict de style de l&#039;opérateur.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">un-variant-n-a-pas--</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>Un variant n&#039;a pas de libellé français, ni au référentiel ni à l&#039;affichage</h2>
+    <div class="point-corps"><p><strong>Constat de l&#039;opérateur, 2026-08-07</strong> : sur la fiche d&#039;un sujet, une carte de variant n&#039;affiche que sa référence technique — <code>orientation-south_action-idle_shape-e_frame-01</code> — et <strong>aucun libellé en français</strong> qui dise ce que ce variant est.</p>
+<p><strong>Vérifié au référentiel : le libellé n&#039;existe pas.</strong> Un variant y porte sa référence et ses axes — orientation, action, forme, et ce que son type déclare d&#039;autre — mais aucun champ ne le nomme en clair. Le sujet, lui, a bien son libellé français ; le variant n&#039;en a pas.</p>
+<p><strong>Vérifié à l&#039;inventaire : la matière est là, mais en prose.</strong> L&#039;entrée d&#039;un sujet décrit ce que valent ses formes et ses valeurs — la ligne, les quatre angles, les extrémités, le portillon fermé ou ouvert — dans le texte de sa fiche. Rien ne les nomme un par un sous une forme qu&#039;une page puisse afficher.</p>
+<p><strong>Deux façons de le régler, et elles ne se valent pas :</strong></p>
+<ul>
+<li><strong>Composer le libellé à l&#039;affichage</strong> à partir des axes — « extrémité est », « ligne est-ouest », « portillon fermé ». Ça ne coûte rien mais <strong>la page inventerait le vocabulaire du projet</strong>, ce qui est exactement ce que la conception interdit : un standard se définit, il ne se déduit jamais.</li>
+<li><strong>Déclarer le libellé au référentiel</strong>, à côté de la référence, et le laisser à l&#039;inventaire qui fait foi. Chaque forme et chaque valeur reçoit son nom français une fois, et toute page l&#039;affiche sans rien deviner.</li>
+</ul>
+<p><strong>La seconde est la bonne</strong>, et elle demande une passe sur les formes et les valeurs déclarées — quinze combinaisons de bords, les portillons, les densités, les propositions. À faire avec l&#039;opérateur pour les noms, ou à écrire d&#039;après ce que ses propres phrases emploient déjà : il dit « extrémité », « angle », « ligne », « portillon ».</p>
+<p><strong>Fermé le 2026-08-07</strong> — Chaque valeur d&#039;axe a son nom français au référentiel — extrémité, angle, ligne, portillon, carrefour, les mots de l&#039;inventaire — et chaque variant son libellé composé une fois et stocké. La page l&#039;affiche en tête de carte, la référence technique passant en petit dessous.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">l-humain-de-referenc</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>L&#039;humain de référence : le déclarer à l&#039;inventaire et le produire de face</h2>
+    <div class="point-corps"><p><strong>Demande de l&#039;opérateur, 2026-08-07, avec sa référence visuelle</strong> : « L&#039;humain de référence ressemble à lui mais il n&#039;a jamais été généré de face, il faut qu&#039;il le soit. Il doit avoir une légère crête sur la tête. Ses cheveux sont de type raide, ils tiennent bien seuls. »</p>
+<p><strong>LA CAPTURE, DÉCRITE EN TOUTES LETTRES</strong> — c&#039;est une référence de style, pas une image du projet. Un enfant ou un jeune adolescent vu de dos et de trois quarts, marchant sur un chemin de terre bordé d&#039;herbe. Cheveux <strong>bruns</strong>, épais, coiffés en <strong>mèches raides et dressées</strong> qui tiennent seules, formant une <strong>crête basse</strong> sur le sommet du crâne. Il porte une <strong>tunique bleue sans manches</strong> par-dessus un vêtement clair, une <strong>ceinture sombre</strong>, un pantalon court beige et des chaussures brunes. Silhouette trapue, tête large par rapport au corps — les proportions du style du monde.</p>
+<p><strong>CE QUI MANQUE ET QUI BLOQUE LE RESTE</strong> : il n&#039;existe <strong>aucun humain produit</strong> dans le projet, et aucun n&#039;est déclaré au référentiel. L&#039;inventaire réunit les humains sous <code>HU-nnn</code> ; le seul code qui traîne est un brouillon écrit dans l&#039;outillage, hors référentiel, que le contrôleur signale. Rappel de l&#039;opérateur du 2026-08-04 : il n&#039;y a pas de sujet « personnage-joueur », il n&#039;y a que des humains.</p>
+<p><strong>Ce qu&#039;il faut faire, dans cet ordre :</strong></p>
+<p>1. <strong>Déclarer l&#039;humain de référence à l&#039;inventaire</strong> — son code <code>HU-nnn</code>, son emprise, sa hauteur (un humain debout fait entre 1,75 et 2 cases, c&#039;est l&#039;étalon du monde), et sa description : les cheveux raides tenant seuls en crête basse, la tunique, la ceinture, les proportions du style.<br />
+2. <strong>Le produire DE FACE</strong>, orientation <code>south</code> — c&#039;est la vue principale du projet, et c&#039;est justement celle qui n&#039;a jamais été dessinée.<br />
+3. Puis les autres orientations, quand elles seront demandées.</p>
+<p><strong>Le lien avec la maquette</strong> : cet humain est celui que la maquette doit porter, avec la créature de référence. Tant qu&#039;il n&#039;existe pas, cette demande-là ne peut pas aboutir.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Déclaré à l&#039;inventaire et produit de face : cheveux raides en crête basse qui tiennent seuls, tunique bleue sans manches, ceinture, pantalon court et chaussures brunes, debout de face. Hauteur 1,9 case pour une fourchette de 1,6 à 2,0.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">le-centre-de-soin---</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le centre de soin (CDS) : descriptions à corriger, puis regénération en PA60</h2>
+    <div class="point-corps"><p>La projection parallèle à 60 degrés de plongée (PA60) est désormais la valeur du projet, appliquée partout — y compris dans les deux phrases envoyées au générateur.</p>
+<p>Reste à reprendre les descriptions du centre de soin (CDS), puis à le regénérer.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Regénéré sous PA60 avec son usure et l&#039;échelle humaine : tuiles manquantes laissant voir la volige, mousse, vitre fêlée, tuiles remplacées plus claires, et une porte deux fois plus haute que large. Hauteur 13,0 cases pour une fourchette de 11,4 à 13,9.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">pont-en-pierre-ch---</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
+    <h2>Pont en pierre CH-021 : sujet et type neufs</h2>
+    <div class="point-corps"><p><strong>Sujet neuf, décidé par l&#039;opérateur le 2026-08-07</strong> : <code>CH-021 pont en pierre</code>, avec un <strong>type neuf</strong>, <code>pont</code>. Un pont n&#039;est pas un chemin — il enjambe, il se dresse au-dessus de l&#039;eau et il la laisse passer dessous ; un chemin posé à sa place laisserait la rivière coupée. <strong>Deux formes seulement</strong>, <code>ns</code> et <code>ew</code> : un pont ne se ramifie pas.</p>
+<p>## Ce que les deux premières générations ont appris</p>
+<p><strong>Première version — refusée par moi.</strong> Le tablier ne touchait pas les deux bords de la case et l&#039;ouvrage était vu de trois quarts, en biais. Deux tronçons ne se seraient pas raccordés. <strong>Cause : la fiche disait « traverse la case d&#039;un bord à l&#039;autre » sans dire que l&#039;ouvrage est ALIGNÉ SUR L&#039;AXE de la case ni que son tablier en occupe toute la longueur.</strong> Corrigé dans la fiche.</p>
+<p><strong>Seconde version — refusée par moi aussi, pour autre chose.</strong> L&#039;alignement est bon, le tablier touche les deux bords. Mais <strong>le cours d&#039;eau longeait le pont sur ses deux flancs au lieu de passer dessous</strong> : un pont posé dans le sens du courant, ce qui n&#039;a aucun sens. <strong>Cause : la clause du type disait que l&#039;eau se voit « de part et d&#039;autre de l&#039;ouvrage » — elle disait la présence, pas la direction, et le générateur choisit toujours quand on le laisse choisir.</strong> La clause dit maintenant que l&#039;eau entre par les deux bords que le pont NE relie PAS, passe sous l&#039;arche et ressort de l&#039;autre côté.</p>
+<p><strong>Une mesure à surveiller</strong> : la seconde version sort à 1,2 case de haut pour une fourchette de 1,0 à 1,2 — au plafond, et le contrôle la signale hors fourchette. Si la troisième reste haute, c&#039;est la hauteur déclarée du sujet qui est à revoir, pas l&#039;image : un pont à parapets se dresse davantage que les 0,4 case déclarées.</p>
+<p><strong>Reste</strong> : juger la troisième version, puis produire la forme <code>ew</code>, puis poser le pont sur la maquette là où le chemin croise le cours d&#039;eau.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Les deux formes existent et sont justes : le tablier traverse la case dans son axe, l&#039;eau passe dessous perpendiculairement. Reste à poser le pont sur la maquette, ce qui est un autre point.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">prolonger-le-chemin-</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : opérateur</span></p>
+    <h2>Prolonger le chemin pour qu&#039;il croise le cours d&#039;eau, ou laisser le pont sans emploi</h2>
+    <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08, ET ELLE DÉPLACE LA QUESTION : LA MAQUETTE N&#039;EST PAS COMPLÈTE.</strong> Il ne s&#039;agit pas de choisir entre prolonger un chemin et laisser le pont en réserve — les deux<br />
+lectures que ce point proposait passaient à côté. <strong>Il manque des chemins sur la maquette</strong>, tout simplement, et c&#039;est pour ça qu&#039;aucune case ne porte à la fois un chemin et un cours d&#039;eau.</p>
+<p><strong>LA RÉFÉRENCE FAIT FOI : <code>assets/revue-da/planche-p1-campagne-v8.png</code>.</strong> La maquette doit s&#039;en rapprocher <strong>avec les éléments dont on dispose déjà</strong> — on ne dessine rien de neuf pour ça, on pose ce<br />
+qui existe. La planche dit où passent les chemins ; la maquette ne les porte pas encore tous.</p>
+<p><strong>Ce que ça change pour le pont</strong> : le croisement n&#039;est pas à créer, il est à <strong>retrouver</strong>. Une fois les chemins manquants posés d&#039;après la planche, le chemin croisera le cours d&#039;eau là où la planche<br />
+le montre, et le pont aura sa case sans que personne ait à déplacer un tracé.</p>
+<p><strong>Ce qu&#039;il reste à faire, et ce n&#039;est plus une décision</strong> :</p>
+<p>1. <strong>Lire la planche et relever les chemins qu&#039;elle montre</strong>, case par case, contre ce que la maquette déclare aujourd&#039;hui.<br />
+2. <strong>Poser les chemins manquants</strong> avec les pièces existantes. Ce qui n&#039;a pas sa pièce se note et rejoint le dessin qui reste à faire — on ne bloque pas le reste pour ça.<br />
+3. <strong>Poser le pont</strong> à la case où le chemin traverse alors le cours d&#039;eau. Le script qui lit le plan et rapporte les croisements le trouvera seul.</p>
+<p><strong>Cette question est donc close</strong> : elle n&#039;attendait pas un arbitrage mais un constat, et le constat est que la maquette est incomplète. Le travail repart sous le point du pont, qui n&#039;est plus bloqué.</p>
+<p><strong>Fermé le 2026-08-08</strong> — Répondu par l&#039;opérateur : la maquette est incomplète, les chemins manquants se posent d&#039;après la planche p1 v8, et le pont suit.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">l-herbe-de-clairiere</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span></p>
+    <h2>L&#039;herbe de clairière (HDC) en densité forte est un peu trop dense</h2>
+    <div class="point-corps"><p>Un seul variant en cause, <code>orientation-south_action-idle_dense_frame-01</code>. Sa description demande un tapis plein « d&#039;un bord à l&#039;autre de l&#039;image » : c&#039;est elle qui produit la densité, donc c&#039;est elle qui se reprend avant de regénérer. Les autres variants du sujet sont bons.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Sept touffes entières, comptables, séparées par du vide transparent. Mon verdict, pas celui de l&#039;opérateur.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">valider-l-axonometri</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : opérateur</span></p>
+    <h2>Valider l&#039;axonométrie d&#039;une sprite produite</h2>
+    <div class="point-corps"><p><strong>Demande de l&#039;opérateur, 2026-08-07</strong> : ajouter aux contrôles une validation de l&#039;axonométrie d&#039;une sprite produite, « ça doit dépendre des sprites, je ne sais pas si c&#039;est faisable, vois ce que tu peux faire ».</p>
+<p><strong>CE QUI EST DÉCIDABLE, ET CE QUI NE L&#039;EST PAS.</strong> Une image seule ne porte aucune vérité de terrain : rien dans les pixels ne dit quelles arêtes étaient CENSÉES être verticales, donc aucune mesure ne peut <strong>prouver</strong> une projection. En revanche, une mesure peut trancher ce que la projection <strong>interdit</strong> : la <strong>convergence</strong>. En projection parallèle, les côtés d&#039;un volume dressé restent parallèles ; avec un point de fuite, ils se rapprochent et la silhouette se pince. Un sujet qui se pince est donc faux, et ça se voit dans l&#039;image seule.</p>
+<p><strong>FAIT — l&#039;outil existe et il est honnête</strong> : <code>python3 scripts/check-axonometry.py &lt;image&gt;</code>. Il lit les deux côtés de la silhouette sur le canal alpha, ajuste une droite sur chacun, et compare leurs pentes. Deux côtés qui penchent <strong>du même côté</strong> sont un sujet incliné, ce qui est permis ; deux côtés qui penchent <strong>l&#039;un vers l&#039;autre</strong> sont un pincement, donc un point de fuite. Il rend un <strong>verdict</strong>, jamais un refus, et il dit « aucun verdict » quand il ne peut pas conclure — ce qui est le point : un contrôle qui devine sur un sujet mou serait pire que pas de contrôle.</p>
+<p><strong>ÉPROUVÉ SUR CINQ SPRITES RÉELLES — ET IL NE CONCLUT SUR AUCUNE.</strong> Maison de ferme, centre de soin, clôture, pommier, pont : les cinq rendent « côtés trop irréguliers pour conclure », avec des irrégularités de 7 à 21 pixels. <strong>La cause est structurelle, pas un réglage</strong> : le contour extérieur d&#039;une sprite n&#039;est jamais une arête droite — un toit déborde, des fleurs dépassent, un feuillage dentelle tout le bord. Les arêtes qui portent réellement la projection sont <strong>intérieures</strong> : l&#039;angle d&#039;un mur, un poteau, un montant de verrière. Le contour ne les voit pas.</p>
+<p><strong>CE QU&#039;IL FAUDRAIT POUR QUE ÇA MARCHE, ET POURQUOI JE M&#039;ARRÊTE LÀ</strong> : détecter les segments droits <strong>dans</strong> l&#039;image — une détection de contours puis une transformée de Hough — au lieu de suivre la silhouette. C&#039;est la méthode juste, elle décide, et elle demande <strong>scikit-image</strong>, qui n&#039;est pas installé et qui n&#039;est pas à la liste des outils validés du projet. <strong>La règle du dépôt est explicite : un outil non validé se demande, il ne s&#039;essaie pas</strong> — chaque outil introduit est une dépendance que quelqu&#039;un devra installer, comprendre et maintenir sur toutes les machines où le projet tourne.</p>
+<p><strong>Statut : bloqué sur cette décision.</strong> L&#039;outil reste en place et ne nuit pas : il ne refuse rien et dit franchement qu&#039;il ne conclut pas. Un mot de l&#039;opérateur sur <code>scikit-image</code> et il devient utile.</p>
+<p><strong>Fermé le 2026-08-08</strong> — Repris en entier par « Contrôle d&#039;axonométrie : lire les arêtes intérieures, sur les bâtiments seulement », qui porte la décision de l&#039;opérateur du 2026-08-08 et la limite de temps.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">les-cours-d-eau-et--</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 5</span><span class="point-attend">attend : opérateur</span></p>
+    <h2>Les cours d&#039;eau et les chemins en réseau : sept pièces restent à dessiner</h2>
+    <div class="point-corps"><p>L&#039;ordre des bords est corrigé et les raccords tiennent. Ce qui manque est du dessin : le cours d&#039;eau nord-sud porte 22 cases à lui seul, plus les extrémités et les angles.</p>
+<p><strong>Attend un ordre de génération de l&#039;opérateur</strong> : ce sont des images, donc du temps et des tirs.</p>
+<p><strong>Fermé le 2026-08-08</strong> — Repris en entier par « Vingt et une formes de tracé manquent », qui corrige le compte de sept et fait dépendre l&#039;ordre de tir du relevé de la planche p1 v8.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="dismissed">
+    <p class="point-tete"><span class="point-ref">faire-converger-les-</span><span class="point-statut">Classé — abandonné ou sans objet, et on dit pourquoi</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span></p>
+    <h2>Faire converger les deux outils de revue de la page Campagne</h2>
+    <div class="point-corps"><p>Le plan et la maquette montée en portent chacun une copie, adaptée. Le stockage est déjà commun depuis le 2026-08-07 ; restent l&#039;affichage et la saisie.</p>
+<p><strong>C&#039;est un remaniement à risque sur la page que l&#039;opérateur relit tous les jours</strong>, donc à proposer plutôt qu&#039;à engager d&#039;un coup.</p>
+<p><strong>Requalifiée en <code>Q1</code></strong> le 2026-08-07 : ce point attend une décision de l&#039;opérateur, c&#039;est donc une question.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">l-inventaire-ne-peut</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span></p>
+    <h2>L&#039;inventaire ne peut pas respecter le standard de largeur : l&#039;outil exige une fiche sur une ligne</h2>
+    <div class="point-corps"><p><strong>Deux règles du projet se contredisent, et l&#039;une doit céder.</strong></p>
+<p>Le <strong>standard de largeur</strong> veut que tout texte se replie à deux cents caractères. L&#039;<strong>outillage de génération</strong>, lui, exige qu&#039;une fiche d&#039;inventaire tienne sur <strong>une seule ligne</strong> : il repère la description à sa forme et à sa place sur la ligne qui porte le code du sujet, et une entrée repliée est lue comme n&#039;ayant aucune description — la génération est alors refusée, sans que rien n&#039;indique la vraie cause.</p>
+<p><strong>Constaté deux fois le 2026-08-07</strong>, sur le pommier puis sur le pont neuf : deux générations refusées, le temps de comprendre que le repli était en cause.</p>
+<p><strong>Ce qui cède aujourd&#039;hui, faute de mieux</strong> : le standard de largeur, sur les seuls fichiers d&#039;inventaire. Leurs entrées font de trois cents à quinze cents caractères sur une ligne, et le contrôle de largeur les signale toutes.</p>
+<p><strong>Ce qu&#039;il faudrait décider</strong> : soit l&#039;outil apprend à lire une fiche repliée — c&#039;est une lecture qui recolle les lignes d&#039;une même entrée avant d&#039;y chercher l&#039;italique, et rien d&#039;autre —, soit les fichiers d&#039;inventaire sont déclarés hors du standard de largeur, explicitement, avec leur raison. <strong>Tant que ce n&#039;est pas tranché, le contrôle crie sur des fichiers qui ne peuvent pas être corrigés</strong>, et un contrôle qui crie sans recours finit par être ignoré — c&#039;est exactement ce qui est arrivé au faux positif sur le code, corrigé le 2026-08-07.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Sans objet : la largeur n&#039;était qu&#039;un symptôme. La cause est le parsing du Markdown, traitée par le point sur les descriptions.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">une-page-archivee-ne</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : agent</span></p>
+    <h2>Une page archivée ne se reconstruit plus</h2>
+    <div class="point-corps"><p>Celle du parc a été reconstruite plusieurs fois alors qu&#039;archivé veut dire « plus maintenu ». Repris par l&#039;opérateur, arrêté. Gardé ouvert comme rappel.</p>
+<p><strong>Fermé le 2026-08-07</strong> — Rien à faire : l&#039;entrée de la page archivée est retirée des pages servies depuis le 2026-08-07, donc une reconstruction ne peut plus la toucher. Le point n&#039;était qu&#039;un rappel.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+  <article class="point" data-statut="dismissed">
+    <p class="point-tete"><span class="point-ref">deplacer-vers-la----</span><span class="point-statut">Classé — abandonné ou sans objet, et on dit pourquoi</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span></p>
+    <h2>Déplacer vers la méthode commune les règles qui ne sont pas propres à GateBeast</h2>
+    <div class="point-corps"><p>Les deux modes de travail, le dépilement, les lots, la pile. Elles valent au-delà de ce projet.</p>
+<p><strong>Requalifiée en <code>Q2</code></strong> le 2026-08-07 : ce point attend une décision de l&#039;opérateur, c&#039;est donc une question.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
+  </article>
+
+  </details>
+</div>
+<aside class="reload" id="reload" role="status" aria-live="polite">
+  <p class="reload-word">Une nouvelle version de cette page est prête.</p>
+  <span class="reload-ring">
+    <svg viewBox="0 0 46 46" aria-hidden="true"><circle class="reload-track" cx="23" cy="23" r="20"></circle>
+      <circle class="reload-gauge" id="reload-gauge" cx="23" cy="23" r="20"></circle></svg>
+    <button type="button" class="reload-button" id="reload-button" title="Recharger maintenant" aria-label="Recharger maintenant">↻</button>
+  </span>
+</aside>
+<script>
+(function () {
+  var route = "\/sujets";
+  var openingSignature = null;
+  var announced = false;
+  var box = document.getElementById('reload');
+  var gauge = document.getElementById('reload-gauge');
+
+  function ask(next) {
+    var call = new XMLHttpRequest();
+    call.open('GET', '/version?page=' + encodeURIComponent(route), true);
+    // A server failure must break NOTHING: the page stays usable as it is, and the pulse resumes on the next beat.
+    call.onload = function () { if (call.status === 200) { next(call.responseText); } };
+    call.send();
+  }
+
+  function announce() {
+    announced = true;
+    box.setAttribute('data-open', 'yes');
+    gauge.style.transitionDuration = '0s';
+    gauge.style.strokeDashoffset = '0';
+    // The browser must have taken the starting point before the transition starts, otherwise it jumps straight to the end and the ring never animates.
+    gauge.getBoundingClientRect();
+    gauge.style.transitionDuration = '5s';
+    gauge.style.strokeDashoffset = '125.66370614359';
+    window.setTimeout(function () { window.location.reload(); }, 5 * 1000);
+  }
+
+  document.getElementById('reload-button').addEventListener('click', function () { window.location.reload(); });
+
+  ask(function (signature) {
+    openingSignature = signature;
+    window.setInterval(function () {
+      if (announced) { return; }
+      ask(function (now) { if (now !== openingSignature) { announce(); } });
+    }, 2000);
+  });
+})();
+</script>

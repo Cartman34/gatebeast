@@ -1,6 +1,25 @@
 # Bâtiments — `BT`
 
-Voir les [règles de l'inventaire](README.md). Emprises en cases, largeur × profondeur. Tous les bâtiments sont d'aplomb sur les axes de la carte et portent des marques d'usure.
+Voir les [règles de l'inventaire](README.md). Emprises en cases, largeur × profondeur. Tous les bâtiments sont d'aplomb sur les axes de la carte.
+
+**L'HUMAIN EST L'ÉTALON DU BÂTIMENT, ET L'ENTRÉE EST LÀ OÙ ÇA SE VÉRIFIE** (opérateur, 2026-08-07). Un humain debout mesure entre 1,75 et 2 cases : **une porte d'entrée fait donc AU MOINS DEUX
+CASES DE HAUT** et une case de large, sans quoi le bâtiment ne se lit plus comme un bâtiment — il devient une maquette de bâtiment, et tout ce qui l'entoure paraît géant. Les fourchettes, à
+respecter et à écrire dans chaque description :
+
+| Ouverture | Hauteur | Largeur |
+|---|---|---|
+| Porte d'entrée ordinaire | 2 à 2,4 cases | 1 à 1,2 case |
+| Grande entrée, porche, portail — quand la description la demande | 3 à 4,5 cases | 2 à 3 cases |
+| Fenêtre | 1 à 1,5 case | 0,8 à 1,2 case |
+| Lucarne, œil-de-bœuf | 0,6 à 1 case | 0,6 à 1 case |
+
+**Une entrée hors de sa fourchette est un défaut, pas un parti pris** : ce n'est pas une affaire de goût mais d'échelle, et l'échelle se contrôle. Une description qui veut une entrée
+monumentale le dit en toutes lettres et prend la seconde ligne du tableau ; sans mention, c'est la première qui s'applique.
+
+**LA DESCRIPTION D'UN BÂTIMENT DIT SON USURE, TOUJOURS** (opérateur, 2026-08-07). Elle choisit d'abord un **degré de vétusté** — de l'entretenu au presque ruiné — puis elle écrit **ce qui le
+montre** : tuiles cassées ou déplacées, mur fissuré, crépi tombé par plaques, lierre, mousse sur le versant nord, bois grisé, ferrures rouillées, seuil creusé, volet dégondé, tache d'humidité sous
+une gouttière. **Cette énumération illustre, elle ne délimite pas** : tout état qu'un bâtiment peut réellement prendre est recevable, sans limite, et une description qui n'y trouve pas son compte
+en invente d'autres plutôt que de se rabattre sur cette liste. **Un bâtiment neuf est très rare** — c'est l'exception, et une description qui en demande un dit pourquoi il l'est.
 
 ## Campagne et parc — BI-001
 

@@ -20,6 +20,9 @@ bootBuild();
 
 const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur du projet, tenue par scripts/tile_scale.py
 const COMPARE_PIXELS_PER_TILE = 48;  // ce qu'une case mesure dans la FSP, où l'on juge et compare (opérateur, 2026-08-06)
+// Le raccourci d'une longueur au sol qui s'enfonce, sous la caméra à 60 degrés — le sinus de l'angle. Écrit ici en attendant que la page le demande au service qui
+// détient l'échelle, qui est en Python : c'est la seule valeur du modèle que cette page recopie, et elle est à supprimer dès que les deux côtés se parlent.
+const GROUND_DEPTH_FACTOR = 0.8660;
 
 $outputPath = $argv[1] ?? __DIR__ . '/page.html';
 $inventory = new Inventory($root);
@@ -204,6 +207,65 @@ function frozenPrompt(string $root, array $representation): string
     return $blocks;
 }
 
+/**
+ * La grille posée sur une sprite : son emprise au sol, son couvert s'il déborde, et les deux axes.
+ *
+ * TOUT EST DIT EN CASES ET RENDU EN POURCENTAGE de la vignette, jamais en pixels : la vignette change de taille selon l'emprise du sujet et selon le zoom, alors
+ * qu'une case reste une case. Écrire des pixels ici les ferait diverger de l'image dès qu'une taille change.
+ *
+ * L'IMAGE EST POSÉE SUR LA LARGEUR DU COUVERT, pas de l'emprise — c'est ce que fait la fabrique de vignettes juste au-dessus. L'emprise au sol se dessine donc
+ * comme une part de cette largeur, centrée, et non comme la vignette entière : c'est exactement ce qu'on veut voir d'un chêne dont la couronne déborde de son pied.
+ */
+/**
+ * The delivered file on show and when it was written, under the variant's label.
+ *
+ * ONE LOOKS AT AN IMAGE WITHOUT KNOWING WHICH ONE — the card carried the variant's ref, which never changes, and nothing about the version actually displayed nor
+ * its age. After an evening of reworks, whether the sprite under one's eyes came out of the last generation or last week is the first thing one wants to read.
+ *
+ * THE DATE COMES FROM THE DELIVERED FILE ITSELF, never from a value copied into the referentiel: a hand-written date falls out of step with the file at the first
+ * forgotten export, and it then lies with authority.
+ *
+ * Written the French way, day first (operator, 2026-08-07): this page is read by a human. The sortable international form stays where dates are data — file names,
+ * tracking documents.
+ */
+function version(string $root, ?array $current): string
+{
+    if (!$current) {
+        return '';
+    }
+    $file = $root . '/assets/' . $current['path'];
+    $when = is_file($file) ? date('d/m/Y à H\hi', filemtime($file)) : 'date inconnue';
+
+    return sprintf('<p class="variant-version"><span class="variant-fichier">%s</span><span class="variant-date">%s</span></p>',
+        escape(basename($current['path'])), escape($when));
+}
+
+function grid(array $sujet, array $spread, int $width, int $height): string
+{
+    $footprint = $sujet['emprise'];
+    $covers = ($spread['columns'] !== $footprint['columns']) || ($spread['rows'] !== $footprint['rows']);
+    // La case, en pourcentage de la vignette : la largeur porte les colonnes du couvert, et la hauteur suit la même échelle puisque l'image n'est jamais déformée.
+    $tile = 100 / $spread['columns'];
+    // UNE CASE DE PROFONDEUR NE SE PROJETTE PAS COMME UNE CASE DE LARGEUR, et l'oublier faisait descendre le cadre d'emprise bien plus bas que le sol du sujet —
+    // deux cases de vide devant le bâtiment, relevées par l'opérateur. Sous la caméra du monde, une longueur au sol qui s'enfonce est vue raccourcie ; le service
+    // qui détient l'échelle porte ce facteur, et c'est à lui qu'on le demande plutôt que de le retaper ici.
+    $tileY = $tile * $width / max($height, 1) * GROUND_DEPTH_FACTOR;
+    $footWidth = 100 * $footprint['columns'] / $spread['columns'];
+    $footHeight = $tileY * $footprint['rows'];
+
+    return sprintf(
+        '<span class="emprise" style="--case: %.4f%%; --case-y: %.4f%%">'
+        . '<span class="emprise-emprise" style="width: %.4f%%; height: %.4f%%" title="Emprise au sol : %d × %d cases"></span>'
+        . '%s'
+        . '<span class="emprise-axe emprise-axe--x"></span><span class="emprise-axe emprise-axe--y"></span>'
+        . '</span>',
+        $tile, $tileY, $footWidth, $footHeight,
+        (int) $footprint['columns'], (int) $footprint['rows'],
+        $covers ? sprintf('<span class="emprise-couvert" title="Couvert : %d × %d cases"></span>',
+            (int) $spread['columns'], (int) $spread['rows']) : ''
+    );
+}
+
 /** La FSP d'un sujet : ses variants, la version courante de chacun en grand, les antérieures, les mesures, la consigne, le verdict et les actions. */
 function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string $code, array $sujet): string
 {
@@ -214,8 +276,17 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
         $current = $inventory->currentRepresentation($variant);
         $picture = '<p class="a-produire">À produire</p>';
         if ($current) {
+            // L'ÉCHELLE EST FIXE ET LA MÊME POUR TOUS LES SUJETS : quarante-huit pixels par case dans la fiche, la case restant une case d'un sujet à l'autre.
+            // Un grand chêne occupe donc quatre fois la largeur d'une clôture, ce qui est la vérité du monde ; des vignettes toutes de même largeur ne
+            // permettaient ni de comparer deux sujets, ni de voir qu'une sprite déborde — ce que l'emprise et le couvert servent justement à montrer.
             $shot = image($thumbnails, $current, COMPARE_PIXELS_PER_TILE * $spread['columns']);
-            $picture = $shot ? sprintf('<img src="%s" width="%d" height="%d" alt="">', $shot[0], $shot[1], $shot[2])
+            // LA GRILLE SE POSE SUR L'IMAGE, À L'ÉCHELLE OÙ ELLE EST MONTRÉE (opérateur, 2026-08-07) : sans elle, une sprite se juge dans le vide — on ne voit ni ce
+            // qu'elle occupe au sol, ni ce qu'elle surplombe, ni où sont ses axes. Les trois se lisent à des couleurs différentes, et les valeurs sont celles du
+            // référentiel, jamais recalculées ici.
+            // L'IMAGE ET SA GRILLE SONT ENFERMÉES ENSEMBLE : sans cette enveloppe qui épouse l'image, la grille se cale sur la carte entière et son cadre d'emprise
+            // s'étire sur toute la largeur, en annonçant une sprite bien plus large qu'elle n'est.
+            $picture = $shot ? sprintf('<span class="pose"><img src="%s" width="%d" height="%d" alt="">%s</span>', $shot[0], $shot[1], $shot[2],
+                grid($sujet, $spread, $shot[1], $shot[2]))
                 : '<p class="a-produire">Image illisible</p>';
         }
         $verdict = $current['verdict'] ?? null;
@@ -232,25 +303,46 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
                     $shot[0], escape(basename($old['path'])), $shot[0], (int) ($shot[1] / 2), (int) ($shot[2] / 2), escape(basename($old['path'])));
             }
         }
+        $key = reviewKey($identifier, $current);
+        // LE BLOC DE JUGEMENT SE CONSTRUIT AVANT, ET C'EST UNE LEÇON PAYÉE : je l'avais rendu conditionnel À L'INTÉRIEUR du gabarit, en laissant des marques de
+        // substitution dans la branche vide. Elles consommaient quand même leurs arguments et les recrachaient en clair — le balisage des actions se retrouvait
+        // déversé au milieu de la page, qui s'est disloquée. Un gabarit ne porte pas de condition ; ce qui varie se calcule avant et n'y entre qu'une fois décidé.
+        $review = '';
+        if ($current) {
+            $review = sprintf(
+                '<div class="actes" data-id="%s">%s'
+                . '<button type="button" class="mot-ouvrir" data-open="%s" aria-expanded="false" aria-label="Commentaire" title="Commentaire">+</button></div>'
+                . '<div class="mot-zone" data-more="%s" hidden>'
+                . '<textarea class="mot" data-id="%s" rows="2" placeholder="Ce qui devrait changer.">%s</textarea>'
+                . '<button type="button" class="effacer-mot" data-id="%s" title="Effacer le commentaire" aria-label="Effacer le commentaire" hidden>×</button></div>',
+                escape($key), actions($key), escape($key), escape($key), escape($key), escape($comment), escape($key)
+            );
+        }
+        // LA ZONE DE SAISIE EST REPLIÉE, ET C'EST LE BOUTON « ＋ » QUI L'OUVRE (opérateur, 2026-08-06 puis 2026-08-07). Dépliée d'office, elle prend autant de hauteur que
+        // les trois actes réunis sur chaque carte, pour un champ qu'on ne remplit qu'une fois sur dix. Cocher « À reprendre » ou « Écarter » l'ouvre toute seule : un refus
+        // demande son motif, un accord n'a rien à justifier.
         $blocks .= sprintf(
             '          <article class="variant" data-etat="%s">%s'
-            . '<p class="variant-ref">%s</p><div class="variant-image">%s</div>%s%s%s%s'
-            . '<div class="actes" data-id="%s">%s</div>'
-            . '<div class="mot-zone"><button type="button" class="effacer-mot" data-id="%s" title="Effacer" aria-label="Effacer le commentaire">✕</button>'
-            . '<textarea class="mot" data-id="%s" rows="2" placeholder="Ce qui devrait changer.">%s</textarea></div></article>' . "\n",
+            // LE LIBELLÉ FRANÇAIS D'ABORD, LA RÉFÉRENCE TECHNIQUE ENSUITE ET EN PETIT : la carte disait « orientation-south_action-idle_shape-e_frame-01 » et rien d'autre, ce qui n'apprend
+            // rien à qui regarde une image (opérateur, 2026-08-07). Le libellé vient du référentiel, jamais composé ici — une page qui compose du vocabulaire en invente.
+            . '<p class="variant-nom">%s</p>%s<div class="variant-image">%s</div>%s%s%s%s'
+            // RIEN NE SE JUGE SUR UNE IMAGE QUI N'EXISTE PAS (opérateur, 2026-08-07) : un variant à produire n'offre ni verdict, ni commentaire, ni comparaison — valider une image absente ne
+            // veut rien dire, et la case « Comparer » proposait de la mettre en regard d'une autre. La carte dit ce qui reste dû, et c'est tout ce qu'elle a à dire.
+            . '%s</article>' . "\n",
             escape(variantState($inventory, $variant)),
-            // COMPARER N'APPARAÎT QUE S'IL Y A DE QUOI COMPARER : un sujet à variant unique n'offre pas une case qui ne peut rien faire.
-            count($sujet['variants']) > 1
+            // COMPARER N'APPARAÎT QUE S'IL Y A DE QUOI COMPARER : un sujet à variant unique n'offre pas une case qui ne peut rien faire, et un variant qui n'a pas d'image non plus.
+            count($sujet['variants']) > 1 && $current
                 ? sprintf('<label class="variant-choix"><input type="checkbox" class="comparer" data-ref="%s"> Comparer</label>', escape($ref))
                 : '',
-            escape($ref), $picture,
+            escape($variant['libelle'] ?? 'Vue principale'), version($root, $current), $picture,
             $verdict ? sprintf('<p class="verdict verdict--%s">%s</p>', escape($verdict), escape(capitalize(str_replace('-', ' ', $verdict)))) : '',
             $current ? measurements($current, $sujet) : '',
+            // LES VERSIONS ANTÉRIEURES PASSENT SOUS LA CONSIGNE ET LE RAPPORT DE LA VERSION COURANTE (opérateur, 2026-08-07) : intercalées entre les mesures et
+            // eux, elles séparaient une version de ses propres pièces justificatives et l'on ne savait plus à laquelle se rapportait quoi.
+            $current ? frozenPrompt($root, $current) : '',
             $anciennes ? '<details class="pli"><summary>' . count($previous) . ' version' . (count($previous) > 1 ? 's' : '')
                 . ' antérieure' . (count($previous) > 1 ? 's' : '') . '</summary><div class="anciennes">' . $anciennes . '</div></details>' : '',
-            $current ? frozenPrompt($root, $current) : '',
-            escape(reviewKey($identifier, $current)), actions(reviewKey($identifier, $current)),
-            escape(reviewKey($identifier, $current)), escape(reviewKey($identifier, $current)), escape($comment)
+            $review
         );
     }
 
@@ -317,13 +409,25 @@ $page = <<<'HTML'
   .fsp-barre { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px;
                background: var(--card); border-bottom: 1px solid var(--line); }
   .fsp-titre { margin: 0; font-size: 1.1rem; font-weight: 600; }
-  .fsp-fermer { padding: 4px 12px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
+  /* UNE CROIX SANS HABILLAGE, MAIS UNE CIBLE DE CLIC LARGE (opérateur, 2026-08-07) : le bouton faisait vingt pixels et il fallait viser pour fermer un panneau
+     plein écran. Le signe reste petit et discret, c'est la SURFACE qui grandit — quarante-quatre pixels de côté, la taille d'une cible qu'on atteint sans regarder.
+     Ni bordure, ni fond, ni survol, ni cerne de focus : rien à styler, tout à cliquer. */
+  .fsp-fermer {
+    width: 44px; height: 44px; padding: 0; margin: -8px -8px -8px 0;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: 0; border-radius: 0; color: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+  }
   .fsp-corps { padding: 16px; }
   .variants { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-items: start; }
   .variants.comparaison { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
   .variants.comparaison .variant:not(.retenu) { display: none; }
   .variant { padding: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
-  .variant-ref { margin: 6px 0; font-family: ui-monospace, monospace; font-size: .76rem; color: var(--muted); word-break: break-all; }
+  .variant-nom { margin: 6px 0 2px; font-size: .92rem; font-weight: 600; }
+  .variant-ref { margin: 0 0 6px; font-family: ui-monospace, monospace; font-size: .7rem; color: var(--faint, var(--muted)); word-break: break-all; }
+  /* LE FICHIER AFFICHÉ ET SA DATE, sous le libellé : c'est ce qu'on cherche en premier après une séance de reprises, pour savoir si l'on regarde la dernière. */
+  .variant-version { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 6px; font-family: ui-monospace, monospace; font-size: .7rem; }
+  .variant-fichier { color: var(--ink); word-break: break-all; }
+  .variant-date { color: var(--accent); }
   /* LE DAMIER DIT OÙ EST LA TRANSPARENCE, et c'est la première chose qu'on juge sur une sprite détourée : sans lui, un fond opaque sombre se confond avec le fond
      de la page et un halo ne se voit pas du tout. */
   .variant-image {
@@ -331,17 +435,53 @@ $page = <<<'HTML'
     background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 16px 16px;
   }
   .anciennes figure img { background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 12px 12px; }
-  .variant-image img { max-width: 100%; height: auto; }
+  /* L'ENVELOPPE ÉPOUSE L'IMAGE, et c'est elle qui sert de repère à la grille : posée sur la carte, la grille annonçait une sprite large de toute la carte. */
+  .pose { position: relative; display: inline-block; line-height: 0; }
+  .variant-image img { max-width: 100%; height: auto; display: block; }
+  /* LA GRILLE D'EMPRISE NE S'APPELLE PAS « grille » : ce nom-là est celui de la grille des vignettes, plus haut, et le lui reprendre a rendu toute la page absolue —
+     sections vides, trois vignettes flottant hors de la page. Un nom déjà pris dans la même feuille est un nom pris, et une classe ne se choisit pas au plus évident.
+     LA GRILLE NE MASQUE JAMAIS L'IMAGE : des traits d'un pixel, semi-transparents, et rien de plein — on juge la sprite, la grille ne fait que la situer. */
+  .emprise { position: absolute; inset: 0; pointer-events: none; }
+  .emprise::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, .16) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255, 255, 255, .16) 1px, transparent 1px);
+    background-size: var(--case) var(--case-y);
+    background-position: bottom left;
+  }
+  /* L'EMPRISE AU SOL EST ANCRÉE EN BAS ET CENTRÉE : c'est là que le sujet touche le sol, et c'est sur ce rectangle que le plan le pose. */
+  .emprise-emprise {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    border: 1px solid var(--accent); background: rgba(217, 164, 65, .10);
+  }
+  /* LE COUVERT EST CE QUE LE VOLUME SURPLOMBE — la vignette entière, puisque c'est sur lui qu'elle est posée. Il ne se dessine que s'il déborde de l'emprise. */
+  .emprise-couvert { position: absolute; inset: 0; border: 1px dashed rgba(255, 255, 255, .30); }
+  .emprise-axe { position: absolute; background: rgba(255, 255, 255, .22); }
+  .emprise-axe--x { left: 0; right: 0; bottom: 0; height: 1px; }
+  .emprise-axe--y { top: 0; bottom: 0; left: 50%; width: 1px; }
   .verdict { margin: 6px 0 0; font-size: .82rem; }
   .verdict--a-reprendre { color: #d08a3a; }
   .verdict--validee { color: var(--accent); }
   .anterieures, .a-produire { margin: 4px 0 0; font-size: .78rem; color: var(--muted); }
-  .actes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .acte { position: relative; }
-  .acte input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .acte span { display: inline-block; padding: 4px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; font-size: .8rem; cursor: pointer; }
-  .acte:hover span { border-color: var(--accent); }
-  .acte input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* L'ÉCHELLE VIENT DU CONSTRUCTEUR PYTHON D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS : chasse fixe, dix pixels, remplissage 3/6, rayon 2. La version PHP avait pris la
+     taille du texte courant — seize pixels — et des remplissages larges, ce qui grossissait toute la carte d'un tiers sans que personne l'ait décidé. */
+  .actes { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .acte { display: inline-flex; position: relative; }
+  .acte input { position: absolute; inset: 0; width: 1px; height: 1px; opacity: 0; margin: 0; clip-path: inset(50%); overflow: hidden; }
+  .acte span, .mot-ouvrir {
+    display: inline-block; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .03em;
+    padding: 3px 6px; border: 1px solid var(--line); border-radius: 2px; background: var(--card);
+    color: var(--muted); cursor: pointer; user-select: none;
+  }
+  /* LE BOUTON D'OUVERTURE PORTE UN SIGNE ASCII, JAMAIS UN GLYPHE DÉCORATIF : le « ＋ » pleine chasse d'origine sort en carré vide dès qu'une police ne le porte pas,
+     et c'est ce que la page a montré au premier contrôle. Un bouton dont le signe manque est un bouton qu'on ne clique pas. */
+  .mot-ouvrir { min-width: 22px; text-align: center; }
+  .acte:hover span, .mot-ouvrir:hover { border-color: var(--accent); color: var(--accent); }
+  .acte input:focus-visible + span, .mot-ouvrir:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* DEUX ÉTATS, DEUX SIGNES : le bouton s'allume quand un commentaire est écrit dessous, et se marque simplement quand le champ est ouvert et vide. Les confondre
+     laissait un champ vidé continuer d'annoncer un texte qui n'existait plus. */
+  .mot-ouvrir[data-filled="true"] { border-color: var(--accent); color: var(--accent); }
+  .mot-ouvrir[aria-expanded="true"][data-filled="false"] { border-color: var(--muted); color: var(--ink); }
   .acte--valider input:checked + span { background: #2f5c3a; border-color: #4e8a5e; color: #eaf6ec; }
   .acte--reprendre input:checked + span { background: #6b4a1c; border-color: #a4762c; color: #fbf1e0; }
   .acte--ecarter input:checked + span { background: #5c2f2f; border-color: #8a4e4e; color: #f6eaea; }
@@ -349,11 +489,20 @@ $page = <<<'HTML'
      qui se voit tout de suite sur une grille de cartes. */
   /* LA CROIX EST COLLÉE AU CHAMP, en haut à droite : c'est le geste courant pour vider une saisie, et un bouton posé à côté avec son mot écrit prenait la place
      d'un tiers du champ pour dire ce qu'une croix dit sans un mot. */
-  .mot-zone { position: relative; margin-top: 8px; }
-  .mot { display: block; width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit; font: inherit;
-         font-size: .82rem; line-height: 1.4; padding: 6px; resize: vertical; }
-  .effacer-mot { align-self: stretch; padding: 0 10px; background: none; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); font: inherit; font-size: .8rem; cursor: pointer; }
+  .mot-zone { position: relative; margin-top: 4px; }
+  .mot-zone[hidden] { display: none; }
+  .mot { display: block; width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; color: var(--ink);
+         font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.45; padding: 4px 22px 4px 6px; resize: vertical; }
+  /* LA CROIX EST DANS LE COIN HAUT DROIT DU CHAMP, POSÉE DESSUS — demandée trois fois par l'opérateur, et perdue deux fois en réécrivant la carte. Le champ lui
+     réserve sa place à droite par son propre remplissage, pour qu'elle ne vienne jamais sur le texte. Sa règle est éprouvée par scripts/check-review-pages.php. */
+  .effacer-mot {
+    position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; padding: 0; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, monospace; font-size: 13px;
+    border: 1px solid var(--line); border-radius: 2px; background: var(--card); color: var(--muted); cursor: pointer;
+  }
   .effacer-mot:hover { border-color: var(--accent); color: var(--accent); }
+  .effacer-mot[hidden] { display: none; }
   .variant { box-sizing: border-box; }
   .mesures { display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; margin: 8px 0 0; font-size: .74rem; color: var(--muted); }
   .mesures dt { font-weight: 600; white-space: nowrap; }
@@ -366,7 +515,11 @@ $page = <<<'HTML'
   #fsp-texte-corps { white-space: pre-wrap; font-size: .82rem; line-height: 1.5; }
   .fsp-corps--image { display: flex; align-items: center; justify-content: center; }
   #fsp-image-corps { max-width: 100%; max-height: 80vh; background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 24px 24px; }
-  .anciennes .voir-image { padding: 0; background: none; border: 0; cursor: pointer; }
+  .anciennes .voir-image { padding: 0; background: none; border: 0; cursor: zoom-in; }
+  /* AGRANDIE SUR PLACE : la vignette double de taille sans quitter la rangée, donc les autres versions restent visibles autour d'elle — c'est tout l'objet, on compare. */
+  .anciennes figure.agrandie .voir-image { cursor: zoom-out; }
+  .anciennes figure.agrandie img { width: auto; height: auto; max-width: 100%; transform: scale(2); transform-origin: bottom left; }
+  .anciennes figure.agrandie { z-index: 2; }
   .pli { margin-top: 6px; font-size: .8rem; color: var(--muted); }
   .pli summary { cursor: pointer; }
   .pli pre { max-height: 40vh; overflow: auto; white-space: pre-wrap; font-size: .74rem; }
@@ -430,6 +583,32 @@ $page = <<<'HTML'
       etat[id] = etat[id] || {};
       etat[id][acte] = box.checked;
       retenir();
+      /* REFUSER UNE IMAGE, C'EST DIRE POURQUOI : cocher « À reprendre » ou « Écarter » ouvre la zone de saisie et lui donne le clavier. Sans le motif, la reprise
+         repart à l'aveugle — c'est ce qui a coûté trois tentatives sur le sapin. « Valider » n'ouvre rien : un accord n'a rien à justifier. */
+      if (box.checked && (acte === 'reprendre' || acte === 'ecarter')) {
+        var zone = document.querySelector('.mot-zone[data-more="' + id + '"]');
+        var ouvrir = document.querySelector('.mot-ouvrir[data-open="' + id + '"]');
+        if (zone) {
+          zone.hidden = false;
+          if (ouvrir) { ouvrir.setAttribute('aria-expanded', 'true'); }
+          var champ = zone.querySelector('.mot');
+          if (champ) { champ.focus({preventScroll: true}); }
+        }
+      }
+    });
+  });
+
+  /* LE BOUTON « ＋ » OUVRE ET REFERME LA ZONE DE SAISIE, et la zone s'ouvre d'elle-même quand elle porte déjà un commentaire : un texte écrit qui ne se voit pas est
+     un texte perdu pour celui qui rouvre la page. */
+  Array.prototype.forEach.call(document.querySelectorAll('.mot-ouvrir'), function (button) {
+    var id = button.getAttribute('data-open');
+    var zone = document.querySelector('.mot-zone[data-more="' + id + '"]');
+    if (!zone) { return; }
+    if (etat[id] && etat[id].mot) { zone.hidden = false; button.setAttribute('aria-expanded', 'true'); }
+    button.addEventListener('click', function () {
+      zone.hidden = !zone.hidden;
+      button.setAttribute('aria-expanded', zone.hidden ? 'false' : 'true');
+      if (!zone.hidden) { zone.querySelector('.mot').focus(); }
     });
   });
 
@@ -443,6 +622,24 @@ $page = <<<'HTML'
     });
   });
 
+  /* SORTIR D'UNE COMPARAISON SANS SORTIR DU SUJET (opérateur, 2026-08-07) : la seule façon d'en sortir était de décocher chaque variant un par un, ou de fermer le
+     panneau — ce qui faisait perdre le sujet qu'on jugeait. Un bouton la quitte d'un geste, et il n'apparaît que pendant qu'elle dure. */
+  function quitterComparaison(liste) {
+    Array.prototype.forEach.call(liste.querySelectorAll('.comparer'), function (box) { box.checked = false; });
+    Array.prototype.forEach.call(liste.querySelectorAll('.variant'), function (variant) { variant.classList.remove('retenu'); });
+    liste.classList.remove('comparaison');
+  }
+
+  /* UNE COMPARAISON NE SURVIT PAS À LA FERMETURE DU SUJET : rouvrir une fiche doit la montrer entière, pas dans l'état où on l'avait laissée trois sujets plus tôt.
+     Une sélection oubliée fait croire à un sujet qui n'a plus que deux variants. */
+  Array.prototype.forEach.call(document.querySelectorAll('.fsp-fermer'), function (button) {
+    button.addEventListener('click', function () {
+      var panneau = button.closest('.fsp');
+      var liste = panneau ? panneau.querySelector('.variants') : null;
+      if (liste) { quitterComparaison(liste); }
+    });
+  });
+
   /* LA COMPARAISON : cocher plusieurs variants ne garde qu'eux à l'écran, côte à côte et plus grands. Décocher tout revient à la liste entière. */
   Array.prototype.forEach.call(document.querySelectorAll('.comparer'), function (box) {
     box.addEventListener('change', function () {
@@ -451,7 +648,9 @@ $page = <<<'HTML'
       Array.prototype.forEach.call(liste.querySelectorAll('.variant'), function (variant) {
         variant.classList.toggle('retenu', variant.querySelector('.comparer').checked);
       });
-      liste.classList.toggle('comparaison', retenus.length > 0);
+      /* LA COMPARAISON N'ENGAGE QU'À PARTIR DE DEUX : à un seul variant coché, elle masquait tous les autres, donc la case du second n'était plus là pour être cochée.
+         On ne pouvait jamais comparer que le premier avec lui-même (opérateur, 2026-08-07). */
+      liste.classList.toggle('comparaison', retenus.length > 1);
     });
   });
 
@@ -460,9 +659,14 @@ $page = <<<'HTML'
   Array.prototype.forEach.call(document.querySelectorAll('.effacer-mot'), function (button) {
     var field = button.parentNode.querySelector('.mot');
     var id = button.getAttribute('data-id');
+    var ouvrir = document.querySelector('.mot-ouvrir[data-open="' + id + '"]');
     var garde = null;
+    /* LA CROIX RESTE UNE CROIX, ET C'EST TOUT LE POINT : elle porte « × » pour vider, « ↺ » pour rétablir, jamais un mot. Écrire « Effacer » dedans lui faisait perdre
+       sa place et sa forme — c'est ainsi que la croix demandée trois fois a disparu deux fois. Elle se cache quand il n'y a rien à effacer. */
     function rendre() {
-      button.textContent = garde === null ? 'Effacer' : 'Rétablir';
+      button.textContent = garde === null ? '×' : '↺';
+      button.hidden = !field.value.trim() && garde === null;
+      if (ouvrir) { ouvrir.setAttribute('data-filled', field.value.trim() ? 'true' : 'false'); }
     }
     button.addEventListener('click', function () {
       if (garde === null) {
@@ -479,6 +683,17 @@ $page = <<<'HTML'
     });
     field.addEventListener('input', function () { garde = null; rendre(); });
     rendre();
+  });
+
+  /* LE BOUTON D'OUVERTURE DIT S'IL Y A UN TEXTE DESSOUS, dès l'ouverture de la page et à chaque frappe : sans ça, une carte repliée ne laisse rien deviner de ce
+     qu'elle contient, et il faut toutes les déplier pour retrouver ce qu'on a écrit. */
+  Array.prototype.forEach.call(document.querySelectorAll('.mot'), function (field) {
+    var id = field.getAttribute('data-id');
+    var ouvrir = document.querySelector('.mot-ouvrir[data-open="' + id + '"]');
+    if (!ouvrir) { return; }
+    function dire() { ouvrir.setAttribute('data-filled', field.value.trim() ? 'true' : 'false'); }
+    field.addEventListener('input', dire);
+    dire();
   });
 
   /* LES FILTRES agissent sur la grille : ils cachent les vignettes qui ne sont pas dans l'état demandé, et une section entièrement vide se cache avec elles —
@@ -500,18 +715,11 @@ $page = <<<'HTML'
     });
   });
 
-  /* UNE IMAGE S'OUVRE EN GRAND, elle aussi : une vignette de la moitié d'une case dit qu'une version existe, elle ne permet pas de la juger. */
-  var imagePopin = document.getElementById('fsp-image');
-  var imageCorps = document.getElementById('fsp-image-corps');
-  var imageTitre = document.getElementById('fsp-image-titre');
-  Array.prototype.forEach.call(document.querySelectorAll('.voir-image'), function (button) {
+  /* UNE VERSION ANTÉRIEURE S'AGRANDIT SUR PLACE, ET NE S'OUVRE PLUS EN PLEIN ÉCRAN (opérateur, 2026-08-07). On compare des versions entre elles, donc on les veut côte à côte : une popin qui prend
+     tout l'écran montre une version seule et cache justement ce à quoi on la compare. Recliquer la rend à sa taille. */
+  Array.prototype.forEach.call(document.querySelectorAll('.anciennes .voir-image'), function (button) {
     button.addEventListener('click', function () {
-      imageCorps.src = button.getAttribute('data-src');
-      imageTitre.textContent = button.getAttribute('data-titre');
-      fermer();
-      imagePopin.hidden = false;
-      document.body.style.overflow = 'hidden';
-      ouverte = imagePopin;
+      button.closest('figure').classList.toggle('agrandie');
     });
   });
 
@@ -524,11 +732,7 @@ $page = <<<'HTML'
       var porteur = button.nextElementSibling;
       texteTitre.textContent = button.getAttribute('data-titre');
       texteCorps.textContent = porteur ? porteur.textContent : '';
-      fermer();
-      textePopin.hidden = false;
-      textePopin.scrollTop = 0;
-      document.body.style.overflow = 'hidden';
-      ouverte = textePopin;
+      empiler(textePopin);
     });
   });
   document.getElementById('fsp-texte-copier').addEventListener('click', function () {
@@ -547,22 +751,30 @@ $page = <<<'HTML'
     window.setTimeout(function () { button.textContent = 'Copier'; }, 2000);
   });
 
-  var ouverte = null;
+  /* UNE FSP S'OUVRE PAR-DESSUS UNE AUTRE, ELLE NE LA REMPLACE PAS (opérateur, 2026-08-07). En fermer une fait réapparaître celle du dessous, et on remonte ainsi jusqu'à la page. Remplacer
+     faisait perdre le sujet qu'on était en train de juger dès qu'on ouvrait un texte : il fallait rouvrir la vignette et refaire défiler jusqu'au variant. */
+  var pile = [];
+  function empiler(popin) {
+    if (!popin) { return; }
+    popin.hidden = false;
+    popin.scrollTop = 0;
+    /* CHAQUE PANNEAU EMPILÉ PASSE AU-DESSUS DU PRÉCÉDENT, et c'est ce qui manquait : tous partageaient le même plan, donc celui du texte — écrit AVANT les panneaux
+       de sujet dans la page — s'ouvrait DERRIÈRE celui qu'on regardait. Le bouton semblait mort alors qu'il faisait son travail : une sonde a montré le panneau
+       ouvert, avec ses milliers de caractères de texte, simplement invisible. Trois lectures du code n'avaient rien donné ; un clic simulé a tranché en une fois. */
+    popin.style.zIndex = String(90 + pile.length + 1);
+    document.body.style.overflow = 'hidden';
+    pile.push(popin);
+  }
   function fermer() {
-    if (!ouverte) { return; }
-    ouverte.hidden = true;
-    document.body.style.overflow = '';
-    ouverte = null;
+    var haut = pile.pop();
+    if (!haut) { return; }
+    haut.hidden = true;
+    haut.style.zIndex = '';
+    if (!pile.length) { document.body.style.overflow = ''; }
   }
   Array.prototype.forEach.call(document.querySelectorAll('.tuile'), function (tile) {
     tile.addEventListener('click', function () {
-      var popin = document.getElementById('fsp-' + tile.getAttribute('data-sujet'));
-      if (!popin) { return; }
-      fermer();
-      popin.hidden = false;
-      popin.scrollTop = 0;
-      document.body.style.overflow = 'hidden';
-      ouverte = popin;
+      empiler(document.getElementById('fsp-' + tile.getAttribute('data-sujet')));
     });
   });
   Array.prototype.forEach.call(document.querySelectorAll('.fsp-fermer'), function (button) { button.addEventListener('click', fermer); });
@@ -625,7 +837,9 @@ foreach (['tout' => 'Tout', 'a-reprendre' => 'À reprendre', 'a-produire' => 'À
 }
 
 $page = strtr($page, [
-    '{$theme}' => $theme->css('encre'),
+    // LA PALETTE EST CELLE DU CONSTRUCTEUR PYTHON, pas celle des autres pages : la migration avait emporté l'habillage de cette page-là, ce que personne n'avait demandé. Les autres pages gardent
+    // « encre », les changer n'a jamais été demandé non plus.
+    '{$theme}' => $theme->css('origine'),
     '{$favicon}' => $favicon->tag(),
     '{$reloadStyles}' => $reload->styles(),
     '{$reloadMarkup}' => $reload->markup(),

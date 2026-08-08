@@ -5,3 +5,6 @@ var/
 __pycache__/
 *.pyc
 .idea/
+# .claude/settings.json porte les hooks du projet et se versionne avec lui : c'est lui qui retient l'agent
+# tant qu'une tâche est ouverte. Seuls les réglages propres à une machine restent dehors.
+.claude/settings.local.json

@@ -35,12 +35,14 @@ INTENTION
   exactly what once made this command unusable for a path.
 """
 import importlib.util
+import json
 import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import asset_common
+import asset_theme
 import plate_common
 import production_report
 import shape_vocab
@@ -55,6 +57,8 @@ spec.loader.exec_module(check_sujets)
 
 REPO = Path(__file__).resolve().parent.parent
 SHEETS = REPO / "doc" / "conception" / "referentiels" / "visuel" / "inventaire"
+# Un fichier par description, lu en entier. L'inventaire garde ce qui n'est pas la description : code, profil, type, emprise, hauteur, formes, décisions et raisons.
+DESCRIPTIONS = REPO / "assets" / "descriptions"
 SIDE = {"n": "NORD", "e": "EST", "s": "SUD", "w": "OUEST"}
 
 # The posts clause is proper to the fence's own composition field, not to every assembling sujet — kept
@@ -66,6 +70,33 @@ POSTS_TEXT = {
     2: "DEUX poteaux verticaux, plantés au tiers et aux deux tiers de la case, de sorte que le "
        "vide à gauche, le vide du milieu et le vide à droite soient égaux.",
 }
+
+
+def current_sprite(code: str, variant_ref: str = None):
+    """The subject's own current deliverable, or None when it has never been drawn — the reference a generation takes by default.
+
+    Reads the referentiel rather than the disk: an image on the disk that no variant claims is precisely what the referentiel exists to rule out, and taking one
+    as a reference would propagate whatever it is. The MAIN view is preferred when it has one, since that is the view the others are meant to agree with.
+    """
+    data = json.loads((REPO / "assets" / "sujets.json").read_text(encoding="utf-8"))
+    sujet = data.get("sujets", {}).get(code)
+    if not sujet:
+        return None
+    # LE VARIANT LUI-MÊME D'ABORD, ET C'EST UNE FAUTE PAYÉE : la référence dit de reprendre la matière et la couleur À L'IDENTIQUE, donc donner la vue principale à
+    # un variant qui a sa propre palette efface exactement ce qui le distingue. Constaté sur la proposition 2 du centre de soin, dont les couleurs de la scène de
+    # référence ont été remplacées par celles de la vue principale (opérateur, 2026-08-07). Sa version précédente est la bonne référence : c'est elle qui porte ce
+    # qu'il est. La vue principale ne sert qu'à un variant qui n'a encore jamais été dessiné.
+    variants = sorted(sujet.get("variants", []),
+                      key=lambda v: (v.get("ref") != variant_ref, not v.get("principale", False)))
+    for variant in variants:
+        for representation in variant.get("representations", []):
+            if representation.get("statut") != "courante":
+                continue
+            path = REPO / "assets" / representation["path"]
+            if path.is_file():
+                return path
+
+    return None
 
 
 def sheet_of(code: str, candidates: tuple = (), replacing: tuple = ()) -> tuple:
@@ -84,22 +115,40 @@ def sheet_of(code: str, candidates: tuple = (), replacing: tuple = ()) -> tuple:
     a gate. Two values replacing at once is a fault too — which one the consigne quotes belongs to the entry, and nothing here is entitled to pick. Several
     values COMPLETING is not a fault: they add up, in the order the variant declares them.
     """
+    # LA DESCRIPTION SE LIT DANS SON PROPRE FICHIER, PRIS EN ENTIER — on ne cherche plus l'italique dans un document (opérateur, 2026-08-07 : « je te déconseille de
+    # parser un MD, soit tu prends tout, soit t'en fais un autre »). Le fichier EST la description : rien n'y est reconnu, donc rien ne peut y être manqué. C'est
+    # l'extraction par reconnaissance de forme qui obligeait une fiche à tenir sur une ligne, et qui refusait une génération sans jamais en dire la cause.
+    # L'ÉTIQUETTE, ELLE, RESTE CELLE DE L'INVENTAIRE : c'est un nom d'affichage, pas la matière de la consigne.
+    label = None
     for path in sorted(SHEETS.glob("*.md")):
         for line in path.read_text(encoding="utf-8").splitlines():
-            if not line.startswith(f"- **{code} "):
-                continue
-            label = line.split("**")[1].replace(code, "").strip()
-            described = [value for value in candidates if value in replacing or asset_common.declares_qualified_description(line, value)]
-            replaced = [value for value in described if value in replacing]
-            if len(replaced) > 1:
-                raise SystemExit(f"FAULT {code} : {', '.join(replaced)} remplacent tous la description du sujet et sont demandés ensemble — laquelle citer appartient à l'inventaire, pas à cet outil.")
-            if replaced:
-                description, _ = asset_common.sheet_description(line, code, replaced[0])
-                return label, description
-            base, _ = asset_common.sheet_description(line, code)
-            parts = [asset_common.sheet_description(line, code, value)[0] for value in described]
-            return label, "\n".join([base] + parts)
-    raise SystemExit(f"FAULT {code} n'est pas à l'inventaire — rien ne se produit sans fiche.")
+            if line.startswith(f"- **{code} "):
+                label = line.split("**")[1].replace(code, "").strip()
+                break
+        if label is not None:
+            break
+    if label is None:
+        raise SystemExit(f"FAULT {code} n'est pas à l'inventaire — rien ne se produit sans fiche.")
+
+    def description_file(qualifier=None):
+        return DESCRIPTIONS / (f"{code}_{qualifier}.md" if qualifier else f"{code}.md")
+
+    described = [value for value in candidates if value in replacing or description_file(value).is_file()]
+    replaced = [value for value in described if value in replacing]
+    if len(replaced) > 1:
+        raise SystemExit(f"FAULT {code} : {', '.join(replaced)} remplacent tous la description du sujet et sont demandés ensemble — laquelle citer appartient à l'inventaire, pas à cet outil.")
+    if replaced:
+        chosen = description_file(replaced[0])
+        if not chosen.is_file():
+            raise SystemExit(f"FAULT {code} n'a pas de description propre à {replaced[0]!r} — elle est obligatoire pour ce qualificatif, la description de base ne s'y substitue jamais. "
+                             f"Fichier attendu : {chosen.relative_to(REPO)}")
+        return label, chosen.read_text(encoding="utf-8").strip()
+    base = description_file()
+    if not base.is_file():
+        raise SystemExit(f"FAULT {code} n'a pas de description écrite — elle est obligatoire. Fichier attendu : {base.relative_to(REPO)}")
+    parts = [description_file(value).read_text(encoding="utf-8").strip() for value in described]
+
+    return label, "\n".join([base.read_text(encoding="utf-8").strip()] + parts)
 
 
 def sujet_type(code: str) -> tuple:
@@ -165,10 +214,20 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
     # treatment, its material and its light steady from one piece to the next; without one, every
     # generation reinvents them and the pieces stop matching. Refused here rather than left to whoever
     # types the command, so forgetting it is impossible instead of merely discouraged.
+    # LA COMMANDE CHOISIT LA RÉFÉRENCE ELLE-MÊME, ET C'EST LA CORRECTION D'UNE FAUTE PAYÉE TROIS FOIS. Une planche du monde porte un point de fuite, et le sujet
+    # produit avec elle en référence le reprend — même quand sa fiche lui interdit d'être vu de biais (constaté sur le centre de soin, 2026-08-07). Ce qu'il VOIT
+    # pèse plus lourd que ce qu'on lui écrit. La bonne référence est donc toujours la sprite courante du sujet lui-même quand elle existe : c'est elle qui tient
+    # sa matière, sa lumière et sa projection d'une pièce à la suivante. La planche ne sert qu'au tout premier dessin, quand rien n'existe encore de lui.
+    #
+    # Laissé au choix de celui qui tape la commande, ce point a produit trois pièces de clôture qui n'étaient pas le même objet, et un bâtiment qui converge.
     if generate and not (reference or plate):
-        raise SystemExit("FAULT aucune référence fournie — une génération se commande toujours avec "
-                         "son image de référence (--ref pour une image du sujet seul, --plate pour "
-                         "une scène où il apparaît parmi d'autres).")
+        courante = current_sprite(code, variant_ref)
+        if courante is not None:
+            reference = courante
+            print(f"référence choisie : {courante.relative_to(REPO)} — la sprite courante du sujet, jamais une planche du monde")
+        else:
+            raise SystemExit("FAULT aucune référence fournie et ce sujet n'a encore aucune sprite — c'est un premier dessin, donnez-lui une planche du monde avec "
+                             "--plate, et regardez sa projection avant de l'inscrire.")
     type_, sujet = sujet_type(code)
     extras = asset_common.extra_instructions(code, sujet, type_)
     # An image is commanded BY THE REF of its variant: the referentiel holds that variant, and everything the consigne needs about it — its shape, its
@@ -282,6 +341,11 @@ RÉFÉRENCE — ouvre et regarde le fichier {asset_common.reference_address(refe
 déjà produite de ce même sujet, montrant plusieurs de ses pièces assemblées, dont celle qu'on te
 demande ici. Elle donne la matière, la couleur et la lumière à reprendre à l'identique. On te demande
 d'extraire cette pièce précise et de la dessiner seule, pas d'en inventer une nouvelle.
+ELLE NE DONNE PAS LA PRISE DE VUE, ET C'EST LE SEUL POINT SUR LEQUEL TU NE LA SUIS PAS. Elle peut
+porter une perspective, une convergence, un point de fuite : ce sont des défauts qu'on corrige, pas des
+traits à reprendre. Tu redresses ce que tu vois en AXONOMÉTRIE ORTHOGRAPHIQUE, comme décrit plus haut —
+arêtes verticales parallèles entre elles, fuyantes parallèles entre elles, aucun rétrécissement vers le
+bas ni vers le haut. La référence fait foi pour la MATIÈRE, jamais pour la PROJECTION.
 """
     elif plate:
         clause = f"""
@@ -357,7 +421,10 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
     # The destination depends on the SUJET's own code, never on a reference: a reference is an input
     # the generator reads, not a place to write to. Deriving it from the reference used to send a
     # produced tracé into assets/revue-da/ whenever the reference given for it lived there.
-    target = REPO / "assets" / "poc" / asset_common.CODE_FOLDER.get(code[:2], "divers")
+    # LE THÈME S'INTERCALE ICI, ET NULLE PART AILLEURS DANS CETTE COMMANDE : un thème regroupe tous les sprites du jeu, donc il se lit au moment où l'on décide
+    # où une image se pose. Le thème d'origine ne porte pas son nom dans les chemins — le fragment est vide pour lui —, si bien que ce branchement ne déplace
+    # aucun fichier tant qu'il est le thème courant, et qu'un second thème n'aura qu'à se déclarer pour vivre à côté du premier.
+    target = REPO / "assets" / "poc" / asset_theme.subtree() / asset_common.CODE_FOLDER.get(code[:2], "divers")
     target.mkdir(parents=True, exist_ok=True)
     # One generation per version, and nothing is thrown away: an existing piece keeps its place and
     # the new one takes the next version number, with its own frozen prompt beside it.

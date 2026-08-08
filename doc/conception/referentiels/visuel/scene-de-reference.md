@@ -6,7 +6,7 @@
 
 ## Cadre
 
-1536 × 1152 pixels, grille de 32 × 24 cases de 48 pixels, jamais dessinée. Un humain debout occupe une case, une créature de base aussi. Caméra en plongée à environ soixante-dix degrés : aucun horizon, aucun ciel, aucun point de fuite. Soleil en haut à gauche, ombres simples vers le bas à droite. Image nette de bord à bord, claire, aux couleurs franches. Case du coin inférieur gauche laissée nue pour la case témoin.
+1536 × 1152 pixels, grille de 32 × 24 cases de 48 pixels, jamais dessinée. Un humain debout occupe une case, une créature de base aussi. Caméra en plongée à soixante degrés : aucun horizon, aucun ciel, aucun point de fuite. Soleil en haut à gauche, ombres simples vers le bas à droite. Image nette de bord à bord, claire, aux couleurs franches. Case du coin inférieur gauche laissée nue pour la case témoin.
 
 ## Chemins, tracés en premier
 

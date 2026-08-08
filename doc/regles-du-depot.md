@@ -1,7 +1,7 @@
 # Les règles du dépôt — GateBeast
 
-**Usage :** ce que lit et applique tout agent qui **construit** le projet, avant d'agir — les règles de tenue du dépôt et les renvois vers ce qui fait foi. On y arrive par l'aiguilleur
-[AGENTS.md](../AGENTS.md), qui dit à qui ces règles s'adressent. Dépôt du projet GateBeast, jeu original de collection de créatures.
+**Usage :** ce que lit et applique tout agent qui **construit** le projet, avant d'agir — les règles de tenue du dépôt et les renvois vers ce qui fait foi. On y arrive par
+[AGENTS.md](../AGENTS.md), qui oriente chaque agent selon son rôle et dit à qui ces règles s'adressent. Dépôt du projet GateBeast, jeu original de collection de créatures.
 
 **Intention :** réunir ce qu'un agent doit savoir pour ne pas nuire, et rien de plus. **Ce fichier n'est pas un fourre-tout** : une règle qui dit ce que le jeu doit être va à la conception, une règle
 sur le contenu d'un document va dans ce document, une règle de conduite valable au-delà de GateBeast va à la méthode commune. Ne reste ici que ce qui n'a pas d'autre foyer — et ce qui s'en trouve un
@@ -109,8 +109,9 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 
 - **Le générateur d'images est l'agent Codex, enveloppé par `scripts/generate-image.php`** (versionné avec le projet). Personne ne l'appelle directement : un seul outil commande un sprite de bout en
   bout ([chaîne de production](doc/conception/referentiels/visuel/assets/chaine-de-production.md)).
-- **Trois barrières séparent le générateur d'images des règles du dépôt, et elles se couvrent l'une l'autre.** `AGENTS.md` n'est plus qu'un aiguilleur sans contenu, qui lui dit explicitement que rien
-  d'ici ne le concerne ; son enveloppe coupe la lecture automatique des instructions du dépôt, à l'appel ; et la consigne qu'il reçoit le lui redit en toutes lettres. Constaté le 2026-08-06 : deux
+- **Trois barrières séparent le générateur d'images des règles du dépôt, et elles se couvrent l'une l'autre.** `AGENTS.md` ne porte plus aucune règle et se contente d'orienter, en
+  lui disant explicitement que rien d'ici ne le concerne ; son enveloppe coupe la lecture automatique des instructions du dépôt, à l'appel ; et la consigne qu'il reçoit le lui redit en toutes lettres.
+  Constaté le 2026-08-06 : deux
   générations ont répondu « mode lot : cette génération nécessite votre validation » au lieu de dessiner, parce que la règle des modes venait d'être écrite dans le fichier qu'il chargeait. Ce qui doit
   parvenir au rôle `illustrator` s'écrit **dans sa consigne**, jamais dans un document du dépôt.
 - **Une seule génération par version, aucune relance sans accord** — sauf la reprise unique prévue par la chaîne de production des assets

@@ -30,6 +30,14 @@ Ce nœud couvre ce qu'est un asset livrable et les règles de mesure qui le gouv
 - **Un sujet qui remplit son emprise l'atteint carrément, sans arrondir ses bords** — une matière ou une masse qui couvre sa case va jusqu'à ses bords en angle vif : un coin arrondi laisse un vide qui se voit dès que deux cases se touchent, et transforme un massif continu en chapelet de pastilles. Ne vaut que pour ce qui est **plein** : un sujet isolé — un arbre, un poteau — garde la silhouette que sa nature lui donne. Écarté : arrondir par défaut, qui fait joli sur une image seule et casse tous les assemblages.
 - **Ce qu'une mesure ne voit pas se contrôle par jugement** — le fond, le cadrage et la régularité se mesurent ; la conformité au style et la fidélité à la fiche, non — et ce sont les écarts réellement constatés. La chaîne porte donc les deux contrôles, dans cet ordre ([chaîne de production](chaine-de-production.md)). Écarté : s'en remettre aux seules mesures, qui déclarent bonne une image hors direction artistique.
 
+- **UN THÈME REGROUPE TOUS LES SPRITES DU JEU** (opérateur, 2026-08-07) — un ensemble complet et cohérent, couvrant chaque sujet et chaque variant, désigné par un nom. En changer change les images
+  que montent les maquettes, celles qu'affichent les pages de revue et celles que le jeu chargerait, **et rien d'autre**. Ce n'est **ni un filtre, ni un axe de variante, ni une chaîne de repli** :
+  un thème répond pour tout le jeu, ou il n'est pas le thème courant — un thème incomplet qui se rabattrait sur un autre pour ses trous rendrait toute image imprévisible. **Le thème courant se
+  choisit dans le code, à un seul endroit**, exactement comme la taille des cases : ni variable d'environnement, ni argument de commande, ni valeur dans un plan. Voir un nom de thème écrit ailleurs
+  est un défaut. **Le thème par défaut est `gb-gen`**, qui nomme tout ce que le générateur a dessiné jusqu'ici pour GateBeast ; **il ne porte pas son nom dans les chemins**, ses images étant
+  antérieures à la notion — lui en donner un obligerait à déplacer chaque fichier produit et à réinscrire chaque chemin au référentiel pour ne rien gagner, alors que le nommer suffit à rendre un
+  second thème possible. Écarté : un thème par sujet ou par famille, qui serait un axe de variante de plus et non un ensemble ; écarté aussi : le repli d'un thème sur un autre.
+
 ## Questions ouvertes
 
 Aucune à ce niveau.

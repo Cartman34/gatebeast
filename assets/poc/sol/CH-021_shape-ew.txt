@@ -1,0 +1,103 @@
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette.
+
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : PROJECTION PARALLÈLE, forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle, le même que celui des planches du monde. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — pont en pierre, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT 1 case(s) de large, et sa hauteur tient ENTRE 1,0 ET 1,2 case(s).
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
+la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 1 case(s) de large sur
+1 case(s) de profondeur : ce rectangle occupe le BAS de l'image, sa profondeur se respecte case pour case, et la dernière rangée tolère un léger débord pour que la
+matière se raccorde à ce qui l'entoure. TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+
+UN SEUL SUJET, ET RIEN D'AUTRE : la pièce d'assemblage décrite ci-dessous, et absolument rien de plus —
+aucun décor, aucun sol, aucun accessoire, aucun être vivant, aucun cadre, aucune bordure, aucun texte.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet TOUCHE les bords que le tracé rejoint — il y est coupé net, c'est voulu, c'est ce qui
+permet le raccordement. Sur les bords qu'il ne rejoint pas, il reste une marge transparente et rien ne
+dépasse.
+
+CE SUJET EST UNE PIÈCE D'ASSEMBLAGE, PAS UN OBJET ISOLÉ. Des cases voisines porteront la même pièce, et
+l'ensemble doit former une ligne continue, sans décrochement ni interruption.
+
+Le tracé PASSE PAR LE CENTRE de la case et REJOINT LES BORDS indiqués par la variante demandée. Ce qui
+le constitue — la matière décrite par sa fiche, et elle seule — ATTEINT EXACTEMENT ces bords : il y est
+coupé net, à la MÊME HAUTEUR et à la MÊME ÉPAISSEUR de chaque côté, de sorte qu'en posant deux images
+identiques côte à côte, la matière se prolonge d'une case à l'autre sans marche ni trou.
+
+Les bords que le tracé ne rejoint PAS restent libres : rien ne les touche.
+
+LA PIÈCE DEMANDÉE : le sujet passe par le CENTRE de la case et rejoint le bord EST et OUEST, et eux seuls.
+Les bords NORD et SUD restent libres : rien ne les touche.
+
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/revue-da/planche-p1-campagne-v8.png. C'est une scène du
+monde, déjà validée, où pont en pierre apparaît PARMI D'AUTRES éléments — pas une image de ce seul sujet.
+Elle donne le style, la matière et la lumière à reprendre pour CE SUJET précis, repéré dans l'image ; le reste de la scène ne se copie pas et n'apparaît pas dans le résultat.
+ELLE NE DONNE PAS LA PRISE DE VUE. C'est une scène unique, rendue avec un point de fuite : les bâtiments y montrent la face tournée vers le centre de l'image. Une sprite se dessine une fois et se
+pose n'importe où, donc elle ne peut pas dépendre d'une position : tu reprends l'angle décrit plus haut, en projection parallèle, et tu ignores la convergence de la scène de référence.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et 96 PIXELS
+dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
+cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
+l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+CH-021 : UN PONT DE PIERRE À UNE SEULE ARCHE, enjambant un cours d'eau et le laissant couler dessous : l'eau se voit de part et d'autre de l'ouvrage et sous l'arche, jamais recouverte. L'OUVRAGE EST ALIGNÉ
+SUR L'AXE DE LA CASE, JAMAIS EN BIAIS ET JAMAIS VU DE TROIS QUARTS : son tablier court droit dans le sens que la forme déclare, ses deux parapets lui restant parallèles d'un bout à l'autre. Son
+tablier, légèrement bombé en dos d'âne, OCCUPE TOUTE LA LONGUEUR DE LA CASE DANS CE SENS : il naît sur un bord, il meurt sur le bord opposé, et sa pierre TOUCHE EXACTEMENT CES DEUX BORDS — il
+ne s'arrête jamais à l'intérieur de la case, sans quoi le tronçon suivant ne s'y raccorde pas ; il couvre les deux tiers de la largeur de la case, comme le chemin, et il reste de chaque côté une
+marge libre. Il est fait de MOELLONS DE PIERRE GRISE assemblés en assises irrégulières, aux joints creusés par le temps ; l'arche, en plein cintre, est cerclée de claveaux mieux taillés que le
+reste. DE PART ET D'AUTRE DU TABLIER, DEUX PARAPETS BAS, à hauteur de genou, faits des mêmes pierres, coiffés d'une seule rangée de dalles plates. SON USURE SE VOIT ET C'EST ELLE QUI LUI DONNE SON
+ÂGE : de la mousse vert sombre dans les joints du côté à l'ombre et sur les pierres basses que l'eau éclabousse, UNE dalle de parapet ébréchée, UNE autre légèrement déchaussée, des
+traînées claires laissées par le ruissellement sous l'arche, et l'usure lisse et creusée au milieu du tablier, là où l'on passe. TROIS touffes d'herbe et UNE petite fougère poussent aux
+jointures des culées, où la pierre rencontre la berge. Rien de neuf, rien de net : c'est un ouvrage ancien, encore solide.
+
+CONSIGNE SUPPLÉMENTAIRE POUR CE SUJET — elle s'ajoute à tout ce qui précède et ne l'annule pas :
+LE COURS D'EAU TRAVERSE LA CASE PERPENDICULAIREMENT AU PONT, et c'est ce qui fait qu'il y a un pont : l'eau entre par les DEUX BORDS QUE LE PONT NE RELIE PAS, passe SOUS l'arche, et ressort de l'autre côté. Elle ne longe jamais l'ouvrage : de l'eau qui coule le long du pont, sur ses deux flancs, décrit un pont posé dans le sens du courant, ce qui n'a aucun sens. On voit donc l'eau à gauche et à droite de l'arche, en dessous du tablier, jamais recouverte. Aucun sol n'est dessiné aux abords — c'est la case voisine qui l'apporte.
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à SOIXANTE DEGRÉS sous l'horizontale, en projection parallèle. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.

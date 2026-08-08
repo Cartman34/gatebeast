@@ -10,11 +10,18 @@
     },
     "artefacts": [
         {
-            "name": "Index des artefacts",
-            "description": "la porte d'entrée vers tous les autres",
+            "name": "Index",
+            "description": "la porte d'entrée vers toutes les autres",
             "state": "alive",
             "state_text": "vivant, ouvert le 2026-08-04",
             "address": "https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949"
+        },
+        {
+            "name": "Suivi des sujets",
+            "description": "ce qui reste à faire, dans l'ordre des priorités",
+            "state": "alive",
+            "state_text": "vivant, servi en local depuis le 2026-08-07",
+            "_adresse_absente": "Cette page n'a jamais été publiée : elle naît sur le serveur de revue (RS) et n'a donc pas d'adresse publiée. L'entrée existe pour que l'index la montre et que sa card mène au local."
         },
         {
             "name": "Suivi des sprites",

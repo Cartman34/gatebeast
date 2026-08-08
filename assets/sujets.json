@@ -597,6 +597,18 @@
         }
       ],
       "_lot_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
+    },
+    "pont": {
+      "layer": "monde",
+      "passage_default": "open",
+      "_passage_comment": "Un pont existe pour qu'on passe : il ouvre les deux bords qu'il relie. Ses deux autres côtés sont fermés par les parapets — c'est la forme qui le dit, pas le type.",
+      "consigne_supplementaire": "LE COURS D'EAU TRAVERSE LA CASE PERPENDICULAIREMENT AU PONT, et c'est ce qui fait qu'il y a un pont : l'eau entre par les DEUX BORDS QUE LE PONT NE RELIE PAS, passe SOUS l'arche, et ressort de l'autre côté. Elle ne longe jamais l'ouvrage : de l'eau qui coule le long du pont, sur ses deux flancs, décrit un pont posé dans le sens du courant, ce qui n'a aucun sens. On voit donc l'eau à gauche et à droite de l'arche, en dessous du tablier, jamais recouverte. Aucun sol n'est dessiné aux abords — c'est la case voisine qui l'apporte.",
+      "_consigne_comment": "La première version disait seulement que l'eau se voit « de part et d'autre de l'ouvrage » : le générateur l'a mise le long des deux flancs du pont, parallèle à lui. Une clause qui dit la présence sans dire la direction laisse choisir, et le générateur choisit toujours.",
+      "shapes": [
+        "ns",
+        "ew"
+      ],
+      "_shapes_comment": "Deux formes, décidées par l'opérateur le 2026-08-07. Un pont ne se ramifie pas : ni angle, ni trois branches, ni croisement — il enjambe en ligne droite."
     }
   },
   "sujets": {
@@ -626,7 +638,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         }
       ]
     },
@@ -686,7 +699,8 @@
               "statut": "courante"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-n_frame-01"
+          "ref": "orientation-south_action-idle_shape-n_frame-01",
+          "libelle": "Extrémité nord"
         },
         {
           "orientation": "south",
@@ -772,21 +786,24 @@
               "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ns_frame-01"
+          "ref": "orientation-south_action-idle_shape-ns_frame-01",
+          "libelle": "Ligne nord-sud"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "ne",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-ne_frame-01"
+          "ref": "orientation-south_action-idle_shape-ne_frame-01",
+          "libelle": "Angle nord-est"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "nes",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nes_frame-01"
+          "ref": "orientation-south_action-idle_shape-nes_frame-01",
+          "libelle": "Trois branches vers le nord, l'est et le sud"
         },
         {
           "orientation": "south",
@@ -872,7 +889,8 @@
               "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+          "ref": "orientation-south_action-idle_shape-nesw_frame-01",
+          "libelle": "Carrefour"
         },
         {
           "orientation": "south",
@@ -880,6 +898,45 @@
           "shape": "ew",
           "_comment": "Hors du lot v0 minimal (qui ne demande que shape-ns pour la ligne, l'autre sens s'obtenant par rotation) : première production de ce variant, aucune version antérieure à porter.",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-ew-v5.png",
+              "maitre": "poc/sol/CH-019_shape-ew-v5.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 17,
+                  "right": 95,
+                  "bottom": 78,
+                  "width": 96,
+                  "height": 62
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 95,
+                  "width": 96
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 79
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
             {
               "type": "sprite",
               "path": "cutout/sol/CH-019_shape-ew-v4.png",
@@ -917,7 +974,7 @@
                   "rows": 1
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             },
             {
               "type": "sprite",
@@ -968,14 +1025,16 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+          "ref": "orientation-south_action-idle_shape-ew_frame-01",
+          "libelle": "Ligne est-ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "e",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-e_frame-01"
+          "ref": "orientation-south_action-idle_shape-e_frame-01",
+          "libelle": "Extrémité est"
         },
         {
           "orientation": "south",
@@ -1007,7 +1066,7 @@
                 },
                 "anchor_px": {
                   "x": 47.5,
-                  "y": 96.0
+                  "y": 96
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1022,56 +1081,64 @@
               "statut": "courante"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-s_frame-01"
+          "ref": "orientation-south_action-idle_shape-s_frame-01",
+          "libelle": "Extrémité sud"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "w",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-w_frame-01"
+          "ref": "orientation-south_action-idle_shape-w_frame-01",
+          "libelle": "Extrémité ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "es",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-es_frame-01"
+          "ref": "orientation-south_action-idle_shape-es_frame-01",
+          "libelle": "Angle est-sud"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "sw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-sw_frame-01"
+          "ref": "orientation-south_action-idle_shape-sw_frame-01",
+          "libelle": "Angle sud-ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "nw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nw_frame-01"
+          "ref": "orientation-south_action-idle_shape-nw_frame-01",
+          "libelle": "Angle nord-ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "esw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-esw_frame-01"
+          "ref": "orientation-south_action-idle_shape-esw_frame-01",
+          "libelle": "Trois branches vers l'est, le sud et l'ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "nsw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nsw_frame-01"
+          "ref": "orientation-south_action-idle_shape-nsw_frame-01",
+          "libelle": "Trois branches vers le nord, le sud et l'ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "new",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-new_frame-01"
+          "ref": "orientation-south_action-idle_shape-new_frame-01",
+          "libelle": "Trois branches vers le nord, l'est et l'ouest"
         }
       ]
     },
@@ -1130,7 +1197,8 @@
               "statut": "courante"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-n_frame-01"
+          "ref": "orientation-south_action-idle_shape-n_frame-01",
+          "libelle": "Extrémité nord"
         },
         {
           "orientation": "south",
@@ -1177,28 +1245,32 @@
               "statut": "courante"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ns_frame-01"
+          "ref": "orientation-south_action-idle_shape-ns_frame-01",
+          "libelle": "Ligne nord-sud"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "ne",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-ne_frame-01"
+          "ref": "orientation-south_action-idle_shape-ne_frame-01",
+          "libelle": "Angle nord-est"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "nes",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nes_frame-01"
+          "ref": "orientation-south_action-idle_shape-nes_frame-01",
+          "libelle": "Trois branches vers le nord, l'est et le sud"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "nesw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nesw_frame-01"
+          "ref": "orientation-south_action-idle_shape-nesw_frame-01",
+          "libelle": "Carrefour"
         },
         {
           "orientation": "south",
@@ -1218,14 +1290,16 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+          "ref": "orientation-south_action-idle_shape-ew_frame-01",
+          "libelle": "Ligne est-ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "e",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-e_frame-01"
+          "ref": "orientation-south_action-idle_shape-e_frame-01",
+          "libelle": "Extrémité est"
         },
         {
           "orientation": "south",
@@ -1256,8 +1330,8 @@
                   "width": 49
                 },
                 "anchor_px": {
-                  "x": 48.0,
-                  "y": 96.0
+                  "x": 48,
+                  "y": 96
                 },
                 "master_size_px": {
                   "width": 96,
@@ -1272,56 +1346,64 @@
               "statut": "courante"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-s_frame-01"
+          "ref": "orientation-south_action-idle_shape-s_frame-01",
+          "libelle": "Extrémité sud"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "w",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-w_frame-01"
+          "ref": "orientation-south_action-idle_shape-w_frame-01",
+          "libelle": "Extrémité ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "es",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-es_frame-01"
+          "ref": "orientation-south_action-idle_shape-es_frame-01",
+          "libelle": "Angle est-sud"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "sw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-sw_frame-01"
+          "ref": "orientation-south_action-idle_shape-sw_frame-01",
+          "libelle": "Angle sud-ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "nw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nw_frame-01"
+          "ref": "orientation-south_action-idle_shape-nw_frame-01",
+          "libelle": "Angle nord-ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "esw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-esw_frame-01"
+          "ref": "orientation-south_action-idle_shape-esw_frame-01",
+          "libelle": "Trois branches vers l'est, le sud et l'ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "nsw",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nsw_frame-01"
+          "ref": "orientation-south_action-idle_shape-nsw_frame-01",
+          "libelle": "Trois branches vers le nord, le sud et l'ouest"
         },
         {
           "orientation": "south",
           "action": "idle",
           "shape": "new",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-new_frame-01"
+          "ref": "orientation-south_action-idle_shape-new_frame-01",
+          "libelle": "Trois branches vers le nord, l'est et l'ouest"
         }
       ]
     },
@@ -1343,11 +1425,50 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-ew_posts-2-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-ew_posts-2-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 125
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 122,
+                  "width": 96,
+                  "height": 123
+                },
+                "contact_px": {
+                  "left": 18,
+                  "right": 78,
+                  "width": 61
+                },
+                "anchor_px": {
+                  "x": 48,
+                  "y": 123
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 125
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/cloture/OB-010_shape-ew_posts-2.png",
               "maitre": "poc/cloture/OB-010_shape-ew_posts-2.png",
               "numero_image": 1,
               "mesures": null,
-              "statut": "courante",
+              "statut": "anterieure",
               "verdict": "validee",
               "commentaire_operateur": "Ancien design"
             },
@@ -1362,7 +1483,8 @@
               "commentaire_operateur": "Ancien design"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ew_frame-01"
+          "ref": "orientation-south_action-idle_shape-ew_frame-01",
+          "libelle": "Ligne est-ouest"
         },
         {
           "orientation": "south",
@@ -1381,7 +1503,8 @@
               "verdict": "validee"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ne_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-ne_posts-1_frame-01",
+          "libelle": "Angle nord-est, un poteau"
         },
         {
           "orientation": "south",
@@ -1408,7 +1531,8 @@
               "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ns_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-ns_posts-1_frame-01",
+          "libelle": "Ligne nord-sud, un poteau"
         },
         {
           "orientation": "south",
@@ -1437,7 +1561,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_shape-ew_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-ew_posts-1_frame-01",
+          "libelle": "Ligne est-ouest, un poteau"
         },
         {
           "orientation": "south",
@@ -1456,7 +1581,8 @@
               "verdict": "validee"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-es_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-es_posts-1_frame-01",
+          "libelle": "Angle est-sud, un poteau"
         },
         {
           "orientation": "south",
@@ -1475,7 +1601,8 @@
               "verdict": "validee"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-sw_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-sw_posts-1_frame-01",
+          "libelle": "Angle sud-ouest, un poteau"
         },
         {
           "orientation": "south",
@@ -1544,7 +1671,8 @@
               "commentaire_operateur": "à la verticale, on voit 2 lisses, au lieu d'une"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-nw_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-nw_posts-1_frame-01",
+          "libelle": "Angle nord-ouest, un poteau"
         },
         {
           "orientation": "south",
@@ -1740,7 +1868,8 @@
               "commentaire_operateur": "C'est d'un ancien style là, non ?"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ew_gate-closed_frame-01"
+          "ref": "orientation-south_action-idle_shape-ew_gate-closed_frame-01",
+          "libelle": "Ligne est-ouest, portillon fermé"
         },
         {
           "orientation": "south",
@@ -1934,7 +2063,8 @@
               "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ew_gate-open_frame-01"
+          "ref": "orientation-south_action-idle_shape-ew_gate-open_frame-01",
+          "libelle": "Ligne est-ouest, portillon ouvert"
         },
         {
           "orientation": "south",
@@ -2003,7 +2133,8 @@
               "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ns_gate-closed_frame-01"
+          "ref": "orientation-south_action-idle_shape-ns_gate-closed_frame-01",
+          "libelle": "Ligne nord-sud, portillon fermé"
         },
         {
           "orientation": "south",
@@ -2080,7 +2211,8 @@
               "commentaire_operateur": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
             }
           ],
-          "ref": "orientation-south_action-idle_shape-ns_gate-open_frame-01"
+          "ref": "orientation-south_action-idle_shape-ns_gate-open_frame-01",
+          "libelle": "Ligne nord-sud, portillon ouvert"
         },
         {
           "orientation": "south",
@@ -2088,7 +2220,8 @@
           "shape": "n",
           "composition": "posts-1",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-n_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-n_posts-1_frame-01",
+          "libelle": "Extrémité nord, un poteau"
         },
         {
           "orientation": "south",
@@ -2096,6 +2229,84 @@
           "shape": "e",
           "composition": "posts-1",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-e_posts-1-v3.png",
+              "maitre": "poc/cloture/OB-010_shape-e_posts-1-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "silhouette_px": {
+                  "left": 27,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 126,
+                  "width": 69,
+                  "height": 127
+                },
+                "contact_px": {
+                  "left": 36,
+                  "right": 58,
+                  "width": 23
+                },
+                "anchor_px": {
+                  "x": 47,
+                  "y": 127
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-e_posts-1-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-e_posts-1-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "silhouette_px": {
+                  "left": 31,
+                  "top": 1,
+                  "right": 95,
+                  "bottom": 126,
+                  "width": 65,
+                  "height": 126
+                },
+                "contact_px": {
+                  "left": 38,
+                  "right": 58,
+                  "width": 21
+                },
+                "anchor_px": {
+                  "x": 48,
+                  "y": 127
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure"
+            },
             {
               "type": "sprite",
               "path": "cutout/cloture/OB-010_shape-e_posts-1.png",
@@ -2121,7 +2332,7 @@
                 },
                 "anchor_px": {
                   "x": 48.5,
-                  "y": 124.0
+                  "y": 124
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2133,10 +2344,11 @@
                   "rows": 1
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-e_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-e_posts-1_frame-01",
+          "libelle": "Extrémité est, un poteau"
         },
         {
           "orientation": "south",
@@ -2144,7 +2356,8 @@
           "shape": "s",
           "composition": "posts-1",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-s_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-s_posts-1_frame-01",
+          "libelle": "Extrémité sud, un poteau"
         },
         {
           "orientation": "south",
@@ -2152,6 +2365,84 @@
           "shape": "w",
           "composition": "posts-1",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-w_posts-1-v3.png",
+              "maitre": "poc/cloture/OB-010_shape-w_posts-1-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 79,
+                  "bottom": 126,
+                  "width": 80,
+                  "height": 127
+                },
+                "contact_px": {
+                  "left": 34,
+                  "right": 67,
+                  "width": 34
+                },
+                "anchor_px": {
+                  "x": 50.5,
+                  "y": 127
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/cloture/OB-010_shape-w_posts-1-v2.png",
+              "maitre": "poc/cloture/OB-010_shape-w_posts-1-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 1,
+                  "right": 76,
+                  "bottom": 126,
+                  "width": 77,
+                  "height": 126
+                },
+                "contact_px": {
+                  "left": 29,
+                  "right": 62,
+                  "width": 34
+                },
+                "anchor_px": {
+                  "x": 45.5,
+                  "y": 127
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure"
+            },
             {
               "type": "sprite",
               "path": "cutout/cloture/OB-010_shape-w_posts-1.png",
@@ -2176,8 +2467,8 @@
                   "width": 25
                 },
                 "anchor_px": {
-                  "x": 52.0,
-                  "y": 107.0
+                  "x": 52,
+                  "y": 107
                 },
                 "master_size_px": {
                   "width": 96,
@@ -2189,10 +2480,11 @@
                   "rows": 1
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_shape-w_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-w_posts-1_frame-01",
+          "libelle": "Extrémité ouest, un poteau"
         },
         {
           "orientation": "south",
@@ -2200,7 +2492,8 @@
           "shape": "nes",
           "composition": "posts-1",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nes_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-nes_posts-1_frame-01",
+          "libelle": "Trois branches vers le nord, l'est et le sud, un poteau"
         },
         {
           "orientation": "south",
@@ -2208,7 +2501,8 @@
           "shape": "esw",
           "composition": "posts-1",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-esw_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-esw_posts-1_frame-01",
+          "libelle": "Trois branches vers l'est, le sud et l'ouest, un poteau"
         },
         {
           "orientation": "south",
@@ -2216,7 +2510,8 @@
           "shape": "nsw",
           "composition": "posts-1",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nsw_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-nsw_posts-1_frame-01",
+          "libelle": "Trois branches vers le nord, le sud et l'ouest, un poteau"
         },
         {
           "orientation": "south",
@@ -2224,7 +2519,8 @@
           "shape": "new",
           "composition": "posts-1",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-new_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-new_posts-1_frame-01",
+          "libelle": "Trois branches vers le nord, l'est et l'ouest, un poteau"
         },
         {
           "orientation": "south",
@@ -2232,7 +2528,8 @@
           "shape": "nesw",
           "composition": "posts-1",
           "representations": [],
-          "ref": "orientation-south_action-idle_shape-nesw_posts-1_frame-01"
+          "ref": "orientation-south_action-idle_shape-nesw_posts-1_frame-01",
+          "libelle": "Carrefour, un poteau"
         }
       ]
     },
@@ -2431,7 +2728,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         }
       ]
     },
@@ -2798,7 +3096,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         }
       ]
     },
@@ -2819,6 +3118,84 @@
           "shape": "plain",
           "_comment": "TR-063-v3 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). TR-063-v2 et TR-063 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v11.png",
+              "maitre": "poc/vegetation/TR-063-v11.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 400
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 7,
+                  "right": 287,
+                  "bottom": 392,
+                  "width": 288,
+                  "height": 386
+                },
+                "contact_px": {
+                  "left": 120,
+                  "right": 183,
+                  "width": 64
+                },
+                "anchor_px": {
+                  "x": 151.5,
+                  "y": 393
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 400
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 3
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v10.png",
+              "maitre": "poc/vegetation/TR-063-v10.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 384
+                },
+                "silhouette_px": {
+                  "left": 4,
+                  "top": 4,
+                  "right": 283,
+                  "bottom": 379,
+                  "width": 280,
+                  "height": 376
+                },
+                "contact_px": {
+                  "left": 114,
+                  "right": 175,
+                  "width": 62
+                },
+                "anchor_px": {
+                  "x": 144.5,
+                  "y": 380
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 384
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 3
+                }
+              },
+              "statut": "anterieure"
+            },
             {
               "type": "sprite",
               "path": "cutout/vegetation/TR-063-v9.png",
@@ -2856,7 +3233,7 @@
                   "rows": 3
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             },
             {
               "type": "sprite",
@@ -3087,7 +3464,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         }
       ],
       "couvert": {
@@ -3122,7 +3500,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         }
       ]
     },
@@ -3355,7 +3734,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         },
         {
           "orientation": "south",
@@ -3520,7 +3900,8 @@
               "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_medium_frame-01"
+          "ref": "orientation-south_action-idle_medium_frame-01",
+          "libelle": "Densité moyenne"
         },
         {
           "orientation": "south",
@@ -3528,6 +3909,45 @@
           "shape": "plain",
           "densite": "dense",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-064_densite-dense-v8.png",
+              "maitre": "poc/vegetation/TR-064_densite-dense-v8.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 95,
+                  "width": 96,
+                  "height": 96
+                },
+                "contact_px": {
+                  "left": 37,
+                  "right": 81,
+                  "width": 45
+                },
+                "anchor_px": {
+                  "x": 59,
+                  "y": 96
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 96
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
             {
               "type": "sprite",
               "path": "cutout/vegetation/TR-064_densite-dense-v7.png",
@@ -3565,7 +3985,7 @@
                   "rows": 1
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             },
             {
               "type": "sprite",
@@ -3802,7 +4222,8 @@
               "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_dense_frame-01"
+          "ref": "orientation-south_action-idle_dense_frame-01",
+          "libelle": "Densité forte"
         }
       ]
     },
@@ -4229,7 +4650,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         }
       ],
       "couvert": {
@@ -4261,6 +4683,318 @@
           "shape": "plain",
           "_comment": "BT-001-v2 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). BT-001 (sans suffixe) devient sa version antérieure, conservée et non écartée.",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v11.png",
+              "maitre": "poc/batiment/BT-001-v11.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1249
+                },
+                "silhouette_px": {
+                  "left": 32,
+                  "top": 18,
+                  "right": 1502,
+                  "bottom": 1224,
+                  "width": 1471,
+                  "height": 1207
+                },
+                "contact_px": {
+                  "left": 331,
+                  "right": 1205,
+                  "width": 875
+                },
+                "anchor_px": {
+                  "x": 768.0,
+                  "y": 1225.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1249
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v10.png",
+              "maitre": "poc/batiment/BT-001-v10.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "silhouette_px": {
+                  "left": 15,
+                  "top": 29,
+                  "right": 1520,
+                  "bottom": 1237,
+                  "width": 1506,
+                  "height": 1209
+                },
+                "contact_px": {
+                  "left": 295,
+                  "right": 1243,
+                  "width": 949
+                },
+                "anchor_px": {
+                  "x": 769.0,
+                  "y": 1238.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v9.png",
+              "maitre": "poc/batiment/BT-001-v9.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "silhouette_px": {
+                  "left": 112,
+                  "top": 15,
+                  "right": 1418,
+                  "bottom": 1247,
+                  "width": 1307,
+                  "height": 1233
+                },
+                "contact_px": {
+                  "left": 358,
+                  "right": 1176,
+                  "width": 819
+                },
+                "anchor_px": {
+                  "x": 767.0,
+                  "y": 1248.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v8.png",
+              "maitre": "poc/batiment/BT-001-v8.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "silhouette_px": {
+                  "left": 22,
+                  "top": 34,
+                  "right": 1511,
+                  "bottom": 1217,
+                  "width": 1490,
+                  "height": 1184
+                },
+                "contact_px": {
+                  "left": 601,
+                  "right": 934,
+                  "width": 334
+                },
+                "anchor_px": {
+                  "x": 767.5,
+                  "y": 1218.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v7.png",
+              "maitre": "poc/batiment/BT-001-v7.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1246
+                },
+                "silhouette_px": {
+                  "left": 17,
+                  "top": 30,
+                  "right": 1511,
+                  "bottom": 1212,
+                  "width": 1495,
+                  "height": 1183
+                },
+                "contact_px": {
+                  "left": 595,
+                  "right": 936,
+                  "width": 342
+                },
+                "anchor_px": {
+                  "x": 765.5,
+                  "y": 1213.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1246
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v6.png",
+              "maitre": "poc/batiment/BT-001-v6.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "silhouette_px": {
+                  "left": 17,
+                  "top": 33,
+                  "right": 1509,
+                  "bottom": 1192,
+                  "width": 1493,
+                  "height": 1160
+                },
+                "contact_px": {
+                  "left": 597,
+                  "right": 933,
+                  "width": 337
+                },
+                "anchor_px": {
+                  "x": 765,
+                  "y": 1193
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v5.png",
+              "maitre": "poc/batiment/BT-001-v5.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 4,
+                  "right": 1535,
+                  "bottom": 1247,
+                  "width": 1536,
+                  "height": 1244
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 1535,
+                  "width": 1536
+                },
+                "anchor_px": {
+                  "x": 767.5,
+                  "y": 1248
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v4.png",
+              "maitre": "poc/batiment/BT-001-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "silhouette_px": {
+                  "left": 34,
+                  "top": 40,
+                  "right": 1501,
+                  "bottom": 1191,
+                  "width": 1468,
+                  "height": 1152
+                },
+                "contact_px": {
+                  "left": 470,
+                  "right": 1060,
+                  "width": 591
+                },
+                "anchor_px": {
+                  "x": 765,
+                  "y": 1192
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
             {
               "type": "sprite",
               "path": "cutout/batiment/BT-001-v3.png",
@@ -4298,7 +5032,7 @@
                   "rows": 10
                 }
               },
-              "statut": "courante",
+              "statut": "anterieure",
               "verdict": "a-reprendre",
               "commentaire_operateur": "Il est très bien, mais je veux des variantes pour avoir trois ou quatre propositions, dont une qui revient aux couleurs de la version précédente (référence assets/revue-da/da-b4-r15-scene.png)."
             },
@@ -4322,7 +5056,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         },
         {
           "orientation": "south",
@@ -4330,6 +5065,84 @@
           "shape": "plain",
           "proposition": "p2",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p2-v4.png",
+              "maitre": "poc/batiment/BT-001_proposition-p2-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1200
+                },
+                "silhouette_px": {
+                  "left": 111,
+                  "top": 14,
+                  "right": 1422,
+                  "bottom": 1197,
+                  "width": 1312,
+                  "height": 1184
+                },
+                "contact_px": {
+                  "left": 199,
+                  "right": 1335,
+                  "width": 1137
+                },
+                "anchor_px": {
+                  "x": 767.0,
+                  "y": 1198.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1200
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p2-v3.png",
+              "maitre": "poc/batiment/BT-001_proposition-p2-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1199
+                },
+                "silhouette_px": {
+                  "left": 113,
+                  "top": 16,
+                  "right": 1417,
+                  "bottom": 1198,
+                  "width": 1305,
+                  "height": 1183
+                },
+                "contact_px": {
+                  "left": 218,
+                  "right": 1317,
+                  "width": 1100
+                },
+                "anchor_px": {
+                  "x": 767.5,
+                  "y": 1199.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1199
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
             {
               "type": "sprite",
               "path": "cutout/batiment/BT-001_proposition-p2-v2.png",
@@ -4367,7 +5180,7 @@
                   "rows": 10
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             },
             {
               "type": "sprite",
@@ -4409,7 +5222,8 @@
               "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_p2_frame-01"
+          "ref": "orientation-south_action-idle_p2_frame-01",
+          "libelle": "Proposition 2"
         },
         {
           "orientation": "south",
@@ -4417,6 +5231,84 @@
           "shape": "plain",
           "proposition": "p3",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p3-v3.png",
+              "maitre": "poc/batiment/BT-001_proposition-p3-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1152
+                },
+                "silhouette_px": {
+                  "left": 103,
+                  "top": 8,
+                  "right": 1435,
+                  "bottom": 1151,
+                  "width": 1333,
+                  "height": 1144
+                },
+                "contact_px": {
+                  "left": 348,
+                  "right": 1194,
+                  "width": 847
+                },
+                "anchor_px": {
+                  "x": 771.0,
+                  "y": 1152.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1152
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p3-v2.png",
+              "maitre": "poc/batiment/BT-001_proposition-p3-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "silhouette_px": {
+                  "left": 74,
+                  "top": 19,
+                  "right": 1458,
+                  "bottom": 1247,
+                  "width": 1385,
+                  "height": 1229
+                },
+                "contact_px": {
+                  "left": 406,
+                  "right": 1129,
+                  "width": 724
+                },
+                "anchor_px": {
+                  "x": 767.5,
+                  "y": 1248.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1248
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "statut": "anterieure"
+            },
             {
               "type": "sprite",
               "path": "cutout/batiment/BT-001_proposition-p3.png",
@@ -4454,10 +5346,11 @@
                   "rows": 10
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_p3_frame-01"
+          "ref": "orientation-south_action-idle_p3_frame-01",
+          "libelle": "Proposition 3"
         }
       ]
     },
@@ -4527,7 +5420,8 @@
             }
           ],
           "principale": true,
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "libelle": "Vue principale"
         },
         {
           "orientation": "south",
@@ -4575,7 +5469,8 @@
               "statut": "courante"
             }
           ],
-          "ref": "orientation-south_action-idle_p2_frame-01"
+          "ref": "orientation-south_action-idle_p2_frame-01",
+          "libelle": "Proposition 2"
         },
         {
           "orientation": "south",
@@ -4583,6 +5478,123 @@
           "shape": "plain",
           "proposition": "p3",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-002_proposition-p3-v5.png",
+              "maitre": "poc/batiment/BT-002_proposition-p3-v5.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 480,
+                  "height": 576
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 1,
+                  "right": 478,
+                  "bottom": 574,
+                  "width": 478,
+                  "height": 574
+                },
+                "contact_px": {
+                  "left": 371,
+                  "right": 397,
+                  "width": 27
+                },
+                "anchor_px": {
+                  "x": 384,
+                  "y": 575
+                },
+                "master_size_px": {
+                  "width": 480,
+                  "height": 576
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 5,
+                  "rows": 4
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-002_proposition-p3-v4.png",
+              "maitre": "poc/batiment/BT-002_proposition-p3-v4.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 480,
+                  "height": 576
+                },
+                "silhouette_px": {
+                  "left": 3,
+                  "top": 3,
+                  "right": 476,
+                  "bottom": 572,
+                  "width": 474,
+                  "height": 570
+                },
+                "contact_px": {
+                  "left": 10,
+                  "right": 469,
+                  "width": 460
+                },
+                "anchor_px": {
+                  "x": 239.5,
+                  "y": 573
+                },
+                "master_size_px": {
+                  "width": 480,
+                  "height": 576
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 5,
+                  "rows": 4
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-002_proposition-p3-v3.png",
+              "maitre": "poc/batiment/BT-002_proposition-p3-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 480,
+                  "height": 576
+                },
+                "silhouette_px": {
+                  "left": 6,
+                  "top": 6,
+                  "right": 473,
+                  "bottom": 569,
+                  "width": 468,
+                  "height": 564
+                },
+                "contact_px": {
+                  "left": 22,
+                  "right": 457,
+                  "width": 436
+                },
+                "anchor_px": {
+                  "x": 239.5,
+                  "y": 570
+                },
+                "master_size_px": {
+                  "width": 480,
+                  "height": 576
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 5,
+                  "rows": 4
+                }
+              },
+              "statut": "anterieure"
+            },
             {
               "type": "sprite",
               "path": "cutout/batiment/BT-002_proposition-p3-v2.png",
@@ -4620,7 +5632,7 @@
                   "rows": 4
                 }
               },
-              "statut": "courante"
+              "statut": "anterieure"
             },
             {
               "type": "sprite",
@@ -4662,7 +5674,315 @@
               "statut": "anterieure"
             }
           ],
-          "ref": "orientation-south_action-idle_p3_frame-01"
+          "ref": "orientation-south_action-idle_p3_frame-01",
+          "libelle": "Proposition 3"
+        }
+      ]
+    },
+    "CH-021": {
+      "profil": "stone-bridge-01",
+      "type": "pont",
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
+      "hauteur": 0.4,
+      "_hauteur_comment": "Le tablier et ses parapets se dressent au-dessus de l'eau : sols-et-chemins.md, « hauteur 0,4 case ». Un pont n'est pas plat, c'est ce qui le distingue d'un gué.",
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ns",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ns-v3.png",
+              "maitre": "poc/sol/CH-021_shape-ns-v3.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 111,
+                  "width": 96,
+                  "height": 112
+                },
+                "contact_px": {
+                  "left": 19,
+                  "right": 76,
+                  "width": 58
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 112
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ns-v2.png",
+              "maitre": "poc/sol/CH-021_shape-ns-v2.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 115
+                },
+                "silhouette_px": {
+                  "left": 6,
+                  "top": 0,
+                  "right": 88,
+                  "bottom": 114,
+                  "width": 83,
+                  "height": 115
+                },
+                "contact_px": {
+                  "left": 11,
+                  "right": 83,
+                  "width": 73
+                },
+                "anchor_px": {
+                  "x": 47,
+                  "y": 115
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 115
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ns.png",
+              "maitre": "poc/sol/CH-021_shape-ns.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "silhouette_px": {
+                  "left": 7,
+                  "top": 0,
+                  "right": 88,
+                  "bottom": 111,
+                  "width": 82,
+                  "height": 112
+                },
+                "contact_px": {
+                  "left": 9,
+                  "right": 88,
+                  "width": 80
+                },
+                "anchor_px": {
+                  "x": 48.5,
+                  "y": 112
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "anterieure"
+            }
+          ],
+          "principale": true,
+          "ref": "orientation-south_action-idle_shape-ns_frame-01",
+          "libelle": "Ligne nord-sud"
+        },
+        {
+          "orientation": "south",
+          "action": "idle",
+          "shape": "ew",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ew.png",
+              "maitre": "poc/sol/CH-021_shape-ew.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 111,
+                  "width": 96,
+                  "height": 112
+                },
+                "contact_px": {
+                  "left": 30,
+                  "right": 64,
+                  "width": 35
+                },
+                "anchor_px": {
+                  "x": 47,
+                  "y": 112
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "ref": "orientation-south_action-idle_shape-ew_frame-01",
+          "libelle": "Ligne est-ouest"
+        }
+      ]
+    },
+    "HU-000": {
+      "profil": "reference-human-01",
+      "type": "humain",
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
+      "hauteur": 1.8,
+      "_hauteur_comment": "personnages.md : un adulte debout fait entre 1,75 et 2 cases, jamais plus, jamais moins. C'est l'étalon de tout le monde, et c'est sur lui que se vérifie une porte.",
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000.png",
+              "maitre": "poc/personnage/HU-000.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 184
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 2,
+                  "right": 93,
+                  "bottom": 181,
+                  "width": 92,
+                  "height": 180
+                },
+                "contact_px": {
+                  "left": 9,
+                  "right": 86,
+                  "width": 78
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 182
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 184
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "principale": true,
+          "libelle": "Vue principale",
+          "ref": "orientation-south_action-idle_frame-01"
+        }
+      ]
+    },
+    "SP-001": {
+      "profil": "amber-fox-cub-01",
+      "type": "creature",
+      "emprise": {
+        "columns": 1,
+        "rows": 1
+      },
+      "hauteur": 0.9,
+      "_hauteur_comment": "Un petit quadrupède de la taille d'un renardeau : il arrive à mi-hauteur d'un humain, qui fait 1,8 case. La fiche donne son emprise, « 1 case », et pas sa hauteur.",
+      "variants": [
+        {
+          "orientation": "south",
+          "action": "idle",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/creature/SP-001.png",
+              "maitre": "poc/creature/SP-001.png",
+              "numero_image": 1,
+              "mesures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 1,
+                  "right": 94,
+                  "bottom": 126,
+                  "width": 94,
+                  "height": 126
+                },
+                "contact_px": {
+                  "left": 21,
+                  "right": 74,
+                  "width": 54
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 127.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "statut": "courante"
+            }
+          ],
+          "principale": true,
+          "libelle": "Vue principale",
+          "ref": "orientation-south_action-idle_frame-01"
         }
       ]
     }
@@ -4672,5 +5992,37 @@
     "HU-000": "brouillon 'joueur' d'asset_common.py, absent de personnages.md",
     "SOL-001": "absent de sols-et-chemins.md",
     "SP-001-1": "SP-001 est à l'inventaire (creatures-temoins.md) mais sans emprise chiffrée — fiche incomplète, à compléter, pas à combler"
+  },
+  "_libelles_variants": {
+    "shape": {
+      "n": "extrémité nord",
+      "e": "extrémité est",
+      "s": "extrémité sud",
+      "w": "extrémité ouest",
+      "ns": "ligne nord-sud",
+      "ew": "ligne est-ouest",
+      "ne": "angle nord-est",
+      "es": "angle est-sud",
+      "sw": "angle sud-ouest",
+      "nw": "angle nord-ouest",
+      "nes": "trois branches vers le nord, l'est et le sud",
+      "esw": "trois branches vers l'est, le sud et l'ouest",
+      "nsw": "trois branches vers le nord, le sud et l'ouest",
+      "new": "trois branches vers le nord, l'est et l'ouest",
+      "nesw": "carrefour"
+    },
+    "_comment": "Le nom français de chaque valeur d'axe. Écrit une fois ici, jamais recomposé par une page : un standard se définit, il ne se déduit pas. Les mots sont ceux de l'inventaire et de l'opérateur — extrémité, angle, ligne, portillon, carrefour.",
+    "valeurs": {
+      "gate-closed": "portillon fermé",
+      "gate-open": "portillon ouvert",
+      "sparse": "densité faible",
+      "medium": "densité moyenne",
+      "dense": "densité forte",
+      "p2": "proposition 2",
+      "p3": "proposition 3",
+      "posts-0": "sans poteau",
+      "posts-1": "un poteau",
+      "posts-2": "deux poteaux"
+    }
   }
 }

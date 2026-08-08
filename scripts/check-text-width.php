@@ -22,9 +22,35 @@ const CEILING = 200;
 const FOLD_WIDTH = 150;
 const FOLD_RUN = 3;
 
-/** True when a line looks like the middle of a hand-wrapped paragraph: prose that stops short and does not close a sentence. */
-function continuesAParagraph(string $line): bool
+/**
+ * Les extensions dont le contenu est du CODE. Dans un de ces fichiers, la seule prose est le commentaire ; tout le reste est instruction, et une instruction n'a
+ * rien à remplir. Ailleurs — Markdown, texte — tout est prose.
+ */
+const CODE_EXTENSIONS = ['php', 'py', 'sh', 'js', 'css', 'json'];
+
+/**
+ * True when a line is PROSE in this file — the only thing the folding rule judges.
+ *
+ * IN A CODE FILE, ONLY A COMMENT IS PROSE (opérateur, 2026-08-07 : « les règles de longueur ne s'appliquent qu'aux commentaires »). Everything else is a
+ * statement, and a statement is exempt whatever its width. Trying to tell a folded sentence from a short statement by its punctuation, or by a list of keywords,
+ * was a losing game: five includes in a row were reported as a paragraph, then three shell commands were, and each miss teaches everyone to ignore the tool.
+ * The comment marker is the one signal that is neither guessed nor fragile.
+ */
+function isProse(string $line, string $path): bool
 {
+    if (!in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), CODE_EXTENSIONS, true)) {
+        return true;
+    }
+    // Les marques de commentaire des langages du projet : deux barres, un bloc et sa continuation, un dièse. Une ligne qui n'en porte pas est du code.
+    return (bool) preg_match('#^\s*(//|/\*|\*|\#)#u', $line);
+}
+
+/** True when a line looks like the middle of a hand-wrapped paragraph: prose that stops short and does not close a sentence. */
+function continuesAParagraph(string $line, string $path = ''): bool
+{
+    if ($path !== '' && !isProse($line, $path)) {
+        return false;
+    }
     $trimmed = rtrim($line);
     if ($trimmed === '' || mb_strlen($trimmed) >= FOLD_WIDTH) {
         return false;
@@ -71,7 +97,7 @@ foreach ($paths as $path) {
             echo "{$path}:{$number} : {$width} caractères, plafond " . CEILING . "\n";
             $faults++;
         }
-        if (continuesAParagraph($line)) {
+        if (continuesAParagraph($line, $path)) {
             $run[] = $number;
             continue;
         }

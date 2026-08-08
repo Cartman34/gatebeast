@@ -11,6 +11,12 @@
 
 return [
     [
+        'route' => '/sujets',
+        'title' => 'Suivi des sujets',
+        'file' => 'suivi-sujets/page.html',
+        'build' => 'php review-server/suivi-sujets/build.php',
+    ],
+    [
         'route' => '/sprites',
         'title' => 'Suivi des sprites',
         'file' => 'suivi-sprites/page.html',

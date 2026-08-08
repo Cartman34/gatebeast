@@ -93,6 +93,18 @@ Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qu
 
 Terme en attente : **tracé** — forme anglaise provisoire (`trace`), à confirmer avec quelqu'un dont c'est le métier.
 
+## Les acronymes du projet
+
+**Un acronyme se donne toujours avec son terme**, écrit en toutes lettres puis le sigle entre parenthèses — « la projection parallèle à 60 degrés de plongée (PA60) ». Règle de la méthode commune,
+donnée par l'opérateur le 2026-08-07 : il abrège quand il écrit vite, et les deux formes ne se rejoignent que si l'agent donne les deux.
+
+| Sigle | Ce qu'il désigne |
+|---|---|
+| PA60 | La projection parallèle à 60 degrés de plongée — l'angle de prise de vue du monde, valeur unique du projet ([angle de vue](conception/referentiels/visuel/angle-de-vue.md)). |
+| RS | Le serveur de revue — `review-server/`, les pages servies en local sur lesquelles l'opérateur relit le travail. |
+| CDS | Le centre de soin, sujet `BT-001`. |
+| HDC | L'herbe de clairière, sujet `TR-064`. |
+
 ## Termes bannis
 
 Un mot est banni quand il désigne plusieurs choses à la fois, ou quand il porte un sens venu d'ailleurs qui ne vaut pas ici. Un terme banni ne s'emploie **nulle part** — ni dans les documents, ni dans
