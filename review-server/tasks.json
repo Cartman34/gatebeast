@@ -500,6 +500,17 @@
             "waiting": "operator",
             "created": "2026-08-08",
             "updated": "2026-08-08"
+        },
+        {
+            "ref": "pose-par-calque",
+            "code": "S45",
+            "label": "Un personnage se pose sur n'importe quelle case : c'est le calque qui empile, pas la case",
+            "description": "**RÈGLE DONNÉE PAR L'OPÉRATEUR, 2026-08-08** : « tout personnage (humain ou créature) peut aller sur une case sans que ce soit un souci, c'est le système de layer qui gère ça ».\n\n**CE QUE ÇA CORRIGE** : le script qui a posé l'humain et le renardeau sur la Maquette Campagne **refuse d'écrire sur une case déjà prise**, quel que soit le sujet. Cette prudence est juste pour un\narbre ou une clôture — deux volumes sur une case, le monteur ne sait pas les démêler — et **fausse pour un personnage** : un humain se tient sur l'herbe, devant une clôture, sur un chemin, et c'est\nprécisément ce que les calques servent à empiler. Les deux cases évidentes au bord du chemin ont donc été écartées pour rien, et les deux sujets sont posés une case plus loin qu'ils ne devraient.\n\n**CE QU'IL FAUT FAIRE :**\n\n1. **La règle d'exclusion devient une règle de calque** : deux sujets du même calque ne partagent pas une case ; un personnage, qui vit au-dessus, se pose où il veut. Le contrôle porte alors sur le\n   calque, plus sur la case.\n2. **Reposer l'humain et le renardeau au bord du chemin**, là où ils devaient être — la case libre la plus proche n'était pas le bon critère, la bonne place l'est.\n3. **Vérifier que le monteur les dessine bien par-dessus**, et dans le bon ordre : le sol, puis le décor au sol, puis le monde, puis ce qui se tient dessus. Un personnage caché derrière une touffe\n   d'herbe haute serait le même défaut vu de l'autre côté.\n\n**Le vocabulaire existe déjà** : le glossaire nomme les cinq calques — sol, décor au sol, monde, dessus, interface. Ce point ne les redéfinit pas, il les fait respecter par l'outillage de pose.",
+            "status": "todo",
+            "priority": 2,
+            "waiting": "agent",
+            "created": "2026-08-08",
+            "updated": "2026-08-08"
         }
     ]
 }

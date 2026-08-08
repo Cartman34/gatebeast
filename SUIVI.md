@@ -40,38 +40,48 @@ entre temps ? » **J'ai fait pire que demander : j'ai nié sa validation** parce
 
 ## POUR REPRENDRE À FROID — LIRE CECI EN ENTIER, RIEN D'AUTRE N'EST NÉCESSAIRE POUR DÉMARRER
 
-**Le prompt de reprise, à donner tel quel à une session neuve** — `cd ~/projects/gatebeast`, puis :
+**LA SESSION S'OUVRE DEPUIS `~/projects/gatebeast`, ET C'EST IMPÉRATIF** — pas depuis `~/projects`. Les deux hooks du projet sont déclarés dans `.claude/settings.json`, à la racine du dépôt : ouverte
+depuis le dossier parent, la session ne les charge pas, le `GO` n'arme rien et la fin de tour n'est jamais refusée. Constaté le 2026-08-08, après une journée entière où le dépilement n'a tenu que sur
+la discipline de l'agent.
 
-> Travaille dans ~/projects/gatebeast. Lis AGENTS.md, puis doc/regles-du-depot.md en entier, puis la première section de SUIVI.md. Les tâches sont dans `php scripts/backlog.php` — `next` te donne
-> la première. Mode dépilement continu, annonce-le et arrête-toi.
+**Le prompt de reprise, à donner tel quel à une session neuve** — ouvrir la session dans `~/projects/gatebeast`, puis :
+
+> Travaille dans ~/projects/gatebeast. Lis AGENTS.md, puis doc/regles-du-depot.md en entier, puis la première section de SUIVI.md — elle contient tout le reste. Mode dépilement continu, annonce-le
+> et arrête-toi.
 
 **LES TÂCHES NE SONT PLUS DANS CE DOCUMENT.** Elles vivent dans `review-server/tasks.json` et **une seule commande les lit et les écrit** : `php scripts/backlog.php`. Ses sous-commandes : `next`
-donne la première à prendre, `list` les range par priorité, `show <REF>` en ouvre une en entier, `add`, `set`, `describe`, `close` les modifient. **Toute écriture reconstruit la page** `/sujets`.
-Une tâche porte une **ref** qui est un slug de vingt caractères, et son ancien code entre parenthèses. Chaque tâche porte son analyse complète, pas seulement son titre : `show` avant d'agir.
+donne la première à prendre, `list` les range, `show <REF>` en ouvre une en entier, `add <SÉRIE> <priorité> <libellé> [ref]`, `set <REF> <champ> <valeur> [attendu]`, `describe`, `close` les modifient.
+**Toute écriture reconstruit la page** `/sujets`. Chaque tâche porte son analyse complète, pas seulement son titre : `show` avant d'agir.
+
+**L'ORDRE DE DÉPILEMENT : ce qui est engagé passe devant**, quelle que soit sa priorité — un point en cours porte un contexte que l'arrêt jetterait. La priorité ne départage que le reste. **Une ref
+se donne à la création**, elle ne se devine pas d'un libellé coupé, et elle ne finit jamais sur un tiret.
+
+**CINQ STATUTS OUVERTS, ET TROIS D'ENTRE EUX DOIVENT NOMMER CE QU'ILS ATTENDENT** : `todo`, `in-progress`, puis `pending-dependency` (un autre point de la pile), `pending-decision` (une décision de
+l'opérateur — réservé à la série `Q`) et `waiting-external` (quelque chose hors du projet). L'outil refuse une attente sans son attendu. **Un point qui n'avance pas n'est pas `in-progress`.**
 
 **UN HOOK EMPÊCHE L'AGENT DE S'ARRÊTER.** Le `GO` de l'opérateur l'arme, son `STOP` le désarme, il expire seul au bout de trois heures, et tant qu'une tâche est `todo` ou `in-progress` il refuse la
-fin de tour en renvoyant la première. Une tâche qui ne peut pas avancer sans l'opérateur se passe en `blocked` **avec sa raison écrite**, jamais laissée en `todo`. Sans `GO`, aucune session n'est
-retenue. État sous `var/hooks/`, jamais sous `local/`.
+fin de tour en renvoyant la première. Sans `GO`, aucune session n'est retenue. État sous `var/hooks/`, jamais sous `local/`.
 
 **LA REVUE SE REGARDE EN LOCAL** : `php review-server/serve.php`, puis `http://localhost:8080/`. Quatre pages — l'Index, le suivi des sujets, le suivi des sprites, la Maquette Campagne. Une page se
 reconstruit par sa route : `php review-server/build.php /sprites`. **Les remarques de l'opérateur sont dans `review-server/notes/`** — elles se lisent directement.
 
-**LES CINQ OUTILS DE CONTRÔLE, à lancer après avoir touché à ce qu'ils gardent :**
+**LES SIX OUTILS DE CONTRÔLE, à lancer après avoir touché à ce qu'ils gardent :**
 
 - `php scripts/check-text-width.php <fichiers>` — le standard de 200 caractères. **Dans un fichier de code, seuls les commentaires sont jugés** ; le reste est instruction et exempt.
-- `php scripts/check-review-pages.php` — les sept comportements de la page des sprites, figés parce qu'ils avaient été perdus deux fois.
+- `php scripts/check-review-pages.php` — les dix comportements de la page des sprites, figés parce qu'ils avaient été perdus deux fois.
+- `php scripts/check-asset-theme.php` — aucun nom de thème hors de son module, toute image inscrite sous le sous-arbre du thème courant, et la complétude rapportée.
+- `python3 scripts/check-sujets.py` — le référentiel contre les fichiers réellement livrés.
 - `bash scripts/diff-prompts.sh` — réassemble les 69 consignes et dit ce qui a bougé depuis la référence figée. Ne dessine rien, ne coûte aucune génération. `--freeze` refige.
-- `bash scripts/diff-prompts-words.sh` — la même chose en ignorant les retours à la ligne, pour un changement qui ne devait déplacer que des espaces.
 - `python3 local/scripts/mesurer-hauteurs.py` — la hauteur dessinée de chaque sprite contre sa fourchette.
 
-**TROIS SONDES POUR REGARDER AU LIEU DE SUPPOSER, et elles ont chacune tranché un cas que la lecture du code avait raté :**
+**QUATRE SONDES POUR REGARDER AU LIEU DE SUPPOSER, et elles ont chacune tranché un cas que la lecture du code avait raté :**
 
+- `php local/scripts/tirer-page.php <page construite>` — la page telle qu'elle s'ouvre, sans rien cliquer.
 - `php local/scripts/probe-fsp.php <CODE>` — ouvre le panneau d'un sujet et en fait un tir d'écran.
-- `php local/scripts/console-page.php <page>` — ce que dit la console du navigateur.
 - `php local/scripts/cliquer-bouton.php <page> <sélecteur>` — clique un bouton pour de vrai et rapporte ce que la page devient.
+- `php local/scripts/console-page.php <page>` — ce que dit la console du navigateur.
 
-**RIEN N'EST ENREGISTRÉ DANS L'HISTORIQUE DE LA JOURNÉE** — ni le code, ni les images, ni les documents, ni le dépôt de la méthode commune. **L'ordre n'a pas été donné.** C'est la première chose à
-proposer à la reprise, et il y a beaucoup à enregistrer.
+**TOUT EST ENREGISTRÉ ET RIEN N'EST EN COURS** au 2026-08-08 : le dépôt est propre, aucun point n'est `in-progress`, et rien n'attend d'être commité. **Rien n'est poussé** — l'ordre n'a pas été donné.
 
 ## POUR REPRENDRE À FROID — 2026-08-07, fin de journée
 
