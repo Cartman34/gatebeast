@@ -77,7 +77,7 @@
   <h1>Suivi des sujets</h1>
   <p class="lede">Ce qui reste à faire, dans l'ordre où je le dépile. Les points ouverts d'abord, du plus prioritaire au moins prioritaire ; à priorité égale, le plus ancien passe devant.
   Cette page se lit, elle ne s'édite pas : une seule commande écrit les points, et elle reconstruit la page en sortant.</p>
-  <p class="compte">23 ouvert(s) · 50 fermé(s) · php scripts/backlog.php next</p>
+  <p class="compte">24 ouvert(s) · 50 fermé(s) · php scripts/backlog.php next</p>
   <article class="point" data-statut="todo">
     <p class="point-tete"><span class="point-ref">remarque-disparait</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
     <h2>Une remarque de variant disparaît quand elle est notée, alors qu&#039;elle doit partir quand elle est traitée</h2>
@@ -476,6 +476,22 @@ lire son bloc d&#039;usage — soit exactement ce que la règle existait pour é
 le bloc d&#039;usage en tête de fichier, pour qu&#039;il n&#039;existe pas deux listes qui divergent.</p>
 <p><strong>Voisin déjà ouvert</strong> : <code>W11 describe-arg-mute</code> — <code>describe</code> accepte un texte en argument et l&#039;ignore en silence. Même outil, même famille : ce qu&#039;on demande à la ligne de commande n&#039;est pas ce<br />
 qu&#039;elle fait. Les deux se traitent bien dans le même geste.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-09 · repris le 2026-08-09</p>
+  </article>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">sondes-servies</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">24</span></p>
+    <h2>Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script</h2>
+    <div class="point-corps"><p><strong>CE QUI EST CONSTATÉ, LE 2026-08-09</strong> : <code>php local/scripts/probe-fsp.php &lt;CODE&gt;</code> construit sa page sous <code>var/tmp/</code> et l&#039;ouvre en <code>file://</code>. Depuis que le style et le script de la page des sprites<br />
+vivent dans leurs propres fichiers, atteints par un chemin absolu, cette page sort <strong>nue</strong> : ni style, ni script. La sonde montre donc une page qui ne ressemble à rien de ce que l&#039;opérateur voit.</p>
+<p><strong>CE QUE ÇA EMPÊCHE</strong> : juger à l&#039;œil quoi que ce soit de la fiche d&#039;un sujet — l&#039;affichage d&#039;une remarque classée, la comparaison de variants, l&#039;échelle des actes. La sonde reste utile pour le<br />
+balisage, jamais pour l&#039;apparence.</p>
+<p><strong>CE QUI MARCHE, ET POURQUOI</strong> : <code>probe-verdicts.php</code>, <code>probe-remarque-course.php</code> et <code>probe-notes-module.php</code> se greffent sur la page <strong>construite à sa place</strong> et l&#039;ouvrent <strong>par le serveur</strong><br />
+(<code>http://localhost:8080/sprites</code>). Le chemin absolu y résout, le style et le script se chargent, et ce qu&#039;on regarde est ce que l&#039;opérateur regarde.</p>
+<p><strong>CE QU&#039;IL Y A À FAIRE</strong> : ramener les sondes qui ouvrent un fichier vers le serveur, sur le même modèle — se greffer sur la page construite, l&#039;ouvrir par sa route, et la reconstruire après pour<br />
+retirer la greffe. Concernées : <code>probe-fsp.php</code>, <code>tirer-page.php</code>, <code>console-page.php</code>, <code>cliquer-bouton.php</code>, <code>probe-comparaison.php</code>, <code>probe-fermeture.php</code>, <code>probe-debordement.php</code>.</p>
+<p><strong>POURQUOI ÇA COMPTE PLUS QU&#039;IL N&#039;Y PARAÎT</strong> : une sonde qui rend une page nue ne dit pas « je ne peux pas conclure », elle rend une image. C&#039;est un verdict favorable rendu sans avoir rien pu<br />
+contrôler, et c&#039;est la famille de défauts que ce dépôt paie le plus cher.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-09 · repris le 2026-08-09</p>
   </article>

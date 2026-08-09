@@ -812,6 +812,17 @@
             "waiting": "agent",
             "created": "2026-08-09",
             "updated": "2026-08-09"
+        },
+        {
+            "ref": "sondes-servies",
+            "code": "W21",
+            "label": "Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script",
+            "description": "**CE QUI EST CONSTATÉ, LE 2026-08-09** : `php local/scripts/probe-fsp.php <CODE>` construit sa page sous `var/tmp/` et l'ouvre en `file://`. Depuis que le style et le script de la page des sprites\nvivent dans leurs propres fichiers, atteints par un chemin absolu, cette page sort **nue** : ni style, ni script. La sonde montre donc une page qui ne ressemble à rien de ce que l'opérateur voit.\n\n**CE QUE ÇA EMPÊCHE** : juger à l'œil quoi que ce soit de la fiche d'un sujet — l'affichage d'une remarque classée, la comparaison de variants, l'échelle des actes. La sonde reste utile pour le\nbalisage, jamais pour l'apparence.\n\n**CE QUI MARCHE, ET POURQUOI** : `probe-verdicts.php`, `probe-remarque-course.php` et `probe-notes-module.php` se greffent sur la page **construite à sa place** et l'ouvrent **par le serveur**\n(`http://localhost:8080/sprites`). Le chemin absolu y résout, le style et le script se chargent, et ce qu'on regarde est ce que l'opérateur regarde.\n\n**CE QU'IL Y A À FAIRE** : ramener les sondes qui ouvrent un fichier vers le serveur, sur le même modèle — se greffer sur la page construite, l'ouvrir par sa route, et la reconstruire après pour\nretirer la greffe. Concernées : `probe-fsp.php`, `tirer-page.php`, `console-page.php`, `cliquer-bouton.php`, `probe-comparaison.php`, `probe-fermeture.php`, `probe-debordement.php`.\n\n**POURQUOI ÇA COMPTE PLUS QU'IL N'Y PARAÎT** : une sonde qui rend une page nue ne dit pas « je ne peux pas conclure », elle rend une image. C'est un verdict favorable rendu sans avoir rien pu\ncontrôler, et c'est la famille de défauts que ce dépôt paie le plus cher.",
+            "status": "proposed",
+            "priority": 11,
+            "waiting": "agent",
+            "created": "2026-08-09",
+            "updated": "2026-08-09"
         }
     ]
 }
