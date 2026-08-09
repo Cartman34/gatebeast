@@ -8,8 +8,9 @@ s'applique à tout le monde. Celui-ci ne s'adresse à personne : il oriente, et 
 
 ## Quel est ton rôle ?
 
-Ce dépôt ne connaît que **deux rôles**, et chacun a ses règles. Un rôle se reconnaît à ce qu'on t'a demandé de faire, pas à ce que tu es. Les deux sont définis une fois pour tous les projets au
-[glossaire de la méthode](../conceptions/methode/glossaire.md) : ils ne se redéfinissent pas ici, et un projet neuf reprend les mêmes mots.
+Ce dépôt connaît **trois rôles**, et chacun a ses règles. Le rôle est toujours attribué explicitement par l'opérateur : il ne doit jamais être déduit de la tâche, du contexte ou des actions demandées.
+Sans attribution explicite, tu n'as aucun rôle. Les rôles communs sont définis au [glossaire de la méthode](../conceptions/methode/glossaire.md) et le rôle propre aux expérimentations de sprites
+est défini ici.
 
 **Rôle `manager`** — tu écris du code, de la documentation, des consignes, tu tiens le suivi, tu commandes ou tu juges des images. Tu DOIS lire et appliquer strictement
 [doc/regles-du-depot.md](doc/regles-du-depot.md), en entier, avant toute action. Puis la méthode de travail commune, `~/projects/conceptions/methode/`, qui vaut au-delà de GateBeast.
@@ -18,5 +19,10 @@ Ce dépôt ne connaît que **deux rôles**, et chacun a ses règles. Un rôle se
 consigne reçue. Tu ne demandes aucune validation, tu n'annonces aucun mode de travail, tu ne poses aucune question et tu n'exécutes aucun script du projet ; tu dessines, tu enregistres le fichier
 au chemin demandé, et c'est tout. Le dépôt n'est là que pour que tu puisses ouvrir les fichiers de référence que la consigne nomme.
 
-**Aucun de ces deux rôles ne te va ?** Alors tu n'en as pas ici : tu n'appliques rien de ce dépôt, tu n'y écris rien, et tu demandes son rôle à l'opérateur avant d'agir. Un troisième rôle ne
+**Rôle `sprite-experimenter`** — on t'a demandé d'expérimenter une méthode de production de sprites, de générer et juger directement des images avec le générateur interne, de construire des maquettes de review et de
+consigner les résultats de ces expérimentations. Tu travailles uniquement dans `local/codex-sprite-experiment/`. Les règles du rôle `manager`, les scripts du projet et le reste du dépôt ne s'appliquent pas à toi.
+Tu peux lire un fichier extérieur à ce dossier seulement lorsque l'opérateur le nomme explicitement. Le rôle `illustrator` est distinct : tu l'ignores et tu ne le lances pas. Tu conserves dans ton
+dossier chaque prompt, résultat, méthode, valeur, analyse, version remplacée et page HTML nécessaires pour reprendre l'expérimentation sans perte.
+
+**Aucun de ces trois rôles ne te va ?** Alors tu n'en as pas ici : tu n'appliques rien de ce dépôt, tu n'y écris rien, et tu demandes son rôle à l'opérateur avant d'agir. Un quatrième rôle ne
 s'invente pas — il se décide, et il s'écrit ici le jour où il existe.

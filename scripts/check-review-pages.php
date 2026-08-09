@@ -20,6 +20,18 @@ if (!is_file($page)) {
 }
 $html = file_get_contents($page);
 
+// LA PAGE, C'EST AUSSI CE QU'ELLE CHARGE. Its style and its script moved out into their own files on 2026-08-09, and the built page now only carries a link and a
+// src towards them. Reading the page alone would then declare nine behaviours lost while every one of them was intact, one file away — a validator that follows the
+// content is part of the move, not a step to remember afterwards.
+foreach (['page.css', 'page.js'] as $carried) {
+    $path = $root . '/review-server/suivi-sprites/' . $carried;
+    if (!is_file($path)) {
+        fwrite(STDERR, "FAULT « {$carried} » manque à la page des sprites : elle le charge et il n'existe pas.\n");
+        exit(1);
+    }
+    $html .= "\n" . file_get_contents($path);
+}
+
 // Chaque règle dit CE QUI EST ATTENDU et POURQUOI, pour que celui qui la casse sache ce qu'il vient de retirer plutôt que de la contourner.
 $rules = [
     [
@@ -35,7 +47,7 @@ $rules = [
     [
         'Cocher « À reprendre » ou « Écarter » ouvre la zone',
         'un refus sans motif fait repartir la reprise à l\'aveugle — trois tentatives perdues sur le sapin',
-        fn (string $html): bool => (bool) preg_match("/acte === 'rework' \|\| acte === 'discarded'/", $html),
+        fn (string $html): bool => (bool) preg_match("/act === 'rework' \|\| act === 'discarded'/", $html),
     ],
     [
         'La croix de vidage est une croix, en haut à droite du champ',
@@ -46,7 +58,7 @@ $rules = [
     [
         'La comparaison n\'engage qu\'à partir de deux variants',
         'engagée dès le premier, elle masque les autres cartes et la case du second n\'est plus là pour être cochée',
-        fn (string $html): bool => str_contains($html, 'retenus.length > 1'),
+        fn (string $html): bool => str_contains($html, 'chosen.length > 1'),
     ],
     [
         'Les actes gardent l\'échelle du constructeur d\'origine',

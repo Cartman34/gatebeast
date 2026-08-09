@@ -1,0 +1,235 @@
+/* L'ÉCHELLE TYPOGRAPHIQUE VIENT DU CONSTRUCTEUR D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS (opérateur, redemandée trois fois). Chasse fixe en base, quinze pixels,
+   interligne 1,55 : c'est une page d'atelier, où l'on lit des noms de fichiers, des mesures et des codes bien plus que des phrases. La reprise avait pris la
+   police du système à seize pixels, ce qui aplatissait toute la hiérarchie — un titre de section ne se distinguait plus d'un nom de sujet. */
+/* THE BACKGROUND CARRIES THE WORLD GRID, ONE TILE EVERY FORTY-FOUR PIXELS. It is not an ornament: this page judges sprites that will be laid on a grid, and
+   seeing it under them is a standing reminder of what these images are for. Two one-pixel lines, barely visible — the grid must never compete with the images
+   it carries, the same rule as the footprint grid drawn over the thumbnails. */
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; -webkit-font-smoothing: antialiased;
+  background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px), linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+/* THE OVERLINE SAYS WHERE ONE IS BEFORE SAYING WHAT ONE IS LOOKING AT: small letter-spaced capitals, quiet, above the title. Four pages look alike from afar,
+   and the one that is open must name itself without the title having to be read in full. */
+.overline { margin: 0 0 8px; font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+/* LA PAGE GRANDIT AVEC L'ÉCRAN au lieu de tenir une largeur fixe, mais jamais bord à bord : un plafond garde la lecture confortable et les marges délibérées. */
+/* BORDER-BOX, OR THE WIDTH LIES: `width: 100%` plus twice forty-eight pixels of padding gave a 1484 px page inside a 1400 px window, so an 84 px horizontal
+   overflow. It had been there from the start and could not be seen — nothing was right-aligned. The section count revealed it by running off the screen, cut
+   down to « 1 » instead of « 1 sujet ». Measured with a probe, not deduced from the stylesheet. */
+.wrap { box-sizing: border-box; width: min(100%, 1760px); margin: 0 auto; padding: 40px clamp(12px, 3vw, 48px) 132px; }
+h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; max-width: 21ch; }
+/* LE TEXTE COURANT GARDE SA PROPRE MESURE, plus étroite que la page : rien ne se lit sur toute la largeur d'un grand écran. Et il passe en police à chasse
+   variable — c'est de la phrase, pas de la donnée. */
+.lede { margin: 14px 0 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 62ch; }
+/* LES SECTIONS RESPIRENT : cinquante-quatre pixels au-dessus de chacune. Serrées à vingt-huit, la planche se lisait comme une seule liste continue. */
+.type { margin-top: 54px; }
+/* THE SECTION HEADER: title on the left, count on the right, a rule underneath. It is the rule that makes the section — without it the families pile up with no
+   separation and the page reads as a single list, which was exactly the reproach made to the rewrite. */
+.type-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.type-count { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.type h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+.slug { font-family: ui-monospace, monospace; font-size: .8rem; color: var(--muted); font-weight: 400; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; }
+.tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; padding: 8px 6px;
+         background: var(--card); border: 1px solid var(--line); border-radius: 3px; color: inherit; font: inherit; text-align: center; cursor: pointer; }
+.tile:hover { border-color: var(--accent); }
+.tile-image { display: flex; align-items: flex-end; justify-content: center; min-height: 26px; margin-top: auto; }
+.tile-image img { max-width: 100%; height: auto; }
+.tile-name { font-weight: 700; font-size: 15px; letter-spacing: -.012em; }
+/* LE COMPTE EST UNE ÉTIQUETTE, PAS UNE PHRASE : petites capitales espacées, comme toutes les étiquettes de la page d'origine. */
+.tile-count, .tile-empty { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+.fsp { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: var(--bg); overflow: auto; }
+.fsp[hidden] { display: none; }
+.fsp-bar { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px;
+             background: var(--card); border-bottom: 1px solid var(--line); }
+.fsp-title { margin: 0; font-size: 1.1rem; font-weight: 600; }
+/* UNE CROIX SANS HABILLAGE, MAIS UNE CIBLE DE CLIC LARGE (opérateur, 2026-08-07) : le bouton faisait vingt pixels et il fallait viser pour fermer un panneau
+   plein écran. Le signe reste petit et discret, c'est la SURFACE qui grandit — quarante-quatre pixels de côté, la taille d'une cible qu'on atteint sans regarder.
+   Ni bordure, ni fond, ni survol, ni cerne de focus : rien à styler, tout à cliquer. */
+.fsp-close {
+  width: 44px; height: 44px; padding: 0; margin: -8px -8px -8px 0;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 0; border-radius: 0; color: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+}
+.fsp-body { padding: 16px; }
+.variants { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-items: start; }
+.variants.comparison { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.variants.comparison .variant:not(.picked) { display: none; }
+/* THE EXIT BUTTON EXISTS ONLY WHILE A COMPARISON RUNS, and it is the list's own `comparison` class that shows it — never a state kept beside it in JavaScript.
+   A button whose display is computed twice goes out of step once: here it cannot, there is a single source. It spans the whole grid width so it stays at the
+   head instead of being stuck in a column, but does not stretch itself — that would give the full-width bar the operator has already objected to. */
+.quit-comparison { display: none; }
+.variants.comparison .quit-comparison {
+  display: inline-block; grid-column: 1 / -1; justify-self: start;
+  padding: 6px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 4px;
+  color: inherit; font: inherit; font-size: .8rem; cursor: pointer;
+}
+.variant { padding: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
+.variant-name { margin: 6px 0 2px; font-size: 19px; font-weight: 700; letter-spacing: -.012em; }
+/* LE VARIANT PRINCIPAL PORTE SA MARQUE À CÔTÉ DE SON NOM, pas ailleurs : c'est en lisant le nom qu'on cherche à savoir lequel fait référence, et une pastille
+   posée plus bas se cherche. Discrète et non grasse — elle informe, elle ne réclame pas l'œil comme un verdict. */
+.variant-main {
+  margin-left: 6px; padding: 1px 6px; border: 1px solid var(--accent); border-radius: 10px;
+  font-size: .62rem; font-weight: 400; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); vertical-align: middle;
+}
+.variant-ref { margin: 0 0 6px; font-family: ui-monospace, monospace; font-size: .7rem; color: var(--faint, var(--muted)); word-break: break-all; }
+/* LE FICHIER AFFICHÉ ET SA DATE, sous le libellé : c'est ce qu'on cherche en premier après une séance de reprises, pour savoir si l'on regarde la dernière. */
+.variant-version { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 6px; font-family: ui-monospace, monospace; font-size: .7rem; }
+.variant-file { color: var(--ink); word-break: break-all; }
+.variant-date { color: var(--accent); }
+/* LE DAMIER DIT OÙ EST LA TRANSPARENCE, et c'est la première chose qu'on juge sur une sprite détourée : sans lui, un fond opaque sombre se confond avec le fond
+   de la page et un halo ne se voit pas du tout. */
+.variant-image {
+  display: flex; align-items: flex-end; justify-content: center; min-height: 48px; padding: 6px; border-radius: 3px;
+  background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 16px 16px;
+}
+/* L'ENVELOPPE ÉPOUSE L'IMAGE, et c'est elle qui sert de repère à la grille : posée sur la carte, la grille annonçait une sprite large de toute la carte. */
+.picture { position: relative; display: inline-block; line-height: 0; }
+.variant-image img { max-width: 100%; height: auto; display: block; }
+/* LA GRILLE D'EMPRISE NE S'APPELLE PAS « grille » : ce nom-là est celui de la grille des vignettes, plus haut, et le lui reprendre a rendu toute la page absolue —
+   sections vides, trois vignettes flottant hors de la page. Un nom déjà pris dans la même feuille est un nom pris, et une classe ne se choisit pas au plus évident.
+   LA GRILLE NE MASQUE JAMAIS L'IMAGE : des traits d'un pixel, semi-transparents, et rien de plein — on juge la sprite, la grille ne fait que la situer. */
+.footprint { position: absolute; inset: 0; pointer-events: none; }
+.footprint::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, .16) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, .16) 1px, transparent 1px);
+  background-size: var(--case) var(--case-y);
+  background-position: bottom left;
+}
+/* L'EMPRISE AU SOL EST ANCRÉE EN BAS ET CENTRÉE : c'est là que le sujet touche le sol, et c'est sur ce rectangle que le plan le pose. */
+.footprint-ground {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  border: 1px solid var(--accent); background: rgba(217, 164, 65, .10);
+}
+/* LE COUVERT EST CE QUE LE VOLUME SURPLOMBE — la vignette entière, puisque c'est sur lui qu'elle est posée. Il ne se dessine que s'il déborde de l'emprise. */
+.footprint-cover { position: absolute; inset: 0; border: 1px dashed rgba(255, 255, 255, .30); }
+.footprint-axis { position: absolute; background: rgba(255, 255, 255, .22); }
+.footprint-axis--x { left: 0; right: 0; bottom: 0; height: 1px; }
+.footprint-axis--y { top: 0; bottom: 0; left: 50%; width: 1px; }
+/* ONE COLOR PER STATE, DECLARED ONCE IN THE THEME AND NEVER RETYPED (operator, 2026-08-08). A hex code copied into three rules cannot be changed in one place,
+   and the copies drift — the verdict line and the tile badge would end up two different oranges for the same state. */
+.verdict { margin: 6px 0 0; font-size: .82rem; }
+.verdict--to-rework { color: var(--state-rework-edge); }
+.verdict--dismissed { color: var(--state-dismissed-edge); }
+.verdict--validated { color: var(--state-validated-edge); }
+.previous-count, .to-produce { margin: 4px 0 0; font-size: .78rem; color: var(--muted); }
+/* THE STATE READS AT A GLANCE ON THE TILE: a small colored label under the name, in the same words as the filters. Color alone would say nothing to anyone who
+   does not know the code, and a word alone would need reading — the two together are recognized before being read. */
+.tile-state {
+  font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 2px;
+  border: 1px solid var(--state-edge); color: var(--state-edge);
+}
+.tile[data-state="to-rework"] { --state-edge: var(--state-rework-edge); }
+.tile[data-state="dismissed"] { --state-edge: var(--state-dismissed-edge); }
+.tile[data-state="to-produce"] { --state-edge: var(--state-to-produce-edge); }
+/* À JUGER EST LE SEUL ÉTAT PLEIN, ET C'EST VOULU : c'est le seul qui réclame un geste de l'opérateur, et il doit se repérer sans être cherché (opérateur,
+   2026-08-08). Les autres disent où en est une image ; celui-ci dit qu'on attend quelqu'un. Un contour de plus au milieu de quatre contours se confond. */
+.tile[data-state="to-judge"] { --state-edge: var(--state-to-judge-edge); }
+.tile[data-state="to-judge"] .tile-state { background: var(--state-to-judge); color: #eaf4fd; border-color: var(--state-to-judge-edge); }
+.tile[data-state="validated"] { --state-edge: var(--state-validated-edge); }
+/* L'ÉCHELLE VIENT DU CONSTRUCTEUR PYTHON D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS : chasse fixe, dix pixels, remplissage 3/6, rayon 2. La version PHP avait pris la
+   taille du texte courant — seize pixels — et des remplissages larges, ce qui grossissait toute la carte d'un tiers sans que personne l'ait décidé. */
+.acts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.act { display: inline-flex; position: relative; }
+.act input { position: absolute; inset: 0; width: 1px; height: 1px; opacity: 0; margin: 0; clip-path: inset(50%); overflow: hidden; }
+.act span, .open-comment {
+  display: inline-block; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .03em;
+  padding: 3px 6px; border: 1px solid var(--line); border-radius: 2px; background: var(--card);
+  color: var(--muted); cursor: pointer; user-select: none;
+}
+/* LE BOUTON D'OUVERTURE PORTE UN SIGNE ASCII, JAMAIS UN GLYPHE DÉCORATIF : le « ＋ » pleine chasse d'origine sort en carré vide dès qu'une police ne le porte pas,
+   et c'est ce que la page a montré au premier contrôle. Un bouton dont le signe manque est un bouton qu'on ne clique pas. */
+.open-comment { min-width: 22px; text-align: center; }
+.act:hover span, .open-comment:hover { border-color: var(--accent); color: var(--accent); }
+.act input:focus-visible + span, .open-comment:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* DEUX ÉTATS, DEUX SIGNES : le bouton s'allume quand un commentaire est écrit dessous, et se marque simplement quand le champ est ouvert et vide. Les confondre
+   laissait un champ vidé continuer d'annoncer un texte qui n'existait plus. */
+.open-comment[data-filled="true"] { border-color: var(--accent); color: var(--accent); }
+.open-comment[aria-expanded="true"][data-filled="false"] { border-color: var(--muted); color: var(--ink); }
+.act--approved input:checked + span { background: #2f5c3a; border-color: #4e8a5e; color: #eaf6ec; }
+.act--rework input:checked + span { background: #6b4a1c; border-color: #a4762c; color: #fbf1e0; }
+.act--discarded input:checked + span { background: #5c2f2f; border-color: #8a4e4e; color: #f6eaea; }
+/* LE CHAMP TIENT DANS SA CARTE : sans box-sizing, ses bordures et son remplissage s'ajoutent aux cent pour cent de largeur et il déborde de quelques pixels — ce
+   qui se voit tout de suite sur une grille de cartes. */
+/* LA CROIX EST COLLÉE AU CHAMP, en haut à droite : c'est le geste courant pour vider une saisie, et un bouton posé à côté avec son mot écrit prenait la place
+   d'un tiers du champ pour dire ce qu'une croix dit sans un mot. */
+.comment-zone { position: relative; margin-top: 4px; }
+.comment-zone[hidden] { display: none; }
+/* A REMARK THAT HAS BEEN DEALT WITH GOES QUIET, IT DOES NOT GO AWAY: half-faded and struck through, still readable at a glance, still there to reopen. Deleting it
+   would answer « was there a remark » with silence, when the question a month later is always « what did it say, and why is it over ». */
+.comment-zone--handled .comment { opacity: .5; text-decoration: line-through; }
+.comment { display: block; width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; color: var(--ink);
+       font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.45; padding: 4px 22px 4px 6px; resize: vertical; }
+/* LA CROIX EST DANS LE COIN HAUT DROIT DU CHAMP, POSÉE DESSUS — demandée trois fois par l'opérateur, et perdue deux fois en réécrivant la carte. Le champ lui
+   réserve sa place à droite par son propre remplissage, pour qu'elle ne vienne jamais sur le texte. Sa règle est éprouvée par scripts/check-review-pages.php. */
+.clear-comment {
+  position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; padding: 0; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  font-family: ui-monospace, monospace; font-size: 13px;
+  border: 1px solid var(--line); border-radius: 2px; background: var(--card); color: var(--muted); cursor: pointer;
+}
+.clear-comment:hover { border-color: var(--accent); color: var(--accent); }
+.clear-comment[hidden] { display: none; }
+.variant { box-sizing: border-box; }
+/* LES MESURES SUIVENT L'ÉCHELLE D'ORIGINE : l'intitulé est une étiquette — onze pixels, petites capitales espacées —, la valeur est un chiffre qu'on compare d'une
+   ligne à l'autre, donc en chasse tabulaire pour que les colonnes s'alignent d'elles-mêmes. Toutes deux au même gris que le reste : ce sont des constats, pas des
+   verdicts. */
+.measures { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 8px 0 0; padding: 6px 0 0; border-top: 1px solid var(--line); }
+.measures dt { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.measures dd { margin: 0; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.open-text { display: block; width: 100%; margin-top: 6px; padding: 5px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit;
+              font: inherit; font-size: .78rem; text-align: left; cursor: pointer; }
+.open-text:hover { border-color: var(--accent); color: var(--accent); }
+/* The path under the label: monospaced and quiet — it is an address to copy, not a sentence to read. */
+.text-path { display: block; font-family: ui-monospace, monospace; font-size: .68rem; color: var(--faint, var(--muted)); word-break: break-all; }
+.fsp-tools { display: flex; gap: 8px; }
+.fsp-tools button { padding: 4px 12px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
+#drawer-body { white-space: pre-wrap; font-size: .82rem; line-height: 1.5; }
+/* LE TEXTE SE LIT À CÔTÉ DE L'IMAGE, JAMAIS PAR-DESSUS (opérateur, 2026-08-08). En panneau plein écran, la consigne recouvrait la sprite qu'elle décrit — or on ne
+   juge une image qu'en confrontant ce qui était demandé à ce qui est sorti, et un aller-retour entre deux écrans ne remplace pas un regard. Le panneau est accolé
+   au bord droit, et la page ouverte se resserre d'autant : rien n'est recouvert, tout se lit d'un même regard. */
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 200; display: flex; flex-direction: column; width: min(38vw, 560px);
+  background: var(--card, var(--bg)); border-left: 1px solid var(--line); overflow: auto;
+}
+.drawer[hidden] { display: none; }
+.drawer-close {
+  padding: 2px 8px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; font-size: 1rem; line-height: 1.2; cursor: pointer;
+}
+/* LA PAGE SE RESSERRE, ELLE NE SE DÉCALE PAS : un décalage ferait sortir la moitié droite de l'écran, alors qu'on veut voir la fiche entière et le texte. */
+body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: min(38vw, 560px); }
+/* SUR UN ÉCRAN ÉTROIT, LE TEXTE PASSE DESSOUS : à moins de mille pixels, deux colonnes ne laissent la place ni à l'une ni à l'autre. */
+@media (max-width: 1000px) {
+  .drawer { top: auto; left: 0; width: auto; height: 50vh; border-left: 0; border-top: 1px solid var(--line); }
+  body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: 0; padding-bottom: 50vh; }
+}
+.fsp-body--image { display: flex; align-items: center; justify-content: center; }
+#fsp-image-corps { max-width: 100%; max-height: 80vh; background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 24px 24px; }
+/* UNE VERSION ANTÉRIEURE EST UNE CARTE COMME LA COURANTE, simplement plus discrète : même largeur, même grille, même mesures, un fond un cran plus sourd pour
+   qu'on ne la confonde pas avec celle qui fait foi. Elles s'alignent en colonne, la plus récente en haut, comme le référentiel les range. */
+.previous { padding: 8px; border: 1px dashed var(--line); border-radius: 4px; opacity: .85; }
+/* AGRANDIE SUR PLACE : la vignette double de taille sans quitter la rangée, donc les autres versions restent visibles autour d'elle — c'est tout l'objet, on compare. */
+.fold { margin-top: 6px; font-size: .8rem; color: var(--muted); }
+.fold summary { cursor: pointer; }
+.fold pre { max-height: 40vh; overflow: auto; white-space: pre-wrap; font-size: .74rem; }
+.previous-list { display: flex; flex-direction: column; gap: 10px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.filter { padding: 5px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; color: inherit; font: inherit; cursor: pointer; }
+.filter[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.filter span { color: var(--muted); }
+/* UNE ORPHELINE SE REGARDE : c'est en la voyant qu'on décide si c'est un reste, une sonde, ou une sprite dont l'inscription s'est perdue. Le damier dit sa transparence, comme partout ailleurs. */
+.orphans { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
+.orphan { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 3px; }
+.orphan img {
+  max-width: 100%; height: auto; display: block;
+  background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 16px 16px;
+}
+.orphan figcaption { color: var(--muted); font-family: ui-monospace, monospace; font-size: .7rem; word-break: break-all; max-width: 176px; text-align: center; }
+.tile[hidden] { display: none; }
+.type[hidden] { display: none; }

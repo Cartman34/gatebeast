@@ -124,7 +124,7 @@ foreach ($inventory->types() as $typeName => $type) {
         // THE STATE SHOWS ON THE TILE, AND IT IS THE FIRST THING ONE LOOKS FOR THERE (operator, 2026-08-08): does this subject need judging, is it fully validated,
         // fully produced, or is something left to rework? The tile carried its state as an attribute, so the filters knew it and the eye did not.
         $tiles .= sprintf(
-            '        <button type="button" class="tile" data-subject="%s" data-etat="%s"><span class="tile-image">%s</span>'
+            '        <button type="button" class="tile" data-subject="%s" data-state="%s"><span class="tile-image">%s</span>'
             . '<span class="tile-name">%s</span><span class="tile-state">%s</span><span class="tile-count">%d/%d variant%s</span></button>' . "\n",
             escape($code), escape($etat), $picture, escape(capitalize($inventory->label($code))), escape(STATE_LABELS[$etat]),
             $produced, count($subject['variants']), count($subject['variants']) > 1 ? 's' : ''
@@ -259,7 +259,7 @@ function textButton(string $label, string $path, string $root): string
     $relative = str_replace($root . '/', '', $path);
 
     return sprintf(
-        '<button type="button" class="open-text" data-titre="%s — %s">%s <span class="text-path">%s</span></button>'
+        '<button type="button" class="open-text" data-title="%s — %s">%s <span class="text-path">%s</span></button>'
         . '<script type="text/plain" class="text-source">%s</script>',
         escape($label), escape($relative), escape($label), escape($relative),
         str_replace('</script', '<\/script', file_get_contents($path))
@@ -426,7 +426,7 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
         // les trois actes réunis sur chaque carte, pour un champ qu'on ne remplit qu'une fois sur dix. Cocher « À reprendre » ou « Écarter » l'ouvre toute seule : un refus
         // demande son motif, un accord n'a rien à justifier.
         $blocks .= sprintf(
-            '          <article class="variant" data-etat="%s">%s'
+            '          <article class="variant" data-state="%s">%s'
             // LE LIBELLÉ FRANÇAIS D'ABORD, LA RÉFÉRENCE TECHNIQUE ENSUITE ET EN PETIT : la carte disait « orientation-south_action-idle_shape-e_frame-01 » et rien d'autre, ce qui n'apprend
             // rien à qui regarde une image (opérateur, 2026-08-07). Le libellé vient du référentiel, jamais composé ici — une page qui compose du vocabulaire en invente.
             . '<p class="variant-name">%s%s</p>%s%s'
@@ -478,7 +478,7 @@ function actions(string $identifier): string
     // THE THREE ACTS CARRY THE REFERENTIAL'S OWN WORDS, AND THAT IS THE WHOLE POINT: approved, rework and discarded are the values `verdict` takes in the data, so
     // what the page records reads straight against it, with no lookup table to keep in step. The displayed labels stay French.
     foreach (['approved' => 'Valider', 'rework' => 'À reprendre', 'discarded' => 'Écarter'] as $key => $label) {
-        $markup .= sprintf('<label class="act act--%s"><input type="checkbox" data-id="%s" data-acte="%s"><span>%s</span></label>',
+        $markup .= sprintf('<label class="act act--%s"><input type="checkbox" data-id="%s" data-act="%s"><span>%s</span></label>',
             $key, escape($identifier), $key, escape($label));
     }
 
@@ -493,238 +493,13 @@ $page = <<<'HTML'
 
 <style>
 {$theme}
-  /* L'ÉCHELLE TYPOGRAPHIQUE VIENT DU CONSTRUCTEUR D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS (opérateur, redemandée trois fois). Chasse fixe en base, quinze pixels,
-     interligne 1,55 : c'est une page d'atelier, où l'on lit des noms de fichiers, des mesures et des codes bien plus que des phrases. La reprise avait pris la
-     police du système à seize pixels, ce qui aplatissait toute la hiérarchie — un titre de section ne se distinguait plus d'un nom de sujet. */
-  /* THE BACKGROUND CARRIES THE WORLD GRID, ONE TILE EVERY FORTY-FOUR PIXELS. It is not an ornament: this page judges sprites that will be laid on a grid, and
-     seeing it under them is a standing reminder of what these images are for. Two one-pixel lines, barely visible — the grid must never compete with the images
-     it carries, the same rule as the footprint grid drawn over the thumbnails. */
-  body {
-    margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; -webkit-font-smoothing: antialiased;
-    background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px), linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-    background-size: 44px 44px;
-  }
-  /* THE OVERLINE SAYS WHERE ONE IS BEFORE SAYING WHAT ONE IS LOOKING AT: small letter-spaced capitals, quiet, above the title. Four pages look alike from afar,
-     and the one that is open must name itself without the title having to be read in full. */
-  .overline { margin: 0 0 8px; font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-  /* LA PAGE GRANDIT AVEC L'ÉCRAN au lieu de tenir une largeur fixe, mais jamais bord à bord : un plafond garde la lecture confortable et les marges délibérées. */
-  /* BORDER-BOX, OR THE WIDTH LIES: `width: 100%` plus twice forty-eight pixels of padding gave a 1484 px page inside a 1400 px window, so an 84 px horizontal
-     overflow. It had been there from the start and could not be seen — nothing was right-aligned. The section count revealed it by running off the screen, cut
-     down to « 1 » instead of « 1 sujet ». Measured with a probe, not deduced from the stylesheet. */
-  .wrap { box-sizing: border-box; width: min(100%, 1760px); margin: 0 auto; padding: 40px clamp(12px, 3vw, 48px) 132px; }
-  h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; max-width: 21ch; }
-  /* LE TEXTE COURANT GARDE SA PROPRE MESURE, plus étroite que la page : rien ne se lit sur toute la largeur d'un grand écran. Et il passe en police à chasse
-     variable — c'est de la phrase, pas de la donnée. */
-  .lede { margin: 14px 0 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 62ch; }
-  /* LES SECTIONS RESPIRENT : cinquante-quatre pixels au-dessus de chacune. Serrées à vingt-huit, la planche se lisait comme une seule liste continue. */
-  .type { margin-top: 54px; }
-  /* THE SECTION HEADER: title on the left, count on the right, a rule underneath. It is the rule that makes the section — without it the families pile up with no
-     separation and the page reads as a single list, which was exactly the reproach made to the rewrite. */
-  .type-head {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
-    margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
-  }
-  .type-count { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-  .type h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
-  .slug { font-family: ui-monospace, monospace; font-size: .8rem; color: var(--muted); font-weight: 400; }
-
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; }
-  .tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; padding: 8px 6px;
-           background: var(--card); border: 1px solid var(--line); border-radius: 3px; color: inherit; font: inherit; text-align: center; cursor: pointer; }
-  .tile:hover { border-color: var(--accent); }
-  .tile-image { display: flex; align-items: flex-end; justify-content: center; min-height: 26px; margin-top: auto; }
-  .tile-image img { max-width: 100%; height: auto; }
-  .tile-name { font-weight: 700; font-size: 15px; letter-spacing: -.012em; }
-  /* LE COMPTE EST UNE ÉTIQUETTE, PAS UNE PHRASE : petites capitales espacées, comme toutes les étiquettes de la page d'origine. */
-  .tile-count, .tile-empty { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-
-  .fsp { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: var(--bg); overflow: auto; }
-  .fsp[hidden] { display: none; }
-  .fsp-bar { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px;
-               background: var(--card); border-bottom: 1px solid var(--line); }
-  .fsp-title { margin: 0; font-size: 1.1rem; font-weight: 600; }
-  /* UNE CROIX SANS HABILLAGE, MAIS UNE CIBLE DE CLIC LARGE (opérateur, 2026-08-07) : le bouton faisait vingt pixels et il fallait viser pour fermer un panneau
-     plein écran. Le signe reste petit et discret, c'est la SURFACE qui grandit — quarante-quatre pixels de côté, la taille d'une cible qu'on atteint sans regarder.
-     Ni bordure, ni fond, ni survol, ni cerne de focus : rien à styler, tout à cliquer. */
-  .fsp-close {
-    width: 44px; height: 44px; padding: 0; margin: -8px -8px -8px 0;
-    display: flex; align-items: center; justify-content: center;
-    background: none; border: 0; border-radius: 0; color: inherit; font-size: 20px; line-height: 1; cursor: pointer;
-  }
-  .fsp-body { padding: 16px; }
-  .variants { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-items: start; }
-  .variants.comparison { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-  .variants.comparison .variant:not(.picked) { display: none; }
-  /* THE EXIT BUTTON EXISTS ONLY WHILE A COMPARISON RUNS, and it is the list's own `comparison` class that shows it — never a state kept beside it in JavaScript.
-     A button whose display is computed twice goes out of step once: here it cannot, there is a single source. It spans the whole grid width so it stays at the
-     head instead of being stuck in a column, but does not stretch itself — that would give the full-width bar the operator has already objected to. */
-  .quit-comparison { display: none; }
-  .variants.comparison .quit-comparison {
-    display: inline-block; grid-column: 1 / -1; justify-self: start;
-    padding: 6px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 4px;
-    color: inherit; font: inherit; font-size: .8rem; cursor: pointer;
-  }
-  .variant { padding: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
-  .variant-name { margin: 6px 0 2px; font-size: 19px; font-weight: 700; letter-spacing: -.012em; }
-  /* LE VARIANT PRINCIPAL PORTE SA MARQUE À CÔTÉ DE SON NOM, pas ailleurs : c'est en lisant le nom qu'on cherche à savoir lequel fait référence, et une pastille
-     posée plus bas se cherche. Discrète et non grasse — elle informe, elle ne réclame pas l'œil comme un verdict. */
-  .variant-main {
-    margin-left: 6px; padding: 1px 6px; border: 1px solid var(--accent); border-radius: 10px;
-    font-size: .62rem; font-weight: 400; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); vertical-align: middle;
-  }
-  .variant-ref { margin: 0 0 6px; font-family: ui-monospace, monospace; font-size: .7rem; color: var(--faint, var(--muted)); word-break: break-all; }
-  /* LE FICHIER AFFICHÉ ET SA DATE, sous le libellé : c'est ce qu'on cherche en premier après une séance de reprises, pour savoir si l'on regarde la dernière. */
-  .variant-version { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 6px; font-family: ui-monospace, monospace; font-size: .7rem; }
-  .variant-file { color: var(--ink); word-break: break-all; }
-  .variant-date { color: var(--accent); }
-  /* LE DAMIER DIT OÙ EST LA TRANSPARENCE, et c'est la première chose qu'on juge sur une sprite détourée : sans lui, un fond opaque sombre se confond avec le fond
-     de la page et un halo ne se voit pas du tout. */
-  .variant-image {
-    display: flex; align-items: flex-end; justify-content: center; min-height: 48px; padding: 6px; border-radius: 3px;
-    background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 16px 16px;
-  }
-  /* L'ENVELOPPE ÉPOUSE L'IMAGE, et c'est elle qui sert de repère à la grille : posée sur la carte, la grille annonçait une sprite large de toute la carte. */
-  .picture { position: relative; display: inline-block; line-height: 0; }
-  .variant-image img { max-width: 100%; height: auto; display: block; }
-  /* LA GRILLE D'EMPRISE NE S'APPELLE PAS « grille » : ce nom-là est celui de la grille des vignettes, plus haut, et le lui reprendre a rendu toute la page absolue —
-     sections vides, trois vignettes flottant hors de la page. Un nom déjà pris dans la même feuille est un nom pris, et une classe ne se choisit pas au plus évident.
-     LA GRILLE NE MASQUE JAMAIS L'IMAGE : des traits d'un pixel, semi-transparents, et rien de plein — on juge la sprite, la grille ne fait que la situer. */
-  .footprint { position: absolute; inset: 0; pointer-events: none; }
-  .footprint::before {
-    content: ""; position: absolute; inset: 0;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, .16) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(255, 255, 255, .16) 1px, transparent 1px);
-    background-size: var(--case) var(--case-y);
-    background-position: bottom left;
-  }
-  /* L'EMPRISE AU SOL EST ANCRÉE EN BAS ET CENTRÉE : c'est là que le sujet touche le sol, et c'est sur ce rectangle que le plan le pose. */
-  .footprint-ground {
-    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-    border: 1px solid var(--accent); background: rgba(217, 164, 65, .10);
-  }
-  /* LE COUVERT EST CE QUE LE VOLUME SURPLOMBE — la vignette entière, puisque c'est sur lui qu'elle est posée. Il ne se dessine que s'il déborde de l'emprise. */
-  .footprint-cover { position: absolute; inset: 0; border: 1px dashed rgba(255, 255, 255, .30); }
-  .footprint-axis { position: absolute; background: rgba(255, 255, 255, .22); }
-  .footprint-axis--x { left: 0; right: 0; bottom: 0; height: 1px; }
-  .footprint-axis--y { top: 0; bottom: 0; left: 50%; width: 1px; }
-  /* ONE COLOR PER STATE, DECLARED ONCE IN THE THEME AND NEVER RETYPED (operator, 2026-08-08). A hex code copied into three rules cannot be changed in one place,
-     and the copies drift — the verdict line and the tile badge would end up two different oranges for the same state. */
-  .verdict { margin: 6px 0 0; font-size: .82rem; }
-  .verdict--to-rework { color: var(--state-rework-edge); }
-  .verdict--dismissed { color: var(--state-dismissed-edge); }
-  .verdict--validated { color: var(--state-validated-edge); }
-  .previous-count, .to-produce { margin: 4px 0 0; font-size: .78rem; color: var(--muted); }
-  /* THE STATE READS AT A GLANCE ON THE TILE: a small colored label under the name, in the same words as the filters. Color alone would say nothing to anyone who
-     does not know the code, and a word alone would need reading — the two together are recognized before being read. */
-  .tile-state {
-    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 2px;
-    border: 1px solid var(--state-edge); color: var(--state-edge);
-  }
-  .tile[data-etat="to-rework"] { --state-edge: var(--state-rework-edge); }
-  .tile[data-etat="dismissed"] { --state-edge: var(--state-dismissed-edge); }
-  .tile[data-etat="to-produce"] { --state-edge: var(--state-to-produce-edge); }
-  /* À JUGER EST LE SEUL ÉTAT PLEIN, ET C'EST VOULU : c'est le seul qui réclame un geste de l'opérateur, et il doit se repérer sans être cherché (opérateur,
-     2026-08-08). Les autres disent où en est une image ; celui-ci dit qu'on attend quelqu'un. Un contour de plus au milieu de quatre contours se confond. */
-  .tile[data-etat="to-judge"] { --state-edge: var(--state-to-judge-edge); }
-  .tile[data-etat="to-judge"] .tile-state { background: var(--state-to-judge); color: #eaf4fd; border-color: var(--state-to-judge-edge); }
-  .tile[data-etat="validated"] { --state-edge: var(--state-validated-edge); }
-  /* L'ÉCHELLE VIENT DU CONSTRUCTEUR PYTHON D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS : chasse fixe, dix pixels, remplissage 3/6, rayon 2. La version PHP avait pris la
-     taille du texte courant — seize pixels — et des remplissages larges, ce qui grossissait toute la carte d'un tiers sans que personne l'ait décidé. */
-  .acts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-  .act { display: inline-flex; position: relative; }
-  .act input { position: absolute; inset: 0; width: 1px; height: 1px; opacity: 0; margin: 0; clip-path: inset(50%); overflow: hidden; }
-  .act span, .open-comment {
-    display: inline-block; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .03em;
-    padding: 3px 6px; border: 1px solid var(--line); border-radius: 2px; background: var(--card);
-    color: var(--muted); cursor: pointer; user-select: none;
-  }
-  /* LE BOUTON D'OUVERTURE PORTE UN SIGNE ASCII, JAMAIS UN GLYPHE DÉCORATIF : le « ＋ » pleine chasse d'origine sort en carré vide dès qu'une police ne le porte pas,
-     et c'est ce que la page a montré au premier contrôle. Un bouton dont le signe manque est un bouton qu'on ne clique pas. */
-  .open-comment { min-width: 22px; text-align: center; }
-  .act:hover span, .open-comment:hover { border-color: var(--accent); color: var(--accent); }
-  .act input:focus-visible + span, .open-comment:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  /* DEUX ÉTATS, DEUX SIGNES : le bouton s'allume quand un commentaire est écrit dessous, et se marque simplement quand le champ est ouvert et vide. Les confondre
-     laissait un champ vidé continuer d'annoncer un texte qui n'existait plus. */
-  .open-comment[data-filled="true"] { border-color: var(--accent); color: var(--accent); }
-  .open-comment[aria-expanded="true"][data-filled="false"] { border-color: var(--muted); color: var(--ink); }
-  .act--approved input:checked + span { background: #2f5c3a; border-color: #4e8a5e; color: #eaf6ec; }
-  .act--rework input:checked + span { background: #6b4a1c; border-color: #a4762c; color: #fbf1e0; }
-  .act--discarded input:checked + span { background: #5c2f2f; border-color: #8a4e4e; color: #f6eaea; }
-  /* LE CHAMP TIENT DANS SA CARTE : sans box-sizing, ses bordures et son remplissage s'ajoutent aux cent pour cent de largeur et il déborde de quelques pixels — ce
-     qui se voit tout de suite sur une grille de cartes. */
-  /* LA CROIX EST COLLÉE AU CHAMP, en haut à droite : c'est le geste courant pour vider une saisie, et un bouton posé à côté avec son mot écrit prenait la place
-     d'un tiers du champ pour dire ce qu'une croix dit sans un mot. */
-  .comment-zone { position: relative; margin-top: 4px; }
-  .comment-zone[hidden] { display: none; }
-  .comment { display: block; width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; color: var(--ink);
-         font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.45; padding: 4px 22px 4px 6px; resize: vertical; }
-  /* LA CROIX EST DANS LE COIN HAUT DROIT DU CHAMP, POSÉE DESSUS — demandée trois fois par l'opérateur, et perdue deux fois en réécrivant la carte. Le champ lui
-     réserve sa place à droite par son propre remplissage, pour qu'elle ne vienne jamais sur le texte. Sa règle est éprouvée par scripts/check-review-pages.php. */
-  .clear-comment {
-    position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; padding: 0; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-    font-family: ui-monospace, monospace; font-size: 13px;
-    border: 1px solid var(--line); border-radius: 2px; background: var(--card); color: var(--muted); cursor: pointer;
-  }
-  .clear-comment:hover { border-color: var(--accent); color: var(--accent); }
-  .clear-comment[hidden] { display: none; }
-  .variant { box-sizing: border-box; }
-  /* LES MESURES SUIVENT L'ÉCHELLE D'ORIGINE : l'intitulé est une étiquette — onze pixels, petites capitales espacées —, la valeur est un chiffre qu'on compare d'une
-     ligne à l'autre, donc en chasse tabulaire pour que les colonnes s'alignent d'elles-mêmes. Toutes deux au même gris que le reste : ce sont des constats, pas des
-     verdicts. */
-  .measures { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 8px 0 0; padding: 6px 0 0; border-top: 1px solid var(--line); }
-  .measures dt { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-  .measures dd { margin: 0; font-size: 13.5px; font-variant-numeric: tabular-nums; }
-  .open-text { display: block; width: 100%; margin-top: 6px; padding: 5px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; color: inherit;
-                font: inherit; font-size: .78rem; text-align: left; cursor: pointer; }
-  .open-text:hover { border-color: var(--accent); color: var(--accent); }
-  /* The path under the label: monospaced and quiet — it is an address to copy, not a sentence to read. */
-  .text-path { display: block; font-family: ui-monospace, monospace; font-size: .68rem; color: var(--faint, var(--muted)); word-break: break-all; }
-  .fsp-tools { display: flex; gap: 8px; }
-  .fsp-tools button { padding: 4px 12px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
-  #drawer-body { white-space: pre-wrap; font-size: .82rem; line-height: 1.5; }
-  /* LE TEXTE SE LIT À CÔTÉ DE L'IMAGE, JAMAIS PAR-DESSUS (opérateur, 2026-08-08). En panneau plein écran, la consigne recouvrait la sprite qu'elle décrit — or on ne
-     juge une image qu'en confrontant ce qui était demandé à ce qui est sorti, et un aller-retour entre deux écrans ne remplace pas un regard. Le panneau est accolé
-     au bord droit, et la page ouverte se resserre d'autant : rien n'est recouvert, tout se lit d'un même regard. */
-  .drawer {
-    position: fixed; top: 0; right: 0; bottom: 0; z-index: 200; display: flex; flex-direction: column; width: min(38vw, 560px);
-    background: var(--card, var(--bg)); border-left: 1px solid var(--line); overflow: auto;
-  }
-  .drawer[hidden] { display: none; }
-  .drawer-close {
-    padding: 2px 8px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; font-size: 1rem; line-height: 1.2; cursor: pointer;
-  }
-  /* LA PAGE SE RESSERRE, ELLE NE SE DÉCALE PAS : un décalage ferait sortir la moitié droite de l'écran, alors qu'on veut voir la fiche entière et le texte. */
-  body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: min(38vw, 560px); }
-  /* SUR UN ÉCRAN ÉTROIT, LE TEXTE PASSE DESSOUS : à moins de mille pixels, deux colonnes ne laissent la place ni à l'une ni à l'autre. */
-  @media (max-width: 1000px) {
-    .drawer { top: auto; left: 0; width: auto; height: 50vh; border-left: 0; border-top: 1px solid var(--line); }
-    body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: 0; padding-bottom: 50vh; }
-  }
-  .fsp-body--image { display: flex; align-items: center; justify-content: center; }
-  #fsp-image-corps { max-width: 100%; max-height: 80vh; background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 24px 24px; }
-  /* UNE VERSION ANTÉRIEURE EST UNE CARTE COMME LA COURANTE, simplement plus discrète : même largeur, même grille, même mesures, un fond un cran plus sourd pour
-     qu'on ne la confonde pas avec celle qui fait foi. Elles s'alignent en colonne, la plus récente en haut, comme le référentiel les range. */
-  .previous { padding: 8px; border: 1px dashed var(--line); border-radius: 4px; opacity: .85; }
-  /* AGRANDIE SUR PLACE : la vignette double de taille sans quitter la rangée, donc les autres versions restent visibles autour d'elle — c'est tout l'objet, on compare. */
-  .fold { margin-top: 6px; font-size: .8rem; color: var(--muted); }
-  .fold summary { cursor: pointer; }
-  .fold pre { max-height: 40vh; overflow: auto; white-space: pre-wrap; font-size: .74rem; }
-  .previous-list { display: flex; flex-direction: column; gap: 10px; }
-  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
-  .filter { padding: 5px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; color: inherit; font: inherit; cursor: pointer; }
-  .filter[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 600; }
-  .filter span { color: var(--muted); }
-  /* UNE ORPHELINE SE REGARDE : c'est en la voyant qu'on décide si c'est un reste, une sonde, ou une sprite dont l'inscription s'est perdue. Le damier dit sa transparence, comme partout ailleurs. */
-  .orphans { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
-  .orphan { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 3px; }
-  .orphan img {
-    max-width: 100%; height: auto; display: block;
-    background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 16px 16px;
-  }
-  .orphan figcaption { color: var(--muted); font-family: ui-monospace, monospace; font-size: .7rem; word-break: break-all; max-width: 176px; text-align: center; }
-  .tile[hidden] { display: none; }
-  .type[hidden] { display: none; }
+</style>
+<!-- LE STYLE ET LE SCRIPT DE CETTE PAGE VIVENT DANS LEURS PROPRES FICHIERS (opérateur, 2026-08-09). Ce qui reste ici est ce qui ne peut pas en sortir : les
+     variables du thème, les modules injectés, et la valeur que le filtre compare.
+     CHEMIN RELATIF, ET C'EST MESURÉ : la page construite s'ouvre aussi comme un simple fichier, et un chemin absolu n'y résout pas — la sonde a montré une page
+     entièrement muette. Les trois fichiers vivent dans le même dossier, donc le nom suffit, servi comme ouvert à la main. -->
+<link rel="stylesheet" href="/review-server/suivi-sprites/page.css">
+<style>
 {$releveStyles}
 {$reloadStyles}
 </style>
@@ -761,366 +536,14 @@ $page = <<<'HTML'
 {$notesScript}
 
 <script>
-(function () {
-  /* VERDICTS AND COMMENTS HAVE LEFT THE BROWSER FOR THE REPOSITORY (operator, 2026-08-08: « quand c'est fait, tu supprimes le commentaire »). While they lived in
-     local storage the agent could neither read them nor erase them: the operator had to copy them out by hand, and nothing survived — not a change of machine,
-     not a cleared browser, not even a renamed key, which happened the same day when the three acts moved to English. The Campagne page had already solved exactly
-     this: its remarks are versioned files, and the server is the only writer. Same mechanism here, same module. */
-  var SECTION = 'verdicts';
-  var MEMOIRE = 'gatebeast-suivi-sprites';
-  var etat = {};
-  var pret = false;
-
-  /* LOCAL STORAGE NOW SERVES ONE PURPOSE ONLY: handing back what it already holds. The operator has verdicts sitting in it from days past; the switch must take
-     them over, not lose them. They are poured over ONLY if the repository holds nothing yet for this page — otherwise an old browser would overwrite a more
-     recent judgement made elsewhere. Once poured, the local key is erased: it must never again be a second source. */
-  function versementUnique() {
-    var ancien = null;
-    try { ancien = JSON.parse(localStorage.getItem(MEMOIRE)); } catch (error) { ancien = null; }
-    if (!ancien || !Object.keys(ancien).length) { return false; }
-    etat = ancien;
-    window.gatebeastNotes.save(SECTION, etat);
-    try { localStorage.removeItem(MEMOIRE); } catch (error) { /* nothing to do: the hand-over has already landed in the repository */ }
-    return true;
-  }
-
-  /* THE REPOSITORY IS THE ONLY COPY, SO NOTHING IS WRITTEN BEFORE IT HAS BEEN READ: `pret` holds the door. Without that guard the first render — which ticks the
-     boxes and fills the fields — would head straight back to the server and overwrite what has not arrived yet. */
-  function retenir() {
-    if (!pret) { return; }
-    window.gatebeastNotes.save(SECTION, etat);
-  }
-
-  /* WHAT ARRIVES FROM THE REPOSITORY IS RENDERED ONTO THE PAGE, AND THAT IS A FUNCTION OF ITS OWN. The first render happens at wiring time, over a still-empty
-     state, because the repository answers afterwards; when it answers, everything has to be laid down again — boxes, fields, unfolded zones, filled markers.
-     Without that second pass the operator would see a blank page and believe his verdicts lost, while they are right there. */
-  function rendre() {
-    Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
-      var id = box.getAttribute('data-id');
-      box.checked = Boolean(etat[id] && etat[id][box.getAttribute('data-acte')]);
-    });
-    Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (field) {
-      var id = field.getAttribute('data-id');
-      var texte = (etat[id] && etat[id].comment) || '';
-      field.value = texte;
-      var zone = document.querySelector('.comment-zone[data-more="' + id + '"]');
-      var ouvrir = document.querySelector('.open-comment[data-open="' + id + '"]');
-      if (zone && texte) { zone.hidden = false; }
-      if (ouvrir) {
-        ouvrir.setAttribute('data-filled', texte.trim() ? 'true' : 'false');
-        ouvrir.setAttribute('aria-expanded', zone && !zone.hidden ? 'true' : 'false');
-      }
-      var vider = document.querySelector('.clear-comment[data-id="' + id + '"]');
-      if (vider) { vider.hidden = !texte.trim(); }
-    });
-    /* The survey count keeps itself up to date on `change`: it need not know where the state came from, only that it moved. */
-    document.dispatchEvent(new Event('change'));
-  }
-
-  Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
-    var id = box.getAttribute('data-id');
-    var acte = box.getAttribute('data-acte');
-    box.checked = Boolean(etat[id] && etat[id][acte]);
-    box.addEventListener('change', function () {
-      etat[id] = etat[id] || {};
-      /* UN VERDICT EST UN SEUL DES TROIS (opérateur, 2026-08-08 : « je peux cocher les 3 »). Valider, à reprendre et écarter s'excluent : une image ne peut pas être
-         acceptée et rejetée à la fois, et un relevé qui la porterait dans deux colonnes ne dit plus rien à celui qui le lit. Ce sont des cases à cocher parce que
-         l'apparence le demande — on les décoche pour revenir en arrière —, mais elles se comportent comme un choix unique : cocher l'une décoche les autres. */
-      if (box.checked) {
-        Array.prototype.forEach.call(document.querySelectorAll('.acts input[data-id="' + id + '"]'), function (other) {
-          if (other !== box) {
-            other.checked = false;
-            etat[id][other.getAttribute('data-acte')] = false;
-          }
-        });
-      }
-      etat[id][acte] = box.checked;
-      retenir();
-      /* REFUSER UNE IMAGE, C'EST DIRE POURQUOI : cocher « À reprendre » ou « Écarter » ouvre la zone de saisie et lui donne le clavier. Sans le motif, la reprise
-         repart à l'aveugle — c'est ce qui a coûté trois tentatives sur le sapin. « Valider » n'ouvre rien : un accord n'a rien à justifier. */
-      if (box.checked && (acte === 'rework' || acte === 'discarded')) {
-        var zone = document.querySelector('.comment-zone[data-more="' + id + '"]');
-        var ouvrir = document.querySelector('.open-comment[data-open="' + id + '"]');
-        if (zone) {
-          zone.hidden = false;
-          if (ouvrir) { ouvrir.setAttribute('aria-expanded', 'true'); }
-          var champ = zone.querySelector('.comment');
-          if (champ) { champ.focus({preventScroll: true}); }
-        }
-      }
-    });
-  });
-
-  /* LE BOUTON « ＋ » OUVRE ET REFERME LA ZONE DE SAISIE, et la zone s'ouvre d'elle-même quand elle porte déjà un commentaire : un texte écrit qui ne se voit pas est
-     un texte perdu pour celui qui rouvre la page. */
-  Array.prototype.forEach.call(document.querySelectorAll('.open-comment'), function (button) {
-    var id = button.getAttribute('data-open');
-    var zone = document.querySelector('.comment-zone[data-more="' + id + '"]');
-    if (!zone) { return; }
-    if (etat[id] && etat[id].comment) { zone.hidden = false; button.setAttribute('aria-expanded', 'true'); }
-    button.addEventListener('click', function () {
-      zone.hidden = !zone.hidden;
-      button.setAttribute('aria-expanded', zone.hidden ? 'false' : 'true');
-      if (!zone.hidden) { zone.querySelector('.comment').focus(); }
-    });
-  });
-
-  Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (field) {
-    var id = field.getAttribute('data-id');
-    if (etat[id] && etat[id].comment) { field.value = etat[id].comment; }
-    field.addEventListener('input', function () {
-      etat[id] = etat[id] || {};
-      etat[id].comment = field.value;
-      retenir();
-    });
-  });
-
-  /* SORTIR D'UNE COMPARAISON SANS SORTIR DU SUJET (opérateur, 2026-08-07) : la seule façon d'en sortir était de décocher chaque variant un par un, ou de fermer le
-     panneau — ce qui faisait perdre le sujet qu'on jugeait. Un bouton la quitte d'un geste, et il n'apparaît que pendant qu'elle dure. */
-  function quitterComparaison(liste) {
-    Array.prototype.forEach.call(liste.querySelectorAll('.compare'), function (box) { box.checked = false; });
-    Array.prototype.forEach.call(liste.querySelectorAll('.variant'), function (variant) { variant.classList.remove('picked'); });
-    liste.classList.remove('comparison');
-  }
-
-  /* UNE COMPARAISON NE SURVIT PAS À LA FERMETURE DU SUJET : rouvrir une fiche doit la montrer entière, pas dans l'état où on l'avait laissée trois sujets plus tôt.
-     Une sélection oubliée fait croire à un sujet qui n'a plus que deux variants. */
-  Array.prototype.forEach.call(document.querySelectorAll('.fsp-close'), function (button) {
-    button.addEventListener('click', function () {
-      var panneau = button.closest('.fsp');
-      var liste = panneau ? panneau.querySelector('.variants') : null;
-      if (liste) { quitterComparaison(liste); }
-    });
-  });
-
-  /* THE BUTTON THAT LEAVES A COMPARISON FROM THE INSIDE (operator, 2026-08-07). Without it, leaving meant unticking each variant one by one, or closing the panel
-     — and so losing the subject being judged. It calls exactly the function the close button already called: one single way out of a comparison, correctable in
-     one single place. */
-  Array.prototype.forEach.call(document.querySelectorAll('.quit-comparison'), function (button) {
-    button.addEventListener('click', function () {
-      var list = button.closest('.variants');
-      if (list) { quitterComparaison(list); }
-    });
-  });
-
-  /* LA COMPARAISON : cocher plusieurs variants ne garde qu'eux à l'écran, côte à côte et plus grands. Décocher tout revient à la liste entière. */
-  Array.prototype.forEach.call(document.querySelectorAll('.compare'), function (box) {
-    box.addEventListener('change', function () {
-      var liste = box.closest('.variants');
-      var retenus = liste.querySelectorAll('.compare:checked');
-      /* A VARIANT WITH NO IMAGE HAS NO CHECKBOX, AND THAT IS DELIBERATE — but the loop read `.checked` off the result of querySelector without checking it exists.
-         On OB-010, thirteen boxes for twenty variants: on the eighth turn the read threw, the handler stopped there, and the NEXT line — the one that sets the
-         `comparison` class — was never reached. So comparison engaged on NO subject carrying a variant still to produce, while the variants were marked all the
-         same: two boxes ticked, two `picked` set, and nothing on screen. Found with a probe on 2026-08-08; three readings of the code had missed it. */
-      Array.prototype.forEach.call(liste.querySelectorAll('.variant'), function (variant) {
-        var pick = variant.querySelector('.compare');
-        variant.classList.toggle('picked', !!pick && pick.checked);
-      });
-      /* LA COMPARAISON N'ENGAGE QU'À PARTIR DE DEUX : à un seul variant coché, elle masquait tous les autres, donc la case du second n'était plus là pour être cochée.
-         On ne pouvait jamais comparer que le premier avec lui-même (opérateur, 2026-08-07). */
-      liste.classList.toggle('comparison', retenus.length > 1);
-    });
-  });
-
-  /* EFFACER UN COMMENTAIRE NE LE DÉTRUIT PAS : le texte effacé est gardé, et le bouton propose de le rétablir tant qu'on n'a pas écrit autre chose. L'opérateur a
-     demandé une solution sans perte — effacer d'un clic ne doit pas détruire ce qu'on vient d'écrire. */
-  Array.prototype.forEach.call(document.querySelectorAll('.clear-comment'), function (button) {
-    var field = button.parentNode.querySelector('.comment');
-    var id = button.getAttribute('data-id');
-    var ouvrir = document.querySelector('.open-comment[data-open="' + id + '"]');
-    var garde = null;
-    /* LA CROIX RESTE UNE CROIX, ET C'EST TOUT LE POINT : elle porte « × » pour vider, « ↺ » pour rétablir, jamais un mot. Écrire « Effacer » dedans lui faisait perdre
-       sa place et sa forme — c'est ainsi que la croix demandée trois fois a disparu deux fois. Elle se cache quand il n'y a rien à effacer. */
-    function rendre() {
-      button.textContent = garde === null ? '×' : '↺';
-      button.hidden = !field.value.trim() && garde === null;
-      if (ouvrir) { ouvrir.setAttribute('data-filled', field.value.trim() ? 'true' : 'false'); }
-    }
-    button.addEventListener('click', function () {
-      if (garde === null) {
-        garde = field.value;
-        field.value = '';
-      } else {
-        field.value = garde;
-        garde = null;
-      }
-      etat[id] = etat[id] || {};
-      etat[id].comment = field.value;
-      retenir();
-      rendre();
-    });
-    field.addEventListener('input', function () { garde = null; rendre(); });
-    rendre();
-  });
-
-  /* LE BOUTON D'OUVERTURE DIT S'IL Y A UN TEXTE DESSOUS, dès l'ouverture de la page et à chaque frappe : sans ça, une carte repliée ne laisse rien deviner de ce
-     qu'elle contient, et il faut toutes les déplier pour retrouver ce qu'on a écrit. */
-  Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (field) {
-    var id = field.getAttribute('data-id');
-    var ouvrir = document.querySelector('.open-comment[data-open="' + id + '"]');
-    if (!ouvrir) { return; }
-    function dire() { ouvrir.setAttribute('data-filled', field.value.trim() ? 'true' : 'false'); }
-    field.addEventListener('input', dire);
-    dire();
-  });
-
-  /* LES FILTRES agissent sur la grille : ils cachent les vignettes qui ne sont pas dans l'état demandé, et une section entièrement vide se cache avec elles —
-     une rubrique qui reste ouverte sur rien fait croire qu'il n'y a rien à voir alors qu'on a simplement filtré. */
-  Array.prototype.forEach.call(document.querySelectorAll('.filter'), function (button) {
-    button.addEventListener('click', function () {
-      var voulu = button.getAttribute('data-filtre');
-      Array.prototype.forEach.call(document.querySelectorAll('.filter'), function (other) {
-        other.setAttribute('aria-pressed', other === button ? 'true' : 'false');
-      });
-      Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
-        tile.hidden = voulu !== '{$stateAll}' && tile.getAttribute('data-etat') !== voulu;
-      });
-      Array.prototype.forEach.call(document.querySelectorAll('.type'), function (section) {
-        var tiles = section.querySelectorAll('.tile');
-        var visible = Array.prototype.filter.call(tiles, function (tile) { return !tile.hidden; });
-        section.hidden = tiles.length > 0 && visible.length === 0;
-      });
-    });
-  });
-
-  /* L'AGRANDISSEMENT D'UNE VERSION ANTÉRIEURE N'A PLUS D'OBJET : elle est désormais montrée à la même échelle que la courante, avec sa grille, ses mesures et sa consigne
-     (opérateur, 2026-08-07 : « même présentation, aucune spécificité »). Il n'y a plus de vignette à demi-taille à agrandir — la comparaison se fait à l'œil, sur place. */
-
-  /* UN TEXTE S'OUVRE À CÔTÉ DE L'IMAGE, dans le panneau accolé au bord droit, et se copie d'un bouton. Il ne passe PAS par la pile des panneaux plein écran : il ne
-     recouvre rien, donc il n'a rien à empiler, et la touche d'échappement doit le fermer LUI avant de fermer la fiche qu'on est en train de lire. */
-  var drawerBody = document.getElementById('drawer-body');
-  var drawerTitle = document.getElementById('drawer-title');
-  var drawer = document.getElementById('drawer');
-  function openDrawer(titre, contenu) {
-    drawerTitle.textContent = titre;
-    drawerBody.textContent = contenu;
-    drawer.hidden = false;
-    drawer.scrollTop = 0;
-    document.body.classList.add('drawer-open');
-  }
-  function closeDrawer() {
-    drawer.hidden = true;
-    document.body.classList.remove('drawer-open');
-  }
-  Array.prototype.forEach.call(document.querySelectorAll('.open-text'), function (button) {
-    button.addEventListener('click', function () {
-      var porteur = button.nextElementSibling;
-      openDrawer(button.getAttribute('data-titre'), porteur ? porteur.textContent : '');
-    });
-  });
-  Array.prototype.forEach.call(document.querySelectorAll('.drawer-close'), function (button) {
-    button.addEventListener('click', closeDrawer);
-  });
-  document.getElementById('drawer-copy').addEventListener('click', function () {
-    var holder = document.createElement('textarea');
-    holder.value = drawerBody.textContent;
-    holder.setAttribute('readonly', 'readonly');
-    holder.style.position = 'fixed';
-    holder.style.opacity = '0';
-    document.body.appendChild(holder);
-    holder.select();
-    var done = false;
-    try { done = document.execCommand('copy'); } catch (error) { done = false; }
-    document.body.removeChild(holder);
-    this.textContent = done ? 'Copié' : 'Sélectionne et copie à la main';
-    var button = this;
-    window.setTimeout(function () { button.textContent = 'Copier'; }, 2000);
-  });
-
-  /* UNE FSP S'OUVRE PAR-DESSUS UNE AUTRE, ELLE NE LA REMPLACE PAS (opérateur, 2026-08-07). En fermer une fait réapparaître celle du dessous, et on remonte ainsi jusqu'à la page. Remplacer
-     faisait perdre le sujet qu'on était en train de juger dès qu'on ouvrait un texte : il fallait rouvrir la vignette et refaire défiler jusqu'au variant. */
-  var pile = [];
-  /* LE RECHARGEMENT AUTOMATIQUE DE PAGE (RAP) DOIT RENDRE LA PAGE OÙ ON L'A LAISSÉE, PANNEAUX COMPRIS (opérateur, 2026-08-08 : « ça recharge la page et ça ne me
-     ré-ouvre PAS la popin où j'étais »). Le défilement était déjà rendu ; la pile des panneaux ouverts ne l'était pas, si bien qu'une reconstruction pendant qu'on
-     juge un sujet renvoyait à la planche entière, à rouvrir et refaire défiler. La pile est donc écrite à chaque ouverture et à chaque fermeture, dans le stockage
-     de session — elle appartient à cet onglet et à cette visite, pas à la machine. */
-  var MEMOIRE_PILE = 'gatebeast-sprites-panneaux';
-  function retenirPile() {
-    try {
-      sessionStorage.setItem(MEMOIRE_PILE, JSON.stringify(pile.map(function (popin) { return popin.id; })));
-    } catch (error) { /* un cadre peut refuser le stockage : la page marche quand même */ }
-  }
-  function empiler(popin) {
-    if (!popin) { return; }
-    popin.hidden = false;
-    popin.scrollTop = 0;
-    /* CHAQUE PANNEAU EMPILÉ PASSE AU-DESSUS DU PRÉCÉDENT, et c'est ce qui manquait : tous partageaient le même plan, donc celui du texte — écrit AVANT les panneaux
-       de sujet dans la page — s'ouvrait DERRIÈRE celui qu'on regardait. Le bouton semblait mort alors qu'il faisait son travail : une sonde a montré le panneau
-       ouvert, avec ses milliers de caractères de texte, simplement invisible. Trois lectures du code n'avaient rien donné ; un clic simulé a tranché en une fois. */
-    popin.style.zIndex = String(90 + pile.length + 1);
-    document.body.style.overflow = 'hidden';
-    pile.push(popin);
-    retenirPile();
-  }
-  function fermer() {
-    /* LE TEXTE APPARTIENT À LA FICHE OUVERTE : la laisser derrière une fiche fermée montrerait la consigne d'un sujet qu'on ne regarde plus. */
-    closeDrawer();
-    /* CLOSING HIDES WHAT IS VISIBLE, NOT WHAT THE STACK BELIEVES (operator, 2026-08-08). The stack lives in memory: if it starts empty while a panel is on screen
-       — storage cleared under the tab, a partial restore — the close button does nothing any more and the panel NEVER closes, page stuck. So we fall back on what
-       the eye can see, which is the only truth at that moment. This is not the normal path: it is the net under the normal path. */
-    var haut = pile.pop();
-    if (!haut) {
-      haut = document.querySelector('.fsp:not([hidden])');
-      if (haut) { haut.hidden = true; haut.style.zIndex = ''; document.body.style.overflow = ''; retenirPile(); }
-      return;
-    }
-    haut.hidden = true;
-    haut.style.zIndex = '';
-    if (!pile.length) { document.body.style.overflow = ''; }
-    retenirPile();
-  }
-  /* On rouvre dans l'ordre où c'était empilé, sinon le panneau du dessous passerait au-dessus. Un panneau disparu de la page — un sujet retiré entre deux
-     constructions — est simplement sauté : on ne rouvre pas ce qui n'existe plus, et on ne refuse pas la page pour autant. */
-  try {
-    JSON.parse(sessionStorage.getItem(MEMOIRE_PILE) || '[]').forEach(function (id) {
-      empiler(document.getElementById(id));
-    });
-  } catch (error) { /* stockage refusé ou illisible : la page s'ouvre simplement fermée */ }
-  Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
-    tile.addEventListener('click', function () {
-      empiler(document.getElementById('fsp-' + tile.getAttribute('data-subject')));
-    });
-  });
-  Array.prototype.forEach.call(document.querySelectorAll('.fsp-close'), function (button) { button.addEventListener('click', fermer); });
-  /* LE PANNEAU ACCOLÉ SE FERME EN PREMIER : il est ouvert PAR-DESSUS une fiche qu'on est en train de lire, donc échapper doit rendre la fiche, pas la fermer avec lui. */
-  document.addEventListener('keydown', function (event) {
-    if (event.key !== 'Escape') { return; }
-    if (!drawer.hidden) { closeDrawer(); return; }
-    fermer();
-  });
-
-  /* CE QUE LA PAGE MET DANS LE RELEVÉ ; le module dit comment il se copie. */
-  /* THE REPOSITORY IS READ LAST, ONCE EVERYTHING IS WIRED. If it holds something, it is authoritative. If it holds nothing, what the browser still keeps is poured
-     over once, and never touched again. And if the server does not answer — page opened as a file, server stopped — the page stays usable but RECORDS NOTHING:
-     better a page that does not remember than a page that pretends to. */
-  window.gatebeastNotes.load(SECTION, function (recu) {
-    if (recu && Object.keys(recu).length) {
-      etat = recu;
-    } else {
-      versementUnique();
-    }
-    pret = true;
-    rendre();
-  });
-
-  window.construireReleve = function () {
-    var lignes = ['SUIVI DES SPRITES — RELEVÉ OPÉRATEUR', new Date().toISOString().slice(0, 10), ''];
-    var actes = {approved: 'VALIDÉES', rework: 'À REPRENDRE', discarded: 'ÉCARTÉES'};
-    Object.keys(actes).forEach(function (acte) {
-      var pris = Object.keys(etat).filter(function (id) { return etat[id] && etat[id][acte]; });
-      if (!pris.length) { return; }
-      lignes.push(actes[acte] + ' (' + pris.length + ')');
-      pris.forEach(function (id) { lignes.push('  - ' + id); });
-      lignes.push('');
-    });
-    var mots = Object.keys(etat).filter(function (id) { return etat[id] && etat[id].comment; });
-    if (mots.length) {
-      lignes.push('COMMENTAIRES (' + mots.length + ')');
-      mots.forEach(function (id) { lignes.push('  - ' + id); lignes.push('      ' + etat[id].comment); });
-    }
-    return lignes.join('\n');
-  };
-})();
+/* LA SEULE VALEUR QUE LE SCRIPT NE PEUT PAS EMPORTER : le libellé de l'état « tout », que le filtre compare. Il vient du référentiel, donc du gabarit — un fichier
+   statique ne peut pas le porter. Il est déclaré ici, avant le script, et lu là-bas. */
+window.GATEBEAST_STATE_ALL = '{$stateAll}';
+</script>
+<!-- SANS `defer` ET AVANT LES MODULES : le script de la page définit `window.construireReleve`, dont le module du relevé se sert aussitôt. Un chargement différé
+     inverserait l'ordre et le relevé partirait sans son constructeur. -->
+<script src="/review-server/suivi-sprites/page.js"></script>
+<script>
 {$releveScript}
 </script>
 {$reloadScript}
@@ -1167,7 +590,7 @@ $filtres = '';
 // THE FILTERS CARRY THE SAME STATES AS THE TILES, in the same order and in the same words: "to judge" replaced "produced", which did not say what was left to do.
 // A produced subject whose images nobody has judged is exactly what one opens this page looking for.
 foreach ([STATE_ALL => 'Tout'] + STATE_LABELS as $key => $label) {
-    $filtres .= sprintf('<button type="button" class="filter" data-filtre="%s" aria-pressed="%s">%s%s</button>',
+    $filtres .= sprintf('<button type="button" class="filter" data-filter="%s" aria-pressed="%s">%s%s</button>',
         $key, $key === STATE_ALL ? 'true' : 'false', escape($label), $key === STATE_ALL ? '' : ' <span>' . ($compte[$key] ?? 0) . '</span>');
 }
 

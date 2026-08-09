@@ -40,6 +40,7 @@ INTENTION
 """
 import importlib.util
 import json
+import math
 import subprocess
 import sys
 from pathlib import Path
@@ -315,8 +316,13 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
     # tiles, and written with commas, because the consigne is French and a decimal point in it reads as a thousands mark.
     per_tile = master["width"] / spread["columns"]
     floor, ceiling = tile_scale.master_band(spread["columns"], spread["rows"], height=subject.get("height"))
-    low = f"{round(floor / per_tile, 1)}".replace(".", ",")
-    high = f"{round(ceiling / per_tile, 1)}".replace(".", ",")
+    # THE BAND IS SAID IN PIXELS, AND THE TILE FIGURES NEVER WIDEN IT. Rounding the band to one decimal in tiles is what let eight flat pieces come back square:
+    # the ceiling of 92 px became « 1,0 case », which IS 96 px, so the consigne authorised exactly what the checker refuses. The rule of the model is written
+    # elsewhere in these words — l'échelle en pixels fait foi, jamais le facteur — and it applies to what is asked as much as to what is measured. The tile
+    # figures are kept because the generator is spoken to in tiles, but the floor rounds UP and the ceiling DOWN, so they can only ever be stricter than the band.
+    low = f"{math.ceil(floor / per_tile * 10) / 10}".replace(".", ",")
+    high = f"{math.floor(ceiling / per_tile * 10) / 10}".replace(".", ",")
+    band_px = f"{round(floor)} à {round(ceiling)} pixels"
     # THE GROUND RECTANGLE, SAID AS THE CAMERA ACTUALLY SEES IT — and read from the model, never retyped. The clause used to claim the depth was respected "tile
     # for tile" while the dimensions clause said the camera crushed it: a plain contradiction, and one that pushes the generator towards perspective depth cues to
     # make a ten-deep rectangle read as ten deep inside fewer tiles of image.
@@ -427,7 +433,8 @@ et tu redresses tout ce que la scène montre de convergent.
 ASSET DE JEU — {label}, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
 dessus.
 
-DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT {spread['columns']} case(s) de large, et sa hauteur tient ENTRE {low} ET {high} case(s).
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT {spread['columns']} case(s) de large, et sa hauteur tient ENTRE {low} ET {high} case(s),
+soit {band_px} — et c'est le chiffre en pixels qui fait foi, jamais la fraction de case.
 Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
 la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
 

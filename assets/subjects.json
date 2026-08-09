@@ -711,6 +711,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-ns-v3.png",
+              "master": "poc/sol/CH-019_shape-ns-v3.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 16,
+                  "top": 0,
+                  "right": 79,
+                  "bottom": 83,
+                  "width": 64,
+                  "height": 84
+                },
+                "contact_px": {
+                  "left": 16,
+                  "right": 79,
+                  "width": 64
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 84.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-019_shape-ns-v2.png",
               "master": "poc/sol/CH-019_shape-ns-v2.png",
               "image_number": 1,
@@ -746,7 +785,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -902,6 +941,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-ew-v6.png",
+              "master": "poc/sol/CH-019_shape-ew-v6.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 16,
+                  "right": 95,
+                  "bottom": 72,
+                  "width": 96,
+                  "height": 57
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 95,
+                  "width": 96
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 73.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-019_shape-ew-v5.png",
               "master": "poc/sol/CH-019_shape-ew-v5.png",
               "image_number": 1,
@@ -937,7 +1015,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -1289,6 +1367,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-ns-v2.png",
+              "master": "poc/sol/CH-020_shape-ns-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 34,
+                  "top": 0,
+                  "right": 61,
+                  "bottom": 83,
+                  "width": 28,
+                  "height": 84
+                },
+                "contact_px": {
+                  "left": 35,
+                  "right": 61,
+                  "width": 27
+                },
+                "anchor_px": {
+                  "x": 48.0,
+                  "y": 84.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-020_shape-ns.png",
               "master": "poc/sol/CH-020_shape-ns.png",
               "image_number": 1,
@@ -1324,7 +1441,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-ns_frame-01",
@@ -1402,11 +1519,50 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-ew-v2.png",
+              "master": "poc/sol/CH-020_shape-ew-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 24,
+                  "right": 95,
+                  "bottom": 59,
+                  "width": 96,
+                  "height": 36
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 95,
+                  "width": 96
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 60.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-020_shape-ew.png",
               "master": "poc/sol/CH-020_shape-ew.png",
               "image_number": 1,
               "measures": null,
-              "status": "current",
+              "status": "previous",
               "verdict": "rework",
               "operator_comment": "Il manque l'angle de la caméra. C'est le sprite principal, il devrait être démarqué des autres (highlight ?) et il devrait être en premier de la liste."
             }

@@ -4,6 +4,39 @@
 
 Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : seul l'état courant compte (le versionnage garde le reste).
 
+## FIN DE SÉANCE DU 2026-08-09 — CE QU'IL FAUT SAVOIR POUR REPRENDRE
+
+**`GO` ET `STOP` PASSENT PAR LE PROMPT, ET PAR RIEN D'AUTRE** (opérateur, 2026-08-09). Le hook de fin de tour ne lit aucun ordre : il décide sur l'armement, le plafond de refus et la pile. Toute
+tentative de lire un ordre ailleurs a été retirée — elle avait armé un dépilement que personne n'avait demandé, parce qu'un `GO` vieux de deux heures traîne dans la conversation.
+
+**CE QUE ÇA COÛTE, ET C'EST MESURÉ** : un message glissé pendant que l'agent travaille n'atteint aucun hook. `var/hooks/payload-log` en porte zéro. L'agent le reçoit et obéit ; la garde, elle, ne le
+voit pas et refuse la fin de tour jusqu'à son plafond de cinq. Le mot renvoyé en ouverture de tour désarme aussitôt.
+
+**LES HOOKS SONT EN PHP** : `hook-word.php` (ce qui compte comme ordre), `hook-trace.php` (état, traces, armement, fuseau de la machine), `hook-transcript.php` (lecture du transcrit, employée par le
+seul mot d'épreuve), `hook-prompt.php`, `hook-stop.php`. Éprouvés par `local/scripts/essai-hook-prompt.sh`, `essai-hook-stop.sh`, `essai-stop-transcrit.sh`, `test-stop-multiline.sh`.
+
+**LE HOOK DE BASE DE L'OPÉRATEUR EST BRANCHÉ** : `~/projects/local/hook/hook-pre-bash.sh`, déclaré en `PreToolUse` sur **`Bash` seul**. Il refuse les `;`, les `&&`, les `$(...)`, les redirections vers
+un fichier et les chemins absolus dans le dépôt. **Sur `Write` ou `Edit` il enferme l'agent** : il lit leur charge comme une ligne de commande et refuse tout — c'est arrivé, et il a fallu la main de
+l'opérateur pour rouvrir.
+
+**TROIS JOURNAUX SOUS `var/hooks/`** : `messages-log` (les messages de l'opérateur, tels qu'ils arrivent), `payload-log` (la charge brute du hook du prompt), `shapes-log` (les types d'entrées du
+transcrit avec leurs clés). Le troisième aurait tranché en une ligne ce qui a coûté une matinée.
+
+**LE STYLE ET LE SCRIPT DE LA PAGE DES SPRITES SONT DANS LEURS FICHIERS** : `review-server/suivi-sprites/page.css` et `page.js`. **Leurs chemins sont ABSOLUS et doivent le rester** — la page est
+servie à la route `/sprites`, donc un chemin relatif est cherché à la racine du serveur et rien ne se charge : ni le style, ni le script, ni l'enregistrement. Mesuré, et ça a fait croire à un
+défaut d'enregistrement qui n'existait pas.
+
+**LA CONSIGNE AUTORISAIT LE CARRÉ, ET C'EST LA CAUSE DES HUIT PIÈCES PLATES FAUSSES.** La fourchette de hauteur était arrondie à une décimale en cases : `92 px` devenait « 1,0 case », soit `96 px`.
+Elle donnait donc le droit à ce que le contrôle refuse. Le plancher s'arrondit maintenant vers le haut, le plafond vers le bas, et la fourchette est dite **en pixels**, avec la mention que c'est le
+pixel qui fait foi. Trois pièces refaites reviennent en `96 × 84` du premier coup.
+
+**UNE REMARQUE TRAITÉE SANS IMAGE NEUVE S'INSCRIT** : `php scripts/remarks.php list | handle <image> "<raison>" | reopen <image>`. La page la montre barrée et grisée, et la sort du relevé sans jamais
+l'effacer. Le reste était déjà défini au référentiel : le verdict porte sur une image, une reprise repart sans verdict.
+
+**CE QUI ATTEND L'OPÉRATEUR** : `Q5` les formes de tracé à tirer, `Q15` les types du référentiel en anglais, `Q16` le tri par profondeur, `Q17` les deux défauts de `backlog.php`, `Q19` la règle bash,
+`Q20` les variables locales françaises. Et `check-code-language.py` signale des mots français dans des **messages destinés à l'opérateur**, qui doivent y rester : le contrôle compte ce qu'il
+annonce ne pas compter.
+
 ## FIN DE SÉANCE DU 2026-08-08 (SOIR) — CE QU'IL FAUT SAVOIR POUR REPRENDRE, ET RIEN D'AUTRE
 
 **LA PREMIÈRE CHOSE À FAIRE, AVANT TOUT LE RESTE : `W stop-priorite`.** Quand l'opérateur demande un `STOP`, l'agent doit s'arrêter — à coup sûr. Ça a échoué quatre fois le 2026-08-08 et il a dû

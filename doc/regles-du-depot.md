@@ -78,6 +78,17 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   `show <REF>` l'ouvre. Énumérer des libellés numérotés n'est pas poser des questions : un titre nomme un sujet, il n'appelle pas de réponse, et l'opérateur ne peut que demander à l'ouvrir — un
   aller-retour de plus pour chaque point, ce que la numérotation existait justement pour éviter (constaté le 2026-08-08). Le format « code et trois mots » ne vaut que pour les **deux lignes de
   récapitulatif** ; l'appliquer au corps du message revient à n'avoir rien demandé.
+- **UNE QUESTION A UN FORMAT, ET IL EST OBLIGATOIRE** (opérateur, 2026-08-09 : « le formatage des questions est une obligation »). Quatre éléments, dans cet ordre, et **rien d'autre** :
+  1. **Un code de la série `Q`, et lui seul** — `Q9`, `Q10`. Une question porte un numéro de question, jamais celui d'une proposition ni d'un sujet : c'est par ce
+     code que l'opérateur répond, et un code emprunté à une autre série rend la réponse ambiguë. **Toutes les questions ouvertes se posent, à chaque fois.**
+  2. **Une phrase** qui dit ce qui est demandé.
+  3. **Les réponses possibles, repérées `A`, `B`, `C`, une ligne chacune** : ce qu'on fait, puis ce que ça coûte, dans la même ligne. **Jamais numérotées** — les
+     chiffres sont pris par les questions, et « 1 » ne dit alors plus si l'on parle de la première question ou de la première réponse.
+  4. **Une ligne de recommandation** : laquelle, et pourquoi en quelques mots.
+  4. **Rien de plus.** Pas de rappel du contexte, pas d'exposé de la cause, pas de récit de ce qui a été trouvé — tout cela vit au point, et `show <RÉF>` l'ouvre.
+- **CE QUE LE FORMAT INTERDIT, ET C'EST LUI QUI COÛTE** : noyer la question dans ce qui l'a produite. Une question qui commence par expliquer le défaut, ses causes et ce qui a déjà été corrigé oblige
+  l'opérateur à lire une page pour trouver la ligne qui appelle sa réponse — et il la relit deux fois pour être sûr de n'avoir rien manqué. **Le diagnostic n'est pas la question.** Une question qui
+  dépasse une dizaine de lignes n'est pas mal écrite : elle contient autre chose qu'une question, et c'est cet autre chose qui doit sortir.
 - **Chaque message se termine par deux lignes de récapitulatif** : ce qui attend l'opérateur, ce qui attend l'agent. Code et trois mots par point, quatre points par ligne au plus, un compteur au-delà.
 - **Toute génération d'image part en tâche de fond** — on ne l'attend jamais. Plus généralement, tout ce dont l'agent n'a pas besoin pour continuer part en tâche de fond et rend la main aussitôt.
 - **On dépile, on ne commente pas la pile.** Constater ce qui manque et le dire n'est pas un travail : ce qui manque se fait. Une tâche ne remonte à l'opérateur que si elle est finie, ou si elle est
