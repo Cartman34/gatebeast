@@ -622,7 +622,7 @@
         "rows": 1
       },
       "height": 0,
-      "_height_comment": "sols-et-chemins.md : « hauteur 0 case » — un sol ne se dresse pas.",
+      "_height_comment": "sols-et-chemins.md : « hauteur 0 case » — un sol ne se dresse pas. C'est une donnée de jeu : depuis le 2026-08-10 elle ne commande plus aucune toile, la fourchette étant déclarée au variant.",
       "variants": [
         {
           "orientation": "south",
@@ -641,9 +641,12 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         }
-      ]
+      ],
+      "_height_band_comment": "Fourchette exacte, sans jeu — un sol : la matière remplit sa case, rien ne s'en élève. Une pièce d'assemblage est sa case : son image fait 1 case de large sur 0.875 de haut, et un dessin plus court laisse un joint."
     },
     "CH-019": {
       "profile": "dirt-path-01",
@@ -653,7 +656,7 @@
         "rows": 1
       },
       "height": 0,
-      "_height_comment": "sols-et-chemins.md : « hauteur 0 case » — un chemin ne se dresse pas.",
+      "_height_comment": "sols-et-chemins.md : « hauteur 0 case » — un chemin ne se dresse pas. Donnée de jeu seulement : la fourchette de l'image est déclarée au variant.",
       "_variants_comment": "Les cinq dessins du lot_v0 du type chemin (extrémité, ligne, angle, trois branches, croisement) : complété le 2026-08-04, deux formes ne suffisaient pas à un tracé qui se ramifie. Plus un variant hors du lot minimal (shape-ew), produit et exporté le 2026-08-05.",
       "variants": [
         {
@@ -702,7 +705,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-n_frame-01",
-          "label": "Extrémité nord"
+          "label": "Extrémité nord",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -828,7 +833,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ns_frame-01",
-          "label": "Ligne nord-sud"
+          "label": "Ligne nord-sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -836,7 +843,9 @@
           "shape": "ne",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-ne_frame-01",
-          "label": "Angle nord-est"
+          "label": "Angle nord-est",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -844,7 +853,9 @@
           "shape": "nes",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nes_frame-01",
-          "label": "Trois branches vers le nord, l'est et le sud"
+          "label": "Trois branches vers le nord, l'est et le sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -931,7 +942,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-nesw_frame-01",
-          "label": "Carrefour"
+          "label": "Carrefour",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1106,7 +1119,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_shape-ew_frame-01",
-          "label": "Ligne est-ouest"
+          "label": "Ligne est-ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1154,7 +1169,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-e_frame-01",
-          "label": "Extrémité est"
+          "label": "Extrémité est",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1202,7 +1219,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-s_frame-01",
-          "label": "Extrémité sud"
+          "label": "Extrémité sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1250,7 +1269,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-w_frame-01",
-          "label": "Extrémité ouest"
+          "label": "Extrémité ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1258,7 +1279,9 @@
           "shape": "es",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-es_frame-01",
-          "label": "Angle est-sud"
+          "label": "Angle est-sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1266,7 +1289,9 @@
           "shape": "sw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-sw_frame-01",
-          "label": "Angle sud-ouest"
+          "label": "Angle sud-ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1274,7 +1299,9 @@
           "shape": "nw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nw_frame-01",
-          "label": "Angle nord-ouest"
+          "label": "Angle nord-ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1282,7 +1309,9 @@
           "shape": "esw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-esw_frame-01",
-          "label": "Trois branches vers l'est, le sud et l'ouest"
+          "label": "Trois branches vers l'est, le sud et l'ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1290,7 +1319,9 @@
           "shape": "nsw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nsw_frame-01",
-          "label": "Trois branches vers le nord, le sud et l'ouest"
+          "label": "Trois branches vers le nord, le sud et l'ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1298,9 +1329,12 @@
           "shape": "new",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-new_frame-01",
-          "label": "Trois branches vers le nord, l'est et l'ouest"
+          "label": "Trois branches vers le nord, l'est et l'ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         }
-      ]
+      ],
+      "_height_band_comment": "Fourchette exacte, sans jeu — un chemin de terre battue, pièce de tracé qui se raccorde bord à bord. Une pièce d'assemblage est sa case : son image fait 1 case de large sur 0.875 de haut, et un dessin plus court laisse un joint."
     },
     "CH-020": {
       "profile": "stream-01",
@@ -1358,7 +1392,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-n_frame-01",
-          "label": "Extrémité nord"
+          "label": "Extrémité nord",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1445,7 +1481,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ns_frame-01",
-          "label": "Ligne nord-sud"
+          "label": "Ligne nord-sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1493,7 +1531,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ne_frame-01",
-          "label": "Angle nord-est"
+          "label": "Angle nord-est",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1501,7 +1541,9 @@
           "shape": "nes",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nes_frame-01",
-          "label": "Trois branches vers le nord, l'est et le sud"
+          "label": "Trois branches vers le nord, l'est et le sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1509,7 +1551,9 @@
           "shape": "nesw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nesw_frame-01",
-          "label": "Carrefour"
+          "label": "Carrefour",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1569,7 +1613,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_shape-ew_frame-01",
-          "label": "Ligne est-ouest"
+          "label": "Ligne est-ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1577,7 +1623,9 @@
           "shape": "e",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-e_frame-01",
-          "label": "Extrémité est"
+          "label": "Extrémité est",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1625,7 +1673,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-s_frame-01",
-          "label": "Extrémité sud"
+          "label": "Extrémité sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1673,7 +1723,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-w_frame-01",
-          "label": "Extrémité ouest"
+          "label": "Extrémité ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1721,7 +1773,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-es_frame-01",
-          "label": "Angle est-sud"
+          "label": "Angle est-sud",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1729,7 +1783,9 @@
           "shape": "sw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-sw_frame-01",
-          "label": "Angle sud-ouest"
+          "label": "Angle sud-ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1777,7 +1833,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-nw_frame-01",
-          "label": "Angle nord-ouest"
+          "label": "Angle nord-ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1785,7 +1843,9 @@
           "shape": "esw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-esw_frame-01",
-          "label": "Trois branches vers l'est, le sud et l'ouest"
+          "label": "Trois branches vers l'est, le sud et l'ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1793,7 +1853,9 @@
           "shape": "nsw",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nsw_frame-01",
-          "label": "Trois branches vers le nord, le sud et l'ouest"
+          "label": "Trois branches vers le nord, le sud et l'ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         },
         {
           "orientation": "south",
@@ -1801,9 +1863,12 @@
           "shape": "new",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-new_frame-01",
-          "label": "Trois branches vers le nord, l'est et l'ouest"
+          "label": "Trois branches vers le nord, l'est et l'ouest",
+          "height_min_ty": 1.0,
+          "height_max_ty": 1.0
         }
-      ]
+      ],
+      "_height_band_comment": "Fourchette exacte, sans jeu — un ruisseau : son lit creuse sous la surface et ne dépasse jamais au-dessus. Une pièce d'assemblage est sa case : son image fait 1 case de large sur 0.875 de haut, et un dessin plus court laisse un joint."
     },
     "OB-010": {
       "profile": "log-fence-01",
@@ -1882,7 +1947,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ew_frame-01",
-          "label": "Ligne est-ouest"
+          "label": "Ligne est-ouest",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -1902,7 +1969,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ne_posts-1_frame-01",
-          "label": "Angle nord-est, un poteau"
+          "label": "Angle nord-est, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -1930,7 +1999,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ns_posts-1_frame-01",
-          "label": "Ligne nord-sud, un poteau"
+          "label": "Ligne nord-sud, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -1960,7 +2031,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_shape-ew_posts-1_frame-01",
-          "label": "Ligne est-ouest, un poteau"
+          "label": "Ligne est-ouest, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -1980,7 +2053,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-es_posts-1_frame-01",
-          "label": "Angle est-sud, un poteau"
+          "label": "Angle est-sud, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2000,7 +2075,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-sw_posts-1_frame-01",
-          "label": "Angle sud-ouest, un poteau"
+          "label": "Angle sud-ouest, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2070,7 +2147,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-nw_posts-1_frame-01",
-          "label": "Angle nord-ouest, un poteau"
+          "label": "Angle nord-ouest, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2267,7 +2346,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ew_gate-closed_frame-01",
-          "label": "Ligne est-ouest, portillon fermé"
+          "label": "Ligne est-ouest, portillon fermé",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2462,7 +2543,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ew_gate-open_frame-01",
-          "label": "Ligne est-ouest, portillon ouvert"
+          "label": "Ligne est-ouest, portillon ouvert",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2532,7 +2615,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ns_gate-closed_frame-01",
-          "label": "Ligne nord-sud, portillon fermé"
+          "label": "Ligne nord-sud, portillon fermé",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2610,7 +2695,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ns_gate-open_frame-01",
-          "label": "Ligne nord-sud, portillon ouvert"
+          "label": "Ligne nord-sud, portillon ouvert",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2619,7 +2706,9 @@
           "composition": "posts-1",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-n_posts-1_frame-01",
-          "label": "Extrémité nord, un poteau"
+          "label": "Extrémité nord, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2746,7 +2835,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-e_posts-1_frame-01",
-          "label": "Extrémité est, un poteau"
+          "label": "Extrémité est, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2755,7 +2846,9 @@
           "composition": "posts-1",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-s_posts-1_frame-01",
-          "label": "Extrémité sud, un poteau"
+          "label": "Extrémité sud, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2882,7 +2975,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-w_posts-1_frame-01",
-          "label": "Extrémité ouest, un poteau"
+          "label": "Extrémité ouest, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2891,7 +2986,9 @@
           "composition": "posts-1",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nes_posts-1_frame-01",
-          "label": "Trois branches vers le nord, l'est et le sud, un poteau"
+          "label": "Trois branches vers le nord, l'est et le sud, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2900,7 +2997,9 @@
           "composition": "posts-1",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-esw_posts-1_frame-01",
-          "label": "Trois branches vers l'est, le sud et l'ouest, un poteau"
+          "label": "Trois branches vers l'est, le sud et l'ouest, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2909,7 +3008,9 @@
           "composition": "posts-1",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nsw_posts-1_frame-01",
-          "label": "Trois branches vers le nord, le sud et l'ouest, un poteau"
+          "label": "Trois branches vers le nord, le sud et l'ouest, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2918,7 +3019,9 @@
           "composition": "posts-1",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-new_posts-1_frame-01",
-          "label": "Trois branches vers le nord, l'est et l'ouest, un poteau"
+          "label": "Trois branches vers le nord, l'est et l'ouest, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         },
         {
           "orientation": "south",
@@ -2927,7 +3030,9 @@
           "composition": "posts-1",
           "representations": [],
           "ref": "orientation-south_action-idle_shape-nesw_posts-1_frame-01",
-          "label": "Carrefour, un poteau"
+          "label": "Carrefour, un poteau",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         }
       ]
     },
@@ -2943,8 +3048,8 @@
         "rows": 6
       },
       "_cover_comment": "vegetation.md : « couvert 6 × 6 » — la couronne s'étale sur six cases pour un pied qui n'en occupe que deux. Le référentiel ne le portait pas, si bien que le plan ne dessinait aucun couvert pour le plus grand arbre du parc et que la page annonçait un couvert égal à l'emprise.",
-      "height": 6,
-      "_height_comment": "vegetation.md : « hauteur 6 cases ».",
+      "height": 8,
+      "_height_comment": "vegetation.md : « hauteur 8 cases ». Le référentiel portait 6 en citant l'inventaire comme disant 6, alors qu'il dit 8. Corrigé le 2026-08-10.",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
       "variants": [
         {
@@ -2952,6 +3057,45 @@
           "action": "idle",
           "shape": "plain",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v7.png",
+              "master": "poc/vegetation/TR-060-v7.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 576,
+                  "height": 864
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 2,
+                  "right": 573,
+                  "bottom": 861,
+                  "width": 572,
+                  "height": 860
+                },
+                "contact_px": {
+                  "left": 236,
+                  "right": 382,
+                  "width": 147
+                },
+                "anchor_px": {
+                  "x": 309.0,
+                  "y": 862.0
+                },
+                "master_size_px": {
+                  "width": 576,
+                  "height": 864
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 6,
+                  "rows": 6
+                }
+              },
+              "status": "current"
+            },
             {
               "type": "sprite",
               "path": "cutout/vegetation/TR-060-v5.png",
@@ -2989,7 +3133,7 @@
                   "rows": 2
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -3127,7 +3271,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 9.43,
+          "height_max_ty": 11.71
         }
       ]
     },
@@ -3495,7 +3641,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 4.57,
+          "height_max_ty": 6.29
         }
       ]
     },
@@ -3506,6 +3654,11 @@
         "columns": 1,
         "rows": 1
       },
+      "cover": {
+        "columns": 3,
+        "rows": 3
+      },
+      "_cover_comment": "vegetation.md : « couvert 3 × 3 ». Perdu au référentiel, retrouvé le 2026-08-10 : les contrôles jugeaient une image de trois cases sur la fourchette d'une seule.",
       "height": 3,
       "_height_comment": "vegetation.md : « hauteur 3 cases ».",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
@@ -3516,6 +3669,45 @@
           "shape": "plain",
           "_comment": "TR-063-v3 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). TR-063-v2 et TR-063 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v12.png",
+              "master": "poc/vegetation/TR-063-v12.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 416
+                },
+                "silhouette_px": {
+                  "left": 4,
+                  "top": 5,
+                  "right": 283,
+                  "bottom": 410,
+                  "width": 280,
+                  "height": 406
+                },
+                "contact_px": {
+                  "left": 125,
+                  "right": 189,
+                  "width": 65
+                },
+                "anchor_px": {
+                  "x": 157.0,
+                  "y": 411.0
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 416
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 3
+                }
+              },
+              "status": "current"
+            },
             {
               "type": "sprite",
               "path": "cutout/vegetation/TR-063-v11.png",
@@ -3553,7 +3745,7 @@
                   "rows": 3
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -3863,13 +4055,11 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 4.24,
+          "height_max_ty": 5.19
         }
-      ],
-      "cover": {
-        "columns": 3,
-        "rows": 3
-      }
+      ]
     },
     "TR-062": {
       "profile": "tall-grass-01",
@@ -3879,7 +4069,7 @@
         "rows": 1
       },
       "height": 0.5,
-      "_height_comment": "vegetation.md : « hauteur 0,5 case ».",
+      "_height_comment": "vegetation.md : « hauteur 0,5 case » — « montant jusqu'au genou », dit sa description. Donnée de jeu seulement.",
       "variants": [
         {
           "orientation": "south",
@@ -3899,7 +4089,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 1.15,
+          "height_max_ty": 1.42
         }
       ]
     },
@@ -3911,7 +4103,7 @@
         "rows": 1
       },
       "height": 0.3,
-      "_height_comment": "vegetation.md : « hauteur 0,3 case ».",
+      "_height_comment": "vegetation.md : « hauteur 0,3 case » — des touffes basses, plus basses que l'herbe haute. Donnée de jeu seulement.",
       "variants": [
         {
           "orientation": "south",
@@ -4133,7 +4325,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 1.05,
+          "height_max_ty": 1.28
         },
         {
           "orientation": "south",
@@ -4299,7 +4493,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_medium_frame-01",
-          "label": "Densité moyenne"
+          "label": "Densité moyenne",
+          "height_min_ty": 1.05,
+          "height_max_ty": 1.28
         },
         {
           "orientation": "south",
@@ -4621,7 +4817,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_dense_frame-01",
-          "label": "Densité forte"
+          "label": "Densité forte",
+          "height_min_ty": 1.05,
+          "height_max_ty": 1.28
         }
       ]
     },
@@ -4632,8 +4830,13 @@
         "columns": 1,
         "rows": 1
       },
-      "height": 6,
-      "_height_comment": "vegetation.md : « hauteur 6 cases ».",
+      "cover": {
+        "columns": 2,
+        "rows": 2
+      },
+      "_cover_comment": "vegetation.md : « couvert 2 × 2 ». Perdu comme celui du pommier, retrouvé le 2026-08-10 : un couvert manquant fait commander une image trop étroite.",
+      "height": 4,
+      "_height_comment": "vegetation.md : « hauteur 4 cases ». Le référentiel portait 6 en citant l'inventaire comme disant 6, alors qu'il dit 4. Corrigé le 2026-08-10.",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
       "variants": [
         {
@@ -5049,13 +5252,11 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 3.71,
+          "height_max_ty": 4.86
         }
-      ],
-      "cover": {
-        "columns": 2,
-        "rows": 2
-      }
+      ]
     },
     "BT-001": {
       "profile": "healing-center-01",
@@ -5455,7 +5656,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 13.12,
+          "height_max_ty": 16.02
         },
         {
           "orientation": "south",
@@ -5664,7 +5867,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_p2_frame-01",
-          "label": "Proposition 2"
+          "label": "Proposition 2",
+          "height_min_ty": 13.12,
+          "height_max_ty": 16.02
         },
         {
           "orientation": "south",
@@ -5869,7 +6074,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_p3_frame-01",
-          "label": "Proposition 3"
+          "label": "Proposition 3",
+          "height_min_ty": 13.12,
+          "height_max_ty": 16.02
         }
       ]
     },
@@ -5940,7 +6147,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
-          "label": "Vue principale"
+          "label": "Vue principale",
+          "height_min_ty": 5.92,
+          "height_max_ty": 7.22
         },
         {
           "orientation": "south",
@@ -5989,7 +6198,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_p2_frame-01",
-          "label": "Proposition 2"
+          "label": "Proposition 2",
+          "height_min_ty": 5.92,
+          "height_max_ty": 7.22
         },
         {
           "orientation": "south",
@@ -6194,7 +6405,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_p3_frame-01",
-          "label": "Proposition 3"
+          "label": "Proposition 3",
+          "height_min_ty": 5.92,
+          "height_max_ty": 7.22
         }
       ]
     },
@@ -6333,7 +6546,9 @@
           ],
           "main": true,
           "ref": "orientation-south_action-idle_shape-ns_frame-01",
-          "label": "Ligne nord-sud"
+          "label": "Ligne nord-sud",
+          "height_min_ty": 1.11,
+          "height_max_ty": 1.35
         },
         {
           "orientation": "south",
@@ -6381,7 +6596,9 @@
             }
           ],
           "ref": "orientation-south_action-idle_shape-ew_frame-01",
-          "label": "Ligne est-ouest"
+          "label": "Ligne est-ouest",
+          "height_min_ty": 1.11,
+          "height_max_ty": 1.35
         }
       ]
     },
@@ -6441,7 +6658,9 @@
           ],
           "main": true,
           "label": "Vue principale",
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
         }
       ]
     },
@@ -6501,7 +6720,9 @@
           ],
           "main": true,
           "label": "Vue principale",
-          "ref": "orientation-south_action-idle_frame-01"
+          "ref": "orientation-south_action-idle_frame-01",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
         }
       ]
     }
@@ -6541,5 +6762,6 @@
       "posts-1": "un poteau",
       "posts-2": "deux poteaux"
     }
-  }
+  },
+  "_bands_in_projected_tiles": true
 }

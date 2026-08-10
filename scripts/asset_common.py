@@ -207,10 +207,12 @@ REGLES_FR = f"""\
 Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
 dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
 
-Toutes les tailles sont données en CASES — une case vaut un mètre dans le monde, et {tile_scale.delivery_fineness()} PIXELS
-dans l'image. C'est la seule correspondance dont tu as besoin : tout ce qu'on te demande est dit en
-cases, et c'est à toi d'en déduire les dimensions. Ne dessine pas de grille, n'écris aucune mesure dans
-l'image.
+DEUX UNITÉS, ET TOUTE MESURE QU'ON TE DONNE PORTE LA SIENNE. Une case du monde est un carré d'un mètre,
+mais on la regarde de haut : dans l'image elle est plus large que haute, et il faut donc deux unités
+plutôt qu'une. TX est une case en LARGEUR, et vaut {tile_scale.FILE_TILE_WIDTH} pixels. TY est une case en HAUTEUR, et vaut
+{tile_scale.FILE_TILE_DEPTH} pixels — c'est TX écrasé par la plongée. Une largeur se donne en TX, une hauteur et une
+profondeur au sol se donnent en TY. C'est la seule correspondance dont tu as besoin : ne dessine pas de
+grille, n'écris aucune mesure dans l'image.
 
 Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
 signature, pas de grille, pas de bordure."""

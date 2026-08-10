@@ -199,6 +199,9 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **Tout libellé et tout titre affiché commence par une majuscule** — « Vue principale », jamais « vue principale ». Une seule majuscule, celle du début : elle ne se répète pas à chaque mot. Les codes
   et les adresses techniques gardent leur casse exacte, celle des fichiers (`OB-010`, `cutout/cloture/...`), aucune majuscule ajoutée. Une interface où la casse varie d'un libellé à l'autre donne
   l'impression que personne ne l'a relue — c'est le genre de détail qui se corrige une fois par page tant que la règle n'existe pas.
+- **ON PARLE EN CASES, JAMAIS EN PIXELS** (opérateur, 2026-08-10). Toute mesure adressée à l'opérateur — message, question, compte rendu, libellé de page — se dit dans l'unité du jeu : « une case et
+  demie », pas « 132 px ». Le pixel reste ce que le code calcule et ce que l'échelle fait foi ; il n'est pas ce dont on parle. Un chiffre en pixels oblige son lecteur à refaire la division pour savoir
+  de quoi il s'agit, et deux hauteurs comparées en pixels ne se comparent plus dès que la finesse du maître change.
 - **Tout rapport destiné à être lu est en Markdown — règle générale.** Un rapport se relit, se cite, se colle dans une conversation et s'affiche dans une page : le Markdown lui donne titres, tableaux
   et blocs de code sans rien coûter, là où le texte brut oblige chaque lecteur à refaire la mise en forme dans sa tête. Ne vaut que pour ce qui se lit : ce qui se relit par machine — évaluations,
   mesures, catalogues — reste du JSON, et les deux coexistent plutôt que l'un n'imite l'autre.

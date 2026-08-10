@@ -29,6 +29,9 @@ Ce nœud couvre l'organisation de l'affichage et ce que chaque asset doit porter
   est `7/8`, retenue parce qu'elle se divise proprement — 96×84, 48×42, 32×28, 24×21 tombent tous justes. L'écart à la géométrie est de 1 % et il achète des entiers à tous les paliers. **Le 84 ne se
   « corrige » pas en 83** : ce serait défaire un choix, pas réparer une erreur. Un bout de code qui recalculerait la taille avec le facteur retomberait sur 83,14, et une sprite rendue à 20,78 posée
   sur un pas de 21 laisse 0,22 px par case — un liseré à chaque raccord, exactement ce que la quantification évite.
+- **UNE CASE EST LA HAUTEUR MINIMUM D'UNE SPRITE, ET RIEN NE L'AUTORISE À DESCENDRE EN DESSOUS.** Décision de l'opérateur, 2026-08-10 : « RIEN ne peut autoriser un sujet d'avoir une hauteur en
+  dessous de 1 case ». Une sprite occupe sa case, donc elle la remplit — un sol, un chemin, une touffe d'herbe, un ruisseau qui creuse en font une comme les autres. **Ce plancher porte sur l'image,
+  pas sur une hauteur d'objet déduite** : voir la section suivante, qui dit pourquoi cette hauteur déduite n'existe plus.
 - **Les cases se posent par leur coin supérieur gauche**, sur un pas entier de `24 × 21 px`, `96 × 84 px` en source. Leur centre géométrique vaut `(12 ; 10,5)` à l'affichage : c'est une frontière
   entre pixels, pas une position à écrire — **rien ne se place par son centre**, ce qui rend la demi-coordonnée sans conséquence.
 - **Les ports de raccord sont centrés sur les quatre bords** — nord au milieu du bord supérieur, est au milieu du bord droit, sud en bas, ouest à gauche. Deux sprites raccordées doivent fournir sur
@@ -36,6 +39,39 @@ Ce nœud couvre l'organisation de l'affichage et ce que chaque asset doit porter
 - **Les calques de sol restent dans `96 × 84 px`.** Une sprite haute conserve **une empreinte de case et une ancre au sol**, mais son image reçoit le débordement vertical nécessaire **au-dessus** de
   cette ancre ; le tri et le survol se rapportent toujours à la case de l'ancre, même si l'image masque des cases arrière.
 - **Le plan de composition peut afficher les deux** — la case carrée du plan et la case projetée du rendu.
+
+## Deux unités, `TX` et `TY` — et aucune mesure ne s'écrit sans la sienne
+
+- **« UNE CASE » NE DÉSIGNE PLUS RIEN TOUT SEUL, ET C'EST VOULU.** Décision de l'opérateur, 2026-08-10 : « selon le sens, ça va poser souci ; si tu veux inventer des unités, faut un truc comme
+  `CX` et `CY` », puis « OK pour `TX` et `TY` ». **`TX` est une case en largeur, `TY` une case en hauteur.** Le mot « case » seul reste bon pour parler du monde — un carré d'un mètre —, jamais pour
+  donner une mesure d'image.
+- **`TY` SE CALCULE DEPUIS `TX`, ET VOICI COMMENT** : `TY = TX × 84 / 96`. Le rapport est celui de la profondeur de la case projetée sur sa largeur, les deux nombres étant publiés à la section « La
+  case projetée » ci-dessus, et repris dans `scripts/tile_scale.py` (`FILE_TILE_DEPTH`, `FILE_TILE_WIDTH`, `TILE_FORESHORTENING`). **Il ne se recalcule jamais depuis `sin(60°)`** — la règle de
+  l'échelle qui fait foi vaut ici comme ailleurs : le sinus donnerait 83,14 pour une case publiée à 84, et rouvrirait un liseré à chaque raccord. À l'écran, le même rapport lie `24` et `21`.
+- **CE QUI S'EXPRIME EN QUOI** : une largeur en `TX` ; une hauteur d'image et une profondeur au sol en `TY`. Une pièce d'assemblage vaut donc `1 TX` sur `1 TY`, et un rectangle au sol de deux
+  rangées vaut `2 TY` de profondeur.
+- **AUCUN NOMBRE NE S'ÉCRIT SANS SON UNITÉ**, nulle part : consigne, référentiel, document, message. Les clés du référentiel la portent dans leur nom — `height_min_ty`, `height_max_ty` —, parce
+  qu'un chiffre nu redevient ambigu dès que quelqu'un le recopie ailleurs.
+- **CE QUE ÇA A COÛTÉ AVANT D'ÊTRE FIXÉ** : les hauteurs se disaient en cases-de-largeur, si bien qu'une pièce d'assemblage remplissant exactement sa case s'annonçait à `0,875 case` — un dessin
+  juste avec un chiffre qui le dit faux, **et c'est l'arrondi de ce `0,875` vers `1,0` qui a fait sortir huit pièces plates carrées**. Pire, la consigne mêlait les deux unités sous le même mot : sa
+  fourchette de hauteur comptait en cases-de-largeur pendant que sa clause du rectangle au sol annonçait « 1,75 case de profondeur » pour deux rangées. **Deux unités sous un seul nom, dans le même
+  texte, envoyées au générateur.**
+- **IL N'Y A PLUS DE RACCOURCISSEMENT À ÉNONCER.** La profondeur d'un rectangle au sol de `n` rangées fait `n TY`, point : elle se dessine plus bas que large parce que `TY` est plus court que `TX`,
+  et cela se dit une seule fois, là où l'unité est convertie en pixels.
+
+## La fourchette de hauteur se déclare, elle ne se calcule pas
+
+- **AUCUN SCRIPT NE PEUT SAVOIR QU'UNE HERBE EST COURTE ET QU'UN CHÊNE EST GRAND.** Décision de l'opérateur, 2026-08-10 : « il n'y a pas de fourchette calculée possible, c'est une fourchette qui est
+  donnée par toi ». La hauteur attendue d'une sprite est un **jugement porté sur le sujet dessiné**, et ce jugement n'existe dans aucun fichier tant que quelqu'un ne l'écrit pas. Le déduire d'un
+  nombre par une formule, c'est fabriquer une autorité que personne n'a exercée.
+- **ELLE APPARTIENT AU VARIANT, PAS AU SUJET** — même décision, même jour : « si le variant met le sujet dans une position allongée, il n'aura pas la même fourchette ». C'est le variant qui porte la
+  posture, l'action et la forme ; un chêne couché n'a pas la hauteur du même chêne debout. Un sujet ne porte donc **aucune** fourchette, et deux variants du même sujet en portent deux différentes.
+- **CE QUE CETTE DÉCISION REMPLACE, ET QUI DOIT DISPARAÎTRE** : la hauteur unique déclarée au sujet (`height`), la formule qui en tirait un plancher et un plafond (`master_band` dans
+  `scripts/tile_scale.py`), et les rustines empilées dessus le 2026-08-10 — plancher d'une case sur la hauteur déclarée, tolérances élargies pour les sujets qui montaient peu. **Toutes traitaient le
+  même défaut par son symptôme.** Le signe qu'il fallait chercher ailleurs : appliquer le plancher d'une case à la hauteur déclarée faisait dépasser d'une demi-case tout sujet qui ne se dresse pas,
+  c'est-à-dire supprimait la possibilité même qu'un sujet soit plat.
+- **CE QUE LA HAUTEUR DÉCLARÉE RESTE, SI ELLE RESTE** : une donnée de jeu — ce que le sujet mesure dans le monde —, jamais une donnée de production. Elle ne commande plus aucune toile et ne juge plus
+  aucune image.
 
 ## Questions ouvertes
 

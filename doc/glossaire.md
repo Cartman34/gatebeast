@@ -21,6 +21,9 @@ rien noter du tout et de découvrir la question de traduction une fois le mot r�
 | Français | Anglais | Ce que c'est |
 |---|---|---|
 | créature | gatebeast | Les créatures du jeu, collectivement les *gatebeasts*. |
+| `TX` | `TX` | **Une case en largeur**, l'unité de toute largeur d'image : 96 pixels dans le fichier, 24 à l'écran. Le symbole ne se traduit pas. |
+| `TY` | `TY` | **Une case en hauteur**, l'unité de toute hauteur d'image et de toute profondeur au sol : `TX × 84 / 96`, soit 84 pixels dans le fichier, 21 à l'écran. C'est `TX` écrasé par la plongée à soixante degrés. Le calcul et l'origine des deux nombres sont à `doc/conception/referentiels/technique/rendu-en-calques.md`. |
+| case | tile | Un carré d'un mètre **dans le monde**. Ne sert jamais à donner une mesure d'image : vue de la caméra, une case est plus large que haute, et c'est précisément ce que `TX` et `TY` distinguent. |
 | biome | biome | Une portion du monde définie par son **ambiance de terrain** : son relief, la matière de son sol, son climat et ce qu'elle donne à voir. Il **ne détermine pas ce qui l'habite** — tout sujet peut se rencontrer partout ; certains y sont endémiques, d'autres l'évitent, mais ce sont des tendances, jamais des contraintes, et rien ne s'y valide. |
 | dresseur | trainer | La personne qui accompagne des créatures. |
 | personnage-joueur | player character | Le personnage incarné par le joueur. |

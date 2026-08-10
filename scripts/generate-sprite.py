@@ -315,13 +315,15 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
     # move it — but there is a floor and a ceiling, and both come from the model (tile_scale.master_band). Said in tiles, because the generator is spoken to in
     # tiles, and written with commas, because the consigne is French and a decimal point in it reads as a thousands mark.
     per_tile = master["width"] / spread["columns"]
-    floor, ceiling = tile_scale.master_band(spread["columns"], spread["rows"], height=subject.get("height"))
-    # THE BAND IS SAID IN PIXELS, AND THE TILE FIGURES NEVER WIDEN IT. Rounding the band to one decimal in tiles is what let eight flat pieces come back square:
-    # the ceiling of 92 px became « 1,0 case », which IS 96 px, so the consigne authorised exactly what the checker refuses. The rule of the model is written
-    # elsewhere in these words — l'échelle en pixels fait foi, jamais le facteur — and it applies to what is asked as much as to what is measured. The tile
-    # figures are kept because the generator is spoken to in tiles, but the floor rounds UP and the ceiling DOWN, so they can only ever be stricter than the band.
-    low = f"{math.ceil(floor / per_tile * 10) / 10}".replace(".", ",")
-    high = f"{math.floor(ceiling / per_tile * 10) / 10}".replace(".", ",")
+    # READ, NEVER COMPUTED (operator, 2026-08-10). The two figures are the variant's own judgement of how tall this drawing must come back, in tiles; a variant
+    # that does not carry them stops the command rather than falling back on anything.
+    floor, ceiling = tile_scale.variant_band(spread["columns"], spread["rows"], declared, f"{code} / {variant_ref}")
+    # THE FIGURES ARE SAID EXACTLY AS THE VARIANT DECLARES THEM, AND NOTHING ROUNDS THEM ANY MORE. They used to be a pixel band converted back into tiles, so the
+    # conversion had to round the floor UP and the ceiling DOWN to stay stricter than the band — a ceiling of 92 px read as « 1,0 case » had authorised exactly
+    # what the checker refuses, and eight flat pieces came back square. Now the tiles ARE the declaration and the pixels are derived from them, so rounding can
+    # only lie. It also inverted the band whenever floor and ceiling met: a path piece declared at 0,875 came out « ENTRE 0,9 ET 0,8 », which asks for nothing.
+    low = f"{declared['height_min_ty']}".replace(".", ",")
+    high = f"{declared['height_max_ty']}".replace(".", ",")
     band_px = f"{round(floor)} à {round(ceiling)} pixels"
     # THE GROUND RECTANGLE, SAID AS THE CAMERA ACTUALLY SEES IT — and read from the model, never retyped. The clause used to claim the depth was respected "tile
     # for tile" while the dimensions clause said the camera crushed it: a plain contradiction, and one that pushes the generator towards perspective depth cues to
@@ -335,10 +337,12 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
     # whatever stands on it — the exemption that kept flat pieces square was a tile seen from straight above, not from the world's camera. Two wrong versions
     # preceded this one: "tile for tile" for everyone, which contradicted the height band; then a branch that told a path its cell was square, which contradicted
     # the projected tile the mounter now lays it on.
-    rounded_depth = f"{round(tile_scale.projected_depth_tiles(subject['footprint']['rows']), 2)}".replace(".", ",")
+    # SINCE THE TILE IS WORTH 1 IN BOTH DIRECTIONS, THE FORESHORTENING IS NO LONGER SAID IN TILES — it lives in what a tile is worth in pixels, stated once above.
+    # This clause used to announce a depth of « 1,75 case » for two rows, which contradicted the height band in the very same consigne: the band counted tiles of
+    # width, the clause counted tiles of depth, and the generator was handed two units under one name. In tiles, a rectangle two rows deep is two tiles deep.
     ground_clause = (
-        f"CE RECTANGLE EST VU DE HAUT, DONC RACCOURCI EN PROFONDEUR : sous la plongée à soixante degrés, sa profondeur se dessine sur "
-        f"{rounded_depth} case(s) de haut dans l'image, pour {subject['footprint']['columns']} case(s) de large. Sa largeur, elle, ne raccourcit pas."
+        "CE RECTANGLE EST VU DE HAUT, ET SES DEUX UNITÉS LE DISENT DÉJÀ : TY étant plus court que TX, il se dessine plus bas que large sans qu'on ait à le "
+        "raccourcir. Aucune autre réduction ne s'y applique."
     )
     # Every sprite is laid on the grid beside others — there is no category that does not assemble. What differs is the SHAPE: it says which edges the piece
     # joins, and `plain` joins none. The clauses about reaching an edge follow the shape, and nothing else.
@@ -433,13 +437,13 @@ et tu redresses tout ce que la scène montre de convergent.
 ASSET DE JEU — {label}, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
 dessus.
 
-DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT {spread['columns']} case(s) de large, et sa hauteur tient ENTRE {low} ET {high} case(s),
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT {spread['columns']} TX de large, et sa hauteur tient ENTRE {low} ET {high} TY,
 soit {band_px} — et c'est le chiffre en pixels qui fait foi, jamais la fraction de case.
-Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle vient de
-la caméra appliquée à la taille réelle du sujet — sa profondeur au sol, plus ce qu'il dresse au-dessus, écrasé par la plongée.
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle a été
+décidée pour CE sujet dans CETTE posture, et pour aucun autre : une image hors de ces deux nombres est refusée.
 
-CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de {subject['footprint']['columns']} case(s) de large sur
-{subject['footprint']['rows']} case(s) de profondeur. {ground_clause}
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de {subject['footprint']['columns']} TX de large sur
+{subject['footprint']['rows']} TY de profondeur. {ground_clause}
 LE BORD DU FOND FAIT EXACTEMENT LA MÊME LARGEUR QUE LE BORD DE DEVANT, et les deux côtés du rectangle sont PARALLÈLES : un rectangle qui se rétrécit vers le fond est une perspective, et elle est
 interdite. Il occupe le BAS de l'image, et sa dernière rangée tolère un léger débord pour que la matière se raccorde à ce qui l'entoure.
 TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
@@ -531,7 +535,8 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
             # final report has to carry (operator, 2026-08-05). Captured rather than left on the
             # terminal, or it would be lost the moment the run ends.
             exported = subprocess.run(
-                ["python3", str(REPO / "scripts" / "export-asset.py"), str(image)],
+                # The variant ref travels with the file: the height band lives on the variant, and the file name alone never says which variant it is.
+                ["python3", str(REPO / "scripts" / "export-asset.py"), str(image), "--variant", variant_ref],
                 cwd=REPO.parent, capture_output=True, text=True)
             print(exported.stdout, end="", flush=True)
             extras["Redimensionnement à la définition de livraison"] = (

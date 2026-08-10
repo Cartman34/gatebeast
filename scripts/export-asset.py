@@ -114,6 +114,19 @@ def profile_of(code):
     return subject["type"], footprint, subject.get("height")
 
 
+def variant_of(code, variant_ref):
+    """The variant a ref designates, read from the referentiel. An absent ref is a fault: the band lives on the variant, so without it there is nothing to check
+    against — and inventing a subject-wide fallback is exactly the derivation that was retired on 2026-08-10."""
+    if not variant_ref:
+        raise ValueError(f"FAULT {code}: aucune ref de variante donnée — la fourchette de hauteur se déclare au variant, passez --variant <ref>.")
+    data = json.loads(SUBJECTS.read_text(encoding="utf-8"))
+    for variant in data["subjects"][code].get("variants", []):
+        if variant.get("ref") == variant_ref:
+            return variant
+    known = ", ".join(variant.get("ref", "?") for variant in data["subjects"][code].get("variants", []))
+    raise ValueError(f"FAULT {code}: aucune variante de ref {variant_ref!r}. Déclarées : {known}")
+
+
 def briefing_fault(kind, footprint, master_size, declared_height=None):
     """None if the master matches what its own consigne should have asked tile_scale for; otherwise
     the sentence explaining the mismatch, for the caller to report rather than resample around.
@@ -132,24 +145,25 @@ def briefing_fault(kind, footprint, master_size, declared_height=None):
     return None
 
 
-def height_verdict(footprint, master_size, declared_height=None):
-    """Whether the master's height sits in the band its declared height implies — a VERDICT, never a refusal.
+def height_verdict(footprint, master_size, code, variant_ref):
+    """Whether the master's height sits in the band ITS VARIANT DECLARES — a VERDICT, never a refusal.
 
     A validator measures and says whether a criterion holds; it refuses nothing and corrects nothing (operator, 2026-08-06, doc/glossaire.md). This one was
     written as a fatal fault first, and it blocked a path that was perfectly good — exactly the confusion the rule exists to prevent.
 
     The band matters because nothing else watched the height: a care centre came out twelve tiles tall for eight declared, a thicket at 1.6 for six, and the
-    whole mock-up looked wrongly calibrated with no measure to say why. No single height is right — a ridge, a chimney, a leaning crown move it — but there is
-    a floor and a ceiling, and tile_scale owns both.
+    whole mock-up looked wrongly calibrated with no measure to say why. No single height is right — a ridge, a chimney, a leaning crown move it — but there is a
+    floor and a ceiling, and since 2026-08-10 BOTH ARE DECLARED ON THE VARIANT rather than derived from the subject's height: no formula can know that a tuft of
+    grass is low and an oak towers, and a variant that lies down is not the height of the same variant standing.
 
     Returns (kept, sentence): kept says whether the criterion holds, the sentence says what was measured against what.
     """
     columns, rows = footprint
-    low, high = tile_scale.master_band(columns, rows, declared_height)
-    per_tile = tile_scale.master_definition(columns, rows)["width"] / columns
+    variant = variant_of(code, variant_ref)
+    low, high = tile_scale.variant_band(columns, rows, variant, f"{code} / {variant_ref}")
     drawn = master_size[1]
-    sentence = (f"hauteur {round(drawn / per_tile, 1)} case(s) pour une fourchette de "
-                f"{round(low / per_tile, 1)} à {round(high / per_tile, 1)} (hauteur déclarée {declared_height})")
+    sentence = (f"hauteur {round(drawn / tile_scale.ty_in_pixels(columns, rows), 2)} TY pour une fourchette déclarée de "
+                f"{variant['height_min_ty']} à {variant['height_max_ty']} TY")
 
     return low <= drawn <= high, sentence
 
@@ -182,7 +196,7 @@ def measure(alpha):
     }
 
 
-def export(path, force=False):
+def export(path, force=False, variant_ref=None):
     """Resize one master to delivery definition. Returns (RGBA image, measures). Nothing written here.
 
     Raises on a briefing fault unless force=True: refusing is the whole point — resampling from a
@@ -200,7 +214,7 @@ def export(path, force=False):
         raise ValueError(f"FAULT {path.name}: {fault}")
     # LA HAUTEUR EST UN VERDICT, PAS UN REFUS : elle se mesure, elle se dit, et elle laisse passer. Un validateur constate qu'un critère est tenu ou non ; il ne
     # refuse rien (opérateur, 2026-08-06). Rapportée au lanceur dans sa sortie à lui, et écrite dans les mesures pour que la page de suivi puisse la montrer.
-    kept, sentence = height_verdict(footprint, source.size, height)
+    kept, sentence = height_verdict(footprint, source.size, code, variant_ref)
     if not kept:
         print(f"HORS FOURCHETTE {path.name} : {sentence}")
 
@@ -248,6 +262,13 @@ def main(arguments):
     dry_run = "--dry-run" in arguments
     force = "--force" in arguments
     arguments = [argument for argument in arguments if argument not in ("--dry-run", "--force")]
+    # THE HEIGHT BAND LIVES ON THE VARIANT, so the validator has to be told WHICH variant it is looking at (operator, 2026-08-10). The file name alone names the
+    # subject and never the variant, and two variants of one subject may legitimately come back at different heights — an oak standing and the same oak lying down.
+    variant_ref = None
+    if "--variant" in arguments:
+        index = arguments.index("--variant")
+        variant_ref = arguments[index + 1]
+        arguments = arguments[:index] + arguments[index + 2:]
     out = None
     if "--out" in arguments:
         index = arguments.index("--out")
@@ -267,7 +288,7 @@ def main(arguments):
             failed += 1
             continue
         try:
-            deliverable, measures = export(path, force=force)
+            deliverable, measures = export(path, force=force, variant_ref=variant_ref)
         except ValueError as error:
             print(str(error))
             failed += 1

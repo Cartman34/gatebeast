@@ -85,6 +85,19 @@ DISPLAY_TILE_DEPTH = 21
 FILE_TILE_WIDTH = 96
 FILE_TILE_DEPTH = 84
 
+# THE TWO UNITS EVERY MEASURE IS WRITTEN IN, AND NO MEASURE IS WRITTEN WITHOUT ONE (operator, 2026-08-10). « Une case » names two different lengths depending on
+# the axis, so the word alone is ambiguous and no decision about it survives three documents: TX and TY exist so the ambiguity cannot be expressed.
+#
+#   TX — one tile ACROSS, the horizontal unit. Its value is FILE_TILE_WIDTH, 96 pixels in the file, DISPLAY_TILE_WIDTH on screen.
+#   TY — one tile DOWN, the vertical unit, used for every height and every ground depth.
+#
+# HOW TY IS COMPUTED FROM TX, AND WHERE ITS FIGURES LIVE. TY is TX foreshortened by the camera: the world's tile is square, and looking at it from sixty degrees
+# above squashes its depth. The ratio is FILE_TILE_DEPTH / FILE_TILE_WIDTH — 84 over 96, that is 7/8 — and both figures are declared right above, published by the
+# conception at doc/conception/referentiels/technique/rendu-en-calques.md, section « La case projetée ». THE RATIO IS READ FROM THOSE TWO NUMBERS AND NEVER FROM
+# sin(60°): the published depth is 84 while the sine gives 83.14, and recomputing it would reopen a seam of a fifth of a pixel at every join — the same rule that
+# says l'échelle en pixels fait foi, jamais le facteur. On screen the same ratio holds between DISPLAY_TILE_WIDTH and DISPLAY_TILE_DEPTH, 24 and 21.
+TILE_FORESHORTENING = FILE_TILE_DEPTH / FILE_TILE_WIDTH
+
 # What a tile measures on screen by default. The game varies it — zooming changes THIS value and
 # nothing else, never the files. Adjusting it costs nothing and reworks no image.
 DISPLAY_PIXELS_PER_TILE = DISPLAY_TILE_WIDTH
@@ -228,29 +241,48 @@ STANDING_TOLERANCE_LOW = 0.75
 STANDING_TOLERANCE_HIGH = 1.25
 
 
-def master_band(columns, rows, height=None):
-    """The band of acceptable image heights for a subject, in PIXELS, around what master_definition computes.
+def variant_band(columns, rows, variant, label):
+    """The band of acceptable image heights, IN PIXELS, read from the two figures the variant declares in tiles. Returns (floor, ceiling).
 
-    Why a band and not a figure (operator, 2026-08-06): a height depends on too many things to be demanded to the pixel, but a drawing that falls below the
-    floor is a subject crushed into its own footprint — nothing rises, and the mock-up has nothing to overlap its neighbours with — while one above the ceiling
-    towers over everything around it. Both are what made the park look wrongly calibrated: a care centre at twelve tiles for eight declared, a thicket at 1.6
-    for six.
+    NO FORMULA PRODUCES THIS BAND ANY MORE, and none ever could (operator, 2026-08-10): « aucun script ne peut savoir qu'une herbe est courte et qu'un arbre
+    grand ». The expected height of a drawing is a judgement about the thing drawn, and a judgement exists only where someone wrote it. What stood here before
+    derived it from a single declared height by a fixed projection, which is why every subject that does not stand — a ground, a path, a streambed — came out
+    wrong, and why each correction landed on the symptom: a floor of one tile applied to the declared height made every flat subject rise half a tile above its
+    own case, abolishing flat subjects altogether.
 
-    Returns (floor, ceiling). A subject with no declared height, or one that is dug in rather than standing, has no room to vary: its canvas is its footprint,
-    and floor and ceiling meet on it.
+    AND IT BELONGS TO THE VARIANT, NOT TO THE SUBJECT — same decision, same day: « si le variant met le sujet dans une position allongée, il n'aura pas la même
+    fourchette ». The variant carries the posture, the action and the shape; an oak lying down is not the height of the same oak standing.
+
+    A MISSING BAND IS A FAULT AND STOPS EVERYTHING. It is a judgement nobody made, and there is no defensible value to fall back on: a default here would quietly
+    reinstate the very formula this replaces.
     """
-    box = master_definition(columns, rows, height)
-    flat = master_definition(columns, rows, 0)["height"]
-    # A FLAT SUBJECT HAS A BAND TOO, and refusing to give it one is what broke the path: declared height zero produced floor and ceiling on the same pixel, so a drawing four
-    # pixels short was rejected although it was right. Nothing is drawn to the exact pixel — only a ground TILE is, and that one is checked elsewhere, as a tile.
-    standing = max(box["height"] - flat, 0)
-    play = standing * (STANDING_TOLERANCE_HIGH - 1)
-    # A FLOOR UNDER THE PLAY, or the band closes on the subjects that barely rise. A quarter of a very small standing part is a very small number: a tuft of grass three
-    # tenths of a tile high got a band three pixels wide, which no drawing can hit and which would have refused a perfectly good image. The play is therefore never less
-    # than a tenth of the whole expected height — tight on what stands tall, breathable on what barely stands.
-    play = max(play, box["height"] * 0.1)
+    for key in ("height_min_ty", "height_max_ty"):
+        if variant.get(key) is None:
+            raise ValueError(f"FAUTE {label} ne déclare pas « {key} » : la fourchette de hauteur se déclare au variant, aucune formule ne la remplace.")
+    minimum, maximum = float(variant["height_min_ty"]), float(variant["height_max_ty"])
+    if minimum > maximum:
+        raise ValueError(f"FAUTE {label} déclare un plancher de {minimum} case(s) au-dessus de son plafond de {maximum}.")
+    ty = ty_in_pixels(columns, rows)
 
-    return round(box["height"] - play), round(box["height"] + play)
+    return round(minimum * ty), round(maximum * ty)
+
+
+def ty_in_pixels(columns, rows):
+    """How many pixels ONE TY is worth in THIS image — the unit every height is declared in.
+
+    TY IS TX FORESHORTENED, AND THAT IS ITS WHOLE DEFINITION: `TX * TILE_FORESHORTENING`, the ratio being FILE_TILE_DEPTH over FILE_TILE_WIDTH, 84 over 96, both
+    declared at the head of this module and published by the conception. Nothing here recomputes it from an angle — see TILE_FORESHORTENING for why.
+
+    TX IS READ OFF THE IMAGE, NOT WRITTEN DOWN: a master is capped, so a wide subject comes back finer per tile than a narrow one, and a fixed 96 would misjudge
+    exactly the biggest sprites. The image's own TX is its width over its columns.
+
+    WHY HEIGHTS ARE IN TY (operator, 2026-08-10). Said in TX, an assembling piece that exactly fills its tile read 0.875 — a right drawing with a figure that
+    calls it short, and the rounding of that 0.875 up to 1.0 is what let eight flat pieces come back square. In TY the same piece reads 1, a ground rectangle of
+    two rows reads 2, and there is no foreshortening left to state in words: it lives in this conversion, and nowhere else.
+    """
+    master = master_definition(columns, rows)
+
+    return master["width"] / columns * TILE_FORESHORTENING
 
 
 def place(column, row):

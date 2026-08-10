@@ -4,6 +4,71 @@
 
 Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : seul l'état courant compte (le versionnage garde le reste).
 
+## SÉANCE DU 2026-08-10 — CE QU'IL FAUT SAVOIR POUR REPRENDRE
+
+**LES RÉSEAUX NE SE FONT PAS MAINTENANT, ET CE N'EST PAS À REDEMANDER** (opérateur, deux fois dans la même séance). Ça vaut pour les formes de tracé manquantes **comme pour la reprise d'une pièce
+déjà livrée** : refaire une pièce de `CH-019`, `CH-020` ou `OB-010` est une génération de réseau, quel qu'en soit le motif. `Q5 formes-de-trace` est fermée là-dessus, et `S50 pieces-plates-96` porte
+la consigne « ne pas les reproposer ».
+
+**LA TAILLE DU FICHIER N'EST PAS LA HAUTEUR DESSINÉE, ET LA CONFONDRE COÛTE DES GÉNÉRATIONS.** Sur les onze pièces plates restantes, six ont toute leur encre dans les `84 px` du haut : elles se
+rattrapent en **recadrant la toile, sans aucun dessin**. Mesure : `python3 local/scripts/measure-ink-off-band.py`.
+
+**LA TOILE SE PREND SUR LE COUVERT, PAS SUR L'EMPRISE** — `generate-sprite.py` et `export-asset.py` le lisent ainsi. **Trois sujets avaient perdu leur couvert au référentiel** (pommier `3 × 3`,
+sapin `2 × 2`, le chêne l'avait déjà retrouvé), si bien que les contrôles jugeaient une image de trois cases sur la fourchette d'une seule et la déclaraient fausse. **`TR-063` a failli être refaite
+pour rien.**
+
+**DEUX HAUTEURS CITAIENT L'INVENTAIRE EN LE DÉFORMANT** : le chêne portait 6 « d'après vegetation.md » qui dit 8, le sapin 6 quand il dit 4. **Une citation qui nomme sa source et la déforme a l'air
+vérifiée** — aucune relecture ne l'attrape. C'est ce qui a fait écrire `php scripts/check-subjects-against-inventory.php`, qui compare emprise, couvert et hauteur de chaque sujet à sa ligne
+d'inventaire et **crie sur ce qu'il n'arrive pas à lire** au lieu de le sauter.
+
+**UNE SPRITE NE MESURE JAMAIS MOINS D'UNE CASE** (opérateur, 2026-08-10, en rappelant que la question avait déjà été tranchée). Les trois hauteurs sous la case étaient donc fautives : chemin
+`CH-019` `0 → 1`, herbe haute `TR-062` `0,5 → 1`, herbe de clairière `TR-064` `0,3 → 1`. `check-subjects-against-inventory.php` ne signale plus aucun écart.
+
+**LE PLANCHER VAUT PARTOUT : cinq sujets au référentiel et trente-quatre lignes d'inventaire remontées à une case** — sols à `0`, ruisseau à `-0,3`, clôture à `0,9`, pont à `0,4`, renardeau à `0,9`.
+`local/scripts/raise-heights-to-one-tile.php` a fait la passe. **Le contrôle vérifie désormais le plancher sur chaque document séparément** : les deux étaient d'accord sur des chiffres faux, donc
+leur comparaison ne disait rien.
+
+**CE QUE LE PLANCHER ENTRAÎNE, ET IL FAUT LE SAVOIR AVANT DE JUGER** : toute fourchette de sujet plat monte à `1,25–1,5 case`. Vingt-cinq sprites passent hors fourchette, **dont les trois refaites
+la veille et déclarées justes**. Hors réseau, seules les trois herbes de clairière sont concernées, à une case tout juste. Rien n'a été relancé.
+
+**MAIS TOUT CE QUI PRÉCÈDE ÉTAIT UNE RUSTINE, ET L'OPÉRATEUR A TROUVÉ LA CAUSE** : « il n'y a pas de fourchette calculée possible », et elle appartient au **variant**, pas au sujet — un chêne couché
+n'a pas la hauteur du même chêne debout. **Tout est défait et remplacé, le 2026-08-10 même** :
+
+- **`tile_scale.master_band` n'existe plus**, remplacée par `variant_band`, qui **lit** `height_min` et `height_max` au variant, en cases. **Une fourchette absente arrête la commande** — il n'y a pas
+  de valeur de repli, un repli réinstallerait la déduction qu'on retire.
+- **Les 69 variants portent leur fourchette.** Amorcées depuis l'ancienne formule (`local/scripts/seed-variant-height-bands.py`), **ce sont des amorces, pas des jugements, et elles sont à relire**.
+  Les 31 variants qui ne se dressent pas — sol `CH-001`, chemin `CH-019`, ruisseau `CH-020` — ont été fixés à la main à `0,875` case exactement, sans jeu : une pièce d'assemblage **est** sa case.
+- **Les hauteurs du sujet sont revenues à ce qu'il mesure** — `0`, `-0,3`, `0,9`, `0,4`, `0,5`, `0,3` — et l'inventaire aussi, par `git checkout`. La hauteur reste une **donnée de jeu** et ne commande
+  plus aucune toile. Les trois divergences historiques sont réglées dans ce sens.
+- **DEUX UNITÉS, `TX` ET `TY`, ET AUCUNE MESURE SANS LA SIENNE** (opérateur, 2026-08-10). « Une case » était ambigu selon le sens et le restait quelle que soit la décision, donc le mot ne sert plus
+  qu'à parler du monde. `TX` = une case en largeur, 96 px ; `TY` = `TX × 84 / 96`, 84 px, et **sa dérivation est écrite dans sa définition, avec l'endroit où trouver les deux nombres**. Les clés du
+  référentiel portent l'unité : `height_min_ty`, `height_max_ty`. Consigne, glossaire et conception suivent. **Aucun verdict d'image ne change.**
+- **UNE CASE VAUT 1 DANS LES DEUX SENS, ET C'EST FIXÉ** (opérateur : « cette mesure unique quelque soit le sens doit être bien fixée et ne plus poser soucis »). Les hauteurs se disaient en
+  cases-de-**largeur**, donc une pièce d'assemblage remplissant sa case s'annonçait à `0,875`. Les 69 fourchettes sont converties en cases projetées : elle vaut `1,0` tout rond. **La consigne
+  portait les deux unités sous le même mot** — fourchette en cases-de-largeur, rectangle au sol en « 1,75 case de profondeur » pour deux rangées. Corrigé aux deux endroits, et le raccourcissement
+  ne s'énonce plus : il vit dans la conversion en pixels, dite une seule fois. **Aucun verdict d'image ne change** — la conversion est neutre en pixels.
+- **Un défaut trouvé en chemin** : l'arrondi conservateur de la consigne inversait une fourchette exacte, « ENTRE 0,9 ET 0,8 case ». Les deux nombres se citent maintenant tels que déclarés.
+- **`export-asset.py` prend `--variant`** : le nom de fichier ne dit jamais quel variant on juge, et deux variants d'un sujet ont deux fourchettes.
+- **Après tout ça, plus rien n'a bougé côté images** : hors réseau, seule `BT-002 p2` reste hors fourchette, et elle attend un écartement. Les vingt-cinq hors fourchette de tout à l'heure étaient
+  l'effet des rustines.
+
+**ON PARLE EN CASES, JAMAIS EN PIXELS** (opérateur, 2026-08-10), écrit aux règles du dépôt. Le pixel reste ce que le code calcule ; il n'est pas ce dont on parle.
+
+**DEUX SPRITES REFAITES ET NON JUGÉES** : `TR-060-v7` (`576 × 864`, hauteur 9,0 cases, dans la fourchette) et `TR-063-v12` (`288 × 416`, 4,3 cases, dans la fourchette). **Ce que j'ai vu sur le
+chêne** : dimensions enfin justes, mais feuillage vert clair et jaune là où la description exige « vert profond », aucune branche basse presque horizontale, et un motif de feuilles tamponné.
+Le pommier tient ses quatre pommes réparties en hauteur.
+
+**UNE REMARQUE DE L'OPÉRATEUR AVAIT ÉTÉ RECOPIÉE SANS SA NÉGATION** dans la description du pommier : « Toutes alignées sur le pourtour, elles paraissent accrochées après coup » ordonnait le défaut
+au lieu de l'interdire. Corrigé dans `assets/descriptions/TR-063.md` **et** dans `vegetation.md`. À vérifier ailleurs : une remarque se recopie en interdiction, jamais en description.
+
+**UN NOM TECHNIQUE EST ANGLAIS PARTOUT, `local/` COMPRIS** (opérateur, 2026-08-10). `lister-cases-carrees.py` est devenu `list-off-band-sprites.py`. Le reste de `local/scripts/` est encore en
+français — `tirer-page.php`, `cliquer-bouton.php`, `mesurer-hauteurs.py` — et se corrige au fil de l'eau.
+
+**`local/scripts/mesurer-hauteurs.py` PLANTE** : il ouvre `assets/sujets.json`, renommé `subjects.json`. Non corrigé, et il porte un nom français lui aussi.
+
+**`GO` ET `STOP` NE COMPTENT QUE SEULS SUR LEUR LIGNE** — `hook-word.php`, et c'est écrit exprès pour qu'aucune phrase ne vaille feu vert. Un `GO` qui termine une phrase est donc reçu par l'agent
+et ignoré par la garde : l'agent obéit, le dit, et ne touche pas à l'état. Vu le 2026-08-10, `prompt-log` porte « ordre lu aucun ».
+
 ## FIN DE SÉANCE DU 2026-08-09 — CE QU'IL FAUT SAVOIR POUR REPRENDRE
 
 **`GO` ET `STOP` PASSENT PAR LE PROMPT, ET PAR RIEN D'AUTRE** (opérateur, 2026-08-09). Le hook de fin de tour ne lit aucun ordre : il décide sur l'armement, le plafond de refus et la pile. Toute
