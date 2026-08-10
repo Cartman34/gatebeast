@@ -4,14 +4,35 @@
 
 Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : seul l'état courant compte (le versionnage garde le reste).
 
+## SÉANCE DU 2026-08-10, SECONDE PARTIE — LA PLUS IMPORTANTE EST LA PREMIÈRE
+
+**LA CONCLUSION QUI FONDE `W19` EST FAUSSE, ET C'EST MESURÉ.** Elle disait qu'un message glissé pendant que l'agent travaille n'atteint **ni** le hook du prompt **ni le transcrit**. La première
+moitié tient : `var/hooks/messages-log` ne porte rien entre le `GO` de 14:08:07 et le message de 14:15:05, alors que trois messages ont été envoyés entre les deux. **La seconde est démentie** :
+« Des questions » apparaît **9 fois** dans le transcrit de la session, `~/.claude/projects/-home-sowapps-projects-gatebeast/<session>.jsonl`. Le texte y est donc, et le hook de fin de tour lit ce
+fichier. **Si ça se confirme, le `STOP` en plein tour est réparable et `Q stop-mi-tour` devient caduque.**
+
+**CE QUI MANQUE POUR TRANCHER, ET C'EST LE PROCHAIN GESTE** : sous quel **type d'entrée** ces messages se trouvent dans le transcrit. `shapes-log` a été écrit exactement pour ça. Ne pas conclure
+avant de l'avoir lu — c'est une conclusion trop vite tirée qui a fondé `W19`.
+
+**LE PAYLOAD DU HOOK DU PROMPT, EN ENTIER, ET IL NE PORTE AUCUNE PILE** : `session_id`, `transcript_path`, `cwd`, `prompt_id`, `permission_mode`, `hook_event_name`, `prompt`, `session_title`. Rien
+d'autre. **`payload-log` est fidèle** : il reçoit la sortie brute de `STDIN` avant tout décodage, et l'écrivain n'ajoute qu'un horodatage.
+
+**`var/hooks/dequeue-armed` A DISPARU À 14:14:40 SANS EXPLICATION** — sans `STOP` en ouverture de tour, sans expiration, et le `GO` datait de 14:08. Seul `disarm()` retire ce fichier, appelé par le
+hook du prompt ou par le hook de fin de tour en cas d'expiration. **Aucun des deux ne s'applique.** Constaté, pas expliqué, et à ne pas expliquer par une hypothèse.
+
+**`W17` FERMÉ, `W16` ET `W19` BLOQUÉS SUR UNE QUESTION.** `SP-001-1` est inscrite sous `_outside_referential` avec sa raison — la conception la déclare comme **variante de rune** de `SP-001`, pas
+comme un sujet, et aucun axe de variante pour la rune n'existe : `S53` doit d'abord trancher la forme. L'humain n'avait pas disparu, c'était la documentation qui était fausse.
+
+**DEUX RÈGLES DE PLUS À LA MÉTHODE COMMUNE** (dépôt `conceptions`, **non commité**) : un avertissement mentionné se donne en entier ; on répond à la question posée avant tout le reste.
+
 ## SÉANCE DU 2026-08-10 — CE QU'IL FAUT SAVOIR POUR REPRENDRE
 
 **LES RÉSEAUX NE SE FONT PAS MAINTENANT, ET CE N'EST PAS À REDEMANDER** (opérateur, deux fois dans la même séance). Ça vaut pour les formes de tracé manquantes **comme pour la reprise d'une pièce
 déjà livrée** : refaire une pièce de `CH-019`, `CH-020` ou `OB-010` est une génération de réseau, quel qu'en soit le motif. `Q5 formes-de-trace` est fermée là-dessus, et `S50 pieces-plates-96` porte
 la consigne « ne pas les reproposer ».
 
-**LA TAILLE DU FICHIER N'EST PAS LA HAUTEUR DESSINÉE, ET LA CONFONDRE COÛTE DES GÉNÉRATIONS.** Sur les onze pièces plates restantes, six ont toute leur encre dans les `84 px` du haut : elles se
-rattrapent en **recadrant la toile, sans aucun dessin**. Mesure : `python3 local/scripts/measure-ink-off-band.py`.
+**LA TAILLE DU FICHIER N'EST PAS LA HAUTEUR DESSINÉE, ET LA CONFONDRE COÛTE DES GÉNÉRATIONS.** Sur les onze pièces plates restantes, six ont toute leur encre dans le `1 TY` du haut : elles se
+rattrapent en **recadrant l'image, sans aucun dessin**. Mesure : `python3 local/scripts/measure-ink-off-band.py`.
 
 **LA TOILE SE PREND SUR LE COUVERT, PAS SUR L'EMPRISE** — `generate-sprite.py` et `export-asset.py` le lisent ainsi. **Trois sujets avaient perdu leur couvert au référentiel** (pommier `3 × 3`,
 sapin `2 × 2`, le chêne l'avait déjà retrouvé), si bien que les contrôles jugeaient une image de trois cases sur la fourchette d'une seule et la déclaraient fausse. **`TR-063` a failli être refaite
@@ -53,6 +74,19 @@ n'a pas la hauteur du même chêne debout. **Tout est défait et remplacé, le 2
   l'effet des rustines.
 
 **ON PARLE EN CASES, JAMAIS EN PIXELS** (opérateur, 2026-08-10), écrit aux règles du dépôt. Le pixel reste ce que le code calcule ; il n'est pas ce dont on parle.
+
+**TROIS RÈGLES DE CONDUITE DONNÉES CE JOUR, TOUTES ÉCRITES À LA MÉTHODE COMMUNE** (`~/projects/conceptions/methode/collaboration.md`), parce qu'elles valent au-delà de GateBeast :
+
+- **UN ACCORD VAUT POUR UN SEUL MESSAGE.** « En français, il est IMPOSSIBLE qu'un `GO`, `vas y`, `faisons le maintenant` vaille plus qu'un seul message. Tu l'as consommé, ça n'existe plus. » Il ne se
+  reporte jamais au geste suivant et ne devient jamais un élan. Constaté le jour même : un « vas y » donné sur une proposition écrite a servi, deux échanges plus loin, à trancher seul une question
+  que l'opérateur venait de poser sans dire quelle réponse retenir.
+- **ON RÉPOND À LA QUESTION POSÉE, ON NE TRAVAILLE PAS À LA PLACE.** « Arrête de prendre des mesures, réponds toujours à la question posée. » Et une décision se prend avant d'être exécutée : les
+  options se nomment avec ce qu'elles coûtent, l'agent recommande, et il attend.
+- **LE BILAN DE FIN DE TÂCHE EST LA RAISON N°1 DE LA RÈGLE DU COMPTE RENDU EN UNE LIGNE**, pas son cas limite. « Msg beaucoup trop long » veut dire « je ne l'ai pas lu ».
+- **ET CHAQUE MESSAGE PORTE SON IDENTIFIANT**, en première et en dernière ligne — la règle existait, elle n'était pas appliquée.
+
+**UN SUJET ÉCARTÉ EXPRESSÉMENT, INSCRIT POUR NE PAS SE PERDRE** : `P hauteur-monde`, en `proposed`. La hauteur d'un sujet dans le monde n'a pas d'unité propre, distincte de `TX` et `TY` —
+« peut-être un truc à faire, mais c'est hors sujet ici ». **Ne pas le reprendre sans demande.**
 
 **DEUX SPRITES REFAITES ET NON JUGÉES** : `TR-060-v7` (`576 × 864`, hauteur 9,0 cases, dans la fourchette) et `TR-063-v12` (`288 × 416`, 4,3 cases, dans la fourchette). **Ce que j'ai vu sur le
 chêne** : dimensions enfin justes, mais feuillage vert clair et jaune là où la description exige « vert profond », aucune branche basse presque horizontale, et un motif de feuilles tamponné.

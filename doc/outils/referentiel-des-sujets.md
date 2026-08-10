@@ -130,9 +130,12 @@ porte `"statut": "courante"`, la première (`OB-010_shape-ns_posts-1.png`) devie
 
 **Rien ne se produit sans fiche** : un sujet sans code ni emprise à l'inventaire n'entre pas ici, même
 si un fichier existe déjà sur le disque. Les sondes de capacité produites avant que la chaîne n'existe
-(`HU-000`, `SOL-001`, `SP-001-1`) sont listées à part, sous `_hors_referentiel`, avec la raison précise
+(`SOL-001`, `SP-001-1`) sont listées à part, sous `_outside_referential`, avec la raison précise
 de leur absence — jamais un code ou une emprise fabriqués pour les y faire entrer. Leurs types, eux,
 sont bien déclarés : un type n'a pas besoin d'un sujet produit pour exister.
+
+**`HU-000` n'en fait plus partie** : l'humain a depuis sa fiche à l'inventaire et sa place au référentiel, et son image y est réclamée par un variant. La clé s'appelle `_outside_referential`, en
+anglais comme les autres — cette section la nommait `_hors_referentiel`, qui n'existe nulle part dans les données (relu le 2026-08-10).
 
 ## Le contrôleur
 

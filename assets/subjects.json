@@ -6729,7 +6729,8 @@
   },
   "_outside_referential": {
     "_comment": "Sondes de capacité produites avant que la chaîne n'existe : ni code ni emprise ne leur est fabriqué, elles n'entrent pas au référentiel (rien ne se produit sans fiche). Leurs types existent bien ci-dessus. Elles restent sur le disque et visibles au suivi, hors référentiel, jusqu'à ce qu'un vrai sujet les remplace.",
-    "SOL-001": "absent de sols-et-chemins.md"
+    "SOL-001": "absent de sols-et-chemins.md",
+    "SP-001-1": "creatures-temoins.md ne la déclare pas comme un sujet mais comme une VARIANTE DE RUNE de SP-001 — « rune en arche, turquoise » —, et le référentiel ne porte encore aucun axe de variante pour la rune. Lui fabriquer un code de sujet en ferait une créature de plus, ce qu'elle n'est pas. L'image reste sur le disque et visible ici jusqu'à ce que l'axe existe : voir S53 rune-creature, qui doit d'abord trancher la forme de la rune."
   },
   "_libelles_variants": {
     "shape": {

@@ -697,11 +697,12 @@
             "code": "W16",
             "label": "Une remarque de variant disparaît quand elle est notée, alors qu'elle doit partir quand elle est traitée",
             "description": "Une remarque de variant disparaissait quand elle était notée, alors qu'elle doit partir quand elle est traitée.\n\n## CE QUI EST FAIT ET PROUVÉ (2026-08-09)\n\n**LA PERTE SILENCIEUSE EST CORRIGÉE.** La page n'écrit rien tant que le serveur n'a pas répondu — sinon le premier rendu écraserait ce qui n'est pas encore arrivé. Mais cette porte avalait ce que\nl'opérateur venait d'écrire. Ce qui est touché pendant l'attente est maintenant retenu et reversé **par-dessus** la réponse : ce qu'il a tapé il y a une seconde est plus récent que ce que le fichier\nporte. Seules les entrées réellement touchées sont reversées.\n\n**MESURÉ EN CONDITIONS RÉELLES, À TRAVERS LE SERVEUR** (`php local/scripts/probe-remarque-course.php`, serveur lancé) : fin de `page.js` atteinte, texte écrit avant la réponse, champ qui le porte\nencore, **une** demande d'enregistrement, et la remarque retrouvée dans le dépôt.\n\n**LE FAUX DÉFAUT QUI A COÛTÉ UNE HEURE** : les premières sondes disaient que rien n'arrivait au dépôt. La cause n'était pas l'enregistrement mais un **chemin relatif** vers `page.js` : la page est\nservie à la route `/sprites`, donc le navigateur cherchait le script à la racine du serveur. Rien ne se chargeait — ni style, ni script. Les chemins sont absolus et doivent le rester.\n\n**UNE REMARQUE TRAITÉE SANS IMAGE NEUVE S'INSCRIT** (réponse `A` de l'opérateur, 2026-08-09) : `php scripts/remarks.php list | handle <image> \"<raison>\" | reopen <image>` pose un champ `handled` avec\nsa date et sa raison sur l'entrée de `review-server/notes/sprites.json`. La page la montre **barrée et grisée**, la sort du relevé, et ne l'efface jamais — le bouton d'ouverture porte la date et la\nraison en infobulle. Une commande refuse un chemin qu'aucune remarque ne concerne, plutôt que d'inventer une entrée.\n\n**LE RESTE ÉTAIT DÉJÀ DÉFINI, ET NE SE REDEMANDE PAS** : le verdict et le commentaire portent sur **une image**, et une reprise produit une représentation neuve qui repart sans verdict\n(`doc/outils/referentiel-des-sujets.md`).\n\n## CE QUI RESTE\n\n**Éprouver le classement à l'œil** : aucune sonde n'a encore regardé une remarque `handled` s'afficher barrée dans la page. La mécanique est vérifiée en ligne de commande, l'affichage non.",
-            "status": "todo",
+            "status": "pending-dependency",
             "priority": 1,
             "waiting": "agent",
             "created": "2026-08-08",
-            "updated": "2026-08-09"
+            "updated": "2026-08-10",
+            "waits_on": "Q essai-classement — la façon d'éprouver l'affichage d'une remarque classée"
         },
         {
             "ref": "rune-creature",
@@ -729,12 +730,12 @@
             "ref": "hors-modele-perdus",
             "code": "W17",
             "label": "Des images hors modèle ont disparu alors que rien ne se jette : SP-001-1 et un humain",
-            "description": "Des images hors modèle ont disparu alors que rien ne se jette : SP-001-1 et un humain",
-            "status": "todo",
+            "description": "Des images hors modèle avaient disparu alors que rien ne se jette : `SP-001-1` et un humain.\n\n## CE QUI EST FAIT (2026-08-10)\n\n**`SP-001-1` NE DISPARAÎT PLUS.** L'image existait sur le disque — `cutout/creature/SP-001-1.png`, son maître et sa consigne — sans qu'aucun variant la réclame : `check-subjects.py` la signalait\nsous « AUCUNE VARIANTE NE RÉCLAME », et elle n'apparaissait nulle part ailleurs. Elle est désormais inscrite sous `_outside_referential`, avec la raison précise que le modèle exige.\n\n**LA RAISON, ET C'EST ELLE QUI COMPTE** : `creatures-temoins.md` ne la déclare pas comme un sujet, mais comme une **variante de rune** de `SP-001` — « rune en arche, turquoise ». Le référentiel ne\nporte aucun axe de variante pour la rune. Lui fabriquer un code de sujet en aurait fait une créature de plus, ce qu'elle n'est pas, et c'est exactement ce que la règle « rien ne se produit sans\nfiche » interdit. **Elle y reste jusqu'à ce que l'axe existe**, et `S53 rune-creature` doit d'abord trancher la forme de la rune.\n\n**L'HUMAIN N'A PAS DISPARU, VÉRIFIÉ.** `cutout/personnage/HU-000.png` est sur le disque, son maître aussi, et un variant le réclame — `check-subjects.py` ne signale plus aucun livrable orphelin.\nL'historique montre bien une suppression de ce fichier au commit `349c674`, mais il a été rétabli depuis. **Ce qui restait faux, c'était la documentation** : `doc/outils/referentiel-des-sujets.md`\nlistait encore `HU-000` parmi les sondes hors référentiel, alors qu'il a sa fiche et sa place depuis. Corrigé, avec le nom réel de la clé — `_outside_referential`, et non `_hors_referentiel`, qui\nn'existe dans aucune donnée.\n\n**CONTRÔLE** : `python3 scripts/check-subjects.py` dit maintenant « chaque livrable est réclamé par une variante ».\n\n**Fermé le 2026-08-10** — SP-001-1 inscrite sous _outside_referential avec sa raison, l'humain vérifié présent et réclamé, et la documentation corrigée.",
+            "status": "done",
             "priority": 1,
             "waiting": "agent",
             "created": "2026-08-08",
-            "updated": "2026-08-08"
+            "updated": "2026-08-10"
         },
         {
             "ref": "stop-en-cours",
@@ -752,11 +753,12 @@
             "code": "W19",
             "label": "PREMIÈRE PRIORITÉ DE LA REPRISE : le STOP de l'opérateur doit arrêter l'agent, à coup sûr",
             "description": "**Quand l'opérateur demande un `STOP`, l'agent doit s'arrêter — à coup sûr.**\n\n## LA MESURE EST FAITE, EN CONDITIONS RÉELLES, AVEC UN MOT QUI NE COMMANDE RIEN\n\nLe mot de sonde `PING` est reconnu par les deux hooks, tracé par chacun, et n'arme ni ne désarme quoi que ce soit. Il répond à la seule question que des transcrits fabriqués ne peuvent pas poser :\n**où le mot de l'opérateur atterrit-il ?**\n\n**Ce que les deux journaux portent, le 2026-08-09 :**\n\n- `var/hooks/prompt-log` — `SONDE — le hook du prompt a reçu le mot`, à chaque `PING` envoyé **en ouverture de tour**. Ce chemin-là fonctionne.\n- `var/hooks/stop-log` — `SONDE — 2 mot(s) de sonde dans le transcrit`, et **ce compte n'a pas bougé** alors que d'autres `PING` avaient été envoyés entre-temps **pendant que l'agent travaillait**.\n\n**CONCLUSION, ET ELLE EST MESURÉE, PLUS DÉDUITE** : un message glissé en cours de tour n'atteint **ni** le hook du prompt — qui ne se déclenche qu'à l'ouverture d'un tour — **ni le transcrit** que lit\nle hook de fin de tour. Le seul à le recevoir est l'agent. Ce n'est donc pas un défaut de code : c'est une limite de l'enveloppe, et aucune correction du hook ne peut la lever.\n\n**CE QUI RESTE À TRANCHER, ET C'EST À L'OPÉRATEUR** : puisque l'agent est le seul à voir ce `STOP`, soit la garde continue de refuser jusqu'à son plafond de cinq — l'ordre est obéi, la garde grogne\n—, soit l'agent reçoit le droit de désarmer **dans ce seul cas**, en laissant une trace nommée. Le second lève l'interdit qui lui est fait de toucher à son propre armement, et c'est bien pour ça que\nça ne se décide pas tout seul.\n\n## LES TROIS DÉFAUTS RÉELS TROUVÉS ET CORRIGÉS\n\n**Le multiligne** : `STOP` suivi d'une ligne vide puis d'une consigne ne valait rien — les deux hooks écrasaient tous les espaces avant de comparer. Le mot compte désormais **seul sur sa ligne,\nn'importe où dans le message** ; une phrase contenant `stop` ne compte toujours pas.\n\n**L'ordre qui s'évaporait** : le hook de fin de tour ne lisait que le **dernier** message de l'opérateur, donc un `STOP` cessait de compter dès qu'il disait autre chose. Il lit maintenant tout, dans\nl'ordre, et retient le **dernier ordre trouvé** — seul un `GO` lève un `STOP`.\n\n**La sonde placée trop bas** : elle était comptée **après** le contrôle d'armement, donc elle n'écrivait rien dans le seul cas pour lequel elle existe — mesurer sans entrer dans le `GO`. Une mesure\nqui ne fonctionne que quand la chose mesurée est allumée ne mesure rien.\n\n**AUCUN DE CES TROIS N'EXPLIQUE LES QUATRE ÉCHECS DU 2026-08-08** : `prompt-log` porte quatre `STOP` de l'opérateur, tous de quatre caractères, donc tous seuls et tous en ouverture de tour. Le hook\nles avait vus et avait désarmé à chaque fois. Ces échecs-là étaient de conduite.\n\n## OÙ ÇA VIT MAINTENANT\n\nLes hooks sont en PHP depuis le 2026-08-09 : `hook-word.php` (ce qui compte comme ordre, et la sonde), `hook-trace.php` (état, traces, armement), `hook-transcript.php` (lecture du transcrit),\n`hook-prompt.php` et `hook-stop.php`. Éprouvés par `local/scripts/test-stop-multiline.sh`, `essai-hook-prompt.sh`, `essai-hook-stop.sh` et `essai-stop-transcrit.sh`.\n\n**Ces essais fournissent eux-mêmes leurs charges** : ils vérifient la lecture du mot, jamais qu'il arrive. C'est la sonde, sur le vrai chemin, qui répond à ça — et c'est elle qu'on relance avant de\nsupposer quoi que ce soit sur ce sujet.",
-            "status": "todo",
+            "status": "pending-dependency",
             "priority": 1,
             "waiting": "agent",
             "created": "2026-08-08",
-            "updated": "2026-08-09"
+            "updated": "2026-08-10",
+            "waits_on": "Q stop-mi-tour — l'arbitrage sur le désarmement"
         },
         {
             "ref": "backlog-help",
@@ -857,6 +859,41 @@
             "waiting": "agent",
             "created": "2026-08-10",
             "updated": "2026-08-10"
+        },
+        {
+            "ref": "hauteur-monde",
+            "code": "P1",
+            "label": "La hauteur d'un sujet dans le monde n'a pas d'unité propre, distincte de TX et TY",
+            "description": "**ÉCARTÉ EXPRESSÉMENT PAR L'OPÉRATEUR LE 2026-08-10** — « y'a peut-être un truc à faire mais c'est hors sujet ici » —, donc inscrit pour ne pas se perdre, et **pas à traiter tant qu'il ne le\ndemande pas**.\n\n**LE CONSTAT.** `TX` et `TY` disent l'image. La hauteur d'un sujet **dans le monde** — « le grand chêne fait 8 cases de haut », à l'inventaire — n'est ni l'un ni l'autre : c'est une mesure du monde,\noù la case est un cube d'un mètre et où rien n'est écrasé. Elle n'a aujourd'hui pas d'unité à elle, et s'écrit « cases » comme le reste.\n\n**POURQUOI ÇA POURRAIT COMPTER.** C'est exactement la confusion qui a coûté la matinée du 2026-08-10 dans l'autre sens : la hauteur du sujet commandait la toile de son image, si bien qu'un sol\ndéclaré à `0` sortait une image écrasée et qu'un plancher d'une case appliqué à cette hauteur faisait dépasser toute pièce plate. La séparation est faite côté production — la fourchette est déclarée\nau variant, en `TY` —, mais **le mot « case » sert encore aux deux** côté monde.\n\n**CE QUI RESTE VRAI SANS RIEN FAIRE** : la hauteur du sujet est désormais une **donnée de jeu** et ne commande plus aucune toile ni aucun verdict. Le risque n'est donc plus qu'elle produise une\nimage fausse ; il est qu'un lecteur la confonde de nouveau avec une mesure d'image.\n\n**CE QU'IL FAUDRAIT DÉCIDER, LE JOUR OÙ ON LE REPREND** : si la mesure du monde prend un symbole à elle, et lequel.",
+            "status": "proposed",
+            "priority": 11,
+            "waiting": "agent",
+            "created": "2026-08-10",
+            "updated": "2026-08-10"
+        },
+        {
+            "ref": "essai-classement",
+            "code": "Q11",
+            "label": "Comment éprouver l'affichage d'une remarque classée sans fausser une remarque de l'opérateur",
+            "description": "**CE QUI BLOQUE `W16 remarque-disparait`, ET RIEN D'AUTRE.** Toute la mécanique du classement est prouvée en ligne de commande ; il reste à **regarder** une remarque classée s'afficher barrée et\ngrisée dans la page. Or il n'existe aucune remarque classée : les trois remarques en attente sont celles de l'opérateur sur `BT-001`, et en classer une revient à écrire sur sa parole un traitement\nqui n'a pas eu lieu.\n\n**LES TROIS FAÇONS D'EN SORTIR :**\n\n- **A — classer puis rouvrir.** `handle` avec la raison « essai d'affichage », tir d'écran, puis `reopen`. C'est exactement ce pour quoi `reopen` existe, et l'essai dure une minute. Coût : la\n  remarque de l'opérateur porte un moment une trace d'un classement qui n'en était pas un.\n- **B — attendre un classement réel.** Rien n'est touché, mais `W16` reste ouvert sans échéance, et l'affichage restera non éprouvé aussi longtemps.\n- **C — l'opérateur dit laquelle des trois est réellement traitée**, avec sa raison ; elle se classe pour de vrai et l'affichage s'éprouve dans la foulée.\n\n**RECOMMANDATION : A.**\n\n**CE QUI NE MARCHERAIT PAS, ET POURQUOI ON NE LE PROPOSE PAS** : fabriquer une fausse remarque à côté, sur un chemin d'image quelconque. La commande refuse un chemin qu'aucune remarque ne concerne\n— délibérément, pour ne pas inventer d'entrée —, et contourner ce refus reviendrait à éprouver l'affichage sur une donnée que le reste de la chaîne rejette.",
+            "status": "pending-decision",
+            "priority": 11,
+            "waiting": "agent",
+            "created": "2026-08-10",
+            "updated": "2026-08-10",
+            "waits_on": "la façon d'éprouver l'affichage sans fausser une remarque de l'opérateur"
+        },
+        {
+            "ref": "stop-mi-tour",
+            "code": "Q12",
+            "label": "Un STOP glissé en cours de tour n'atteint aucun hook : la garde grogne, ou l'agent désarme",
+            "description": "**CE QUI BLOQUE `W19 stop-priorite`, ET C'EST TOUT CE QUI LUI RESTE.** Les trois défauts réels sont corrigés, la mesure est faite en conditions réelles avec le mot de sonde `PING`, et elle conclut :\n**un message glissé pendant que l'agent travaille n'atteint ni le hook du prompt ni le transcrit que lit le hook de fin de tour.** Seul l'agent le reçoit. Ce n'est pas un défaut de code, c'est une\nlimite de l'enveloppe, et aucune correction de hook ne peut la lever.\n\n**REVÉRIFIÉ LE 2026-08-10, DEUX FOIS, SANS RIEN CHERCHER** : un `GO` terminant une phrase n'a rien armé — `hook-word.php` n'accepte le mot que seul sur sa ligne, et c'est voulu —, et deux messages\n« Des questions ? » envoyés en cours de tour n'ont laissé aucune trace dans les journaux des hooks. Le comportement mesuré le 2026-08-09 se reproduit à l'identique.\n\n**LA DÉCISION, ET ELLE N'APPARTIENT QU'À L'OPÉRATEUR** puisqu'elle porte sur l'interdit fait à l'agent de toucher à son propre armement :\n\n- **A — la garde continue de refuser jusqu'à son plafond de cinq.** L'ordre est obéi par l'agent, la garde grogne, et l'opérateur renvoie son mot en ouverture de tour s'il veut l'état juste. Rien ne\n  change, l'interdit reste entier.\n- **B — l'agent reçoit le droit de désarmer dans ce seul cas**, en laissant une trace nommée qui dit que le désarmement vient de lui et pourquoi. L'état devient juste tout de suite ; en échange,\n  l'interdit qui protège l'armement s'ouvre d'un cas, et c'est exactement le geste qui avait été fait à tort le 2026-08-08.\n\n**RECOMMANDATION : A**, tant que le coût constaté se limite à une garde qui grogne. L'interdit vaut plus que la justesse immédiate d'un fichier d'état, et `B` rouvre la porte que la journée du\n2026-08-08 avait fermée pour de bonnes raisons.",
+            "status": "pending-decision",
+            "priority": 11,
+            "waiting": "agent",
+            "created": "2026-08-10",
+            "updated": "2026-08-10",
+            "waits_on": "l'arbitrage sur le désarmement quand le STOP n'atteint aucun hook"
         }
     ]
 }
