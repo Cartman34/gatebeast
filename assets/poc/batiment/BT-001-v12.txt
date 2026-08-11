@@ -1,0 +1,114 @@
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette.
+
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : AXONOMÉTRIE ORTHOGRAPHIQUE — une PROJECTION PARALLÈLE, et surtout PAS une perspective. AUCUN POINT DE
+FUITE, AUCUNE CONVERGENCE : les arêtes verticales sont verticales et parallèles entre elles d'un bout à l'autre
+de l'image, et les arêtes qui s'enfoncent vers le fond restent parallèles entre elles au lieu de se rapprocher.
+Deux murs opposés d'un même bâtiment ne penchent JAMAIS l'un vers l'autre, et une façade ne s'évase pas vers le
+bas. C'est le rendu d'un plan technique, pas celui d'un appareil photo.
+AUCUNE ROTATION AUTOUR DE LA VERTICALE : on regarde droit dans l'axe de la grille du monde, jamais en
+biais et jamais de trois quarts. Un sujet qui a une face avant la présente DE FRONT, entière, et son
+corps s'enfonce derrière elle vers le haut de l'image. Ce que tu produis EST une projection parallèle, exactement
+comme une vue isométrique : ce qui change est seulement l'orientation, sans la rotation de 45 degrés autour de la
+verticale qu'une isométrie classique applique. La projection, elle, est bien parallèle, et sans aucune exception.
+Forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
+rôle. On regarde le sujet d'en haut ET un peu de face : ses
+faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
+volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
+venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
+bas restent lisibles, l'ombrage se fait en deux bandes claires.
+
+ASSET DE JEU — centre de soin, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT 16 TX de large, et sa hauteur tient ENTRE 13,12 ET 16,02 TY,
+soit 1102 à 1346 pixels — et c'est le chiffre en pixels qui fait foi, jamais la fraction de case.
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle a été
+décidée pour CE sujet dans CETTE posture, et pour aucun autre : une image hors de ces deux nombres est refusée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 16 TX de large sur
+10 TY de profondeur. CE RECTANGLE EST VU DE HAUT, ET SES DEUX UNITÉS LE DISENT DÉJÀ : TY étant plus court que TX, il se dessine plus bas que large sans qu'on ait à le raccourcir. Aucune autre réduction ne s'y applique.
+LE BORD DU FOND FAIT EXACTEMENT LA MÊME LARGEUR QUE LE BORD DE DEVANT, et les deux côtés du rectangle sont PARALLÈLES : un rectangle qui se rétrécit vers le fond est une perspective, et elle est
+interdite. Il occupe le BAS de l'image, et sa dernière rangée tolère un léger débord pour que la matière se raccorde à ce qui l'entoure.
+TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
+ce que la description demande appartient au sujet et se dessine, quelle que soit la matière dont il est fait.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+
+
+LE SUJET EST SEUL DANS SA CASE : il ne rejoint aucun bord, rien ne se prolonge hors de lui, et il ne s'assemble avec rien.
+
+
+
+RÉFÉRENCE — ouvre et regarde le fichier /home/sowapps/projects/gatebeast/assets/cutout/batiment/BT-001-v11.png. C'est une image
+déjà produite de ce même sujet, montrant plusieurs de ses pièces assemblées, dont celle qu'on te
+demande ici. Elle donne la matière, la couleur et la lumière à reprendre à l'identique. On te demande
+d'extraire cette pièce précise et de la dessiner seule, pas d'en inventer une nouvelle.
+CE QUE TU PRENDS DE CETTE IMAGE, ET RIEN D'AUTRE : la MATIÈRE (pierre, bois, tuile, feuillage et leur
+grain), les COULEURS exactes, la LUMIÈRE et son ombrage, le niveau de détail, et la FORME PROPRE du
+sujet — son plan, ses proportions, ses éléments et leur place.
+CE QUE TU N'EN PRENDS PAS, ET C'EST AUSSI IMPORTANT : sa PRISE DE VUE. Elle peut porter une
+perspective, une convergence, un point de fuite, des murs qui penchent l'un vers l'autre, une façade
+qui s'évase : ce sont des défauts qu'on corrige, pas des traits à reprendre. Tu redresses ce que tu
+vois en AXONOMÉTRIE ORTHOGRAPHIQUE, comme décrit plus haut — arêtes verticales parallèles entre elles,
+fuyantes parallèles entre elles, aucun rétrécissement ni vers le bas ni vers le haut.
+LA RÉFÉRENCE FAIT FOI POUR LA MATIÈRE ET POUR LA FORME, JAMAIS POUR LA PROJECTION.
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+DEUX UNITÉS, ET TOUTE MESURE QU'ON TE DONNE PORTE LA SIENNE. Une case du monde est un carré d'un mètre,
+mais on la regarde de haut : dans l'image elle est plus large que haute, et il faut donc deux unités
+plutôt qu'une. TX est une case en LARGEUR, et vaut 96 pixels. TY est une case en HAUTEUR, et vaut
+84 pixels — c'est TX écrasé par la plongée. Une largeur se donne en TX, une hauteur et une
+profondeur au sol se donnent en TY. C'est la seule correspondance dont tu as besoin : ne dessine pas de
+grille, n'écris aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+BT-001 : Un centre de soin bâti pour ce qu'il fait : on y accueille, on y soigne, et les bêtes qu'on y soigne ont besoin d'air et d'abri. Rien de cubique ni de sévère — le bâtiment est CHALEUREUX et
+vivant. IL REMPLIT SON EMPRISE JUSQU'À SES DEUX BORDS, ET C'EST LA FAUTE À NE PAS REFAIRE : ses ailes de gauche et de droite descendent en MUR PLEIN jusqu'au SOL, sur toute la largeur de l'emprise — on voit la maçonnerie du mur, son soubassement et le pied du bâtiment aux deux extrémités, pas seulement une toiture. Une aile dont le toit s'arrête en l'air, sans mur en dessous, fait flotter le bâtiment au-dessus de ses propres cases. La largeur au sol est la MÊME en bas qu'en haut : rien ne se rétrécit vers le bas.
+
+
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
+plongée à SOIXANTE DEGRÉS sous l'horizontale, en projection parallèle. On voit le sujet d'en haut ET un peu de face :
+ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
+dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.
+
+REPRISE — LA VERSION PRÉCÉDENTE A ÉTÉ REJETÉE SUR CE POINT PRÉCIS, ET C'EST LE SEUL À CORRIGER :
+Verdict de l'opérateur sur la version précédente, cité mot pour mot. « Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne ». Ce que cela veut dire, précisément. La projection doit être parallèle, sans aucun point de fuite. Deux arêtes parallèles du bâtiment dans le monde doivent rester parallèles sur l'image, du premier au dernier pixel, et ne jamais converger. Aucune façade ne se rétrécit avec l'éloignement. Et chaque contrainte de la consigne se vérifie une par une avant de rendre l'image, aucune n'est facultative.
+Tout le reste de l'image précédente était juste et se reprend tel quel : même plan, même palette, même matière, même lumière, même projection.

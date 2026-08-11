@@ -3293,6 +3293,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v8.png",
+              "master": "poc/vegetation/TR-060-v8.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 576,
+                  "height": 864
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 2,
+                  "right": 573,
+                  "bottom": 858,
+                  "width": 572,
+                  "height": 857
+                },
+                "contact_px": {
+                  "left": 240,
+                  "right": 365,
+                  "width": 126
+                },
+                "anchor_px": {
+                  "x": 302.5,
+                  "y": 859.0
+                },
+                "master_size_px": {
+                  "width": 576,
+                  "height": 864
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 6,
+                  "rows": 6
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/vegetation/TR-060-v7.png",
               "master": "poc/vegetation/TR-060-v7.png",
               "image_number": 1,
@@ -3328,7 +3367,7 @@
                   "rows": 6
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -3905,6 +3944,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v13.png",
+              "master": "poc/vegetation/TR-063-v13.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 432
+                },
+                "silhouette_px": {
+                  "left": 3,
+                  "top": 3,
+                  "right": 284,
+                  "bottom": 428,
+                  "width": 282,
+                  "height": 426
+                },
+                "contact_px": {
+                  "left": 3,
+                  "right": 3,
+                  "width": 1
+                },
+                "anchor_px": {
+                  "x": 3.0,
+                  "y": 429.0
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 432
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 3
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/vegetation/TR-063-v12.png",
               "master": "poc/vegetation/TR-063-v12.png",
               "image_number": 1,
@@ -3940,7 +4018,7 @@
                   "rows": 3
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -5518,6 +5596,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001-v12.png",
+              "master": "poc/batiment/BT-001-v12.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1344
+                },
+                "silhouette_px": {
+                  "left": 66,
+                  "top": 35,
+                  "right": 1468,
+                  "bottom": 1322,
+                  "width": 1403,
+                  "height": 1288
+                },
+                "contact_px": {
+                  "left": 336,
+                  "right": 1190,
+                  "width": 855
+                },
+                "anchor_px": {
+                  "x": 763.0,
+                  "y": 1323.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1344
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001-v11.png",
               "master": "poc/batiment/BT-001-v11.png",
               "image_number": 1,
@@ -5553,7 +5670,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -5902,6 +6019,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p2-v6.png",
+              "master": "poc/batiment/BT-001_proposition-p2-v6.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1259
+                },
+                "silhouette_px": {
+                  "left": 4,
+                  "top": 8,
+                  "right": 1531,
+                  "bottom": 1250,
+                  "width": 1528,
+                  "height": 1243
+                },
+                "contact_px": {
+                  "left": 9,
+                  "right": 1524,
+                  "width": 1516
+                },
+                "anchor_px": {
+                  "x": 766.5,
+                  "y": 1251.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1259
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001_proposition-p2-v5.png",
               "master": "poc/batiment/BT-001_proposition-p2-v5.png",
               "image_number": 1,
@@ -5937,7 +6093,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -6113,6 +6269,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p3-v6.png",
+              "master": "poc/batiment/BT-001_proposition-p3-v6.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1287
+                },
+                "silhouette_px": {
+                  "left": 163,
+                  "top": 50,
+                  "right": 1372,
+                  "bottom": 1268,
+                  "width": 1210,
+                  "height": 1219
+                },
+                "contact_px": {
+                  "left": 256,
+                  "right": 1279,
+                  "width": 1024
+                },
+                "anchor_px": {
+                  "x": 767.5,
+                  "y": 1269.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1287
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001_proposition-p3-v5.png",
               "master": "poc/batiment/BT-001_proposition-p3-v5.png",
               "image_number": 1,
@@ -6148,7 +6343,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -6662,6 +6857,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ns-v5.png",
+              "master": "poc/sol/CH-021_shape-ns-v5.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 106
+                },
+                "silhouette_px": {
+                  "left": 24,
+                  "top": 0,
+                  "right": 71,
+                  "bottom": 105,
+                  "width": 48,
+                  "height": 106
+                },
+                "contact_px": {
+                  "left": 24,
+                  "right": 71,
+                  "width": 48
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 106.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 106
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-021_shape-ns-v4.png",
               "master": "poc/sol/CH-021_shape-ns-v4.png",
               "image_number": 1,
@@ -6697,7 +6931,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -6830,6 +7064,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ew-v2.png",
+              "master": "poc/sol/CH-021_shape-ew-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 3,
+                  "right": 95,
+                  "bottom": 109,
+                  "width": 96,
+                  "height": 107
+                },
+                "contact_px": {
+                  "left": 30,
+                  "right": 30,
+                  "width": 1
+                },
+                "anchor_px": {
+                  "x": 30.0,
+                  "y": 110.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-021_shape-ew.png",
               "master": "poc/sol/CH-021_shape-ew.png",
               "image_number": 1,
@@ -6865,7 +7138,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-ew_frame-01",
@@ -6889,6 +7162,45 @@
           "orientation": "south",
           "action": "idle",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v2.png",
+              "master": "poc/personnage/HU-000-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 168
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 2,
+                  "right": 93,
+                  "bottom": 165,
+                  "width": 92,
+                  "height": 164
+                },
+                "contact_px": {
+                  "left": 12,
+                  "right": 83,
+                  "width": 72
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 166.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 168
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
             {
               "type": "sprite",
               "path": "cutout/personnage/HU-000.png",
@@ -6926,7 +7238,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "main": true,

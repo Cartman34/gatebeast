@@ -112,6 +112,10 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   l'opérateur à lire une page pour trouver la ligne qui appelle sa réponse — et il la relit deux fois pour être sûr de n'avoir rien manqué. **Le diagnostic n'est pas la question.** Une question qui
   dépasse une dizaine de lignes n'est pas mal écrite : elle contient autre chose qu'une question, et c'est cet autre chose qui doit sortir.
 - **Chaque message se termine par deux lignes de récapitulatif** : ce qui attend l'opérateur, ce qui attend l'agent. Code et trois mots par point, quatre points par ligne au plus, un compteur au-delà.
+- **L'OPÉRATEUR N'ATTEND QUE DEUX CHOSES DE L'AGENT : UN `GO` À DONNER, OU DES QUESTIONS À TRANCHER** (opérateur, 2026-08-11 : « y'a que deux types de choses que tu attends de moi : un go ou des
+  questions »). La ligne « attente opérateur » ne porte donc que l'un ou l'autre, et **rien d'autre n'y figure** : ce qui attend vraiment une réponse se pose comme question, au format, dans le corps
+  du message ; le reste sort du récapitulatif. Un sujet nommé en trois mots dans cette ligne **ressemble** à une demande sans en être une — l'opérateur ne peut pas y répondre, et il doit demander ce
+  qu'on attend de lui, soit exactement l'aller-retour que le récapitulatif existe pour éviter. Ce qui se juge sur la page de revue s'y juge : ce n'est pas une attente de message.
 - **Toute génération d'image part en tâche de fond** — on ne l'attend jamais. Plus généralement, tout ce dont l'agent n'a pas besoin pour continuer part en tâche de fond et rend la main aussitôt.
 - **On dépile, on ne commente pas la pile.** Constater ce qui manque et le dire n'est pas un travail : ce qui manque se fait. Une tâche ne remonte à l'opérateur que si elle est finie, ou si elle est
   bloquée par une décision qui lui appartient. **Ce qui fait sortir un sujet du dépilement, et rien d'autre : une question, un inconnu, une incohérence, ou quelque chose que l'agent veut proposer.**

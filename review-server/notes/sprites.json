@@ -4,19 +4,31 @@
             "approved": false,
             "discarded": false,
             "rework": true,
-            "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne"
+            "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne",
+            "handled": {
+                "date": "2026-08-11",
+                "reason": "Reprise livrée le 2026-08-11 en v12, sur ce motif exact — le verdict se donne maintenant sur la v12."
+            }
         },
         "cutout/batiment/BT-001_proposition-p2-v5.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
-            "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne"
+            "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne",
+            "handled": {
+                "date": "2026-08-11",
+                "reason": "Reprise livrée le 2026-08-11 en v6, sur ce motif exact — le verdict se donne maintenant sur la v6."
+            }
         },
         "cutout/batiment/BT-001_proposition-p3-v5.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
-            "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne"
+            "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne",
+            "handled": {
+                "date": "2026-08-11",
+                "reason": "Reprise livrée le 2026-08-11 en v6, sur ce motif exact — le verdict se donne maintenant sur la v6."
+            }
         },
         "cutout/sol/CH-021_shape-ns-v3.png": {
             "approved": false,
@@ -24,10 +36,73 @@
             "rework": true
         },
         "cutout/creature/SP-001.png": {
+            "approved": true,
+            "discarded": false,
+            "rework": false,
+            "comment": ""
+        },
+        "cutout/vegetation/TR-063-v12.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
-            "comment": "Il manque sa rune"
+            "comment": "Il est horrible. y'a du bois mort non demandé et il ne fait pas assez pommier. La v5 était mieux.",
+            "handled": {
+                "date": "2026-08-11",
+                "reason": "Reprise livrée le 2026-08-11 en v13, sur ce motif exact — le verdict se donne maintenant sur la v13."
+            }
+        },
+        "cutout/personnage/HU-000-v2.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/vegetation/TR-064_densite-dense-v8.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/vegetation/TR-064_densite-medium-v4.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/vegetation/TR-064-v6.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/sol/CH-021_shape-ns-v4.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Je veux le style de v2. Ne pas mettre de cours d'eau sur l'image !!!"
+        },
+        "cutout/sol/CH-021_shape-ew.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Ne pas mettre de cours d'eau sur l'image !!!"
+        },
+        "cutout/vegetation/TR-060-v7.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Déformé par rapport à v5"
+        },
+        "cutout/batiment/BT-001_proposition-p2-v6.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true
+        },
+        "cutout/batiment/BT-001-v12.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true
+        },
+        "cutout/batiment/BT-001_proposition-p3-v6.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true
         }
     }
 }

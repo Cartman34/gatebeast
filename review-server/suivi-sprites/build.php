@@ -22,6 +22,10 @@ const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la
 const COMPARE_PIXELS_PER_TILE = 48;  // ce qu'une case mesure dans la FSP, où l'on juge et compare (opérateur, 2026-08-06)
 // ORPHAN_WIDTH is a width in pixels, not a count of tiles: an unclaimed image has no variant, so nothing declares how many tiles it covers. Wide enough to recognize the subject at a glance.
 const ORPHAN_WIDTH = 160;
+// THE TWO FAMILIES OF IMAGES UNDER assets/: the master as it comes out of the generator, and the cutout delivered to the game. Both words are those of the paths
+// the referential records — `master` and `path` — and they were typed out wherever the page swept the disk.
+const MASTER_DIRECTORY = 'poc';
+const DELIVERABLE_DIRECTORY = 'cutout';
 // Le raccourci d'une longueur au sol qui s'enfonce, sous la caméra à 60 degrés — le sinus de l'angle. Écrit ici en attendant que la page le demande au service qui
 // détient l'échelle, qui est en Python : c'est la seule valeur du modèle que cette page recopie, et elle est à supprimer dès que les deux côtés se parlent.
 const GROUND_DEPTH_FACTOR = 0.8660;
@@ -94,6 +98,8 @@ $sections = '';
 $popins = '';
 $missing = [];
 $compte = [];
+$expected = 0;
+$produced_total = 0;
 
 foreach ($inventory->types() as $typeName => $type) {
     $codes = $inventory->subjectsOfType($typeName);
@@ -121,6 +127,10 @@ foreach ($inventory->types() as $typeName => $type) {
         }
         $etat = subjectState($inventory, $subject);
         $compte[$etat] = ($compte[$etat] ?? 0) + 1;
+        // THE EXPECTED TOTAL IS WHAT NOBODY SAYS, and it is what the original builder announced under its title. The filters count SUBJECTS by state; this counts
+        // IMAGES, produced and expected, across every subject — the only measure that says where the production as a whole stands.
+        $expected += count($subject['variants']);
+        $produced_total += $produced;
         // THE STATE SHOWS ON THE TILE, AND IT IS THE FIRST THING ONE LOOKS FOR THERE (operator, 2026-08-08): does this subject need judging, is it fully validated,
         // fully produced, or is something left to rework? The tile carried its state as an attribute, so the filters knew it and the eye did not.
         $tiles .= sprintf(
@@ -250,18 +260,19 @@ function measurements(array $representation, array $subject): string
 /**
  * The button that opens a text, and the text itself, folded into the page.
  *
- * THE TITLE CARRIES THE FILE PATH, RELATIVE TO THE PROJECT ROOT (operator, 2026-08-08). Without it, one has to guess which file is being read in order to correct
- * it, open it elsewhere or quote it — and two prompts from two versions of the same variant look alike enough to be confused. Relative rather than absolute: that
- * is what copies straight into a command, and what still means something on another machine.
+ * THE PATH BELONGS TO THE DRAWER, NEITHER TO THE BUTTON NOR TO THE DRAWER TITLE (operator, 2026-08-11). It is still shown, relative to the project root — one has
+ * to know which file is being read in order to correct it, open it elsewhere or quote it, and two prompts from two versions of the same variant look alike enough
+ * to be confused. But under a button label it turns a one-line control into a two-line block of monospace, and in the title it pushes the label out of sight. It
+ * travels on the button as data, and the drawer displays it beside the text it came from.
  */
 function textButton(string $label, string $path, string $root): string
 {
     $relative = str_replace($root . '/', '', $path);
 
     return sprintf(
-        '<button type="button" class="open-text" data-title="%s — %s">%s <span class="text-path">%s</span></button>'
+        '<button type="button" class="open-text" data-title="%s" data-path="%s">%s</button>'
         . '<script type="text/plain" class="text-source">%s</script>',
-        escape($label), escape($relative), escape($label), escape($relative),
+        escape($label), escape($relative), escape($label),
         str_replace('</script', '<\/script', file_get_contents($path))
     );
 }
@@ -517,16 +528,21 @@ $page = <<<'HTML'
     <div class="fsp-bar"><p class="fsp-title" id="drawer-title"></p>
       <span class="fsp-tools"><button type="button" id="drawer-copy">Copier</button>
       <button type="button" class="drawer-close" aria-label="Fermer">✕</button></span></div>
+    <p class="drawer-path" id="drawer-path"></p>
     <div class="fsp-body"><pre id="drawer-body"></pre></div>
   </aside>
 
   <p class="lede">Une vignette par sujet. Un clic ouvre le sujet en plein écran, avec ses variants, leurs versions, leurs mesures, la consigne qui les a produits et les actions — toutes
   offertes, toujours. Cochez « Comparer » sur plusieurs variants pour ne garder qu'eux, côte à côte, à quarante-huit pixels par case.</p>
 
-  <div class="filters">{$filtres}</div>
+  <p class="production"><span class="production-label">État de la production</span> {$production}</p>
+  <div class="filters" role="group" aria-labelledby="filter-label">
+    <p class="filter-label" id="filter-label">N'afficher que</p>
+{$filters}</div>
+  <p class="filter-state" id="filter-state" role="status" aria-live="polite"></p>
 
 {$sections}
-{$horsModele}
+{$outsideModel}
 {$releveMarkup}
 </div>
 {$reloadMarkup}
@@ -536,9 +552,14 @@ $page = <<<'HTML'
 {$notesScript}
 
 <script>
-/* LA SEULE VALEUR QUE LE SCRIPT NE PEUT PAS EMPORTER : le libellé de l'état « tout », que le filtre compare. Il vient du référentiel, donc du gabarit — un fichier
-   statique ne peut pas le porter. Il est déclaré ici, avant le script, et lu là-bas. */
+/* THE VALUES THE SCRIPT CANNOT CARRY: the state words, their labels and the order that ranks them. They come from the referential, hence from the template — a
+   static file cannot hold them. Declared here, before the script, and read there: otherwise the script would retype them, and two spellings of the same state
+   would never meet. THE ORDER IS THE ONE IN subjectState(), in a single place: what is owed comes before what is finished. */
 window.GATEBEAST_STATE_ALL = '{$stateAll}';
+window.GATEBEAST_STATE_LABELS = {$stateLabels};
+window.GATEBEAST_STATE_OWED = {$stateOwed};
+window.GATEBEAST_STATE_VALIDATED = '{$stateValidated}';
+window.GATEBEAST_STATE_TO_JUDGE = '{$stateToJudge}';
 </script>
 <!-- SANS `defer` ET AVANT LES MODULES : le script de la page définit `window.construireReleve`, dont le module du relevé se sert aussitôt. Un chargement différé
      inverserait l'ordre et le relevé partirait sans son constructeur. -->
@@ -549,55 +570,75 @@ window.GATEBEAST_STATE_ALL = '{$stateAll}';
 {$reloadScript}
 HTML;
 
-// LES ORPHELINS : toute image livrée sous assets/cutout/ que l'inventaire ne réclame pas. Une image qui existe sans être inscrite n'existe pour personne — elle
+// LES ORPHELINS : toute image présente sur le disque que l'inventaire ne réclame pas. Une image qui existe sans être inscrite n'existe pour personne — elle
 // n'apparaît nulle part, personne ne peut la juger, et elle se refait. La page les montre plutôt que de laisser croire que tout est rangé.
-$reclamees = [];
+// BOTH DIRECTORIES, AS THE ORIGINAL BUILDER DID: « présents sur le disque, sous assets/poc/ ou assets/cutout/ ». The rewrite swept the deliverables only, so a
+// MASTER that nothing claims — an abandoned shape, a trial plate — appeared nowhere, while that is exactly the kind of image one opens this section to find. A
+// representation claims both of the files it names, its cutout and its master.
+$claimed = [];
 foreach ($inventory->subjects() as $subject) {
     foreach ($subject['variants'] as $variant) {
         foreach ($variant['representations'] ?? [] as $representation) {
-            $reclamees[$representation['path']] = true;
+            $claimed[$representation['path']] = true;
+            if (isset($representation['master'])) {
+                $claimed[$representation['master']] = true;
+            }
         }
     }
 }
-$orphelines = [];
-$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/assets/cutout'));
-foreach ($iterator as $file) {
-    if ($file->isFile() && strtolower($file->getExtension()) === 'png') {
-        $relative = 'cutout/' . substr($file->getPathname(), strlen($root . '/assets/cutout/'));
-        if (!isset($reclamees[$relative])) {
-            $orphelines[] = $relative;
+$orphans = [];
+foreach ([DELIVERABLE_DIRECTORY, MASTER_DIRECTORY] as $family) {
+    $base = $root . '/assets/' . $family;
+    if (!is_dir($base)) {
+        throw new RuntimeException("FAULT le répertoire d'images « {$base} » n'existe pas.");
+    }
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base)) as $file) {
+        if ($file->isFile() && strtolower($file->getExtension()) === 'png') {
+            $relative = $family . '/' . substr($file->getPathname(), strlen($base . '/'));
+            if (!isset($claimed[$relative])) {
+                $orphans[] = $relative;
+            }
         }
     }
 }
-sort($orphelines);
+sort($orphans);
 // AN ORPHAN IS SHOWN, NOT NAMED (operator, 2026-08-08: "it must go back to the old display where the images could be seen, see the py version"). A file name says an image exists and nothing about
 // what it is: deciding whether an unclaimed image is a leftover, a probe or a sprite whose record was lost takes one look at it. Naming it forces the operator to open it by hand, one by one.
 $orphanCards = '';
-foreach ($orphelines as $orphan) {
+foreach ($orphans as $orphan) {
     $shot = $thumbnails->shrink($orphan, ORPHAN_WIDTH);
-    $orphanCards .= sprintf('<figure class="orphan">%s<figcaption>%s</figcaption></figure>',
+    // MASTER OR DELIVERABLE, SAID ON THE CARD — the original builder carried it, and without it two images of the same subject look alike enough that one cannot
+    // tell which is the master out of the generator and which is the delivered cutout. The information is already in the path; it is read, never asked for.
+    $kind = str_starts_with($orphan, MASTER_DIRECTORY . '/') ? 'Brute (poc)' : 'Livrable';
+    $orphanCards .= sprintf('<figure class="orphan">%s<figcaption><span class="orphan-kind">%s</span>%s</figcaption></figure>',
         $shot ? sprintf('<img src="%s" width="%d" height="%d" alt="" loading="lazy">', $shot[0], $shot[1], $shot[2]) : '<p class="to-produce">Image illisible</p>',
-        escape($orphan));
+        escape($kind), escape($orphan));
 }
-$horsModele = $orphelines
+$outsideModel = $orphans
     ? '  <section class="type"><header class="type-head"><h2>Hors modèle <span class="slug">image(s) livrée(s) qu\'aucun variant ne réclame</span></h2>'
-      . '<span class="type-count">' . count($orphelines) . ' image' . (count($orphelines) > 1 ? 's' : '') . '</span></header>'
+      . '<span class="type-count">' . count($orphans) . ' image' . (count($orphans) > 1 ? 's' : '') . '</span></header>'
       . '<div class="orphans">' . $orphanCards . '</div></section>'
     : '  <section class="type"><header class="type-head"><h2>Hors modèle</h2><span class="type-count">rien</span></header>'
       . '<p class="lede">Chaque image livrée est réclamée par un variant.</p></section>';
 
-$filtres = '';
+// THE SENTENCE THE ORIGINAL BUILDER PUT UNDER ITS TITLE, in its own words: how many images the model expects, over how many subjects, and how many are drawn.
+// The filters tell the state of the subjects; this one tells how far the production has come, which nothing else says.
+$production = sprintf('%d images attendues, réparties sur %d sujets — %d produites', $expected, count($inventory->subjects()), $produced_total);
+
+$filters = '';
 // THE FILTERS CARRY THE SAME STATES AS THE TILES, in the same order and in the same words: "to judge" replaced "produced", which did not say what was left to do.
 // A produced subject whose images nobody has judged is exactly what one opens this page looking for.
 foreach ([STATE_ALL => 'Tout'] + STATE_LABELS as $key => $label) {
-    $filtres .= sprintf('<button type="button" class="filter" data-filter="%s" aria-pressed="%s">%s%s</button>',
+    $filters .= sprintf('<button type="button" class="filter" data-filter="%s" aria-pressed="%s">%s%s</button>',
         $key, $key === STATE_ALL ? 'true' : 'false', escape($label), $key === STATE_ALL ? '' : ' <span>' . ($compte[$key] ?? 0) . '</span>');
 }
 
 $page = strtr($page, [
-    // LA PALETTE EST CELLE DU CONSTRUCTEUR PYTHON, pas celle des autres pages : la migration avait emporté l'habillage de cette page-là, ce que personne n'avait demandé. Les autres pages gardent
-    // « encre », les changer n'a jamais été demandé non plus.
-    '{$theme}' => $theme->css('origine'),
+    // THE PAGE GOES BACK TO « ENCRE », THE THEME IT WAS MIGRATED WITH, and the history says so rather than my memory (operator, 2026-08-11: « il y avait un
+    // thème avant celui là, je veux le récupérer !!! »). Read off the repository: on 2026-08-06 the page moved to PHP with `Theme::css('encre')` — a near-black
+    // slightly blue ground, amber accent. On 2026-08-08 a `origine` theme was written from the PYTHON builder's DARK block, a very dark green, and the page was
+    // switched to it. That green is what the operator has been looking at and refusing. `origine.css` stays on disk, unused: nothing is thrown away here.
+    '{$theme}' => $theme->css('encre'),
     '{$favicon}' => $favicon->tag(),
     '{$reloadStyles}' => $reload->styles(),
     '{$reloadMarkup}' => $reload->markup(),
@@ -608,8 +649,15 @@ $page = strtr($page, [
     // THE STATE THAT MEANS "NO FILTER" IS WRITTEN ONCE, in the constant, and handed to the script rather than retyped in it: a filter button and the code that
     // reads it must agree on the word, and two spellings of it would silently show nothing.
     '{$stateAll}' => STATE_ALL,
-    '{$filtres}' => $filtres,
-    '{$horsModele}' => $horsModele,
+    // THE SAME WORDS AND THE SAME ORDER AS subjectState(), HANDED OVER RATHER THAN RETYPED: the page recomputes a subject's state as soon as a verdict is ticked,
+    // and it must decide it exactly as the build did — one image to rework outweighs everything, and « validated » takes every variant.
+    '{$stateLabels}' => json_encode(STATE_LABELS, JSON_UNESCAPED_UNICODE),
+    '{$stateOwed}' => json_encode([STATE_TO_REWORK, STATE_DISMISSED, STATE_TO_PRODUCE]),
+    '{$stateValidated}' => STATE_VALIDATED,
+    '{$stateToJudge}' => STATE_TO_JUDGE,
+    '{$filters}' => $filters,
+    '{$production}' => $production,
+    '{$outsideModel}' => $outsideModel,
     '{$releveStyles}' => $releve->styles(),
     '{$releveMarkup}' => $releve->markup('Votre relevé, à me coller en conversation'),
     '{$releveScript}' => $releve->script(),

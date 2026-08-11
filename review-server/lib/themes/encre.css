@@ -14,7 +14,22 @@
    * page bare in the other, with nothing to signal it. */
   --grid: #1a1c20;
   --muted: #8e9299;
+  --faint: #6b6f76;
+  /* A surface sunk into the card — a folded zone, a field. One step below --card, never below --bg. */
+  --card-sunk: #15171b;
   --accent: #d9a441;
+  /* The accent laid flat as a field, for what is ticked or waiting for a hand: the accent itself is for the line and the word. */
+  --accent-field: rgba(217, 164, 65, 0.10);
+  /* THE TWO FAMILIES, DECLARED ONCE AND FOR ALL: the review pages are monospaced — one reads file names, measurements and codes there far more than sentences —
+   * and running text takes the variable-width one. They were spelled out in the stylesheets, which is a value copied instead of named. */
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* The lines drawn ON an image and not on the page — the footprint grid and its two axes over a sprite. Two strengths, both light, because they lie on the
+   * picture rather than on the interface. */
+  --overlay: rgba(255, 255, 255, 0.30);
+  --overlay-soft: rgba(255, 255, 255, 0.16);
+  /* The ink written on a filled state: every state fill is a deep colour, so what is written on it is always near-white. */
+  --ink-on-state: #f2f3f5;
   /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte. */
   --state-validated: #2f5c3a;
   --state-validated-edge: #4e8a5e;
@@ -23,6 +38,10 @@
   --state-dismissed: #5c2f2f;
   --state-dismissed-edge: #8a4e4e;
   --state-to-produce-edge: #6e7869;
+  /* « TO JUDGE » MUST BE SEEN — IT IS THE ONLY STATE THAT CALLS FOR THE OPERATOR (operator, 2026-08-08: « je dois intervenir dessus et donc je dois bien le
+   * voir »). It had only an edge here, pale grey, hence quieter than the settled states — the opposite of what is needed. It gains a filled blue, the only
+   * shade still free among the states, and keeps its pale edge. */
+  --state-to-judge: #16456b;
   --state-to-judge-edge: #cfd6c8;
   --damier-a: #202329;
   --damier-b: #1a1d22;

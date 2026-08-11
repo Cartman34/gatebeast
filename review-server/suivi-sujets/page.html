@@ -18,7 +18,22 @@
    * page bare in the other, with nothing to signal it. */
   --grid: #1a1c20;
   --muted: #8e9299;
+  --faint: #6b6f76;
+  /* A surface sunk into the card — a folded zone, a field. One step below --card, never below --bg. */
+  --card-sunk: #15171b;
   --accent: #d9a441;
+  /* The accent laid flat as a field, for what is ticked or waiting for a hand: the accent itself is for the line and the word. */
+  --accent-field: rgba(217, 164, 65, 0.10);
+  /* THE TWO FAMILIES, DECLARED ONCE AND FOR ALL: the review pages are monospaced — one reads file names, measurements and codes there far more than sentences —
+   * and running text takes the variable-width one. They were spelled out in the stylesheets, which is a value copied instead of named. */
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* The lines drawn ON an image and not on the page — the footprint grid and its two axes over a sprite. Two strengths, both light, because they lie on the
+   * picture rather than on the interface. */
+  --overlay: rgba(255, 255, 255, 0.30);
+  --overlay-soft: rgba(255, 255, 255, 0.16);
+  /* The ink written on a filled state: every state fill is a deep colour, so what is written on it is always near-white. */
+  --ink-on-state: #f2f3f5;
   /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte. */
   --state-validated: #2f5c3a;
   --state-validated-edge: #4e8a5e;
@@ -27,6 +42,10 @@
   --state-dismissed: #5c2f2f;
   --state-dismissed-edge: #8a4e4e;
   --state-to-produce-edge: #6e7869;
+  /* « TO JUDGE » MUST BE SEEN — IT IS THE ONLY STATE THAT CALLS FOR THE OPERATOR (operator, 2026-08-08: « je dois intervenir dessus et donc je dois bien le
+   * voir »). It had only an edge here, pale grey, hence quieter than the settled states — the opposite of what is needed. It gains a filled blue, the only
+   * shade still free among the states, and keeps its pale edge. */
+  --state-to-judge: #16456b;
   --state-to-judge-edge: #cfd6c8;
   --damier-a: #202329;
   --damier-b: #1a1d22;
@@ -77,84 +96,62 @@
   <h1>Suivi des sujets</h1>
   <p class="lede">Ce qui reste à faire, dans l'ordre où je le dépile. Les points ouverts d'abord, du plus prioritaire au moins prioritaire ; à priorité égale, le plus ancien passe devant.
   Cette page se lit, elle ne s'édite pas : une seule commande écrit les points, et elle reconstruit la page en sortant.</p>
-  <p class="compte">19 ouvert(s) · 65 fermé(s) · php scripts/backlog.php next</p>
+  <p class="compte">22 ouvert(s) · 73 fermé(s) · php scripts/backlog.php next</p>
   <article class="point" data-statut="in-progress">
-    <p class="point-tete"><span class="point-ref">pont-ns</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
-    <h2>Le pont nord-sud n&#039;est toujours pas corrigé</h2>
-    <div class="point-corps"><p>Le pont nord-sud n&#039;est toujours pas corrigé.</p>
-<p>## LE DÉFAUT, VU ET NOMMÉ (2026-08-11)</p>
-<p><strong>LES DEUX FORMES PORTENT LE MÊME DESSIN DE CÔTÉ.</strong> Sur <code>CH-021_shape-ew.png</code>, le tablier traverse l&#039;image de gauche à droite et l&#039;arche se présente de face : c&#039;est juste, son flanc est tourné vers<br />
-nous. Sur <code>CH-021_shape-ns-v3.png</code>, le tablier court bien du bas vers le haut — l&#039;axe est bon — <strong>mais l&#039;arche se présente encore de face, ouverture visible et dessous apparent.</strong></p>
-<p><strong>POURQUOI C&#039;EST FAUX</strong> : un tablier nord-sud s&#039;enfonce vers le haut de l&#039;image, en s&#039;éloignant de la caméra. On le regarde donc <strong>par-dessus</strong>, sur toute sa longueur, avec ses deux parapets qui le<br />
-bordent à gauche et à droite. Son arche passe <strong>sous</strong> l&#039;ouvrage et ne se voit plus de face ; elle ne se devine que par l&#039;eau qui ressort de part et d&#039;autre. <strong>Ce qui est livré est le pont est-ouest<br />
-tourné d&#039;un quart de tour</strong>, pas un pont vu sous cette caméra.</p>
-<p><strong>CE QUI N&#039;EST PAS EN CAUSE, ET QUE J&#039;AI CRU À TORT</strong> : l&#039;eau dessinée dans l&#039;image. La fiche la demande explicitement — « l&#039;eau se voit de part et d&#039;autre de l&#039;ouvrage et sous l&#039;arche, jamais<br />
-recouverte ». Vérifié avant d&#039;y toucher.</p>
-<p>## LA CAUSE EST DANS LA CONSIGNE, ET ELLE EST CORRIGÉE</p>
-<p>La fiche disait comment le tablier s&#039;oriente — « son tablier court droit dans le sens que la forme déclare » — mais <strong>ne disait rien de ce que la caméra montre de l&#039;arche selon ce sens</strong>. Le<br />
-générateur n&#039;avait donc aucune raison de dessiner autre chose que la vue qu&#039;il connaissait déjà. Une clause l&#039;énonce désormais, avec le refus explicite : un pont nord-sud dont on voit l&#039;ouverture de<br />
-l&#039;arche est refusé.</p>
-<p>## CE QUI RESTE : UNE GÉNÉRATION, QUI SE SOUMET</p>
-<p><code>CH-021 shape-ns</code> est à retirer une fois la consigne corrigée. <strong>Une génération est une dépense et une relance demande l&#039;accord de l&#039;opérateur</strong> — elle n&#039;est pas lancée. La forme est-ouest, elle, est<br />
-juste et ne se retouche pas.</p>
+    <p class="point-tete"><span class="point-ref">verdicts-perdus</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>Les verdicts se perdent : une page enregistre toute la section et écrase ce qu&#039;une autre vient d&#039;écrire</h2>
+    <div class="point-corps"><p><strong>CAPTURE DE L&#039;OPÉRATEUR, 2026-08-11</strong> : « J&#039;ai mis des commentaires et à reprendre sur tous les PDS mais les commentaires ont disparu, tu as des pertes apparemment. »</p>
+<p><strong>LA PERTE EST RÉELLE, ELLE EST DE MON FAIT, ET CE QUI A DISPARU NE SE RÉCUPÈRE PAS.</strong> <code>review-server/notes/sprites.json</code> est la seule copie, et la version enregistrée dans l&#039;historique est antérieure<br />
+à sa saisie.</p>
+<p>## LE MÉCANISME, NOMMÉ PRÉCISÉMENT</p>
+<p><strong>UNE SONDE QUE J&#039;AI ÉCRITE COCHAIT DES VERDICTS SUR LA PAGE SERVIE POUR MESURER SI UNE VIGNETTE SE MET À JOUR</strong> — et la page enregistre chaque coche sur le serveur. Elle a donc écrit pour de vrai.<br />
+<strong>Pire que l&#039;écriture elle-même : la page renvoyait TOUTE la section</strong>, pas la seule entrée modifiée. Celle qui enregistrait écrasait donc l&#039;ensemble des verdicts par la vue qu&#039;elle avait au<br />
+chargement. Ma sonde a chargé la page, l&#039;opérateur a écrit ensuite, la sonde a enregistré : sa saisie a été remplacée par un état qui ne la contenait pas. <strong>Deux onglets ouverts sur la revue<br />
+suffisaient à reproduire la perte, sans aucune sonde.</strong></p>
+<p>## FAIT LE 2026-08-11</p>
+<ul>
+<li><strong>LES SONDES N&#039;ÉCRIVENT PLUS</strong> : celles qui cliquent neutralisent l&#039;envoi avant leur premier clic. Les dix entrées vides qu&#039;elles avaient déposées sont retirées par<br />
+  <code>python3 local/scripts/clean-empty-verdicts.py --apply</code>, qui ne touche qu&#039;aux entrées sans verdict, sans commentaire et sans classement.</li>
+<li><strong>LE SERVEUR FUSIONNE AU LIEU DE REMPLACER</strong> : <code>Notes::save()</code> pose ce qu&#039;une page envoie <strong>entrée par entrée</strong> sur ce que le fichier contient déjà. Une entrée que l&#039;émetteur ne mentionne pas est<br />
+  laissée intacte ; celle qu&#039;il mentionne l&#039;emporte, parce que c&#039;est le jugement le plus frais sur cette image. Une section qui porte une <strong>liste ordonnée</strong> — les remarques du plan de la page<br />
+  Campagne — garde l&#039;ancien comportement : il n&#039;y a pas de clé sur quoi fusionner, et retirer la troisième remarque ne se distinguerait pas de ne pas l&#039;envoyer.</li>
+<li><strong>LA VERSION PRÉCÉDENTE EST GARDÉE</strong>, un cran, dans <code>&lt;route&gt;.previous.json</code> à chaque écriture. Ce n&#039;est pas un historique : c&#039;est le pas en arrière qui transforme un accident en contrariété.</li>
+</ul>
+<p>## CE QUI RESTE</p>
+<ul>
+<li><strong>ÉPROUVER LA FUSION</strong> : deux pages qui écrivent tour à tour sur deux images différentes doivent conserver les deux verdicts. À faire avec une sonde, sans toucher aux données de l&#039;opérateur.</li>
+<li><strong>LE VERROU</strong> : deux écritures simultanées peuvent encore se croiser entre la lecture et l&#039;écriture du fichier. La règle du projet demande un verrou dès la conception ; il manque toujours.</li>
+<li><strong>ET LA PAGE POURRAIT N&#039;ENVOYER QUE CE QU&#039;ELLE CHANGE</strong> : la fusion côté serveur suffit à empêcher la perte, mais envoyer toute la section à chaque coche reste inutilement large.</li>
+</ul>
 </div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">remarque-disparait</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
-    <h2>Une remarque de variant disparaît quand elle est notée, alors qu&#039;elle doit partir quand elle est traitée</h2>
-    <div class="point-corps"><p><strong>LA RÈGLE, DITE PAR L&#039;OPÉRATEUR LE 2026-08-11, ET ELLE EST TOUTE SIMPLE</strong> : « une image validée peut avoir une remarque ; quand elle est traitée, elle est conservée de ton côté mais plus affichée<br />
-dans l&#039;interface ». Il n&#039;y a rien d&#039;autre à décider — ni forme d&#039;affichage, ni essai à monter.</p>
-<p><strong>CE QUE J&#039;AVAIS COMPRIS DE TRAVERS</strong> : que la remarque traitée devait rester visible, barrée et grisée, et qu&#039;il fallait donc fabriquer une remarque classée pour regarder ce rendu. J&#039;en avais fait<br />
-une question (<code>Q11</code>), fermée : elle portait sur un affichage qui n&#039;a pas lieu d&#039;être.</p>
-<p><strong>CE QUI EST DÉJÀ FAIT ET PROUVÉ (2026-08-09)</strong> : la perte silencieuse est corrigée — ce que l&#039;opérateur écrit pendant que la page attend la réponse du serveur est retenu et reversé par-dessus, et<br />
-mesuré en conditions réelles à travers le serveur. Le classement lui-même existe : <code>php scripts/remarks.php list | handle &lt;image&gt; &quot;&lt;raison&gt;&quot; | reopen &lt;image&gt;</code> pose un champ <code>handled</code> avec sa date et<br />
-sa raison, et la commande refuse un chemin qu&#039;aucune remarque ne concerne plutôt que d&#039;inventer une entrée.</p>
-<p><strong>CE QUI RESTE, ET C&#039;EST LE POINT ENTIER</strong> : que la page <strong>cesse d&#039;afficher</strong> une remarque traitée, au lieu de la montrer barrée. La donnée, elle, ne s&#039;efface jamais — <code>handled</code> la conserve avec sa<br />
-raison, et <code>reopen</code> la remet en attente si le classement était faux.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">stop-priorite</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : Q12 — mais la mesure du 2026-08-10 la rend probablement caduque</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
-    <h2>PREMIÈRE PRIORITÉ DE LA REPRISE : le STOP de l&#039;opérateur doit arrêter l&#039;agent, à coup sûr</h2>
-    <div class="point-corps"><p><strong>Quand l&#039;opérateur demande un <code>STOP</code>, l&#039;agent doit s&#039;arrêter — à coup sûr.</strong></p>
-<p>## LA CAUSE EST TROUVÉE, ET LA CONCLUSION PRÉCÉDENTE ÉTAIT FAUSSE (2026-08-11)</p>
-<p><strong>LE MOT EST DANS LE TRANSCRIT, SOUS UN TYPE QUE PERSONNE N&#039;AVAIT REGARDÉ.</strong> <code>queue-operation</code>, clés <code>type, operation, timestamp, sessionId, content</code>. Chaque message glissé pendant que l&#039;agent<br />
-travaille y figure <strong>deux fois</strong> : <code>enqueue</code> avec son contenu, puis <code>remove</code> ou <code>dequeue</code> quand l&#039;agent le reçoit. Le <code>STOP</code> de la séance du 2026-08-10 y est, mot pour mot.</p>
-<p><strong>CE QUI AVAIT ÉGARÉ</strong> : <code>hook-transcript.php</code> connaissait bien un porteur pour les messages en file — <code>attachment</code> de type <code>queued_command</code> — mais ce n&#039;est pas celui que le client écrit dans cette<br />
-version. La branche existait, elle ne se déclenchait jamais, et on en a conclu que le mot n&#039;atteignait pas le fichier. <strong>Une branche qui ne se déclenche jamais ressemble à une absence.</strong></p>
-<p><strong>FAIT</strong> : <code>hook-transcript.php</code> lit désormais les entrées <code>queue-operation</code>, et <strong>ne compte que <code>enqueue</code></strong> — sans quoi un mot vaudrait deux ordres. Sonde :<br />
-<code>php local/scripts/montrer-queue-operation.php &lt;transcript.jsonl&gt;</code>.</p>
-<p>## BRANCHÉ ET ÉPROUVÉ (2026-08-11, accord de l&#039;opérateur : « on peut essayer alors »)</p>
-<p><strong><code>hook-stop.php</code> LIT LE <code>STOP</code> GLISSÉ EN COURS DE TOUR, ET LUI SEUL PEUT LE FAIRE</strong> : il se déclenche à chaque fin de tour, reçoit <code>transcript_path</code>, et lit déjà ce fichier. C&#039;est le seul endroit<br />
-où le mot est saisissable <strong>au moment où il compte</strong>, c&#039;est-à-dire juste avant que la garde refuse.</p>
-<p><strong>DEUX GARDE-FOUS, ET CHACUN FERME UNE MOITIÉ DE LA RÉGRESSION DU 2026-08-09 :</strong></p>
-<ul>
-<li><strong>Seul <code>STOP</code> est lu, jamais <code>GO</code>.</strong> Un mot qui ne peut que <strong>relâcher</strong> la garde ne peut rien armer : le vieux <code>GO</code> qui traîne dans la conversation devient inoffensif, puisqu&#039;on ne le lit plus.</li>
-<li><strong>La lecture est bornée au tour courant</strong>, positionnellement : <code>HookTranscript::queuedThisTurn</code> repart de zéro à chaque entrée qui <strong>ouvre</strong> un tour. Tout ce qui précède appartient aux tours<br />
-  d&#039;avant et a déjà été traité par le hook du prompt. <strong>Aucune horloge, donc aucune dérive et aucune durée à inventer.</strong> C&#039;est la borne qui manquait à la tentative précédente.</li>
-</ul>
-<p><strong>ÉPROUVÉ EN DEUX CAS</strong> — <code>bash local/scripts/essai-stop-transcrit.sh</code> : un <code>STOP</code> du tour courant désarme, un <code>STOP</code> d&#039;un tour précédent ne fait rien. Le second est le plus important des deux.</p>
-<p>## CE QUI RESTE, ET C&#039;EST UNE DÉCISION DE L&#039;OPÉRATEUR, PAS UN GESTE MÉCANIQUE</p>
-<p><strong>HUIT CAS DE <code>test-stop-multiline.sh</code> ÉCHOUENT, ET ILS TESTENT UN COMPORTEMENT SUPPRIMÉ.</strong> Ils écrivent le <code>STOP</code> comme une entrée <code>user</code> du transcrit et attendent que la garde désarme — c&#039;est-à-<br />
-dire exactement la lecture d&#039;ordres retirée le 2026-08-09, quand il a été décidé que <code>GO</code> et <code>STOP</code> passent par le prompt et par rien d&#039;autre. <strong>Supprimer des cas d&#039;essai est une décision, pas un<br />
-nettoyage</strong>, donc ils restent en place et rouges en attendant l&#039;arbitrage.</p>
-<p><strong>CE QUI A DÉJÀ ÉTÉ CORRIGÉ DANS CET ESSAI</strong> : il fabriquait un porteur inexistant pour les messages en file — <code>attachment.queued_command</code> —, si bien qu&#039;il déclarait le mot introuvable alors qu&#039;il<br />
-était dans le fichier sous <code>queue-operation</code>. <strong>Un essai qui invente sa charge n&#039;éprouve que lui-même.</strong> Corrigé, et son cas « STOP en cours de travail » passe désormais.</p>
-<p><strong>BRANCHER CE MOT SUR LA GARDE, C&#039;EST RENDRE À L&#039;AGENT UNE PRISE SUR SON PROPRE ARMEMENT</strong> — l&#039;interdit qui lui est fait d&#039;y toucher. <code>hook-stop.php</code> ne lit aujourd&#039;hui <strong>aucun</strong> ordre : il décide<br />
-sur l&#039;armement, le plafond de refus et la pile. Cette lecture avait été retirée le 2026-08-09 pour une raison précise et vérifiée : <strong>un <code>GO</code> vieux de deux heures traîne dans la conversation et<br />
-réarmait un dépilement que personne n&#039;avait demandé.</strong></p>
-<p><strong>L&#039;ESSAI <code>local/scripts/essai-stop-transcrit.sh</code> ÉCHOUE, ET IL A RAISON D&#039;ÉCHOUER</strong> : il vérifie qu&#039;un <code>STOP</code> du transcrit désarme, c&#039;est-à-dire exactement le comportement retiré. Il est resté en<br />
-place après la décision qui l&#039;a rendu caduc — <strong>un essai qui teste un comportement supprimé accuse le code au lieu de se taire.</strong></p>
-<p><strong>LA FORME QUI LÈVERAIT LE RISQUE, SI L&#039;OPÉRATEUR LA VEUT</strong> : ne lire dans les entrées <code>queue-operation</code> que le mot <code>STOP</code>, <strong>jamais <code>GO</code></strong>. Un <code>STOP</code> glissé en cours de tour désarmerait ; un <code>GO</code><br />
-glissé ne réarmerait rien, ce qui est déjà la règle écrite. Le vieux <code>GO</code> qui traîne ne peut alors plus rien réarmer, puisqu&#039;on ne le lit plus.</p>
-<p><strong>TANT QUE CE N&#039;EST PAS TRANCHÉ</strong> : l&#039;agent obéit au <code>STOP</code> qu&#039;il est seul à voir, le dit, et ne touche pas à l&#039;état — la garde continue de réclamer jusqu&#039;à son plafond de cinq.</p>
+    <p class="point-tete"><span class="point-ref">style-page-sprites</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : le regard de l&#039;opérateur sur la page revenue au thème encre, et sa décision sur la trame du monde en fond</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
+    <h2>Le style de la page des sprites revient à celui du constructeur d&#039;origine</h2>
+    <div class="point-corps"><p><strong>CE QUE L&#039;HISTORIQUE DIT, ET QUI CORRIGE UNE AFFIRMATION FAUSSE DE MA PART</strong> (opérateur, 2026-08-11 : « C&#039;EST FAUX !!! Tu crois que c&#039;est le cas, tu forces à restaurer un thème qui est déjà celui en<br />
+place !!! Ce n&#039;est pas ce que je te demande, il y avait un thème avant celui-là, je veux le récupérer !!! »). J&#039;avais affirmé que le vert sombre de la page était le style d&#039;origine. <strong>Il ne l&#039;est<br />
+pas.</strong> Trois habillages se sont succédé, et <code>bash local/scripts/list-page-themes.sh</code> les lit dans le dépôt, commit par commit :</p>
+<p>| Quand | Ce que la page portait |<br />
+| --- | --- |<br />
+| du 2026-08-04 au 2026-08-06, page Python | clair par défaut, fond crème <code>#F2F4EF</code>, cartes blanches, clé magenta <code>#A3007A</code> — avec un bloc sombre <code>#12150F</code> pour les systèmes en sombre |<br />
+| <strong>le 2026-08-06, migration en PHP : <code>Theme::css(&#039;encre&#039;)</code></strong> | <strong>presque noir légèrement bleuté <code>#101114</code>, cartes <code>#191b1f</code>, accent ambre <code>#d9a441</code></strong> |<br />
+| le 2026-08-08 | un thème <code>origine</code> est écrit <strong>à partir du bloc SOMBRE du constructeur Python</strong> — vert très sombre <code>#12150F</code> — et la page bascule dessus |</p>
+<p><strong>LE THÈME « D&#039;AVANT » EST DONC <code>encre</code></strong>, celui de la migration, et c&#039;est celui que l&#039;opérateur réclame. Le vert qu&#039;il refuse n&#039;est pas l&#039;original : c&#039;est le sombre de l&#039;original, recopié le<br />
+2026-08-08 et imposé comme unique palette par un agent qui croyait restaurer.</p>
+<p>## FAIT LE 2026-08-11</p>
+<p><strong>LA PAGE DES SPRITES REVIENT À <code>encre</code>.</strong> Une ligne du gabarit, et l&#039;historique la justifie plutôt que ma mémoire. <code>origine.css</code> reste sur le disque, inutilisé : rien ne se jette.</p>
+<p><strong>ET <code>encre</code> REÇOIT LES JETONS QUE LA PAGE A GAGNÉS DEPUIS</strong> — <code>--faint</code>, <code>--card-sunk</code>, <code>--accent-field</code>, <code>--mono</code>, <code>--sans</code>, les deux traits posés sur une image, l&#039;encre écrite sur un état plein, et<br />
+le fond bleu de « à juger », que l&#039;opérateur avait demandé visible le 2026-08-08. Ajouts purs : les autres pages de revue gardent exactement ce qu&#039;elles avaient.</p>
+<p><strong>CE QUI RESTE DE LA JOURNÉE ET QUI NE DÉPEND PAS DU THÈME</strong> : la rangée de filtres nommée et son compte, l&#039;état de la production, la section hors modèle qui balaie de nouveau les deux répertoires<br />
+avec la mention brute ou livrable, et les valeurs de couleur sorties des feuilles pour vivre au thème. Tout cela vaut sous n&#039;importe quel habillage.</p>
+<p><strong>CE QUI RESTE À TRANCHER</strong> : la trame du monde en fond de page. Elle vient de <code>encre</code> comme du constructeur Python, qui la commentait « une case fait un mètre : la page se tient sur la trame du<br />
+monde ». L&#039;opérateur dit ne pas la vouloir ; elle se retire d&#039;une ligne dès qu&#039;il le confirme.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">types-en-francais</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
+    <p class="point-tete"><span class="point-ref">types-en-francais</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
     <h2>Les valeurs de type nomment des répertoires sur le disque et restent en français</h2>
     <div class="point-corps"><p><strong>TRANCHÉ PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « à l&#039;affichage, ok en français ; mais dans le code, ça doit respecter les mêmes règles et être en anglais ». Les valeurs de type ne bénéficient d&#039;aucune<br />
 exception — elles sont du code.</p>
@@ -171,23 +168,42 @@ consigne qui l&#039;a produite — et ce lien est ce qui permet de comprendre un
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">rune-creature</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
-    <h2>La rune de la créature doit être une demi-lune comme sur la référence DA, et il lui faut des variants de posture</h2>
-    <div class="point-corps"><p><strong>LE DÉFAUT EST NOMMÉ PAR L&#039;OPÉRATEUR, 2026-08-11</strong> : « la forme était bonne, c&#039;est juste que tu ne la mettais pas sur les nouvelles générations, c&#039;était ça le problème ». <strong>La rune n&#039;est donc pas à<br />
-redessiner : elle est à faire porter par les générations neuves.</strong></p>
-<p><strong>CE QUE ÇA ANNULE</strong> : le libellé de ce point disait « la rune doit être une demi-lune comme sur la référence DA ». C&#039;est faux, et j&#039;ai commencé à corriger la fiche sur cette foi avant que<br />
-l&#039;opérateur ne m&#039;arrête — la fiche est intacte. L&#039;arche déclarée à <code>creatures-temoins.md</code>, et dessinée sur <code>SP-001-1.png</code>, est la bonne forme.</p>
-<p><strong>CE QU&#039;IL RESTE À FAIRE :</strong></p>
-<p>1. <strong>Vérifier ce que la consigne assemblée dit de la rune</strong> pour une créature — position, forme, couleur, et la règle du trait unique. Si elle ne la porte pas, ou la porte sans la forme du sujet,<br />
-   c&#039;est là que le défaut vit.<br />
-2. <strong>Faire porter la rune du sujet à chaque génération de créature</strong>, lue au référentiel comme le reste, jamais retapée.<br />
-3. <strong>Les variants de posture</strong>, seconde moitié du libellé, que rien n&#039;a démentie.</p>
-<p><strong>CE QUI NE SE REDEMANDE PAS</strong> : la forme de la rune de <code>SP-001</code> est une arche, un arc simple ouvert, turquoise, au milieu du front. <code>SP-001-1.png</code> la porte correctement.</p>
+    <p class="point-tete"><span class="point-ref">rune-creature</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
+    <h2>La rune se trace au rendu : formes, couleurs, ancre par image, et le tracé à la composition</h2>
+    <div class="point-corps"><p><strong>LA RUNE NE SE DESSINE PLUS DANS LA SPRITE : ELLE SE TRACE AU RENDU, SUR UN POINT DÉCLARÉ PAR IMAGE.</strong> Décision prise par l&#039;agent le 2026-08-11, sur délégation explicite de l&#039;opérateur — « tu dois<br />
+prendre la meilleure solution pour gérer tous les cas ». Elle vaut jusqu&#039;à ce qu&#039;il en décide autrement.</p>
+<p>## POURQUOI CELLE-LÀ, EN TROIS RAISONS QUI NE SE RATTRAPENT PAS AUTREMENT</p>
+<ul>
+<li><strong>L&#039;IDENTITÉ.</strong> Une rune désigne un individu : deux images doivent porter <strong>la même</strong>, pas deux dessins ressemblants. Un générateur ne redessine jamais deux fois le même trait — c&#039;est constaté à<br />
+  chaque reprise de ce projet. Seul un tracé déclaré est exactement reproductible.</li>
+<li><strong>LA TAILLE CONSTANTE</strong>, déjà écrite au référentiel visuel : « calibrée sur une créature d&#039;une case », plus petite relativement sur une grande bête. Un tracé la tient par construction ; une rune<br />
+  dessinée dans la sprite suit la taille de la bête quoi qu&#039;on écrive dans la consigne.</li>
+<li><strong>LE NOMBRE.</strong> Les espèces, les runes et les postures se multiplient dans la solution dessinée — une image par combinaison — et s&#039;additionnent dans celle-ci : les sprites d&#039;un côté, les formes de<br />
+  l&#039;autre. <strong>Une rune neuve ne coûte alors plus aucune génération.</strong></li>
+</ul>
+<p>## CE QUE ÇA COÛTE, ET C&#039;EST ASSUMÉ</p>
+<p><strong>UN POINT À POSER PAR IMAGE</strong>, à l&#039;œil, plus une inclinaison quand la surface est bombée. Rien n&#039;est deviné par un programme : la position vient de l&#039;œil, comme aujourd&#039;hui, mais elle s&#039;écrit une<br />
+fois au lieu d&#039;être redemandée au générateur à chaque image.</p>
+<p><strong>ET UN ÉCART À UNE RÈGLE ÉTABLIE, NOMMÉ PLUTÔT QUE CONTOURNÉ</strong> : « la rune épouse le corps, elle est sur la créature, pas par-dessus ». Un tracé posé au rendu ne se plie pas aux plis du poil. Trois<br />
+choses le contiennent : les emplacements du référentiel ont <strong>déjà</strong> été choisis faciles à rendre — la règle le prescrit elle-même —, le chemin se déclare <strong>déjà courbé</strong>, et l&#039;ancre porte une<br />
+<strong>inclinaison</strong>. Une surface bombée est rattrapée, un pli de poil ne l&#039;est pas. <strong>C&#039;est le prix de la décision, et il est écrit ici pour que personne ne le redécouvre.</strong></p>
+<p>## CE QUI RESTE À FAIRE, ET DANS CET ORDRE</p>
+<p>1. <strong>Écrire la décision à son foyer</strong> — <code>doc/conception/referentiels/visuel/index.md</code>, où vivent les règles de rune : la rune se compose au rendu, sur une ancre déclarée, et la règle « épouse le<br />
+   corps » reçoit sa nuance. <strong>À faire au prochain dépilement</strong> : tant qu&#039;il n&#039;est pas lancé, l&#039;agent ne touche qu&#039;au suivi.<br />
+2. <strong>Donner leur géométrie et leur couleur exacte aux quinze formes</strong> nommées au référentiel de contenu — un chemin dans un carré de référence, un code de couleur. Écrit une fois, au même endroit<br />
+   que les noms.<br />
+3. <strong>Déclarer l&#039;ancre de rune par représentation</strong>, à côté des mesures que chaque sprite porte déjà, et <strong>poser l&#039;ancre d&#039;un clic depuis la page de revue</strong> — le même geste que donner un verdict, au<br />
+   même endroit.<br />
+4. <strong>Tracer la rune à la composition</strong> de la maquette, puis dans le moteur du jeu quand il existera. Repli connu si un moteur ne savait pas tracer : une image par forme, posée de la même façon, sans<br />
+   rien changer au reste.<br />
+5. <strong>Retirer la copie <code>INDIVIDUALS</code></strong> de <code>scripts/asset_common.py</code> et la clause de rune de la consigne : une sprite de créature se génère désormais <strong>sans</strong> sa rune, y compris la vue d&#039;espèce.</p>
+<p><strong>CE QUE ÇA CHANGE POUR <code>SP-001</code>, ET QUI EST À DIRE TOUT DE SUITE</strong> : l&#039;arche turquoise que l&#039;opérateur attend sur son front n&#039;arrivera pas par une génération, mais par le tracé, une fois le point 3<br />
+fait. Aucune image n&#039;est à relancer pour cela.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">noms-scripts-fr</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
+    <p class="point-tete"><span class="point-ref">noms-scripts-fr</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
     <h2>Renommer en anglais les 89 scripts au nom francais que le controle signale</h2>
     <div class="point-corps"><p><strong>DEMANDÉ PAR L&#039;OPÉRATEUR LE 2026-08-10</strong> : « y&#039;a des scripts en fr… je mets en place des process et ils ne sont pas respectés, ça m&#039;énerve ». La règle existait — un nom technique est anglais,<br />
 partout, <code>local/</code> compris — mais rien ne la contrôlait.</p>
@@ -208,8 +224,80 @@ l&#039;agent n&#039;a rien à faire hors du dépôt. Chaque nouveau fautif renco
 </div>
     <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
+  <article class="point" data-statut="pending-dependency">
+    <p class="point-tete"><span class="point-ref">reprises-en-cours</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : les verdicts sur BT-001-v12 et ses deux propositions, et sur TR-063-v13 — l&#039;humain de référence est validé, le pommier et la maison de ferme attendent</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
+    <h2>Cinq reprises de sprites lancées : les regarder, les inscrire à leur sujet et republier la page</h2>
+    <div class="point-corps"><p><strong>CINQ REPRISES LANCÉES LE 2026-08-11</strong>, sur ordre de l&#039;opérateur : « Tu dois aussi produire des sprites et tu ne les as pas lancé, c&#039;est à faire pour que ça tourne en parallèle. pas 50 en parallèle<br />
+mais quelques uns au moins. » Toutes partent en tâche de fond, aucune n&#039;est attendue.</p>
+<p><strong>QUATRE VIENNENT DE SES PROPRES VERDICTS</strong>, lus dans <code>review-server/notes/sprites.json</code>, où ils portent la marque « à refaire » :</p>
+<p>| Sprite | Le motif, tel qu&#039;il l&#039;a écrit |<br />
+| --- | --- |<br />
+| <code>BT-001</code> maison de ferme, et ses propositions <code>p2</code> et <code>p3</code> — trois reprises | « Consignes toujours non respectées, c&#039;est de la merde. Le parallèle n&#039;est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne » |<br />
+| <code>TR-063</code> pommier | « Il est horrible. y&#039;a du bois mort non demandé et il ne fait pas assez pommier. La v5 était mieux. » |</p>
+<p><strong>LA CINQUIÈME EST L&#039;HUMAIN DE RÉFÉRENCE</strong> — voir <code>S17 humain-crete</code>. Le motif transmis au générateur cite les quatre écarts constatés entre la sprite livrée et une consigne qui, elle, était juste.</p>
+<p><strong>CE QUI RESTE À FAIRE QUAND ELLES RENDENT</strong> : regarder chaque image, l&#039;inscrire à son sujet et republier la page des sprites — une image qui existe sans être inscrite n&#039;existe pour personne.</p>
+<p><strong>CE QUI N&#039;A PAS ÉTÉ LANCÉ, ET POURQUOI</strong> : la créature <code>SP-001</code>, dont le verdict dit « Il manque sa rune ». Sa rune attend d&#039;abord la forme que <code>S53 rune-creature</code> doit trancher — la produire<br />
+maintenant, c&#039;est la refaire ensuite.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="pending-dependency">
+    <p class="point-tete"><span class="point-ref">verdicts-du-11</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : les verdicts sur les trois reprises livrées le 2026-08-11 : CH-021_shape-ns-v5, CH-021_shape-ew-v2 et TR-060-v8</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
+    <h2>Pas de cours d&#039;eau sur les deux ponts, le style de v2, et le chêne déformé : trois verdicts à traiter</h2>
+    <div class="point-corps"><p><strong>TROIS VERDICTS DE L&#039;OPÉRATEUR, DONNÉS SUR LA PAGE LE 2026-08-11 ET LUS DANS <code>review-server/notes/sprites.json</code></strong> — cités mot pour mot :</p>
+<p>| Image | Ce qu&#039;il écrit |<br />
+| --- | --- |<br />
+| <code>CH-021_shape-ns-v4</code>, le pont nord-sud | « Je veux le style de v2. Ne pas mettre de cours d&#039;eau sur l&#039;image !!! » |<br />
+| <code>CH-021_shape-ew</code>, le pont est-ouest | « Ne pas mettre de cours d&#039;eau sur l&#039;image !!! » |<br />
+| <code>TR-060-v7</code>, le chêne | « Déformé par rapport à v5 » |</p>
+<p><strong>LES DEUX PREMIERS RENVERSENT UNE RÈGLE ÉCRITE, ET C&#039;EST LE POINT LE PLUS IMPORTANT ICI.</strong> La fiche du pont demande l&#039;eau explicitement — « l&#039;eau se voit de part et d&#039;autre de l&#039;ouvrage et sous<br />
+l&#039;arche, jamais recouverte » —, et c&#039;est même au nom de cette ligne que je l&#039;avais défendue en écartant l&#039;eau des causes du défaut. <strong>Sa parole prime sur la documentation</strong> : c&#039;est la fiche qui est à<br />
+corriger, et l&#039;eau à retirer de la consigne, pour les deux formes. Tant que la fiche dit l&#039;inverse, toute reprise redessinera un cours d&#039;eau.</p>
+<p><strong>« LE STYLE DE V2 » EST UNE RÉFÉRENCE À RETROUVER AVANT DE RELANCER</strong> : <code>CH-021_shape-ns-v2</code> existe sous <code>assets/poc/sol/</code>. Ce qui le distingue de la v4 se regarde, se nomme, et entre dans la<br />
+consigne — sans quoi la reprise sera un troisième essai à l&#039;aveugle sur le même sujet.</p>
+<p><strong>LE CHÊNE EST UN CAS CONNU</strong> : « déformé par rapport à v5 » dit que la v5 tenait et que la v7 s&#039;en écarte. La v5 se regarde avant toute relance, et l&#039;écart se nomme.</p>
+<p><strong>RIEN N&#039;EST RELANCÉ</strong> : trois générations sur le même sujet ont déjà été perdues faute d&#039;avoir lu la référence avant de retenter.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">verdicts-notifies</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
+    <h2>Le relevé à copier disparaît, et l&#039;agent doit être averti des verdicts neufs</h2>
+    <div class="point-corps"><p><strong>CAPTURE DE L&#039;OPÉRATEUR, 2026-08-11, EN TOUTES LETTRES</strong> : « Si ça enregistre tout seul sur le serveur, je n&#039;ai pas besoin de la fonctionnalité pour copier le relevé. Mais par contre, toi tu n&#039;es<br />
+pas encore notifié apparemment, tu ne vois pas les modifs. »</p>
+<p><strong>IL A RAISON, ET ÇA S&#039;EST VU LE JOUR MÊME</strong> : il a jugé trois images sur la page — le pont nord-sud, le pont est-ouest, le chêne — et je ne l&#039;ai su qu&#039;en ouvrant le fichier des remarques pour une<br />
+tout autre raison, une heure plus tard. <strong>Rien ne me prévient.</strong> Un verdict qu&#039;il donne pendant que je travaille attend que j&#039;aie l&#039;idée d&#039;aller regarder, et deux de ceux-là renversaient une règle<br />
+écrite.</p>
+<p>## DEUX DEMANDES DISTINCTES, ET ELLES NE SE MÉLANGENT PAS</p>
+<p>1. <strong>LE RELEVÉ À COPIER N&#039;A PLUS DE RAISON D&#039;ÊTRE</strong> — il existait pour lui donner un texte à coller dans la conversation, faute de canal. L&#039;enregistrement direct sur le serveur le remplace. Ce qui<br />
+   part avec : la barre du bas, son bouton, le module <code>Releve.php</code> et ce que les pages en tirent. <strong>À retirer, pas à masquer</strong> — et sur les deux pages qui le portent, pas seulement celle des sprites.<br />
+2. <strong>L&#039;AGENT DOIT VOIR CE QUI A CHANGÉ</strong>, sans ouvrir un fichier de données à la main. Ce qui manque n&#039;est pas la donnée — elle est dans <code>review-server/notes/sprites.json</code> — mais <strong>le fait d&#039;être<br />
+   averti</strong> : une commande qui dit ce qui est arrivé depuis la dernière fois, et un signal qui le pousse plutôt que de l&#039;attendre.</p>
+<p>## CE QUI EXISTE DÉJÀ, ET CE QU&#039;IL MANQUE</p>
+<p><code>php scripts/remarks.php list</code> dit toutes les remarques, traitées comprises — mais rien ne dit <strong>ce qui est neuf</strong>. Le classement <code>handled</code> marque une remarque traitée : il donne déjà la moitié du<br />
+« déjà vu ». Ce qui manque, c&#039;est le pendant côté verdicts, et un moyen d&#039;être prévenu sans demander : le dépôt tient des hooks, et un hook de fin de tour lit déjà des fichiers pour décider.<br />
+<strong>Proposé, et rien de plus tant que ce n&#039;est pas validé</strong> : un <code>remarks.php new</code> qui ne montre que ce qui n&#039;a pas encore été vu, et le hook de fin de tour qui refuse de rendre la main en silence<br />
+quand un verdict neuf attend.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">theme-moderne</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">9</span></p>
+    <h2>Un thème moderne, neuf, pour les pages de revue — pensé, pas restauré</h2>
+    <div class="point-corps"><p><strong>DEMANDE DE L&#039;OPÉRATEUR, 2026-08-11, EN TOUTES LETTRES</strong> : « Quand tu n&#039;as plus rien à améliorer, on enregistre, tu vas créer un tout nouveau thème moderne et ça ira mieux. »</p>
+<p><strong>CE QUI L&#039;A AMENÉE</strong> : une journée passée à restaurer un habillage, en se trompant deux fois de source — le vert sombre que la page portait n&#039;était pas l&#039;original mais son bloc sombre recopié, et<br />
+la chasse fixe imposée le même jour n&#039;était pas la sienne non plus. La page est aujourd&#039;hui revenue à <code>encre</code>, sans trame de fond et dans la police du système. <strong>Elle est propre, elle n&#039;est pas<br />
+belle</strong> : c&#039;est un habillage rendu à un état antérieur, pas un habillage pensé.</p>
+<p><strong>CE QUE ÇA COUVRE</strong> : un thème neuf, écrit pour ce qu&#039;on fait de ces pages — juger des images. Il vit où vivent les autres, <code>review-server/lib/themes/</code>, et il s&#039;applique par la même ligne. Rien du<br />
+balisage ni des comportements n&#039;est touché : la page a ses quatorze comportements éprouvés, et un thème n&#039;a pas à les rouvrir.</p>
+<p><strong>CE QUI RESTE À DÉCIDER, ET QUI APPARTIENT À L&#039;OPÉRATEUR</strong> : sombre, clair, ou les deux avec le choix ; ce qui doit sauter aux yeux et ce qui doit s&#039;effacer ; et si les autres pages de revue le<br />
+prennent aussi ou gardent <code>encre</code>. <strong>La contrainte qui ne se discute pas</strong> : aucune teinte de l&#039;interface ne doit fausser le jugement d&#039;une image, ce que <code>encre</code> disait déjà en tête.</p>
+<p><strong>LES DEUX HABILLAGES PRÉCÉDENTS RESTENT SUR LE DISQUE</strong>, <code>encre.css</code> et <code>origine.css</code> — rien ne se jette, et le jour où le neuf déplaît, le retour est d&#039;une ligne.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">audit-journal</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
+    <p class="point-tete"><span class="point-ref">audit-journal</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">10</span></p>
     <h2>Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</h2>
     <div class="point-corps"><p><strong>LE SUIVI A ÉTÉ ÉLAGUÉ LE 2026-08-11 SUR UNE AFFIRMATION, PAS SUR UNE VÉRIFICATION.</strong> Deux mille lignes retirées en disant que tout vivait ailleurs, sans l&#039;avoir établi. Elles sont archivées à<br />
 <code>doc/journal-des-seances.md</code> — versionné et citable —, mais <strong>une information qui n&#039;existe plus que là est perdue en pratique</strong> : ce fichier ne fait pas foi et personne ne l&#039;ouvre en reprenant.</p>
@@ -236,14 +324,14 @@ vers <code>SUIVI.md</code>, un tableau, une version d&#039;outil, un « reste à
     <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">tri-profondeur</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
+    <p class="point-tete"><span class="point-ref">tri-profondeur</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">11</span></p>
     <h2>Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</h2>
     <div class="point-corps"><p>Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">bouton-copie-releve</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">9</span></p>
+    <p class="point-tete"><span class="point-ref">bouton-copie-releve</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">12</span></p>
     <h2>Le bouton de copie du relevé doit exister sur toutes les pages qui en portent un</h2>
     <div class="point-corps"><p><strong>Constat localisé le 2026-08-07, et il est pire que « recopié » : il l&#039;est deux fois.</strong> Le bouton de copie du relevé et toute sa mécanique existent <strong>en trois exemplaires</strong> — une fois dans le module partagé, qui sert la page des sprites, et <strong>deux fois à l&#039;identique dans les deux sources de la page Campagne</strong> : le plan et la maquette montée en portent chacun leur copie.</p>
 <p><strong>Ce que ça produit aujourd&#039;hui</strong> : la page des sprites a la barre fixe pleine largeur avec son compte, restaurée le 2026-08-07 ; la page Campagne, elle, n&#039;a que son bouton dans le corps de la page, sans barre fixe et sans compte. <strong>L&#039;opérateur doit donc redescendre chercher le bouton</strong> sur la page qu&#039;il relit tous les jours, alors qu&#039;il ne le fait plus sur l&#039;autre.</p>
@@ -255,7 +343,7 @@ vers <code>SUIVI.md</code>, un tableau, une version d&#039;outil, un « reste à
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">comparaison-variants</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">10</span></p>
+    <p class="point-tete"><span class="point-ref">comparaison-variants</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : la convergence des deux outils de revue de la page Campagne</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">13</span></p>
     <h2>La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</h2>
     <div class="point-corps"><p><strong>La comparaison de variants sélectionnés, à 48 pixels par case, dans la fiche du sujet.</strong></p>
 <p><strong>Le préalable est levé</strong> : la sélection multiple fonctionne depuis le 2026-08-07 — la comparaison n&#039;engage plus dès le premier variant coché, donc on peut enfin en retenir plusieurs. Avant, cocher le premier masquait tous les autres et la case du second n&#039;était plus là pour être cochée.</p>
@@ -267,7 +355,7 @@ vers <code>SUIVI.md</code>, un tableau, une version d&#039;outil, un « reste à
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">convergence-revue</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span><span class="point-rang">11</span></p>
+    <p class="point-tete"><span class="point-ref">convergence-revue</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : opérateur</span><span class="point-rang">14</span></p>
     <h2>Faire converger les deux outils de revue de la page Campagne</h2>
     <div class="point-corps"><p><strong>RÉPONSE DE L&#039;OPÉRATEUR, 2026-08-08 : OUI, ON FAIT CONVERGER.</strong> Écrite ici plutôt que laissée dans la conversation, à sa demande expresse — une réponse qui ne vit que dans le fil se redemande à la<br />
 séance suivante. L&#039;accord porte sur le principe et sur la solution décrite plus bas ; il ne dispense pas de regarder la page à chaque étape.</p>
@@ -312,7 +400,7 @@ reprise commence par sortir le module sans le brancher à personne : à ce stade
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">describe-arg-mute</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">12</span></p>
+    <p class="point-tete"><span class="point-ref">describe-arg-mute</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">15</span></p>
     <h2>backlog.php describe accepte un texte en argument et l&#039;ignore en silence</h2>
     <div class="point-corps"><p>Constaté le 2026-08-08 en écrivant le point <code>droits-parent</code>. <code>describe &lt;REF&gt;</code> lit son texte sur l&#039;entrée standard, comme son bloc d&#039;usage le dit. Mais appelé avec le texte en argument positionnel —<br />
 <code>describe &lt;REF&gt; &quot;...&quot;</code> —, il ne refuse pas : il lit une entrée standard vide, écrase la description par la chaîne vide, et annonce « description reprise, 0 caractères ». Le message se lit comme un<br />
@@ -322,7 +410,7 @@ succès, et la description est perdue sans que personne le voie.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">bash-simple</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">13</span></p>
+    <p class="point-tete"><span class="point-ref">bash-simple</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
     <h2>Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</h2>
     <div class="point-corps"><p><strong>LA DOC FAIT AUTORITÉ, LA MÉMOIRE NE SERT PAS</strong> (opérateur, 2026-08-08) : une consigne rangée dans la mémoire de l&#039;agent ne serait pas mieux respectée qu&#039;une règle écrite, et elle échappe à tout<br />
 le monde — elle ne se relit pas, ne se corrige pas, ne suit pas le dépôt. Ce qui doit tenir s&#039;écrit dans la documentation. Deux consignes données ce jour-là avaient été mises en mémoire ; la mémoire<br />
@@ -341,14 +429,14 @@ défaut est dans l&#039;application, pas dans la règle : il n&#039;y a rien à 
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">locales-francaises</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
+    <p class="point-tete"><span class="point-ref">locales-francaises</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
     <h2>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</h2>
     <div class="point-corps"><p>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">15</span></p>
+    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">18</span></p>
     <h2>Monter à la méthode commune les règles d&#039;outillage et d&#039;écriture, et elles seules</h2>
     <div class="point-corps"><p><strong>DÉCISION DE L&#039;OPÉRATEUR, 2026-08-08 : SEULE LA FAMILLE « OUTILLAGE ET ÉCRITURE » EST COMMUNE.</strong> Tout le reste est propre à ce projet et n&#039;en sort pas. Cette décision annule le « non, pas encore »<br />
 du 2026-08-07 : la question n&#039;était pas prématurée, elle était mal posée — elle demandait un tout ou rien, alors que le partage se fait famille par famille.</p>
@@ -378,7 +466,7 @@ des chemins, il ne vaut que pour ce dépôt.</p>
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">backlog-help</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
+    <p class="point-tete"><span class="point-ref">backlog-help</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">19</span></p>
     <h2>backlog.php n&#039;a pas de sous-commande help, et une sous-commande inconnue tombe en erreur sèche</h2>
     <div class="point-corps"><p><strong>Ce qui est constaté</strong> : <code>php scripts/backlog.php help</code> tombe en <code>RuntimeException</code> — « help » n&#039;est pas une sous-commande. Toute sous-commande inconnue fait de même, et l&#039;appel sans argument<br />
 n&#039;affiche pas non plus l&#039;aide. Le bloc d&#039;usage en tête du fichier porte pourtant la liste complète des sous-commandes : l&#039;information existe, elle n&#039;est simplement pas atteignable depuis la ligne de<br />
@@ -396,7 +484,7 @@ qu&#039;elle fait. Les deux se traitent bien dans le même geste.</p>
     <p class="point-pied">Créé le 2026-08-09 · repris le 2026-08-09</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">sondes-servies</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
+    <p class="point-tete"><span class="point-ref">sondes-servies</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">20</span></p>
     <h2>Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script</h2>
     <div class="point-corps"><p><strong>CE QUI EST CONSTATÉ, LE 2026-08-09</strong> : <code>php local/scripts/probe-fsp.php &lt;CODE&gt;</code> construit sa page sous <code>var/tmp/</code> et l&#039;ouvre en <code>file://</code>. Depuis que le style et le script de la page des sprites<br />
 vivent dans leurs propres fichiers, atteints par un chemin absolu, cette page sort <strong>nue</strong> : ni style, ni script. La sonde montre donc une page qui ne ressemble à rien de ce que l&#039;opérateur voit.</p>
@@ -412,7 +500,7 @@ contrôler, et c&#039;est la famille de défauts que ce dépôt paie le plus che
     <p class="point-pied">Créé le 2026-08-09 · repris le 2026-08-09</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">hauteur-monde</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">18</span></p>
+    <p class="point-tete"><span class="point-ref">hauteur-monde</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">21</span></p>
     <h2>La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</h2>
     <div class="point-corps"><p><strong>ÉCARTÉ EXPRESSÉMENT PAR L&#039;OPÉRATEUR LE 2026-08-10</strong> — « y&#039;a peut-être un truc à faire mais c&#039;est hors sujet ici » —, donc inscrit pour ne pas se perdre, et <strong>pas à traiter tant qu&#039;il ne le<br />
 demande pas</strong>.</p>
@@ -427,25 +515,21 @@ image fausse ; il est qu&#039;un lecteur la confonde de nouveau avec une mesure 
 </div>
     <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-10</p>
   </article>
-  <article class="point" data-statut="pending-decision">
-    <p class="point-tete"><span class="point-ref">stop-mi-tour</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : l&#039;arbitrage sur le désarmement quand le STOP n&#039;atteint aucun hook</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">19</span></p>
-    <h2>Un STOP glissé en cours de tour n&#039;atteint aucun hook : la garde grogne, ou l&#039;agent désarme</h2>
-    <div class="point-corps"><p><strong>CE QUI BLOQUE <code>W19 stop-priorite</code>, ET C&#039;EST TOUT CE QUI LUI RESTE.</strong> Les trois défauts réels sont corrigés, la mesure est faite en conditions réelles avec le mot de sonde <code>PING</code>, et elle conclut :<br />
-<strong>un message glissé pendant que l&#039;agent travaille n&#039;atteint ni le hook du prompt ni le transcrit que lit le hook de fin de tour.</strong> Seul l&#039;agent le reçoit. Ce n&#039;est pas un défaut de code, c&#039;est une<br />
-limite de l&#039;enveloppe, et aucune correction de hook ne peut la lever.</p>
-<p><strong>REVÉRIFIÉ LE 2026-08-10, DEUX FOIS, SANS RIEN CHERCHER</strong> : un <code>GO</code> terminant une phrase n&#039;a rien armé — <code>hook-word.php</code> n&#039;accepte le mot que seul sur sa ligne, et c&#039;est voulu —, et deux messages<br />
-« Des questions ? » envoyés en cours de tour n&#039;ont laissé aucune trace dans les journaux des hooks. Le comportement mesuré le 2026-08-09 se reproduit à l&#039;identique.</p>
-<p><strong>LA DÉCISION, ET ELLE N&#039;APPARTIENT QU&#039;À L&#039;OPÉRATEUR</strong> puisqu&#039;elle porte sur l&#039;interdit fait à l&#039;agent de toucher à son propre armement :</p>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">outils-morts</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">22</span></p>
+    <h2>Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</h2>
+    <div class="point-corps"><p><strong>DEUX OUTILS DE <code>scripts/</code> APPELLENT DES FICHIERS QUI N&#039;EXISTENT PLUS</strong>, croisés le 2026-08-11 en cherchant quelles sprites étaient dues.</p>
 <ul>
-<li><strong>A — la garde continue de refuser jusqu&#039;à son plafond de cinq.</strong> L&#039;ordre est obéi par l&#039;agent, la garde grogne, et l&#039;opérateur renvoie son mot en ouverture de tour s&#039;il veut l&#039;état juste. Rien ne<br />
-  change, l&#039;interdit reste entier.</li>
-<li><strong>B — l&#039;agent reçoit le droit de désarmer dans ce seul cas</strong>, en laissant une trace nommée qui dit que le désarmement vient de lui et pourquoi. L&#039;état devient juste tout de suite ; en échange,<br />
-  l&#039;interdit qui protège l&#039;armement s&#039;ouvre d&#039;un cas, et c&#039;est exactement le geste qui avait été fait à tort le 2026-08-08.</li>
+<li><strong><code>list-variants.py</code> tombe à la première ligne utile</strong> : il lit <code>scripts/revue-sprites.html</code>, une page qui n&#039;est plus là depuis que la revue est construite sous <code>review-server/</code>. La trace est une<br />
+  <code>FileNotFoundError</code> nue, pas un message qui dit ce qui manque.</li>
+<li><strong><code>sprite-queue.py</code> enchaîne <code>generate-sprite-subject.py</code> et <code>generate-sprite-trace.py</code></strong>, les deux commandes que <code>generate-sprite.py</code> a remplacées en devenant la commande unique. Sa file écrit en<br />
+  plus dans <code>local/sprite-queue.jsonl</code>, alors que l&#039;outillage n&#039;écrit jamais dans le répertoire de l&#039;agent. <strong>Il ne peut donc rien produire</strong>, et c&#039;est le seul outil qui sait faire tourner plusieurs<br />
+  reprises de front — je les ai lancées à la main, une commande par sprite.</li>
 </ul>
-<p><strong>RECOMMANDATION : A</strong>, tant que le coût constaté se limite à une garde qui grogne. L&#039;interdit vaut plus que la justesse immédiate d&#039;un fichier d&#039;état, et <code>B</code> rouvre la porte que la journée du<br />
-2026-08-08 avait fermée pour de bonnes raisons.</p>
+<p><strong>CE QUE ÇA COÛTE</strong> : un outil mort ne se voit qu&#039;à l&#039;appel, et il se rappelle exactement au moment où l&#039;on en a besoin. <strong>CE QUI EST PROPOSÉ</strong> : réparer la file sur la commande unique, et soit<br />
+réparer <code>list-variants.py</code>, soit le supprimer si la page des sprites dit déjà ce qu&#039;il disait — à trancher en le regardant.</p>
 </div>
-    <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-10</p>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
 
   <details class="clos">
@@ -578,24 +662,6 @@ garde le titre du texte ouvert. Sur un écran étroit, il repasse sous l&#039;im
 <p><strong>Pourquoi pas un dépliage sous le bouton</strong> : la carte d&#039;un variant fait deux cent soixante pixels de large ; un texte de dix mille caractères y descend sur des mètres et repousse tout le reste de la<br />
 planche. Le panneau accolé est le seul endroit où le texte a la place de se lire sans déplacer l&#039;image.</p>
 <p><strong>Fermé le 2026-08-08</strong> — Le texte s&#039;ouvre dans un panneau accolé au bord droit, la fiche se resserre, l&#039;image reste visible. Vérifié au tir d&#039;écran.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="done">
-    <p class="point-tete"><span class="point-ref">style-page-sprites</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
-    <h2>Le style de la page des sprites revient à celui du constructeur d&#039;origine</h2>
-    <div class="point-corps"><p><strong>FAIT — LES TROIS MANQUES DE STYLE SONT POSÉS</strong>, 2026-08-08, et chacun a été jugé sur un tir d&#039;écran, jamais dans la feuille de style.</p>
-<p><strong>L&#039;EN-TÊTE DE SECTION</strong> : titre et code à gauche, <strong>compte à droite</strong>, une règle dessous. C&#039;est la règle qui fait la section — sans elle les familles s&#039;empilaient sans séparation et la page se<br />
-lisait comme une liste unique, ce qui était le reproche exact fait à la reprise.</p>
-<p><strong>L&#039;EN-TÊTE DE PAGE</strong> : un surtitre en petites capitales espacées au-dessus du titre. Quatre pages se ressemblent de loin ; celle qu&#039;on a ouverte doit se nommer sans qu&#039;on lise le titre en entier.</p>
-<p><strong>LE FOND QUADRILLÉ</strong>, une case du monde tous les quarante-quatre pixels. Posé d&#039;abord avec <code>--line</code>, il avait le poids d&#039;une bordure et <strong>on ne distinguait plus les règles de section</strong> : il a sa<br />
-propre variable, <code>--grid</code>, nettement plus faible, déclarée dans <strong>les deux thèmes</strong> — une variable qui n&#039;existe que dans l&#039;un rend la page nue dans l&#039;autre sans que rien ne le signale.</p>
-<p>## UN DÉFAUT PLUS ANCIEN, RÉVÉLÉ PAR CE TRAVAIL ET CORRIGÉ</p>
-<p><strong>LA PAGE DÉBORDAIT DE 84 PIXELS SUR LA DROITE, DEPUIS TOUJOURS, ET PERSONNE NE POUVAIT LE VOIR.</strong> <code>.wrap</code> portait <code>width: min(100%, 1760px)</code> avec quarante-huit pixels de remplissage de chaque<br />
-côté, sans <code>box-sizing: border-box</code> : 1400 de fenêtre donnaient 1484 de contenu. Rien n&#039;était aligné à droite, donc rien ne sortait de l&#039;écran, donc le défaut était invisible.</p>
-<p><strong>LE COMPTE DE SECTION L&#039;A RÉVÉLÉ EN SE FAISANT COUPER</strong> : il affichait « 1 » au lieu de « 1 sujet ». Mesuré à la sonde — <code>php local/scripts/probe-debordement.php &lt;page&gt;</code>, qui dit de combien la page<br />
-déborde et <strong>nomme les éléments responsables</strong> — et non déduit de la feuille de style : c&#039;est <code>div.wrap</code>, 1484 px, qui portait tout le reste au-delà du bord. Corrigé, plus aucun élément ne dépasse.</p>
-<p><strong>LA SONDE RESTE</strong>, parce que ce défaut-là ne se voit jamais tant qu&#039;un élément n&#039;est pas aligné à droite, et qu&#039;aucun contrôle ne le regardait.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
@@ -815,6 +881,22 @@ ne se voit pas, et c&#039;est précisément pourquoi il fallait le compter plut�
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">remarque-disparait</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Une remarque de variant disparaît quand elle est notée, alors qu&#039;elle doit partir quand elle est traitée</h2>
+    <div class="point-corps"><p><strong>LA RÈGLE, DITE PAR L&#039;OPÉRATEUR LE 2026-08-11, ET ELLE EST TOUTE SIMPLE</strong> : « une image validée peut avoir une remarque ; quand elle est traitée, elle est conservée de ton côté mais plus affichée<br />
+dans l&#039;interface ». Il n&#039;y a rien d&#039;autre à décider — ni forme d&#039;affichage, ni essai à monter.</p>
+<p><strong>CE QUE J&#039;AVAIS COMPRIS DE TRAVERS</strong> : que la remarque traitée devait rester visible, barrée et grisée, et qu&#039;il fallait donc fabriquer une remarque classée pour regarder ce rendu. J&#039;en avais fait<br />
+une question (<code>Q11</code>), fermée : elle portait sur un affichage qui n&#039;a pas lieu d&#039;être.</p>
+<p><strong>CE QUI EST DÉJÀ FAIT ET PROUVÉ (2026-08-09)</strong> : la perte silencieuse est corrigée — ce que l&#039;opérateur écrit pendant que la page attend la réponse du serveur est retenu et reversé par-dessus, et<br />
+mesuré en conditions réelles à travers le serveur. Le classement lui-même existe : <code>php scripts/remarks.php list | handle &lt;image&gt; &quot;&lt;raison&gt;&quot; | reopen &lt;image&gt;</code> pose un champ <code>handled</code> avec sa date et<br />
+sa raison, et la commande refuse un chemin qu&#039;aucune remarque ne concerne plutôt que d&#039;inventer une entrée.</p>
+<p><strong>CE QUI RESTE, ET C&#039;EST LE POINT ENTIER</strong> : que la page <strong>cesse d&#039;afficher</strong> une remarque traitée, au lieu de la montrer barrée. La donnée, elle, ne s&#039;efface jamais — <code>handled</code> la conserve avec sa<br />
+raison, et <code>reopen</code> la remet en attente si le classement était faux.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Fait le 2026-08-11. Une remarque traitée quitte l&#039;interface : son texte n&#039;est plus rendu, sa zone reste fermée, et sa boîte passe en lecture seule pour qu&#039;un texte tapé par-dessus ne puisse pas écraser ce qui est conservé. La donnée reste dans review-server/notes/sprites.json avec sa date et sa raison, et remarks.php reopen la remet à l&#039;affichage. Le style barré et grisé a disparu, puisqu&#039;il montrait encore ce qu&#039;il fallait cesser de montrer. Éprouvé à travers le serveur par local/scripts/probe-remarque-traitee.php, sur deux cas à la fois : la remarque traitée est absente et verrouillée, la remarque en attente s&#039;affiche et reste saisissable.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">hors-modele-perdus</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
     <h2>Des images hors modèle ont disparu alors que rien ne se jette : SP-001-1 et un humain</h2>
     <div class="point-corps"><p>Des images hors modèle avaient disparu alors que rien ne se jette : <code>SP-001-1</code> et un humain.</p>
@@ -848,6 +930,45 @@ passe. Les six essais existants de <code>essai-hook-stop.sh</code> passent toujo
 de sens, alors que désarmer en a un : l&#039;opérateur veut que ça s&#039;arrête, et ça s&#039;arrête.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">stop-priorite</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>PREMIÈRE PRIORITÉ DE LA REPRISE : le STOP de l&#039;opérateur doit arrêter l&#039;agent, à coup sûr</h2>
+    <div class="point-corps"><p><strong>Quand l&#039;opérateur demande un <code>STOP</code>, l&#039;agent doit s&#039;arrêter — à coup sûr.</strong></p>
+<p>## LA CAUSE EST TROUVÉE, ET LA CONCLUSION PRÉCÉDENTE ÉTAIT FAUSSE (2026-08-11)</p>
+<p><strong>LE MOT EST DANS LE TRANSCRIT, SOUS UN TYPE QUE PERSONNE N&#039;AVAIT REGARDÉ.</strong> <code>queue-operation</code>, clés <code>type, operation, timestamp, sessionId, content</code>. Chaque message glissé pendant que l&#039;agent<br />
+travaille y figure <strong>deux fois</strong> : <code>enqueue</code> avec son contenu, puis <code>remove</code> ou <code>dequeue</code> quand l&#039;agent le reçoit. Le <code>STOP</code> de la séance du 2026-08-10 y est, mot pour mot.</p>
+<p><strong>CE QUI AVAIT ÉGARÉ</strong> : <code>hook-transcript.php</code> connaissait bien un porteur pour les messages en file — <code>attachment</code> de type <code>queued_command</code> — mais ce n&#039;est pas celui que le client écrit dans cette<br />
+version. La branche existait, elle ne se déclenchait jamais, et on en a conclu que le mot n&#039;atteignait pas le fichier. <strong>Une branche qui ne se déclenche jamais ressemble à une absence.</strong></p>
+<p><strong>FAIT</strong> : <code>hook-transcript.php</code> lit désormais les entrées <code>queue-operation</code>, et <strong>ne compte que <code>enqueue</code></strong> — sans quoi un mot vaudrait deux ordres. Sonde :<br />
+<code>php local/scripts/montrer-queue-operation.php &lt;transcript.jsonl&gt;</code>.</p>
+<p>## BRANCHÉ ET ÉPROUVÉ (2026-08-11, accord de l&#039;opérateur : « on peut essayer alors »)</p>
+<p><strong><code>hook-stop.php</code> LIT LE <code>STOP</code> GLISSÉ EN COURS DE TOUR, ET LUI SEUL PEUT LE FAIRE</strong> : il se déclenche à chaque fin de tour, reçoit <code>transcript_path</code>, et lit déjà ce fichier. C&#039;est le seul endroit<br />
+où le mot est saisissable <strong>au moment où il compte</strong>, c&#039;est-à-dire juste avant que la garde refuse.</p>
+<p><strong>DEUX GARDE-FOUS, ET CHACUN FERME UNE MOITIÉ DE LA RÉGRESSION DU 2026-08-09 :</strong></p>
+<ul>
+<li><strong>Seul <code>STOP</code> est lu, jamais <code>GO</code>.</strong> Un mot qui ne peut que <strong>relâcher</strong> la garde ne peut rien armer : le vieux <code>GO</code> qui traîne dans la conversation devient inoffensif, puisqu&#039;on ne le lit plus.</li>
+<li><strong>La lecture est bornée au tour courant</strong>, positionnellement : <code>HookTranscript::queuedThisTurn</code> repart de zéro à chaque entrée qui <strong>ouvre</strong> un tour. Tout ce qui précède appartient aux tours<br />
+  d&#039;avant et a déjà été traité par le hook du prompt. <strong>Aucune horloge, donc aucune dérive et aucune durée à inventer.</strong> C&#039;est la borne qui manquait à la tentative précédente.</li>
+</ul>
+<p><strong>ÉPROUVÉ EN DEUX CAS</strong> — <code>bash local/scripts/essai-stop-transcrit.sh</code> : un <code>STOP</code> du tour courant désarme, un <code>STOP</code> d&#039;un tour précédent ne fait rien. Le second est le plus important des deux.</p>
+<p>## CE QUI RESTE, ET C&#039;EST UNE DÉCISION DE L&#039;OPÉRATEUR, PAS UN GESTE MÉCANIQUE</p>
+<p><strong>HUIT CAS DE <code>test-stop-multiline.sh</code> ÉCHOUENT, ET ILS TESTENT UN COMPORTEMENT SUPPRIMÉ.</strong> Ils écrivent le <code>STOP</code> comme une entrée <code>user</code> du transcrit et attendent que la garde désarme — c&#039;est-à-<br />
+dire exactement la lecture d&#039;ordres retirée le 2026-08-09, quand il a été décidé que <code>GO</code> et <code>STOP</code> passent par le prompt et par rien d&#039;autre. <strong>Supprimer des cas d&#039;essai est une décision, pas un<br />
+nettoyage</strong>, donc ils restent en place et rouges en attendant l&#039;arbitrage.</p>
+<p><strong>CE QUI A DÉJÀ ÉTÉ CORRIGÉ DANS CET ESSAI</strong> : il fabriquait un porteur inexistant pour les messages en file — <code>attachment.queued_command</code> —, si bien qu&#039;il déclarait le mot introuvable alors qu&#039;il<br />
+était dans le fichier sous <code>queue-operation</code>. <strong>Un essai qui invente sa charge n&#039;éprouve que lui-même.</strong> Corrigé, et son cas « STOP en cours de travail » passe désormais.</p>
+<p><strong>BRANCHER CE MOT SUR LA GARDE, C&#039;EST RENDRE À L&#039;AGENT UNE PRISE SUR SON PROPRE ARMEMENT</strong> — l&#039;interdit qui lui est fait d&#039;y toucher. <code>hook-stop.php</code> ne lit aujourd&#039;hui <strong>aucun</strong> ordre : il décide<br />
+sur l&#039;armement, le plafond de refus et la pile. Cette lecture avait été retirée le 2026-08-09 pour une raison précise et vérifiée : <strong>un <code>GO</code> vieux de deux heures traîne dans la conversation et<br />
+réarmait un dépilement que personne n&#039;avait demandé.</strong></p>
+<p><strong>L&#039;ESSAI <code>local/scripts/essai-stop-transcrit.sh</code> ÉCHOUE, ET IL A RAISON D&#039;ÉCHOUER</strong> : il vérifie qu&#039;un <code>STOP</code> du transcrit désarme, c&#039;est-à-dire exactement le comportement retiré. Il est resté en<br />
+place après la décision qui l&#039;a rendu caduc — <strong>un essai qui teste un comportement supprimé accuse le code au lieu de se taire.</strong></p>
+<p><strong>LA FORME QUI LÈVERAIT LE RISQUE, SI L&#039;OPÉRATEUR LA VEUT</strong> : ne lire dans les entrées <code>queue-operation</code> que le mot <code>STOP</code>, <strong>jamais <code>GO</code></strong>. Un <code>STOP</code> glissé en cours de tour désarmerait ; un <code>GO</code><br />
+glissé ne réarmerait rien, ce qui est déjà la règle écrite. Le vieux <code>GO</code> qui traîne ne peut alors plus rien réarmer, puisqu&#039;on ne le lit plus.</p>
+<p><strong>TANT QUE CE N&#039;EST PAS TRANCHÉ</strong> : l&#039;agent obéit au <code>STOP</code> qu&#039;il est seul à voir, le dit, et ne touche pas à l&#039;état — la garde continue de réclamer jusqu&#039;à son plafond de cinq.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Le STOP glissé en cours de tour est lu et désarme seul — entrées queue-operation du transcrit, hook-stop.php à la fin du tour, borné au tour courant, STOP seul et jamais GO, éprouvé par essai-stop-transcrit.sh. Ce qui restait — les huit cas rouges de test-stop-multiline.sh — vit désormais à Q15 cas-rouges-stop.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">js-francais-sprites</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
@@ -933,6 +1054,20 @@ deviennent du code ordinaire, relisible et éprouvable.</p>
 <p><strong>Fermé le 2026-08-09</strong> — les cinq fichiers PHP remplacent les trois fichiers shell, les quatre essais passent, la déclaration est basculée</p>
 </div>
     <p class="point-pied">Créé le 2026-08-09 · repris le 2026-08-09</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">style-a-refaire</span><span class="point-statut">Fait — le travail est allé au bout : la nature de la demande : habillage neuf de la page, ou reprise de la restauration de S39</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span></p>
+    <h2>Refaire le style de la page Suivi des sprites : habillage neuf, ou restauration qui n&#039;a pas abouti ?</h2>
+    <div class="point-corps"><p><strong>CAPTURE DE L&#039;OPÉRATEUR, 2026-08-11, écrite en toutes lettres</strong> : « j&#039;avais demandé à refaire le style de la page de Suivi des sprites mais ça n&#039;a pas été refait !! »</p>
+<p><strong>CE QUI EXISTE DÉJÀ SOUS CE NOM, ET QUI EST FERMÉ</strong> : <code>S35 page-sprites-style</code> — boutons de texte morts, variant principal non mis en avant, style non restauré — et <code>S39 style-page-sprites</code> — le<br />
+style de la page revient à celui du constructeur d&#039;origine. Les deux portaient une <strong>restauration</strong> : rendre à la page le style qu&#039;elle avait avant sa migration. <strong>Ce n&#039;est pas la même chose que la<br />
+refaire</strong>, et c&#039;est là que je ne sais pas ce qui est attendu.</p>
+<p><strong>CE QUI MANQUE POUR AGIR</strong> : savoir si la demande porte sur un habillage neuf de la page — donc un travail de conception d&#039;interface, à cadrer avec ce qu&#039;il doit donner de plus — ou sur une<br />
+restauration qui n&#039;a pas abouti, auquel cas c&#039;est un défaut de <code>S39</code> et il se reprend là. Posé à l&#039;opérateur. <strong>Rien ne se touche à la page tant que ce n&#039;est pas tranché</strong> : la refaire d&#039;après ma<br />
+propre idée du beau est exactement la régression que la règle de migration interdit.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Répondu B par l&#039;opérateur le 2026-08-11 : c&#039;est la restauration qui n&#039;a pas abouti. Le sujet S39 style-page-sprites est rouvert et porte l&#039;écart mesuré.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">la-cloture-est-trop</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
@@ -1065,6 +1200,24 @@ ne correspondait plus à son plan.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">pont-ns</span><span class="point-statut">Fait — le travail est allé au bout : le verdict de l&#039;opérateur sur CH-021_shape-ns-v4, à donner sur la page de revue des sprites</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le pont nord-sud n&#039;est toujours pas corrigé</h2>
+    <div class="point-corps"><p>Le pont nord-sud attend son verdict, et il se donne sur la page de revue.</p>
+<p>## LE DÉFAUT ET SA CAUSE (2026-08-11)</p>
+<p><strong>LES DEUX FORMES PORTAIENT LE MÊME DESSIN DE CÔTÉ.</strong> Sur la forme est-ouest, le tablier traverse l&#039;image et l&#039;arche se présente de face : c&#039;est juste, son flanc est tourné vers nous. Sur la forme<br />
+nord-sud jusqu&#039;à <code>v3</code>, le tablier courait bien du bas vers le haut — l&#039;axe était bon — <strong>mais l&#039;arche se présentait encore de face, ouverture visible et dessous apparent.</strong> Un tablier nord-sud<br />
+s&#039;enfonce vers le haut de l&#039;image : on le regarde <strong>par-dessus</strong>, avec ses deux parapets, et son arche passe <strong>sous</strong> l&#039;ouvrage, devinée seulement par l&#039;eau qui ressort de part et d&#039;autre.</p>
+<p><strong>LA CAUSE ÉTAIT DANS LA CONSIGNE, ET ELLE EST CORRIGÉE.</strong> La fiche disait comment le tablier s&#039;oriente, mais rien de ce que la caméra montre de l&#039;arche selon ce sens : le générateur n&#039;avait aucune<br />
+raison de dessiner autre chose que la vue qu&#039;il connaissait. Une clause l&#039;énonce désormais, avec son refus explicite — un pont nord-sud dont on voit l&#039;ouverture de l&#039;arche est refusé.</p>
+<p><strong>CE QUI N&#039;ÉTAIT PAS EN CAUSE</strong> : l&#039;eau dessinée dans l&#039;image. La fiche la demande explicitement — « l&#039;eau se voit de part et d&#039;autre de l&#039;ouvrage et sous l&#039;arche, jamais recouverte ».</p>
+<p>## OÙ ÇA EN EST</p>
+<p><strong><code>CH-021_shape-ns-v4</code> EST GÉNÉRÉ, ET IL EST CONFORME À LA CLAUSE À MA LECTURE</strong> : tablier vu par-dessus, deux parapets, aucune ouverture d&#039;arche visible, l&#039;eau traversant de part et d&#039;autre. <strong>Le<br />
+verdict appartient à l&#039;opérateur et se donne sur la page de revue</strong>, comme pour toute sprite. La forme est-ouest, elle, est juste et ne se retouche pas.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Verdict rendu le 2026-08-11 sur CH-021_shape-ns-v4 : à reprendre, « Je veux le style de v2. Ne pas mettre de cours d&#039;eau sur l&#039;image !!! ». Ce qui reste vit désormais à S62 verdicts-du-11, avec le verdict de la forme est-ouest, qui porte le même refus.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">rune-forme</span><span class="point-statut">Fait — le travail est allé au bout : ce que le point visait, l&#039;arche etant confirmee bonne</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
     <h2>Si l&#039;arche etait bonne, qu&#039;est-ce qui doit changer sur la rune de la creature</h2>
     <div class="point-corps"><p><strong>CE QUI BLOQUE <code>S53 rune-creature</code>.</strong> Son libellé dit « la rune de la créature doit être une demi-lune comme sur la référence DA ». L&#039;opérateur, le 2026-08-11 : <strong>« arche, c&#039;était bien »</strong>. La<br />
@@ -1104,6 +1257,106 @@ d&#039;arche visible sur un pont nord-sud.</p>
 <p><strong>RECOMMANDATION : A.</strong> Le défaut se voit dans la maquette, la cause est corrigée, et une pièce de tracé fausse se répète partout où la branche passe.</p>
 <p><strong>CE QUI NE SE REDEMANDE PAS</strong> : la forme est-ouest est juste et ne se retouche pas.</p>
 <p><strong>Fermé le 2026-08-11</strong> — Question qui n&#039;avait pas lieu d&#039;etre : il etait deja decide que la consigne se corrige et que la sprite se regenere, sans redemander. La generation est lancee.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">humain-crete</span><span class="point-statut">Fait — le travail est allé au bout : le verdict de l&#039;opérateur sur HU-000-v2, à donner sur la page de revue des sprites</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>L&#039;humain de référence a les cheveux plats : la légère crête basse que l&#039;inventaire décrit n&#039;est pas dessinée</h2>
+    <div class="point-corps"><p><strong>CAPTURE DE L&#039;OPÉRATEUR, 2026-08-11, écrite en toutes lettres.</strong> Il joint la référence de l&#039;humain de référence — un jeune garçon vu de dos-trois-quarts dans un décor de prairie, tunique bleue<br />
+sans manches sur un vêtement clair, ceinture sombre, pantalon court beige, chaussures brunes montantes, cheveux bruns dressés sur le sommet du crâne — et il écrit : « Pour l&#039;humain de référence,<br />
+j&#039;avais demandé lui avec une crète légère comme coupe de cheveux, il a les cheveux raides. C&#039;est normalement décrit dans ta doc. »</p>
+<p><strong>CE QUE LA DOC DIT DÉJÀ</strong>, à <code>doc/conception/referentiels/visuel/inventaire/personnages.md</code>, sur <code>HU-000</code> : « SES CHEVEUX SONT RAIDES ET TIENNENT SEULS, C&#039;EST SON TRAIT LE PLUS RECONNAISSABLE :<br />
+bruns, épais, coiffés en mèches dressées et nettes qui ne retombent pas, formant une LÉGÈRE CRÊTE BASSE sur le sommet du crâne — jamais une chevelure souple, jamais des boucles, jamais une mèche<br />
+plaquée. » La crête y est donc écrite, et l&#039;opérateur le rappelle : le manque n&#039;est pas dans l&#039;inventaire.</p>
+<p><strong>CE QUI RESTE À ÉTABLIR, ET IL NE FAUT RIEN RELANCER AVANT</strong> : où la crête se perd. Trois endroits possibles, à regarder dans cet ordre — la sprite livrée, qui dit ce qui est sorti ; la consigne<br />
+figée qui l&#039;a produite, qui dit ce qui a été demandé au générateur ; et l&#039;assemblage de cette consigne, si la clause de l&#039;inventaire n&#039;y arrive pas entière. <strong>La formulation est suspecte à elle<br />
+seule</strong> : elle ouvre en capitales sur « CHEVEUX RAIDES », et la crête arrive en fin de phrase — un générateur qui lit la première contrainte et s&#039;arrête dessine exactement ce qui est constaté.</p>
+<p><strong>Une génération est une dépense</strong> : la reprise se propose une fois la cause située, jamais avant.</p>
+<p><strong>Fermé le 2026-08-11</strong> — L&#039;opérateur a validé HU-000-v2 le 2026-08-11 sur la page de revue : la crête, la tunique bleue sans manches, le pantalon beige court et l&#039;absence d&#039;accessoire sont conformes à l&#039;inventaire.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">rune-dissociee</span><span class="point-statut">Fait — le travail est allé au bout : le choix entre la rune dessinée dans la sprite et la rune composée au rendu</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>La rune se dessine-t-elle dans la sprite de la créature, ou à part et composée au rendu ?</h2>
+    <div class="point-corps"><p><strong>CE QUI BLOQUE <code>S53 rune-creature</code>, ET C&#039;EST UN CHOIX DE MODÈLE</strong>, ouvert par l&#039;opérateur le 2026-08-11 : « Tu dois être capable de générer chaque espèce de créature avec une rune différente donc<br />
+faut peut être dissocier les deux mais du coup, ça veut dire générer des images de runes sans créature et cela dans toutes les postures... complexe. » Puis : « c&#039;est à toi de prendre le temps de<br />
+réfléchir à toutes les solutions techniques et de proposer la meilleure. » Puis, sur la réserve de la solution tracée : « Les runes sont des formes et des couleurs bien définies et référencées. Si ce<br />
+n&#039;est pas fait, tu pourras le prévoir. »</p>
+<p>## CE QUI EST DÉJÀ RÉFÉRENCÉ, VÉRIFIÉ LE 2026-08-11</p>
+<p><strong>IL A RAISON : LE CATALOGUE EXISTE</strong>, à <code>doc/conception/referentiels/contenu/creatures-temoins.md</code>, et il est complet au niveau du nom. Quinze formes y sont nommées — arche, croissant, spirale,<br />
+crochet, vague, chevron, anneau, goutte, boucle croisée, double courbe, boucle ouverte, couronne ouverte, flamme, roseau plié, rafale —, chacune avec sa couleur en toutes lettres et sa position fixe<br />
+par espèce. Les règles qui les gouvernent y sont aussi : un seul trait sans lever le crayon, une seule couleur, une seule rune par créature, aucune ne se répète dans une même scène.</p>
+<p><strong>CE QUI MANQUE POUR QU&#039;UN RENDU LA TRACE</strong>, et que l&#039;opérateur autorise à prévoir : la <strong>géométrie</strong> de chaque forme — le chemin, en coordonnées, dans un carré de référence — et la <strong>couleur<br />
+exacte</strong>, en code, là où le référentiel dit « turquoise » ou « jaune pâle ». Rien d&#039;autre : un tableau de quinze lignes, écrit une fois, au même endroit que les noms.</p>
+<p><strong>ET LA RUNE GARDE TOUJOURS LA MÊME TAILLE</strong> (opérateur, 2026-08-11 : « Idéalement, la rune fait toujours la même taille, même sur les grosses créatures. les règles de rune sont déjà établies »).<br />
+L&#039;ancre par sprite se réduit donc à <strong>un point</strong>, sans échelle à déclarer — une contrainte de moins par image, et une propriété que seul un tracé tient vraiment : une rune dessinée dans la sprite<br />
+suit la taille de la bête, quoi qu&#039;on écrive dans la consigne.</p>
+<p>## CE QUE LA RUNE EST, ET QUI COMMANDE LA RÉPONSE</p>
+<p><strong>LA RUNE IDENTIFIE UN INDIVIDU.</strong> Deux images de la même rune doivent porter <strong>la même</strong> rune, pas deux dessins ressemblants. Un générateur d&#039;images ne redessine jamais deux fois le même trait —<br />
+c&#039;est constaté sur chaque reprise de ce projet. <strong>Une marque d&#039;identité ne se confie donc pas à un procédé qui varie à chaque appel</strong>, et c&#039;est le critère qui départage, avant même le coût.</p>
+<p>## LES CINQ SOLUTIONS, ET CE QUE CHACUNE COÛTE</p>
+<p>Trois nombres commandent tout : <strong>E</strong> espèces, <strong>R</strong> runes, <strong>P</strong> postures.</p>
+<p>| | Ce qu&#039;il faut produire | Ce qu&#039;une rune neuve coûte | La rune est-elle identique partout ? |<br />
+| --- | --- | --- | --- |<br />
+| <strong>1. Dessinée dans la sprite</strong> | E × R × P images | E × P images | Non — redessinée à chaque image |<br />
+| <strong>2. Générée à part, une image par rune et par posture</strong> | E × P + R × P images | R × P images | Non — redessinée à chaque posture |<br />
+| <strong>3. Tracée par le moteur, en vectoriel</strong> | E × P images, plus une géométrie par rune | <strong>rien</strong> — une forme s&#039;écrit | <strong>Oui, au trait près</strong> |<br />
+| <strong>4. Une image de rune par forme, posée et déformée au rendu</strong> | E × P + R images | 1 image | Oui |<br />
+| <strong>5. Une forme unique, teintée par individu</strong> | E × P images, plus une forme | rien | Oui, mais toutes les runes ont la même forme |</p>
+<p><strong>LA 1 EST CE QUI EXISTE</strong>, et c&#039;est elle qui a produit le défaut : la rune ne se met pas sur les générations neuves, parce qu&#039;il faut y penser à chaque fois. <strong>LA 2 EST CELLE QUE L&#039;OPÉRATEUR<br />
+ENVISAGEAIT ET QU&#039;IL NOMME COMPLEXE</strong> : elle additionne au lieu de multiplier, mais elle garde le défaut d&#039;identité et demande une image par posture. <strong>LA 5 ferme la porte</strong> : le référentiel déclare<br />
+déjà quinze formes distinctes, une forme unique teintée les réduirait toutes à une.</p>
+<p>## CE QU&#039;IL FAUT DANS TOUS LES CAS SAUF LE PREMIER</p>
+<p><strong>UN POINT D&#039;ANCRAGE PAR SPRITE</strong> — où la rune se pose, à quelle taille, selon quelle inclinaison. C&#039;est ce que l&#039;opérateur appelle « dans toutes les postures ». <strong>Ce n&#039;est pas une donnée neuve dans<br />
+le modèle</strong> : chaque représentation porte déjà ses mesures, dont son <code>anchor_px</code>, le point par lequel elle touche le sol. Une ancre de rune est de la même famille, déclarée au même endroit, et elle se<br />
+pose à l&#039;œil en regardant l&#039;image — un geste par sprite, jamais une génération. <strong>Et la position est déjà déclarée par espèce</strong> en toutes lettres ; l&#039;ancre ne fait que la donner en pixels.</p>
+<p>## « JE NE VOIS PAS COMMENT C&#039;EST POSSIBLE DE FAIRE UN SYSTÈME AUTOMATIQUE » (opérateur, 2026-08-11)</p>
+<p><strong>IL N&#039;Y A RIEN D&#039;AUTOMATIQUE DANS CE QUI EST PROPOSÉ, ET C&#039;EST LE MALENTENDU À LEVER.</strong> Aucun programme ne cherche le front d&#039;une bête, ne devine une posture ni ne suit un corps : cela, en effet,<br />
+n&#039;est pas faisable, et personne ne le propose. <strong>L&#039;emplacement est une donnée, posée à la main, une fois par image</strong> — un point, et une inclinaison quand la surface est bombée. Le rendu ne fait que<br />
+tracer la forme déclarée à l&#039;endroit déclaré : il ne décide de rien.</p>
+<p><strong>CE QUE ÇA COÛTE, POSTURE PAR POSTURE</strong> : un clic sur la sprite, à l&#039;endroit où la rune doit être. C&#039;est le même geste que donner un verdict, et il se met au même endroit — la page de revue, sous<br />
+l&#039;image. Cent postures, c&#039;est cent clics, une fois. <strong>La solution qui dessine la rune dans la sprite coûte, pour ces mêmes cent postures, cent générations par rune</strong> — et il faut recommencer pour<br />
+chaque rune de chaque espèce.</p>
+<p><strong>C&#039;EST DONC L&#039;INVERSE D&#039;UN SYSTÈME QUI DEVINE</strong> : la position vient de l&#039;œil de l&#039;opérateur ou de l&#039;agent, exactement comme aujourd&#039;hui, mais elle est <strong>écrite une fois</strong> au lieu d&#039;être redemandée au<br />
+générateur à chaque image — qui, lui, la replace ailleurs à chaque tentative.</p>
+<p>## CE QUI EST PROPOSÉ</p>
+<p><strong>LA 3.</strong> La rune se déclare comme une géométrie et une couleur au référentiel, le rendu la trace sur l&#039;ancre déclarée par la sprite, et elle est la même partout. Ce qui reste à écrire est petit et<br />
+connu : les quinze géométries et leurs couleurs, l&#039;ancre par sprite, le tracé au rendu.</p>
+<p><strong>MAIS UNE RÈGLE ÉTABLIE S&#039;Y OPPOSE, ET ELLE EST ÉCRITE NOIR SUR BLANC</strong> — <code>doc/conception/referentiels/visuel/index.md</code> : « La rune épouse le corps — elle est <strong>sur</strong> la créature, pas <strong>par-dessus</strong><br />
+[…] Une rune plaquée à plat sur un volume rond se voit immédiatement comme un autocollant et ruine la crédibilité de l&#039;animal. » <strong>Un tracé posé au rendu est exactement cet autocollant</strong>, et c&#039;est la<br />
+seule objection sérieuse à la solution 3. Elle ne se contourne pas en silence.</p>
+<p><strong>CE QUI LA DÉSAMORCE EN PARTIE, ET QUI VIENT DE LA MÊME RÈGLE</strong> : elle prévoit déjà la difficulté et donne la sortie — « tant qu&#039;un emplacement ne peut pas être rendu correctement, on lui préfère un<br />
+emplacement facile : une surface plate, ou un endroit peu visible ». Les positions du référentiel ont été choisies ainsi ; celle de <code>SP-003</code> le dit mot pour mot. <strong>Il reste le front de <code>SP-001</code>, qui<br />
+est rond.</strong> Un chemin peut se déclarer déjà courbé, et l&#039;ancre porter une inclinaison : ça rattrape une surface bombée, ça ne rattrape pas un pli de poil.</p>
+<p><strong>L&#039;AUTRE RÉSERVE</strong> : la maquette compose aujourd&#039;hui des images, et poser un tracé par-dessus est acquis en HTML ; pour le moteur du jeu, qui n&#039;existe pas encore, cela reste à établir — mais aucun<br />
+moteur ne manque de tracé vectoriel, et la solution 4 est le repli exact si l&#039;un d&#039;eux le faisait, sans rien changer au reste.</p>
+<p><strong>LE PAS IMMÉDIAT, INDÉPENDANT DU CHOIX</strong> : <code>SP-001</code> doit porter son arche turquoise, et l&#039;opérateur l&#039;attend. Une génération de la vue courante avec sa rune le lui donne aujourd&#039;hui, sans rien<br />
+préjuger — le jour où le rendu trace les runes, cette image reste juste, elle porte simplement la sienne dessinée.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Tranché par l&#039;agent le 2026-08-11, sur délégation de l&#039;opérateur : « tu dois prendre la meilleure solution pour gérer tous les cas ». La rune se trace au rendu sur une ancre déclarée par image. La décision, ses trois raisons, son prix et les cinq étapes vivent maintenant à S53 rune-creature.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">etat-vivant</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>L&#039;état d&#039;un sujet restait figé à la construction : il se refait maintenant à chaque verdict</h2>
+    <div class="point-corps"><p><strong>CAPTURE DE L&#039;OPÉRATEUR, 2026-08-11</strong> : « Quand j&#039;ai jugé tous les variants d&#039;un sujet, il apparait toujours &quot;À juger&quot;. Vérifie ça pour toutes les situations, ça doit s&#039;actualiser. »</p>
+<p><strong>LA CAUSE</strong> : l&#039;état d&#039;un sujet était calculé <strong>à la construction</strong> de la page, à partir du verdict inscrit au référentiel, et la page ne le rejouait jamais. Les verdicts donnés dans le navigateur<br />
+partaient bien au serveur, mais la vignette gardait le mot figé à la construction — le sujet restait « à juger » alors que ses images venaient d&#039;être jugées sous les yeux de qui le lit.</p>
+<p><strong>FAIT</strong> : la page refait l&#039;état de chaque sujet dès qu&#039;un verdict change, et à l&#039;arrivée des verdicts enregistrés. <strong>Les mots, les libellés et l&#039;ordre qui les départage viennent du gabarit</strong> — les<br />
+mêmes qu&#039;à la construction, passés au script au lieu d&#039;être retapés : ce qui est dû passe devant, et « validé » exige TOUS les variants. Le compte de chaque filtre suit, et un filtre actif se<br />
+réapplique aussitôt, sans quoi la grille montrerait un sujet que le filtre exclut désormais.</p>
+<p><strong>ET UN VERDICT ABSENT DE LA PAGE NE VEUT PAS DIRE « À JUGER »</strong> : il veut dire qu&#039;on n&#039;en sait pas plus que la construction. Écrit après l&#039;avoir cassé — une image validée au référentiel et jamais<br />
+retouchée dans la page repassait « à juger » à l&#039;ouverture, soit le défaut corrigé, à l&#039;envers.</p>
+<p><strong>ÉPROUVÉ, QUATRE SITUATIONS ET DEUX SUJETS</strong> : <code>php local/scripts/probe-state-refresh.php BT-001</code> — à juger au départ, validé quand tout est coché, à reprendre dès qu&#039;un seul l&#039;est, écarté de même,<br />
+et retour à « à juger » une fois tout effacé. <code>… CH-001</code>, validé au référentiel, reste validé sans verdict de page et suit celui qu&#039;on lui donne. Un sujet dont un variant n&#039;a pas d&#039;image reste « à<br />
+produire » quoi qu&#039;on coche, et c&#039;est la règle.</p>
+<p><strong>UNE FAUTE PAYÉE AU PASSAGE, ÉCRITE POUR QU&#039;ELLE NE SE REFASSE PAS</strong> : la première version de cette sonde cochait des verdicts sur la page servie, et la page enregistre chaque coche sur le serveur —<br />
+<strong>elle a donc écrit pour de vrai dans les données de l&#039;opérateur</strong>, dix entrées vides déposées dans <code>review-server/notes/sprites.json</code>. Elles ont été retirées par<br />
+<code>python3 local/scripts/clean-empty-verdicts.py --apply</code>, qui ne touche qu&#039;aux entrées sans verdict, sans commentaire et sans classement. <strong>La sonde neutralise désormais l&#039;envoi avant tout clic</strong> :<br />
+une sonde n&#039;écrit jamais dans les données de l&#039;opérateur.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Fait et éprouvé le 2026-08-11 — quatre situations sur deux sujets, plus le cas du sujet dont un variant n&#039;a pas d&#039;image.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
@@ -1612,6 +1865,47 @@ qui n&#039;a pas eu lieu.</p>
 <p><strong>Fermé le 2026-08-11</strong> — Question sans objet : l&#039;operateur a rappele qu&#039;une remarque traitee n&#039;est plus affichee du tout, pas affichee barree. Il n&#039;y avait donc aucun rendu a eprouver.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">stop-mi-tour</span><span class="point-statut">Fait — le travail est allé au bout : l&#039;arbitrage sur le désarmement quand le STOP n&#039;atteint aucun hook</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span></p>
+    <h2>Un STOP glissé en cours de tour n&#039;atteint aucun hook : la garde grogne, ou l&#039;agent désarme</h2>
+    <div class="point-corps"><p><strong>CE QUI BLOQUE <code>W19 stop-priorite</code>, ET C&#039;EST TOUT CE QUI LUI RESTE.</strong> Les trois défauts réels sont corrigés, la mesure est faite en conditions réelles avec le mot de sonde <code>PING</code>, et elle conclut :<br />
+<strong>un message glissé pendant que l&#039;agent travaille n&#039;atteint ni le hook du prompt ni le transcrit que lit le hook de fin de tour.</strong> Seul l&#039;agent le reçoit. Ce n&#039;est pas un défaut de code, c&#039;est une<br />
+limite de l&#039;enveloppe, et aucune correction de hook ne peut la lever.</p>
+<p><strong>REVÉRIFIÉ LE 2026-08-10, DEUX FOIS, SANS RIEN CHERCHER</strong> : un <code>GO</code> terminant une phrase n&#039;a rien armé — <code>hook-word.php</code> n&#039;accepte le mot que seul sur sa ligne, et c&#039;est voulu —, et deux messages<br />
+« Des questions ? » envoyés en cours de tour n&#039;ont laissé aucune trace dans les journaux des hooks. Le comportement mesuré le 2026-08-09 se reproduit à l&#039;identique.</p>
+<p><strong>LA DÉCISION, ET ELLE N&#039;APPARTIENT QU&#039;À L&#039;OPÉRATEUR</strong> puisqu&#039;elle porte sur l&#039;interdit fait à l&#039;agent de toucher à son propre armement :</p>
+<ul>
+<li><strong>A — la garde continue de refuser jusqu&#039;à son plafond de cinq.</strong> L&#039;ordre est obéi par l&#039;agent, la garde grogne, et l&#039;opérateur renvoie son mot en ouverture de tour s&#039;il veut l&#039;état juste. Rien ne<br />
+  change, l&#039;interdit reste entier.</li>
+<li><strong>B — l&#039;agent reçoit le droit de désarmer dans ce seul cas</strong>, en laissant une trace nommée qui dit que le désarmement vient de lui et pourquoi. L&#039;état devient juste tout de suite ; en échange,<br />
+  l&#039;interdit qui protège l&#039;armement s&#039;ouvre d&#039;un cas, et c&#039;est exactement le geste qui avait été fait à tort le 2026-08-08.</li>
+</ul>
+<p><strong>RECOMMANDATION : A</strong>, tant que le coût constaté se limite à une garde qui grogne. L&#039;interdit vaut plus que la justesse immédiate d&#039;un fichier d&#039;état, et <code>B</code> rouvre la porte que la journée du<br />
+2026-08-08 avait fermée pour de bonnes raisons.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Caduque : le STOP glissé en cours de tour est désormais lu dans les entrées queue-operation du transcrit et désarme seul, donc le cas où il n&#039;atteint aucun hook n&#039;existe plus. Classé sur la réponse A de l&#039;opérateur, le 2026-08-11.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">cas-rouges-stop</span><span class="point-statut">Fait — le travail est allé au bout : l&#039;arbitrage sur les huit cas d&#039;essai qui testent la lecture d&#039;ordres retirée le 2026-08-09</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span></p>
+    <h2>Les huit cas rouges de test-stop-multiline.sh testent un comportement supprimé : les retirer ou les réécrire</h2>
+    <div class="point-corps"><p><strong>CE QUI RESTE DE <code>W19 stop-priorite</code>, UNE FOIS LE MÉCANISME EN PLACE ET ÉPROUVÉ.</strong> Le <code>STOP</code> glissé en cours de tour est lu — entrées <code>queue-operation</code> du transcrit, <code>hook-stop.php</code> à la fin du<br />
+tour, borné au tour courant, <code>STOP</code> seul et jamais <code>GO</code>. Il ne reste que l&#039;arbitrage ci-dessous, qui n&#039;appartient qu&#039;à l&#039;opérateur.</p>
+<p><strong>HUIT CAS DE <code>local/scripts/test-stop-multiline.sh</code> ÉCHOUENT, ET ILS TESTENT UN COMPORTEMENT SUPPRIMÉ.</strong> Ils écrivent le <code>STOP</code> comme une entrée <code>user</code> du transcrit et attendent que la garde<br />
+désarme — c&#039;est-à-dire exactement la lecture d&#039;ordres retirée le 2026-08-09, quand il a été décidé que <code>GO</code> et <code>STOP</code> passent par le prompt et par rien d&#039;autre. <strong>Supprimer des cas d&#039;essai est une<br />
+décision, pas un nettoyage</strong> : ils restent en place et rouges tant que rien n&#039;est tranché.</p>
+<p><strong>CE QUE COÛTE L&#039;ATTENTE</strong> : un essai rouge en permanence cesse d&#039;être lu, et le jour où il rougit pour une vraie raison, personne ne le distingue des huit autres. C&#039;est la seule dépense — le<br />
+mécanisme, lui, fonctionne.</p>
+<p><strong>LES DEUX ISSUES</strong> :</p>
+<ul>
+<li><strong>Les retirer</strong> — l&#039;essai ne garde plus que ce qui existe, et il redevient un signal. Ce qu&#039;on perd : la trace, dans les essais, du comportement qui a existé jusqu&#039;au 2026-08-09.</li>
+<li><strong>Les réécrire sur le porteur réel</strong> — ils écriraient le <code>STOP</code> en entrée <code>queue-operation</code> au lieu d&#039;une entrée <code>user</code>, et éprouveraient alors le mécanisme en place au lieu de l&#039;ancien. Coût :<br />
+  une passe sur les huit cas.</li>
+</ul>
+<p><strong>Fermé le 2026-08-11</strong> — Classé sur ordre de l&#039;opérateur, le 2026-08-11 : « j&#039;aimerais que tu clos le sujet STOP, normalement tout est terminé ». Le mécanisme est en place et éprouvé. Les huit cas d&#039;essai périmés vivent dans local/scripts/, qui appartient à l&#039;agent — leur remise à jour est de l&#039;entretien d&#039;agent, pas un arbitrage d&#039;opérateur, et se fait au fil du dépilement.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
 
   </details>

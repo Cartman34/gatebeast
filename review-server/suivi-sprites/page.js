@@ -46,26 +46,32 @@
     });
     Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (field) {
       var id = field.getAttribute('data-id');
-      var text = (state[id] && state[id].comment) || '';
+      /* A REMARK THAT HAS BEEN DEALT WITH LEAVES THE INTERFACE, AND IT IS KEPT (operator, 2026-08-11: « une image validée peut avoir une remarque, quand elle est
+         traitée, elle est conservée de ton côté mais plus affichée dans l'interface »). It used to be shown struck through and grey, which is still showing it.
+         The text stays in the store with its date and its reason — scripts/remarks.php writes the mark, `reopen` puts the remark back on display. */
+      var handled = state[id] && state[id].handled;
+      var text = (!handled && state[id] && state[id].comment) || '';
       field.value = text;
+      /* THE FIELD OF A FILED REMARK IS READ-ONLY, and that is what makes hiding it safe: typing into a box we have just emptied would write the empty text over
+         the remark being kept, which is the silent loss this rule exists to prevent. Reopening it is one command away. */
+      field.readOnly = Boolean(handled);
       var zone = document.querySelector('.comment-zone[data-more="' + id + '"]');
       var opener = document.querySelector('.open-comment[data-open="' + id + '"]');
       if (zone && text) { zone.hidden = false; }
+      if (zone && handled) { zone.hidden = true; }
       if (opener) {
         opener.setAttribute('data-filled', text.trim() ? 'true' : 'false');
         opener.setAttribute('aria-expanded', zone && !zone.hidden ? 'true' : 'false');
       }
       var clearButton = document.querySelector('.clear-comment[data-id="' + id + '"]');
       if (clearButton) { clearButton.hidden = !text.trim(); }
-      /* A REMARK THAT HAS BEEN DEALT WITH IS FILED, NOT DELETED. It goes grey, it leaves the survey, and it stays readable — because a month later the question
-         is never « was there a remark » but « what did it say, and why is it over ». The mark and its reason are written by scripts/remarks.php; the page only
-         shows them. It is the ONE case the referential does not settle: the operator validates the image as it stands, so no new image will ever clear it. */
-      var handled = state[id] && state[id].handled;
-      if (zone) { zone.classList.toggle('comment-zone--handled', Boolean(handled)); }
-      if (opener) { opener.setAttribute('title', handled ? 'Traitée le ' + handled.date + ' — ' + handled.reason : 'Commentaire'); }
+      if (opener) { opener.setAttribute('title', handled ? 'Remarque traitée le ' + handled.date + ' — ' + handled.reason : 'Commentaire'); }
     });
     /* The survey count keeps itself up to date on `change`: it need not know where the state came from, only that it moved. */
     document.dispatchEvent(new Event('change'));
+    /* AND THE TILES FOLLOW THE VERDICTS THAT JUST ARRIVED: this runs when the repository answers, so the states shown are those of the stored verdicts and not
+       those frozen at build time. */
+    refreshStates();
   }
 
   Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
@@ -87,6 +93,8 @@
       }
       state[id][act] = box.checked;
       remember(id);
+      /* THE SUBJECT'S STATE IS REMADE AT THE MOMENT OF THE VERDICT, not at the next build: that is the defect the operator reported on 2026-08-11. */
+      refreshStates();
       /* REFUSING AN IMAGE MEANS SAYING WHY: ticking « À reprendre » or « Écarter » opens the entry zone and gives it the keyboard. Without the reason the retake
          starts blind again — which is what cost three attempts on the fir tree. « Valider » opens nothing: an agreement has nothing to justify. */
       if (box.checked && (act === 'rework' || act === 'discarded')) {
@@ -108,7 +116,7 @@
     var id = button.getAttribute('data-open');
     var zone = document.querySelector('.comment-zone[data-more="' + id + '"]');
     if (!zone) { return; }
-    if (state[id] && state[id].comment) { zone.hidden = false; button.setAttribute('aria-expanded', 'true'); }
+    if (state[id] && state[id].comment && !state[id].handled) { zone.hidden = false; button.setAttribute('aria-expanded', 'true'); }
     button.addEventListener('click', function () {
       zone.hidden = !zone.hidden;
       button.setAttribute('aria-expanded', zone.hidden ? 'false' : 'true');
@@ -118,8 +126,11 @@
 
   Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (field) {
     var id = field.getAttribute('data-id');
-    if (state[id] && state[id].comment) { field.value = state[id].comment; }
+    if (state[id] && state[id].comment && !state[id].handled) { field.value = state[id].comment; }
+    field.readOnly = Boolean(state[id] && state[id].handled);
     field.addEventListener('input', function () {
+      /* A FILED REMARK IS NEVER OVERWRITTEN FROM THE PAGE: its box is read-only and empty, so what would be saved here is the emptiness we put there ourselves. */
+      if (state[id] && state[id].handled) { return; }
       state[id] = state[id] || {};
       state[id].comment = field.value;
       remember(id);
@@ -217,30 +228,98 @@
 
   /* THE FILTERS ACT ON THE GRID: they hide the tiles that are not in the asked-for state, and a section left entirely empty hides with them — a heading that stays
      open over nothing makes one believe there is nothing to see, when all that happened is a filter. */
-  Array.prototype.forEach.call(document.querySelectorAll('.filter'), function (button) {
-    button.addEventListener('click', function () {
-      var wanted = button.getAttribute('data-filter');
-      Array.prototype.forEach.call(document.querySelectorAll('.filter'), function (other) {
-        other.setAttribute('aria-pressed', other === button ? 'true' : 'false');
-      });
-      Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
-        tile.hidden = wanted !== window.GATEBEAST_STATE_ALL && tile.getAttribute('data-state') !== wanted;
-      });
-      Array.prototype.forEach.call(document.querySelectorAll('.type'), function (section) {
-        var tiles = section.querySelectorAll('.tile');
-        var visible = Array.prototype.filter.call(tiles, function (tile) { return !tile.hidden; });
-        section.hidden = tiles.length > 0 && visible.length === 0;
-      });
+  /* A SUBJECT'S STATE IS REMADE AS SOON AS A VERDICT CHANGES (operator, 2026-08-11: « Quand j'ai jugé tous les variants d'un sujet, il apparait toujours "À
+     juger". Vérifie ça pour toutes les situations, ça doit s'actualiser »). It was computed at build time, from the verdict written in the referential, and the
+     page never replayed it: the subject stayed « to judge » until the next build, while its images had just been judged under the reader's eyes.
+     THE WORDS AND THE ORDER COME FROM THE TEMPLATE, never retyped here: it is the same rule as at build time — what is owed comes first, and « validated » takes
+     EVERY variant. Whatever a page verdict does not say keeps the built state: a variant with no image stays to produce, and a verdict written in the
+     referential and never touched here stays what it is. */
+  function variantStateNow(article) {
+    var built = article.getAttribute('data-state');
+    var box = article.querySelector('.acts input');
+    if (!box) { return built; }
+    var verdict = state[box.getAttribute('data-id')] || {};
+    if (verdict.rework) { return window.GATEBEAST_STATE_OWED[0]; }
+    if (verdict.discarded) { return window.GATEBEAST_STATE_OWED[1]; }
+    if (verdict.approved) { return window.GATEBEAST_STATE_VALIDATED; }
+    /* NO VERDICT IN THE PAGE MEANS « I KNOW NOTHING MORE THAN THE BUILD DID » — and certainly not « to judge ». Written after breaking it: an image validated in
+       the referential and never touched here fell back to « to judge » on opening, which is the defect just fixed, the other way round. */
+    return built;
+  }
+  function subjectStateNow(panel) {
+    var states = Array.prototype.map.call(panel.querySelectorAll('.variant'), variantStateNow);
+    if (!states.length) { return window.GATEBEAST_STATE_OWED[2]; }
+    for (var rank = 0; rank < window.GATEBEAST_STATE_OWED.length; rank += 1) {
+      if (states.indexOf(window.GATEBEAST_STATE_OWED[rank]) >= 0) { return window.GATEBEAST_STATE_OWED[rank]; }
+    }
+    var everyone = states.every(function (one) { return one === window.GATEBEAST_STATE_VALIDATED; });
+    return everyone ? window.GATEBEAST_STATE_VALIDATED : window.GATEBEAST_STATE_TO_JUDGE;
+  }
+  /* THE FILTER COUNTS FOLLOW THE TILES, or « À juger 9 » would sit above zero tiles left to judge — the filter would then say the opposite of what the grid
+     shows, and that is the kind of gap one only notices after being misled by it. */
+  function refreshStates() {
+    var counts = {};
+    Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
+      var panel = document.getElementById('fsp-' + tile.getAttribute('data-subject'));
+      if (!panel) { return; }
+      var now = subjectStateNow(panel);
+      tile.setAttribute('data-state', now);
+      var word = tile.querySelector('.tile-state');
+      if (word) { word.textContent = window.GATEBEAST_STATE_LABELS[now] || now; }
+      counts[now] = (counts[now] || 0) + 1;
     });
+    Array.prototype.forEach.call(document.querySelectorAll('.filter'), function (button) {
+      var which = button.getAttribute('data-filter');
+      var number = button.querySelector('span');
+      if (number && which !== window.GATEBEAST_STATE_ALL) { number.textContent = counts[which] || 0; }
+    });
+    var pressed = document.querySelector('.filter[aria-pressed="true"]');
+    if (pressed) { applyFilter(pressed.getAttribute('data-filter')); }
+  }
+
+  /* THE FILTER SAYS WHAT IT LEFT VISIBLE, in the words of the original builder — « 12 sujets affichés », and « tout est affiché » when nothing is filtered out.
+     Without it, a filter left on makes the project look as though it held three subjects, and nothing on the page says otherwise. */
+  var filterState = document.getElementById('filter-state');
+  function tellFilterState() {
+    var tiles = document.querySelectorAll('.tile');
+    var shown = Array.prototype.filter.call(tiles, function (tile) { return !tile.hidden; }).length;
+    var pressed = document.querySelector('.filter[aria-pressed="true"]');
+    var everything = !pressed || pressed.getAttribute('data-filter') === window.GATEBEAST_STATE_ALL;
+    filterState.textContent = shown + (shown > 1 ? ' sujets affichés' : ' sujet affiché') + (everything ? ' — tout est affiché' : '');
+  }
+  /* ONE PLACE APPLIES A FILTER, and both the click and the state refresh go through it: a state that changes under an active filter must make its tile appear or
+     disappear at once, or the grid shows a subject the filter now excludes. */
+  function applyFilter(wanted) {
+    Array.prototype.forEach.call(document.querySelectorAll('.filter'), function (other) {
+      other.setAttribute('aria-pressed', other.getAttribute('data-filter') === wanted ? 'true' : 'false');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
+      tile.hidden = wanted !== window.GATEBEAST_STATE_ALL && tile.getAttribute('data-state') !== wanted;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.type'), function (section) {
+      var tiles = section.querySelectorAll('.tile');
+      var visible = Array.prototype.filter.call(tiles, function (tile) { return !tile.hidden; });
+      section.hidden = tiles.length > 0 && visible.length === 0;
+    });
+    tellFilterState();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.filter'), function (button) {
+    button.addEventListener('click', function () { applyFilter(button.getAttribute('data-filter')); });
   });
+  tellFilterState();
 
   /* A TEXT OPENS BESIDE THE IMAGE, in the drawer against the right edge, and copies with one button. It does NOT go through the stack of full-screen panels: it
      covers nothing, so it has nothing to stack, and the escape key must close IT before closing the card being read. */
   var drawerBody = document.getElementById('drawer-body');
   var drawerTitle = document.getElementById('drawer-title');
+  var drawerPath = document.getElementById('drawer-path');
   var drawer = document.getElementById('drawer');
-  function openDrawer(title, content) {
+  /* THE PATH IS SHOWN IN THE DRAWER, UNDER THE BAR AND ABOVE THE TEXT (operator, 2026-08-11) — never under the button label, never in the title: it belongs to the
+     text one is reading, not to the control that opens it. */
+  function openDrawer(title, path, content) {
     drawerTitle.textContent = title;
+    drawerPath.textContent = path || '';
+    drawerPath.hidden = !path;
     drawerBody.textContent = content;
     drawer.hidden = false;
     drawer.scrollTop = 0;
@@ -253,7 +332,7 @@
   Array.prototype.forEach.call(document.querySelectorAll('.open-text'), function (button) {
     button.addEventListener('click', function () {
       var carrier = button.nextElementSibling;
-      openDrawer(button.getAttribute('data-title'), carrier ? carrier.textContent : '');
+      openDrawer(button.getAttribute('data-title'), button.getAttribute('data-path'), carrier ? carrier.textContent : '');
     });
   });
   Array.prototype.forEach.call(document.querySelectorAll('.drawer-close'), function (button) {

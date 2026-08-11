@@ -8,3 +8,6 @@ __pycache__/
 # .claude/settings.json porte les hooks du projet et se versionne avec lui : c'est lui qui retient l'agent
 # tant qu'une tâche est ouverte. Seuls les réglages propres à une machine restent dehors.
 .claude/settings.local.json
+# La copie de secours d'un fichier de remarques : un pas en arrière, écrit à chaque enregistrement pour qu'une écriture malheureuse ne soit pas définitive.
+# C'est une trace de fonctionnement, pas la donnée — le fichier de remarques, lui, reste versionné.
+review-server/notes/*.previous.json

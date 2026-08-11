@@ -1,39 +1,175 @@
-/* Thème « origine » — la palette et les couleurs d'état de la page des sprites telle que le constructeur Python la rendait.
+/* The « origine » theme — the palette of the sprites page as the Python builder rendered it, its three themes included.
  *
- * Intention : la migration de cette page vers PHP a emporté son habillage au passage, ce que personne n'avait demandé (opérateur, 2026-08-07 : « restaurer le style et les fonctionnalités
- * manquantes qui étaient avant en Python »). Les valeurs ci-dessous sont celles du constructeur d'origine, reprises telles quelles — un vert-gris très sombre, un texte crème, une ligne discrète —
- * et non une palette recomposée de mémoire. Elles portent les noms que les pages PHP emploient, pour qu'aucune page n'ait à connaître deux vocabulaires de couleur.
+ * Intention: migrating this page to PHP carried its dressing away, which nobody had asked for (operator, 2026-08-07: « restaurer le style et les fonctionnalités
+ * manquantes qui étaient avant en Python »). The values below are the original builder's, taken as they stand — never a palette recomposed from memory. They
+ * carry the names the PHP pages use, so that no page has to know two colour vocabularies.
  *
- * Il vit à côté du thème « encre » plutôt que de le remplacer : « encre » habille les autres pages de revue, et les changer n'a jamais été demandé.
+ * It lives beside the « encre » theme rather than replacing it: « encre » dresses the other review pages, and changing those was never asked for either.
+ *
+ * THE ORIGINAL PAGE WAS LIGHT BY DEFAULT AND FOLLOWED THE SYSTEM (restored on 2026-08-11, on the operator's order: « La restauration n'a pas été fait […] La
+ * migration était sur la version python et faut regarder l'historique git pour la retrouver »). The previous attempt had kept only the original's dark block and
+ * made it the sole palette: the page could no longer be light, while the original opened on cream and turned dark only if the system asked. The three blocks are
+ * therefore given back as they were — light as the base, dark under `prefers-color-scheme`, and the two explicit `data-theme` overrides, which allow a choice
+ * against the system.
+ *
+ * THE NAMES ARE THE PHP PAGES', THE VALUES ARE THE ORIGINAL'S, and here is the mapping, written down so that nobody has to work it out again: `--bg` is the
+ * original's `--ground`, `--card` its `--surface`, `--card-sunk` its `--surface-sunk`, `--muted` its `--ink-soft`, `--faint` its `--ink-faint`, `--grid` its
+ * `--rule` — the world grid behind the page —, `--accent` its key `--key`, and `--damier-a` / `--damier-b` its `--checker-a` / `--checker-b`. The state colours
+ * keep the names from here and the values from there.
  */
 
 :root {
-  color-scheme: dark;
-  --ink: #e8ede4;
-  --bg: #12150f;
-  --card: #1b1f19;
-  --card-sunk: #161a14;
-  --line: #2e342b;
-  /* The world grid behind the page: markedly weaker than --line, or it carries the weight of a border and competes with the section rules, which then cannot be
-   * made out. It must be sensed, never read — the same requirement as the footprint grid drawn over the thumbnails. */
-  --grid: #1c2018;
-  --muted: #9aa494;
-  --faint: #6e7869;
-  --accent: #e5b255;
-  /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte.
-   * « À produire » et « à juger » n'en avaient pas : la première se dit en gris — rien n'est encore là à juger —, la seconde en clair, parce qu'elle réclame l'œil. */
-  --state-validated: #1b5e3a;
-  --state-validated-edge: #6fd8a4;
-  --state-rework: #6b4a1c;
-  --state-rework-edge: #e5b255;
-  --state-dismissed: #8c1d18;
-  --state-dismissed-edge: #e8776b;
-  --state-to-produce-edge: #6e7869;
-  /* À JUGER SE VOIT, ET C'EST LE SEUL ÉTAT QUI RÉCLAME L'OPÉRATEUR (opérateur, 2026-08-08 : « je dois intervenir dessus et donc je dois bien le voir »). Il était
-   * en gris pâle, donc plus discret que « validé » ou « à reprendre », c'est-à-dire l'inverse de ce qu'il faut : les états réglés peuvent être calmes, celui qui
-   * attend un geste doit sauter aux yeux. Bleu franc, la seule teinte encore libre parmi les états. */
-  --state-to-judge: #16456b;
-  --state-to-judge-edge: #7ec2f0;
-  --damier-a: #23271f;
-  --damier-b: #171a14;
+  color-scheme: light dark;
+  /* THE ORIGINAL'S TWO FAMILIES, DECLARED ONCE — they depend on no theme, so they are not repeated in the three blocks that follow. The page is monospaced: one
+   * reads file names, measurements and codes there far more than sentences; the variable-width family is for running text. */
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* THE INK WRITTEN ON A FILLED STATE, and it belongs to no theme: every state fill is a deep colour in both themes — the blue of « to judge », the green of
+   * « validated », the amber of « to rework » —, so what is written on it is always near-white. Taking the card colour instead put dark ink on dark blue and the
+   * badge could no longer be read (operator, 2026-08-11: « Badge A juger pas très lisible »). */
+  --ink-on-state: #F4F7F2;
+  --ink: #171B15;
+  --bg: #F2F4EF;
+  --card: #FFFFFF;
+  --card-sunk: #EBEEE6;
+  --line: #D8DDD2;
+  /* The world grid behind the page, one line every forty-four pixels: it must be sensed, never read. Markedly weaker than --line, or it carries the weight of a
+   * border and competes with the section rules. */
+  --grid: rgba(23, 27, 21, 0.05);
+  --muted: #5C6459;
+  --faint: #8B9287;
+  /* THE KEY COLOUR IS MAGENTA, AND IT IS NOT A DECORATION: the original used it for what calls the operator's hand — the survey block, a ticked verdict, the
+   * focus ring, and the field of an image still to be drawn. Amber had taken its place in the migration, which left the page with no way to say « here ». */
+  --accent: #A3007A;
+  --accent-field: rgba(255, 0, 255, 0.055);
+  --accent-edge: rgba(196, 0, 150, 0.5);
+  /* The state colours. The plain colour fills, the edge one draws the border and the word. */
+  --state-planned: #6E7669;
+  --state-running: #A66300;
+  --state-done: #2F7A3B;
+  --state-fault: #B3261E;
+  --state-validated: #1B5E3A;
+  --state-validated-edge: #2F7A3B;
+  --state-rework: #A66300;
+  --state-rework-edge: #A66300;
+  --state-dismissed: #8C1D18;
+  --state-dismissed-edge: #8C1D18;
+  --state-to-produce-edge: #6E7669;
+  /* « TO JUDGE » MUST BE SEEN — IT IS THE ONLY STATE THAT CALLS FOR THE OPERATOR (operator, 2026-08-08: « je dois intervenir dessus et donc je dois bien le
+   * voir »). It used to be pale grey, hence quieter than « validated » or « to rework », which is the opposite of what is needed: settled states may be calm,
+   * the one waiting for a gesture must catch the eye. A plain blue, the only shade still free among the states. */
+  --state-to-judge: #16456B;
+  --state-to-judge-edge: #16456B;
+  --warn: #8A5A00;
+  --warn-field: rgba(138, 90, 0, 0.09);
+  --damier-a: #D7DBD0;
+  --damier-b: #F2F4EF;
+  /* THE LINES DRAWN ON AN IMAGE, NOT ON THE PAGE — the footprint grid and its two axes, laid over the sprite. They do not come from the original, which had no
+   * such grid: they are added here because they were written in white inside the stylesheet, hence invisible the moment the page turned light again. Two
+   * strengths, the same as the ones they replace. */
+  --overlay: rgba(23, 27, 21, 0.34);
+  --overlay-soft: rgba(23, 27, 21, 0.18);
+}
+
+/* The original's dark, applied when the system asks for it — and only there, save the explicit overrides below. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #E8EDE4;
+    --bg: #12150F;
+    --card: #1B1F19;
+    --card-sunk: #161A14;
+    --line: #2E342B;
+    --grid: rgba(232, 237, 228, 0.045);
+    --muted: #9AA494;
+    --faint: #6E7869;
+    --accent: #FF7BDD;
+    --accent-field: rgba(255, 0, 255, 0.09);
+    --accent-edge: rgba(255, 90, 220, 0.45);
+    --state-planned: #8E9887;
+    --state-running: #E5B255;
+    --state-done: #7CC98A;
+    --state-fault: #FF8F84;
+    --state-validated: #1B5E3A;
+    --state-validated-edge: #6FD8A4;
+    --state-rework: #6B4A1C;
+    --state-rework-edge: #E5B255;
+    --state-dismissed: #8C1D18;
+    --state-dismissed-edge: #E8776B;
+    --state-to-produce-edge: #6E7869;
+    --state-to-judge: #16456B;
+    --state-to-judge-edge: #7EC2F0;
+    --warn: #E0B267;
+    --warn-field: rgba(224, 178, 103, 0.12);
+    --damier-a: #23271F;
+    --damier-b: #171A14;
+    --overlay: rgba(255, 255, 255, 0.30);
+    --overlay-soft: rgba(255, 255, 255, 0.16);
+  }
+}
+
+/* The original's two overrides: they win over the system, in either direction. */
+:root[data-theme="dark"] {
+  --ink: #E8EDE4;
+  --bg: #12150F;
+  --card: #1B1F19;
+  --card-sunk: #161A14;
+  --line: #2E342B;
+  --grid: rgba(232, 237, 228, 0.045);
+  --muted: #9AA494;
+  --faint: #6E7869;
+  --accent: #FF7BDD;
+  --accent-field: rgba(255, 0, 255, 0.09);
+  --accent-edge: rgba(255, 90, 220, 0.45);
+  --state-planned: #8E9887;
+  --state-running: #E5B255;
+  --state-done: #7CC98A;
+  --state-fault: #FF8F84;
+  --state-validated: #1B5E3A;
+  --state-validated-edge: #6FD8A4;
+  --state-rework: #6B4A1C;
+  --state-rework-edge: #E5B255;
+  --state-dismissed: #8C1D18;
+  --state-dismissed-edge: #E8776B;
+  --state-to-produce-edge: #6E7869;
+  --state-to-judge: #16456B;
+  --state-to-judge-edge: #7EC2F0;
+  --warn: #E0B267;
+  --warn-field: rgba(224, 178, 103, 0.12);
+  --damier-a: #23271F;
+  --damier-b: #171A14;
+  --overlay: rgba(255, 255, 255, 0.30);
+  --overlay-soft: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme="light"] {
+  --ink: #171B15;
+  --bg: #F2F4EF;
+  --card: #FFFFFF;
+  --card-sunk: #EBEEE6;
+  --line: #D8DDD2;
+  --grid: rgba(23, 27, 21, 0.05);
+  --muted: #5C6459;
+  --faint: #8B9287;
+  --accent: #A3007A;
+  --accent-field: rgba(255, 0, 255, 0.055);
+  --accent-edge: rgba(196, 0, 150, 0.5);
+  --state-planned: #6E7669;
+  --state-running: #A66300;
+  --state-done: #2F7A3B;
+  --state-fault: #B3261E;
+  --state-validated: #1B5E3A;
+  --state-validated-edge: #2F7A3B;
+  --state-rework: #A66300;
+  --state-rework-edge: #A66300;
+  --state-dismissed: #8C1D18;
+  --state-dismissed-edge: #8C1D18;
+  --state-to-produce-edge: #6E7669;
+  --state-to-judge: #16456B;
+  --state-to-judge-edge: #16456B;
+  --warn: #8A5A00;
+  --warn-field: rgba(138, 90, 0, 0.09);
+  --damier-a: #D7DBD0;
+  --damier-b: #F2F4EF;
+  --overlay: rgba(23, 27, 21, 0.34);
+  --overlay-soft: rgba(23, 27, 21, 0.18);
 }

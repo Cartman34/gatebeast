@@ -40,13 +40,44 @@ class Notes
         return is_file($path) ? json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR) : [];
     }
 
-    /** Replaces the remarks of a page with the list given. The page sends its whole list, so a removal is a list without it — no separate deletion to keep in step. */
+    /**
+     * Lays what a page sends over what the file already holds, entry by entry, and keeps the version it replaces.
+     *
+     * A PAGE NO LONGER REPLACES THE FILE, IT ADDS TO IT (operator, 2026-08-11: « J'ai mis des commentaires et à reprendre sur tous les PDS mais les commentaires
+     * ont disparu, tu as des pertes apparemment »). Each page sent the WHOLE section it knew, so whoever saved last wrote back the state it had read on opening
+     * and erased everything written elsewhere in between — two tabs on the review, or a tab and a probe, were enough to lose a morning of verdicts. What arrives
+     * is merged key by key: an entry the sender does not mention is left alone, and one it does mention wins, because it is the fresher judgement on that image.
+     *
+     * A LIST STILL REPLACES ITS LIST. Where a section holds an ordered list rather than entries with keys — the Campagne plan's remarks — there is nothing to
+     * merge on: removing the third remark would be indistinguishable from not sending it. Those sections keep the old behaviour, and it is written here rather
+     * than discovered.
+     *
+     * AND THE PREVIOUS VERSION IS KEPT, ONE DEEP. The file was the single copy of a human judgement, overwritten in place with no trace: the loss above could not
+     * be repaired, not even from the history, because it had never been committed. `.previous.json` is not a history — it is the one step back that turns an
+     * accident into an annoyance.
+     */
     public function save(string $route, array $notes): void
     {
         if (!is_dir($this->directory)) {
             mkdir($this->directory, 0o775, true);
         }
-        file_put_contents($this->pathFor($route), json_encode($notes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+        $path = $this->pathFor($route);
+        $held = is_file($path) ? json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR) : [];
+        if ($held) {
+            copy($path, $this->previousFor($route));
+        }
+        foreach ($notes as $section => $sent) {
+            $held[$section] = is_array($sent) && !array_is_list($sent) && isset($held[$section]) && is_array($held[$section])
+                ? array_replace($held[$section], $sent)
+                : $sent;
+        }
+        file_put_contents($path, json_encode($held, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+    }
+
+    /** The copy of what a route's file held before the last write — one step back, never a history. */
+    private function previousFor(string $route): string
+    {
+        return preg_replace('/\.json$/', '.previous.json', $this->pathFor($route));
     }
 
     /**
