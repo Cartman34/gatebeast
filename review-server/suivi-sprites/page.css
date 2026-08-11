@@ -21,7 +21,9 @@ body {
 h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; max-width: 21ch; }
 /* LE TEXTE COURANT GARDE SA PROPRE MESURE, plus étroite que la page : rien ne se lit sur toute la largeur d'un grand écran. Et il passe en police à chasse
    variable — c'est de la phrase, pas de la donnée. */
-.lede { margin: 14px 0 0; font-family: var(--sans); font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 62ch; }
+/* LA PHRASE DE TÊTE TIENT SUR UNE LIGNE (opérateur, 2026-08-11 : « ça tient sur une ligne »). Elle était bornée à soixante-deux caractères, la mesure d'un texte
+   qu'on lit longtemps ; celle-ci se lit une fois et doit s'effacer. Elle prend donc la largeur de la page, et rapetisse d'un cran. */
+.lede { margin: 10px 0 0; font-family: var(--sans); font-size: 14.5px; line-height: 1.5; color: var(--muted); }
 /* LES SECTIONS RESPIRENT : cinquante-quatre pixels au-dessus de chacune. Serrées à vingt-huit, la planche se lisait comme une seule liste continue. */
 .type { margin-top: 54px; }
 /* THE SECTION HEADER: title on the left, count on the right, a rule underneath. It is the rule that makes the section — without it the families pile up with no
@@ -43,9 +45,15 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
 .filter-label { margin: 0 5px 0 0; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .filter-state { margin: 11px 0 0; font-family: var(--sans); font-size: 13px; color: var(--muted); min-height: 1.3em; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; }
-.tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; padding: 8px 6px;
-         background: var(--card); border: 1px solid var(--line); border-radius: 3px; color: inherit; font: inherit; text-align: center; cursor: pointer; }
-.tile:hover { border-color: var(--accent); }
+/* UNE VIGNETTE EST UNE CARTE, PAS UN CADRE : coins franchement arrondis, une élévation discrète qui la détache du fond, et un dessous creusé sous l'image pour
+   que la sprite pose sur quelque chose. Au survol elle monte d'un pixel et prend le bord de l'accent — le mouvement dit « celle-ci » mieux qu'un changement de
+   couleur, et il n'ajoute aucune couleur à une page où l'on juge des couleurs. */
+.tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; padding: 10px 8px 9px;
+         background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--lift);
+         color: inherit; font: inherit; text-align: center; cursor: pointer;
+         transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease; }
+.tile:hover { border-color: var(--accent-edge); box-shadow: var(--lift-strong); transform: translateY(-1px); }
+.tile:focus-visible { outline: none; box-shadow: var(--ring); }
 .tile-image { display: flex; align-items: flex-end; justify-content: center; min-height: 26px; margin-top: auto; }
 .tile-image img { max-width: 100%; height: auto; }
 .tile-name { font-weight: 700; font-size: 15px; letter-spacing: -.012em; }
@@ -131,7 +139,7 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
 /* THE STATE READS AT A GLANCE ON THE TILE: a small colored label under the name, in the same words as the filters. Color alone would say nothing to anyone who
    does not know the code, and a word alone would need reading — the two together are recognized before being read. */
 .tile-state {
-  font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 2px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 2px 8px; border-radius: var(--radius-pill);
   border: 1px solid var(--state-edge); color: var(--state-edge);
 }
 .tile[data-state="to-rework"] { --state-edge: var(--state-rework-edge); }
@@ -232,10 +240,16 @@ body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: min(38vw, 560px
 .fold summary { cursor: pointer; }
 .fold pre { max-height: 40vh; overflow: auto; white-space: pre-wrap; font-size: .74rem; }
 .previous-list { display: flex; flex-direction: column; gap: 10px; }
-.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 0; }
-.filter { padding: 5px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; color: inherit; font: inherit; cursor: pointer; }
-.filter[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 600; }
-.filter span { color: var(--muted); }
+/* LES FILTRES SONT DES PASTILLES, ET CELLE QUI TIENT SE VOIT DE LOIN : fond d'accent voilé, bord d'accent, texte d'accent. Un simple changement de couleur de
+   texte se cherchait au milieu de six boutons identiques. Le compte reste en retrait dans la pastille — c'est une précision, pas le nom du filtre. */
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-bottom: 0; }
+.filter { padding: 6px 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-pill); color: var(--muted); font: inherit;
+          font-size: 14px; cursor: pointer; transition: border-color .12s ease, color .12s ease, background .12s ease; }
+.filter:hover { border-color: var(--accent-edge); color: var(--ink); }
+.filter:focus-visible { outline: none; box-shadow: var(--ring); }
+.filter[aria-pressed="true"] { background: var(--accent-field); border-color: var(--accent-edge); color: var(--accent); font-weight: 600; }
+.filter span { color: var(--faint); margin-left: 4px; }
+.filter[aria-pressed="true"] span { color: var(--accent); }
 /* UNE ORPHELINE SE REGARDE : c'est en la voyant qu'on décide si c'est un reste, une sonde, ou une sprite dont l'inscription s'est perdue. Le damier dit sa transparence, comme partout ailleurs. */
 .orphans { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
 .orphan { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 3px; }

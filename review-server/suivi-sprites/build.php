@@ -35,7 +35,6 @@ $inventory = new Inventory($root);
 $thumbnails = new Thumbnail($root);
 $theme = Theme::get();
 $favicon = Favicon::get();
-$releve = Releve::get();
 $reload = Reload::get();
 
 // Les images manquantes plus bas ne sont PAS des fautes : elles se rapportent et se montrent comme des trous. Un trou qui se voit est ce qui dit à l'opérateur ce qui reste dû.
@@ -511,7 +510,6 @@ $page = <<<'HTML'
      entièrement muette. Les trois fichiers vivent dans le même dossier, donc le nom suffit, servi comme ouvert à la main. -->
 <link rel="stylesheet" href="/review-server/suivi-sprites/page.css">
 <style>
-{$releveStyles}
 {$reloadStyles}
 </style>
 
@@ -543,7 +541,6 @@ $page = <<<'HTML'
 
 {$sections}
 {$outsideModel}
-{$releveMarkup}
 </div>
 {$reloadMarkup}
 
@@ -561,12 +558,7 @@ window.GATEBEAST_STATE_OWED = {$stateOwed};
 window.GATEBEAST_STATE_VALIDATED = '{$stateValidated}';
 window.GATEBEAST_STATE_TO_JUDGE = '{$stateToJudge}';
 </script>
-<!-- SANS `defer` ET AVANT LES MODULES : le script de la page définit `window.construireReleve`, dont le module du relevé se sert aussitôt. Un chargement différé
-     inverserait l'ordre et le relevé partirait sans son constructeur. -->
 <script src="/review-server/suivi-sprites/page.js"></script>
-<script>
-{$releveScript}
-</script>
 {$reloadScript}
 HTML;
 
@@ -638,7 +630,7 @@ $page = strtr($page, [
     // thème avant celui là, je veux le récupérer !!! »). Read off the repository: on 2026-08-06 the page moved to PHP with `Theme::css('encre')` — a near-black
     // slightly blue ground, amber accent. On 2026-08-08 a `origine` theme was written from the PYTHON builder's DARK block, a very dark green, and the page was
     // switched to it. That green is what the operator has been looking at and refusing. `origine.css` stays on disk, unused: nothing is thrown away here.
-    '{$theme}' => $theme->css('encre'),
+    '{$theme}' => $theme->css('graphite'),
     '{$favicon}' => $favicon->tag(),
     '{$reloadStyles}' => $reload->styles(),
     '{$reloadMarkup}' => $reload->markup(),
@@ -658,9 +650,6 @@ $page = strtr($page, [
     '{$filters}' => $filters,
     '{$production}' => $production,
     '{$outsideModel}' => $outsideModel,
-    '{$releveStyles}' => $releve->styles(),
-    '{$releveMarkup}' => $releve->markup('Votre relevé, à me coller en conversation'),
-    '{$releveScript}' => $releve->script(),
     '{$sections}' => $sections,
     '{$popins}' => $popins,
 ]);

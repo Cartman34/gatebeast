@@ -188,6 +188,9 @@ foreach ($declarations as $file) {
 }
 
 $faviconTag = $favicon->tag();
+// THE PLAN TAKES THE REVIEW'S THEME LIKE EVERY OTHER PAGE (operator, 2026-08-11: « Sombre et appliqué partout »). It carried a green-tinted palette of its own,
+// in its own names, which is what made the Campagne page — assembled from this document — impossible to redress with the rest.
+$themeCss = Theme::get()->css('graphite');
 // A source melted into another page carries no notice: no route puts out all three pieces at once, without the template having to know about that case.
 $reloadStyles = $route === null ? '' : $reload->styles();
 $reloadMarkup = $route === null ? '' : $reload->markup();
@@ -198,23 +201,14 @@ $page = <<<HTML
 <title>Le parc — maquette</title>
 {$faviconTag}
 <style>
+{$themeCss}
+  /* THE PLAN'S OWN NAMES, SAID IN THE SHARED ONES: `--paper` is the ground it is drawn on, `--surface` a card upon it, and `--marque` the colour of a remark
+     pinned to a tile — a warning, not an accent, and it keeps that meaning. Nothing of the markup moves; only where its colours come from. */
   :root {
-    color-scheme: light dark;
-    --paper: #e8ece6;
-    --surface: #ffffff;
-    --ink: #12211b;
-    --muted: #5d6f63;
-    --line: #c7d1c6;
-    --accent: #2d6b3c;
-    --marque: #c2410c;
-    --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
-    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;
+    --paper: var(--bg);
+    --surface: var(--card);
+    --marque: var(--warn);
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper: #0f1512; --surface: #161e19; --ink: #e3eae2; --muted: #93a597; --line: #28352c; --accent: #7cc182; --marque: #f97316; }
-  }
-  :root[data-theme="dark"] { --paper: #0f1512; --surface: #161e19; --ink: #e3eae2; --muted: #93a597; --line: #28352c; --accent: #7cc182; --marque: #f97316; }
-  :root[data-theme="light"] { --paper: #e8ece6; --surface: #ffffff; --ink: #12211b; --muted: #5d6f63; --line: #c7d1c6; --accent: #2d6b3c; --marque: #c2410c; }
 
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; }

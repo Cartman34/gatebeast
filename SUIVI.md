@@ -46,6 +46,8 @@ Toute écriture reconstruit la page `/sujets`. **Chaque point porte son analyse 
 - `python3 scripts/check-subjects.py` — le référentiel contre les fichiers réellement livrés.
 - `python3 scripts/check-code-language.py [fichiers]` — le vocabulaire technique français dans les **noms de fichiers** et les valeurs comparées. Balaie aussi `local/scripts/`.
 - `bash scripts/diff-prompts.sh` — réassemble les consignes et dit ce qui a bougé depuis la référence figée. Ne dessine rien. `--freeze` refige.
+- `python3 scripts/check-runes.py` — chaque rune déclarée au référentiel des créatures a sa forme, son tracé et sa couleur dans `assets/runes.json`, et réciproquement.
+  **Les vingt formes se regardent** : `python3 local/scripts/draw-runes-sheet.py` les dessine sur une planche, sous leur nom — une coordonnée ne se contrôle qu'à l'œil.
 
 **LES ESSAIS DES HOOKS** : `bash local/scripts/essai-mot-ordre.sh` (la forme d'un ordre), `essai-hook-prompt.sh`, `essai-hook-stop.sh`, `essai-stop-transcrit.sh`, `test-stop-multiline.sh`. **Huit cas
 de ce dernier sont rouges** : ils écrivent le `STOP` en entrée `user` du transcrit, soit la lecture d'ordres retirée le 2026-08-09, et non le porteur réel `queue-operation`. Ce sont des essais
@@ -88,8 +90,9 @@ fichier, les chemins absolus dans le dépôt et le `sed -i`. **Sur `Write` ou `E
 
 ### Ce qui attend l'opérateur
 
-- **Huit sprites à juger**, sur la page de revue : `TR-060-v7` (chêne), `CH-021_shape-ns-v4` (pont nord-sud), et les cinq reprises du 2026-08-11 — `HU-000-v2` (humain de référence),
-  `TR-063-v13` (pommier), `BT-001-v12` (maison de ferme) avec ses propositions `p2-v6` et `p3-v6`.
+- **Sept sprites à juger**, sur la page de revue : `TR-063-v13` (pommier), `TR-060-v8` (chêne repris d'aplomb), `CH-021_shape-ns-v5` et `CH-021_shape-ew-v2` (les deux ponts, sans eau), et
+  `BT-001-v13` avec ses propositions `p2-v7` et `p3-v7` (la maison de ferme, cette fois avec la plongée à soixante degrés). `HU-000-v2`, l'humain de référence, est validé.
+- **Les quatre pages de revue portent le thème `graphite`**, sombre et unique, demandé le 2026-08-11 — à regarder et à dire s'il convient.
 - **`BT-002 p2`** — la version abîmée du centre de soin, à écarter ; c'est un verdict, pas un dessin.
 - **Les 66 fourchettes amorcées**, à relire.
 - **Dix points `proposed`**, à valider ou à classer.

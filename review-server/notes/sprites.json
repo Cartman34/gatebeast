@@ -54,7 +54,8 @@
         "cutout/personnage/HU-000-v2.png": {
             "rework": false,
             "discarded": false,
-            "approved": true
+            "approved": true,
+            "comment": ""
         },
         "cutout/vegetation/TR-064_densite-dense-v8.png": {
             "rework": false,

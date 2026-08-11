@@ -11,3 +11,5 @@ __pycache__/
 # La copie de secours d'un fichier de remarques : un pas en arrière, écrit à chaque enregistrement pour qu'une écriture malheureuse ne soit pas définitive.
 # C'est une trace de fonctionnement, pas la donnée — le fichier de remarques, lui, reste versionné.
 review-server/notes/*.previous.json
+# Le verrou d'écriture des remarques : un fichier vide dont seule l'existence sert, le temps d'une écriture.
+review-server/notes/*.lock

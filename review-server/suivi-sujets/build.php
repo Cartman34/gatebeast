@@ -136,7 +136,7 @@ $page = <<<'HTML'
 HTML;
 
 $page = strtr($page, [
-    '{$theme}' => $theme->css('encre'),
+    '{$theme}' => $theme->css('graphite'),
     '{$favicon}' => $favicon->tag(),
     '{$reloadStyles}' => $reload->styles(),
     '{$reloadMarkup}' => $reload->markup(),

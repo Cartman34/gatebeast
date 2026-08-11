@@ -27,6 +27,9 @@ bootApp(static function (Throwable $fault): void {
 
 // Services are taken here, at the top, once.
 $favicon = Favicon::get();
+// THE HOME PAGE TAKES THE SAME THEME AS THE OTHERS (operator, 2026-08-11: « Sombre et appliqué partout »). It carried its own palette, in its own names, so the
+// four review pages could not be changed together — which is exactly what a theme exists to prevent.
+$theme = Theme::get();
 $reload = Reload::get();
 
 // The four states the registry documents, and the badge each one wears. Any other state in the data is an error told on the page, never a silent guess.
@@ -283,54 +286,23 @@ header('Content-Type: text/html; charset=utf-8');
 <title>GateBeast — Index</title>
 <?= $favicon->tag() ?>
 <style>
+<?= $theme->css('graphite') ?>
+  /* THE HOME PAGE'S OWN NAMES, SAID IN THE SHARED ONES — nothing of its markup moves, only where its colours come from. It had its own palette in `--fg`,
+     `--card-bg`, `--border` and five badge colours, so changing the review's dressing meant editing it twice and forgetting it once. Its names stay, because
+     renaming them would be a rewrite; they simply point at the theme now, and the day the theme changes this page follows without being touched. */
   :root {
-    color-scheme: light dark;
-    --bg: #ffffff;
-    --fg: #1d1a24;
-    --muted: #5c5468;
-    --border: #d8d3e0;
-    --card-bg: #faf9fc;
-    --warning-fg: #7a1f1f;
-    --warning-bg: #fbe6e6;
-    --warning-border: #d98c8c;
-    --alive-badge-bg: #e1f3e6;
-    --alive-badge-fg: #1f6b3a;
-    --archived-badge-bg: #fdedd3;
-    --archived-badge-fg: #8a5a10;
-    --closed-badge-bg: #e2e1e6;
-    --closed-badge-fg: #4a4753;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #17151d;
-      --fg: #eeecf3;
-      --muted: #a79fb5;
-      --border: #3a3546;
-      --card-bg: #1f1c27;
-      --warning-fg: #f3b4b4;
-      --warning-bg: #3a1f1f;
-      --warning-border: #7a3a3a;
-      --alive-badge-bg: #1e3a27;
-      --alive-badge-fg: #8fdba8;
-      --archived-badge-bg: #40320f;
-      --archived-badge-fg: #ecc880;
-      --closed-badge-bg: #322f3a;
-      --closed-badge-fg: #c3bfcc;
-    }
-  }
-  :root[data-theme="light"] {
-    --bg: #ffffff; --fg: #1d1a24; --muted: #5c5468; --border: #d8d3e0;
-    --card-bg: #faf9fc; --warning-fg: #7a1f1f; --warning-bg: #fbe6e6; --warning-border: #d98c8c;
-    --alive-badge-bg: #e1f3e6; --alive-badge-fg: #1f6b3a;
-    --archived-badge-bg: #fdedd3; --archived-badge-fg: #8a5a10;
-    --closed-badge-bg: #e2e1e6; --closed-badge-fg: #4a4753;
-  }
-  :root[data-theme="dark"] {
-    --bg: #17151d; --fg: #eeecf3; --muted: #a79fb5; --border: #3a3546;
-    --card-bg: #1f1c27; --warning-fg: #f3b4b4; --warning-bg: #3a1f1f; --warning-border: #7a3a3a;
-    --alive-badge-bg: #1e3a27; --alive-badge-fg: #8fdba8;
-    --archived-badge-bg: #40320f; --archived-badge-fg: #ecc880;
-    --closed-badge-bg: #322f3a; --closed-badge-fg: #c3bfcc;
+    --fg: var(--ink);
+    --border: var(--line);
+    --card-bg: var(--card);
+    --warning-fg: var(--warn);
+    --warning-bg: var(--warn-field);
+    --warning-border: var(--warn);
+    --alive-badge-bg: var(--state-validated);
+    --alive-badge-fg: var(--state-validated-edge);
+    --archived-badge-bg: var(--state-rework);
+    --archived-badge-fg: var(--state-rework-edge);
+    --closed-badge-bg: var(--card-sunk);
+    --closed-badge-fg: var(--muted);
   }
 
   * { box-sizing: border-box; }

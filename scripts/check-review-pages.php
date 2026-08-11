@@ -80,11 +80,9 @@ $rules = [
         'un nom de fichier ne dit pas si l\'image est un reste, une sonde ou une sprite dont l\'inscription s\'est perdue (opérateur, 2026-08-08)',
         fn (string $html): bool => (bool) preg_match('/<figure class="orphan"><img/', $html),
     ],
-    [
-        'Les boutons du relevé portent l\'habillage du projet',
-        'sans règle à eux, ils tombent sur le bouton par défaut du navigateur — deux pavés gris sur une page sombre',
-        fn (string $html): bool => (bool) preg_match('/\.releve-copier, \.releve-deplier, \.releve-fixe\s*\{/', $html),
-    ],
+    // LE RELEVÉ À COPIER N'EXISTE PLUS, et sa règle part avec lui (opérateur, 2026-08-11 : « je n'ai pas besoin de la fonctionnalité pour copier le relevé »,
+    // puis « normalement, y'a plus de relevé »). Il servait à lui donner un texte à coller dans la conversation ; les verdicts partent maintenant au serveur à la
+    // coche, et `php scripts/remarks.php list` en dit autant depuis le fichier. Un contrôle qui garde un comportement supprimé accuse le code d'une perte voulue.
     [
         'Un bouton quitte la comparaison depuis l\'intérieur',
         'sans lui, on en sort en décochant chaque variant un par un, ou en fermant le panneau — donc en perdant le sujet qu\'on juge (opérateur, 2026-08-07)',
@@ -125,7 +123,10 @@ $onBoth = fn (string $name): callable => fn (string $html): bool =>
     str_contains($html, 'class="' . $name . '"') && str_contains($html, 'class="mq-' . $name . '"');
 
 $campaignRules = [
-    ['Le survol annonce la case sous le curseur', 'sans lui, on pose une remarque sur une case qu\'on croit désigner', $onBoth('code')],
+    // LA CLASSE TESTÉE ICI ÉTAIT `code`, ET ELLE NE PORTAIT PAS CE COMPORTEMENT (corrigé le 2026-08-11). Le survol est annoncé par l'élément `.survol`, présent
+    // des deux côtés ; `code` n'apparaît dans la maquette montée que dans la LISTE DES SUJETS SANS IMAGE. La règle passait donc tant qu'il manquait une image, et
+    // elle a crié le jour où il n'en manquait plus — un contrôle qui dépend du contenu au lieu du comportement dit « perdu » sur une page intacte.
+    ['Le survol annonce la case sous le curseur', 'sans lui, on pose une remarque sur une case qu\'on croit désigner', $onBoth('survol')],
     ['Un clic ouvre la saisie', 'c\'est le seul geste qui attache une remarque à une case', $onBoth('poser')],
     ['La saisie s\'annule', 'un clic malheureux ne doit pas obliger à écrire pour s\'en sortir', $onBoth('annuler')],
     ['Les remarques posées se listent', 'une remarque qu\'on ne relit pas est une remarque perdue', $onBoth('remarques')],

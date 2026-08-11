@@ -5596,6 +5596,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001-v13.png",
+              "master": "poc/batiment/BT-001-v13.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1261
+                },
+                "silhouette_px": {
+                  "left": 138,
+                  "top": 52,
+                  "right": 1382,
+                  "bottom": 1252,
+                  "width": 1245,
+                  "height": 1201
+                },
+                "contact_px": {
+                  "left": 384,
+                  "right": 1138,
+                  "width": 755
+                },
+                "anchor_px": {
+                  "x": 761.0,
+                  "y": 1253.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1261
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001-v12.png",
               "master": "poc/batiment/BT-001-v12.png",
               "image_number": 1,
@@ -5631,7 +5670,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -6019,6 +6058,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p2-v7.png",
+              "master": "poc/batiment/BT-001_proposition-p2-v7.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1152
+                },
+                "silhouette_px": {
+                  "left": 198,
+                  "top": 39,
+                  "right": 1360,
+                  "bottom": 1140,
+                  "width": 1163,
+                  "height": 1102
+                },
+                "contact_px": {
+                  "left": 306,
+                  "right": 1231,
+                  "width": 926
+                },
+                "anchor_px": {
+                  "x": 768.5,
+                  "y": 1141.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1152
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001_proposition-p2-v6.png",
               "master": "poc/batiment/BT-001_proposition-p2-v6.png",
               "image_number": 1,
@@ -6054,7 +6132,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -6269,6 +6347,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001_proposition-p3-v7.png",
+              "master": "poc/batiment/BT-001_proposition-p3-v7.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1281
+                },
+                "silhouette_px": {
+                  "left": 104,
+                  "top": 72,
+                  "right": 1427,
+                  "bottom": 1220,
+                  "width": 1324,
+                  "height": 1149
+                },
+                "contact_px": {
+                  "left": 422,
+                  "right": 1102,
+                  "width": 681
+                },
+                "anchor_px": {
+                  "x": 762.0,
+                  "y": 1221.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1281
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001_proposition-p3-v6.png",
               "master": "poc/batiment/BT-001_proposition-p3-v6.png",
               "image_number": 1,
@@ -6304,7 +6421,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -7246,6 +7363,33 @@
           "ref": "orientation-south_action-idle_frame-01",
           "height_min_ty": 1.76,
           "height_max_ty": 2.29
+        },
+        {
+          "orientation": "north",
+          "action": "idle",
+          "representations": [],
+          "label": "Tourné vers le nord — de dos",
+          "ref": "orientation-north_action-idle_frame-01",
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
+        },
+        {
+          "orientation": "east",
+          "action": "idle",
+          "representations": [],
+          "label": "Tourné vers l'est — de profil",
+          "ref": "orientation-east_action-idle_frame-01",
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
+        },
+        {
+          "orientation": "west",
+          "action": "idle",
+          "representations": [],
+          "label": "Tourné vers l'ouest — de profil",
+          "ref": "orientation-west_action-idle_frame-01",
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
         }
       ]
     },
@@ -7306,6 +7450,33 @@
           "main": true,
           "label": "Vue principale",
           "ref": "orientation-south_action-idle_frame-01",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
+        },
+        {
+          "orientation": "north",
+          "action": "idle",
+          "representations": [],
+          "label": "Tourné vers le nord — de dos",
+          "ref": "orientation-north_action-idle_frame-01",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
+        },
+        {
+          "orientation": "east",
+          "action": "idle",
+          "representations": [],
+          "label": "Tourné vers l'est — de profil",
+          "ref": "orientation-east_action-idle_frame-01",
+          "height_min_ty": 1.36,
+          "height_max_ty": 1.67
+        },
+        {
+          "orientation": "west",
+          "action": "idle",
+          "representations": [],
+          "label": "Tourné vers l'ouest — de profil",
+          "ref": "orientation-west_action-idle_frame-01",
           "height_min_ty": 1.36,
           "height_max_ty": 1.67
         }

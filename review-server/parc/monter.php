@@ -246,13 +246,10 @@ $capture->start();
 <title>Le parc — maquette montée</title>
 <?= $faviconTag ?>
 <style>
-  :root { color-scheme: light dark; --paper: #e8ece6; --surface: #fff; --ink: #12211b; --muted: #5d6f63; --line: #c7d1c6; --accent: #2d6b3c;
-          --sans: "Segoe UI", system-ui, sans-serif; --mono: ui-monospace, "Cascadia Mono", monospace; }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper: #0f1512; --surface: #161e19; --ink: #e3eae2; --muted: #93a597; --line: #28352c; --accent: #7cc182; }
-  }
-  :root[data-theme="dark"] { --paper: #0f1512; --surface: #161e19; --ink: #e3eae2; --muted: #93a597; --line: #28352c; --accent: #7cc182; }
-  :root[data-theme="light"] { --paper: #e8ece6; --surface: #fff; --ink: #12211b; --muted: #5d6f63; --line: #c7d1c6; --accent: #2d6b3c; }
+<?= Theme::get()->css('graphite') ?>
+  /* The mounted scene's own names, said in the shared ones — same reason as the plan: the Campagne page is assembled from both documents, and two palettes
+     side by side could not be redressed together. */
+  :root { --paper: var(--bg); --surface: var(--card); }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
   .wrap { width: min(100%, 1760px); margin: 0 auto; padding: 2rem 1rem 4rem; display: flex; flex-direction: column; gap: 1.4rem; }

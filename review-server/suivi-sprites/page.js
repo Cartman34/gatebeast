@@ -28,12 +28,17 @@
      DEALT WITH, never at the moment it is written. What is edited during that window is now named here and poured back over the answer, which is the right way
      round: what the operator typed a second ago is more recent than what the file holds. */
   var pending = {};
+  /* THE PAGE SENDS THE ENTRY IT CHANGED, NOT EVERYTHING IT KNOWS (2026-08-11, after a morning of verdicts was lost). The server lays what arrives over what it
+     holds, key by key, so sending one image's verdict is enough — and sending all of them is how a stale tab used to erase what another had just written. When
+     no image is named, everything goes: that is the hand-over of what was typed before the repository answered, and there the whole state IS the change. */
   function remember(id) {
     if (!ready) {
       if (id) { pending[id] = true; }
       return;
     }
-    window.gatebeastNotes.save(SECTION, state);
+    var change = {};
+    if (id) { change[id] = state[id]; }
+    window.gatebeastNotes.save(SECTION, id ? change : state);
   }
 
   /* WHAT ARRIVES FROM THE REPOSITORY IS RENDERED ONTO THE PAGE, AND THAT IS A FUNCTION OF ITS OWN. The first render happens at wiring time, over a still-empty
@@ -437,23 +442,8 @@
     render();
   });
 
-  window.construireReleve = function () {
-    var lines = ['SUIVI DES SPRITES — RELEVÉ OPÉRATEUR', new Date().toISOString().slice(0, 10), ''];
-    var acts = {approved: 'VALIDÉES', rework: 'À REPRENDRE', discarded: 'ÉCARTÉES'};
-    Object.keys(acts).forEach(function (act) {
-      var taken = Object.keys(state).filter(function (id) { return state[id] && state[id][act]; });
-      if (!taken.length) { return; }
-      lines.push(acts[act] + ' (' + taken.length + ')');
-      taken.forEach(function (id) { lines.push('  - ' + id); });
-      lines.push('');
-    });
-    /* THE SURVEY CARRIES ONLY WHAT IS STILL DUE: handing back a remark already dealt with would have it done a second time. It stays in the file and on the
-       card — filed, not deleted — but it is no longer counted as waiting. */
-    var commented = Object.keys(state).filter(function (id) { return state[id] && state[id].comment && !state[id].handled; });
-    if (commented.length) {
-      lines.push('COMMENTAIRES (' + commented.length + ')');
-      commented.forEach(function (id) { lines.push('  - ' + id); lines.push('      ' + state[id].comment); });
-    }
-    return lines.join('\n');
-  };
+  /* THE SURVEY TO COPY IS GONE (operator, 2026-08-11: « Si ça enregistre tout seul sur le serveur, je n'ai pas besoin de la fonctionnalité pour copier le
+     relevé », then « normalement, y'a plus de relevé »). It existed to hand him a text to paste into the conversation, for want of any other channel: every
+     verdict now reaches the repository the moment it is ticked, and the agent reads it there. What it built — the list of what is validated, to rework,
+     dismissed and commented — is exactly what `php scripts/remarks.php list` prints, from the file rather than from a screen. */
 })();

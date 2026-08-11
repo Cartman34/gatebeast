@@ -55,6 +55,11 @@ class Notes
      * AND THE PREVIOUS VERSION IS KEPT, ONE DEEP. The file was the single copy of a human judgement, overwritten in place with no trace: the loss above could not
      * be repaired, not even from the history, because it had never been committed. `.previous.json` is not a history — it is the one step back that turns an
      * accident into an annoyance.
+     *
+     * THE WHOLE THING HAPPENS UNDER A LOCK, and merging is exactly why it must. Reading, laying over and writing back are three steps: two saves arriving
+     * together would both read the same state and the second would write back a merge that ignores the first — the very loss this method exists to prevent,
+     * narrowed to a few milliseconds instead of a browser session. The project's rule asks for the lock at the moment the concurrent write is written, not after
+     * the first damage; here the damage came first, and the rule is applied late.
      */
     public function save(string $route, array $notes): void
     {
@@ -62,16 +67,27 @@ class Notes
             mkdir($this->directory, 0o775, true);
         }
         $path = $this->pathFor($route);
-        $held = is_file($path) ? json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR) : [];
-        if ($held) {
-            copy($path, $this->previousFor($route));
+        // THE LOCK LIVES BESIDE THE FILE, NOT ON IT: locking the file itself would mean opening it for writing before knowing what to write, which truncates it
+        // the moment two writers meet. A lock file has no content to lose.
+        $gate = fopen($path . '.lock', 'c');
+        if ($gate === false || !flock($gate, LOCK_EX)) {
+            throw new RuntimeException("FAULT impossible de verrouiller {$path}.lock — rien n'est écrit plutôt qu'écrit à moitié.");
         }
-        foreach ($notes as $section => $sent) {
-            $held[$section] = is_array($sent) && !array_is_list($sent) && isset($held[$section]) && is_array($held[$section])
-                ? array_replace($held[$section], $sent)
-                : $sent;
+        try {
+            $held = is_file($path) ? json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR) : [];
+            if ($held) {
+                copy($path, $this->previousFor($route));
+            }
+            foreach ($notes as $section => $sent) {
+                $held[$section] = is_array($sent) && !array_is_list($sent) && isset($held[$section]) && is_array($held[$section])
+                    ? array_replace($held[$section], $sent)
+                    : $sent;
+            }
+            file_put_contents($path, json_encode($held, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+        } finally {
+            flock($gate, LOCK_UN);
+            fclose($gate);
         }
-        file_put_contents($path, json_encode($held, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
     }
 
     /** The copy of what a route's file held before the last write — one step back, never a history. */
