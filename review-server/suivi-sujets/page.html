@@ -77,31 +77,46 @@
   <h1>Suivi des sujets</h1>
   <p class="lede">Ce qui reste à faire, dans l'ordre où je le dépile. Les points ouverts d'abord, du plus prioritaire au moins prioritaire ; à priorité égale, le plus ancien passe devant.
   Cette page se lit, elle ne s'édite pas : une seule commande écrit les points, et elle reconstruit la page en sortant.</p>
-  <p class="compte">26 ouvert(s) · 55 fermé(s) · php scripts/backlog.php next</p>
-  <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">remarque-disparait</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : Q11 — la façon d&#039;éprouver l&#039;affichage d&#039;une remarque classée</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+  <p class="compte">19 ouvert(s) · 65 fermé(s) · php scripts/backlog.php next</p>
+  <article class="point" data-statut="in-progress">
+    <p class="point-tete"><span class="point-ref">pont-ns</span><span class="point-statut">En cours — engagé maintenant</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>Le pont nord-sud n&#039;est toujours pas corrigé</h2>
+    <div class="point-corps"><p>Le pont nord-sud n&#039;est toujours pas corrigé.</p>
+<p>## LE DÉFAUT, VU ET NOMMÉ (2026-08-11)</p>
+<p><strong>LES DEUX FORMES PORTENT LE MÊME DESSIN DE CÔTÉ.</strong> Sur <code>CH-021_shape-ew.png</code>, le tablier traverse l&#039;image de gauche à droite et l&#039;arche se présente de face : c&#039;est juste, son flanc est tourné vers<br />
+nous. Sur <code>CH-021_shape-ns-v3.png</code>, le tablier court bien du bas vers le haut — l&#039;axe est bon — <strong>mais l&#039;arche se présente encore de face, ouverture visible et dessous apparent.</strong></p>
+<p><strong>POURQUOI C&#039;EST FAUX</strong> : un tablier nord-sud s&#039;enfonce vers le haut de l&#039;image, en s&#039;éloignant de la caméra. On le regarde donc <strong>par-dessus</strong>, sur toute sa longueur, avec ses deux parapets qui le<br />
+bordent à gauche et à droite. Son arche passe <strong>sous</strong> l&#039;ouvrage et ne se voit plus de face ; elle ne se devine que par l&#039;eau qui ressort de part et d&#039;autre. <strong>Ce qui est livré est le pont est-ouest<br />
+tourné d&#039;un quart de tour</strong>, pas un pont vu sous cette caméra.</p>
+<p><strong>CE QUI N&#039;EST PAS EN CAUSE, ET QUE J&#039;AI CRU À TORT</strong> : l&#039;eau dessinée dans l&#039;image. La fiche la demande explicitement — « l&#039;eau se voit de part et d&#039;autre de l&#039;ouvrage et sous l&#039;arche, jamais<br />
+recouverte ». Vérifié avant d&#039;y toucher.</p>
+<p>## LA CAUSE EST DANS LA CONSIGNE, ET ELLE EST CORRIGÉE</p>
+<p>La fiche disait comment le tablier s&#039;oriente — « son tablier court droit dans le sens que la forme déclare » — mais <strong>ne disait rien de ce que la caméra montre de l&#039;arche selon ce sens</strong>. Le<br />
+générateur n&#039;avait donc aucune raison de dessiner autre chose que la vue qu&#039;il connaissait déjà. Une clause l&#039;énonce désormais, avec le refus explicite : un pont nord-sud dont on voit l&#039;ouverture de<br />
+l&#039;arche est refusé.</p>
+<p>## CE QUI RESTE : UNE GÉNÉRATION, QUI SE SOUMET</p>
+<p><code>CH-021 shape-ns</code> est à retirer une fois la consigne corrigée. <strong>Une génération est une dépense et une relance demande l&#039;accord de l&#039;opérateur</strong> — elle n&#039;est pas lancée. La forme est-ouest, elle, est<br />
+juste et ne se retouche pas.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="todo">
+    <p class="point-tete"><span class="point-ref">remarque-disparait</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
     <h2>Une remarque de variant disparaît quand elle est notée, alors qu&#039;elle doit partir quand elle est traitée</h2>
-    <div class="point-corps"><p>Une remarque de variant disparaissait quand elle était notée, alors qu&#039;elle doit partir quand elle est traitée.</p>
-<p>## CE QUI EST FAIT ET PROUVÉ (2026-08-09)</p>
-<p><strong>LA PERTE SILENCIEUSE EST CORRIGÉE.</strong> La page n&#039;écrit rien tant que le serveur n&#039;a pas répondu — sinon le premier rendu écraserait ce qui n&#039;est pas encore arrivé. Mais cette porte avalait ce que<br />
-l&#039;opérateur venait d&#039;écrire. Ce qui est touché pendant l&#039;attente est maintenant retenu et reversé <strong>par-dessus</strong> la réponse : ce qu&#039;il a tapé il y a une seconde est plus récent que ce que le fichier<br />
-porte. Seules les entrées réellement touchées sont reversées.</p>
-<p><strong>MESURÉ EN CONDITIONS RÉELLES, À TRAVERS LE SERVEUR</strong> (<code>php local/scripts/probe-remarque-course.php</code>, serveur lancé) : fin de <code>page.js</code> atteinte, texte écrit avant la réponse, champ qui le porte<br />
-encore, <strong>une</strong> demande d&#039;enregistrement, et la remarque retrouvée dans le dépôt.</p>
-<p><strong>LE FAUX DÉFAUT QUI A COÛTÉ UNE HEURE</strong> : les premières sondes disaient que rien n&#039;arrivait au dépôt. La cause n&#039;était pas l&#039;enregistrement mais un <strong>chemin relatif</strong> vers <code>page.js</code> : la page est<br />
-servie à la route <code>/sprites</code>, donc le navigateur cherchait le script à la racine du serveur. Rien ne se chargeait — ni style, ni script. Les chemins sont absolus et doivent le rester.</p>
-<p><strong>UNE REMARQUE TRAITÉE SANS IMAGE NEUVE S&#039;INSCRIT</strong> (réponse <code>A</code> de l&#039;opérateur, 2026-08-09) : <code>php scripts/remarks.php list | handle &lt;image&gt; &quot;&lt;raison&gt;&quot; | reopen &lt;image&gt;</code> pose un champ <code>handled</code> avec<br />
-sa date et sa raison sur l&#039;entrée de <code>review-server/notes/sprites.json</code>. La page la montre <strong>barrée et grisée</strong>, la sort du relevé, et ne l&#039;efface jamais — le bouton d&#039;ouverture porte la date et la<br />
-raison en infobulle. Une commande refuse un chemin qu&#039;aucune remarque ne concerne, plutôt que d&#039;inventer une entrée.</p>
-<p><strong>LE RESTE ÉTAIT DÉJÀ DÉFINI, ET NE SE REDEMANDE PAS</strong> : le verdict et le commentaire portent sur <strong>une image</strong>, et une reprise produit une représentation neuve qui repart sans verdict<br />
-(<code>doc/outils/referentiel-des-sujets.md</code>).</p>
-<p>## CE QUI RESTE</p>
-<p><strong>Éprouver le classement à l&#039;œil</strong> : aucune sonde n&#039;a encore regardé une remarque <code>handled</code> s&#039;afficher barrée dans la page. La mécanique est vérifiée en ligne de commande, l&#039;affichage non.</p>
+    <div class="point-corps"><p><strong>LA RÈGLE, DITE PAR L&#039;OPÉRATEUR LE 2026-08-11, ET ELLE EST TOUTE SIMPLE</strong> : « une image validée peut avoir une remarque ; quand elle est traitée, elle est conservée de ton côté mais plus affichée<br />
+dans l&#039;interface ». Il n&#039;y a rien d&#039;autre à décider — ni forme d&#039;affichage, ni essai à monter.</p>
+<p><strong>CE QUE J&#039;AVAIS COMPRIS DE TRAVERS</strong> : que la remarque traitée devait rester visible, barrée et grisée, et qu&#039;il fallait donc fabriquer une remarque classée pour regarder ce rendu. J&#039;en avais fait<br />
+une question (<code>Q11</code>), fermée : elle portait sur un affichage qui n&#039;a pas lieu d&#039;être.</p>
+<p><strong>CE QUI EST DÉJÀ FAIT ET PROUVÉ (2026-08-09)</strong> : la perte silencieuse est corrigée — ce que l&#039;opérateur écrit pendant que la page attend la réponse du serveur est retenu et reversé par-dessus, et<br />
+mesuré en conditions réelles à travers le serveur. Le classement lui-même existe : <code>php scripts/remarks.php list | handle &lt;image&gt; &quot;&lt;raison&gt;&quot; | reopen &lt;image&gt;</code> pose un champ <code>handled</code> avec sa date et<br />
+sa raison, et la commande refuse un chemin qu&#039;aucune remarque ne concerne plutôt que d&#039;inventer une entrée.</p>
+<p><strong>CE QUI RESTE, ET C&#039;EST LE POINT ENTIER</strong> : que la page <strong>cesse d&#039;afficher</strong> une remarque traitée, au lieu de la montrer barrée. La donnée, elle, ne s&#039;efface jamais — <code>handled</code> la conserve avec sa<br />
+raison, et <code>reopen</code> la remet en attente si le classement était faux.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="pending-dependency">
-    <p class="point-tete"><span class="point-ref">stop-priorite</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : Q12 — mais la mesure du 2026-08-10 la rend probablement caduque</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
+    <p class="point-tete"><span class="point-ref">stop-priorite</span><span class="point-statut">En attente — un autre point de la pile doit passer avant : Q12 — mais la mesure du 2026-08-10 la rend probablement caduque</span><span class="point-prio">priorité 1</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
     <h2>PREMIÈRE PRIORITÉ DE LA REPRISE : le STOP de l&#039;opérateur doit arrêter l&#039;agent, à coup sûr</h2>
     <div class="point-corps"><p><strong>Quand l&#039;opérateur demande un <code>STOP</code>, l&#039;agent doit s&#039;arrêter — à coup sûr.</strong></p>
 <p>## LA CAUSE EST TROUVÉE, ET LA CONCLUSION PRÉCÉDENTE ÉTAIT FAUSSE (2026-08-11)</p>
@@ -139,7 +154,7 @@ glissé ne réarmerait rien, ce qui est déjà la règle écrite. Le vieux <code
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">types-en-francais</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
+    <p class="point-tete"><span class="point-ref">types-en-francais</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
     <h2>Les valeurs de type nomment des répertoires sur le disque et restent en français</h2>
     <div class="point-corps"><p><strong>TRANCHÉ PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « à l&#039;affichage, ok en français ; mais dans le code, ça doit respecter les mêmes règles et être en anglais ». Les valeurs de type ne bénéficient d&#039;aucune<br />
 exception — elles sont du code.</p>
@@ -156,18 +171,20 @@ consigne qui l&#039;a produite — et ce lien est ce qui permet de comprendre un
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">rune-creature</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
+    <p class="point-tete"><span class="point-ref">rune-creature</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
     <h2>La rune de la créature doit être une demi-lune comme sur la référence DA, et il lui faut des variants de posture</h2>
-    <div class="point-corps"><p>La rune de la créature doit être une demi-lune comme sur la référence DA, et il lui faut des variants de posture</p>
+    <div class="point-corps"><p><strong>LE DÉFAUT EST NOMMÉ PAR L&#039;OPÉRATEUR, 2026-08-11</strong> : « la forme était bonne, c&#039;est juste que tu ne la mettais pas sur les nouvelles générations, c&#039;était ça le problème ». <strong>La rune n&#039;est donc pas à<br />
+redessiner : elle est à faire porter par les générations neuves.</strong></p>
+<p><strong>CE QUE ÇA ANNULE</strong> : le libellé de ce point disait « la rune doit être une demi-lune comme sur la référence DA ». C&#039;est faux, et j&#039;ai commencé à corriger la fiche sur cette foi avant que<br />
+l&#039;opérateur ne m&#039;arrête — la fiche est intacte. L&#039;arche déclarée à <code>creatures-temoins.md</code>, et dessinée sur <code>SP-001-1.png</code>, est la bonne forme.</p>
+<p><strong>CE QU&#039;IL RESTE À FAIRE :</strong></p>
+<p>1. <strong>Vérifier ce que la consigne assemblée dit de la rune</strong> pour une créature — position, forme, couleur, et la règle du trait unique. Si elle ne la porte pas, ou la porte sans la forme du sujet,<br />
+   c&#039;est là que le défaut vit.<br />
+2. <strong>Faire porter la rune du sujet à chaque génération de créature</strong>, lue au référentiel comme le reste, jamais retapée.<br />
+3. <strong>Les variants de posture</strong>, seconde moitié du libellé, que rien n&#039;a démentie.</p>
+<p><strong>CE QUI NE SE REDEMANDE PAS</strong> : la forme de la rune de <code>SP-001</code> est une arche, un arc simple ouvert, turquoise, au milieu du front. <code>SP-001-1.png</code> la porte correctement.</p>
 </div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">pont-ns</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
-    <h2>Le pont nord-sud n&#039;est toujours pas corrigé</h2>
-    <div class="point-corps"><p>Le pont nord-sud n&#039;est toujours pas corrigé</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
     <p class="point-tete"><span class="point-ref">noms-scripts-fr</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
@@ -191,43 +208,32 @@ l&#039;agent n&#039;a rien à faire hors du dépôt. Chaque nouveau fautif renco
 </div>
     <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">pieces-plates-96</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
-    <h2>Refaire les huit pièces plates livrées en 96 x 96, la case en demande 96 x 84</h2>
-    <div class="point-corps"><p>Les pièces plates de chemin et de cours d&#039;eau étaient livrées en <code>96 × 96</code> alors que la case projetée en demande <code>96 × 84</code>.</p>
-<p><strong>LA CAUSE EST TROUVÉE ET CORRIGÉE, ET CE N&#039;ÉTAIT PAS LE GÉNÉRATEUR</strong> (2026-08-09). La consigne calculait la fourchette de hauteur en cases et l&#039;arrondissait à une décimale : <code>92 px</code> devenait<br />
-« 1,0 case », c&#039;est-à-dire <code>96 px</code>. Elle <strong>autorisait donc exactement ce que le contrôle refuse</strong>. Le générateur obéissait. Depuis, le plancher s&#039;arrondit vers le haut, le plafond vers le bas, et la<br />
-fourchette est dite <strong>en pixels</strong>, avec la mention que c&#039;est le pixel qui fait foi — <code>scripts/generate-sprite.py</code>. Ça vaut pour les 69 consignes.</p>
-<p><strong>TROIS PIÈCES REFAITES, ET ELLES REVIENNENT JUSTES DU PREMIER COUP</strong> : <code>CH-019 ns</code>, <code>CH-019 ew</code>, <code>CH-020 ns</code>, toutes en <code>96 × 84</code>. L&#039;opérateur avait répondu « quelques-unes » ; les lignes ont été<br />
-prises d&#039;abord parce qu&#039;une ligne se répète sur toute une branche, donc son raccord faux se répète partout, là où une extrémité n&#039;apparaît qu&#039;une fois.</p>
-<p><strong>UNE GÉNÉRATION GASPILLÉE</strong> : <code>CH-020 ew</code> était déjà dans sa fourchette et a été relancée sans vérification préalable. La liste des pièces hors fourchette se lit avant de commander :<br />
-<code>python3 local/scripts/list-off-band-sprites.py</code>.</p>
-<p>## LES ONZE RESTANTES NE SE VALENT PAS — MESURÉ LE 2026-08-10</p>
-<p><strong><code>list-off-band-sprites.py</code> COMPARE LA TAILLE DU FICHIER, PAS LA HAUTEUR DESSINÉE</strong>, donc il signale les onze de la même façon. L&#039;opérateur l&#039;a dit : « la hauteur était variable, peut-être certains<br />
-restent acceptables ». C&#039;est exact, et la mesure de l&#039;encre le montre — <code>python3 local/scripts/measure-ink-off-band.py</code>. <strong>Les deux scripts s&#039;appelaient en français ; renommés le 2026-08-10 sur<br />
-remarque de l&#039;opérateur, un nom technique est anglais partout, <code>local/</code> compris.</strong></p>
-<p><strong>LES TROIS REFAITES DONNENT LE REPÈRE : LA CASE EST LA TOILE.</strong> Leur toile fait <code>84 px</code> de haut, et une pièce traversante nord-sud remplit <code>0 → 84</code> exactement. Une pièce est-ouest acceptée<br />
-(<code>CH-019 ew-v6</code>) ne porte que <code>57 px</code> d&#039;encre, de <code>16</code> à <code>73</code> : <strong>la fourchette 76–92 ne juge que ce qui doit atteindre les bords nord et sud</strong>, jamais une barre est-ouest ni une amorce.</p>
-<p>| Pièce | Encre | Haut → bas | Ce qui cloche |<br />
-|---|---|---|---|<br />
-| <code>CH-019 nesw</code> | 96 | 0 → 96 | Déborde de 12 px, et un carrefour doit raccorder aux quatre bords |<br />
-| <code>CH-020 n</code> | 94 | 0 → 94 | Déborde de 10 px |<br />
-| <code>CH-020 s</code> | 94 | 2 → 96 | Déborde de 10 px |<br />
-| <code>CH-019 s</code> | 61 | 35 → 96 | Tient dans 84, mais colle au bas de la toile : le raccord sud tombe 12 px sous le bord de la case |<br />
-| <code>CH-020 es</code> | 57 | 39 → 96 | Même défaut, même raccord sud |<br />
-| <code>CH-019 n</code> | 76 | 0 → 76 | Rien — tient sous 84 et raccorde au nord |<br />
-| <code>CH-020 ne</code> | 61 | 0 → 61 | Rien |<br />
-| <code>CH-020 nw</code> | 70 | 0 → 70 | Rien |<br />
-| <code>CH-019 e</code> | 61 | 18 → 79 | Rien de sûr — amorce est, comparable au <code>ew</code> accepté (16 → 73), 6 px plus bas |<br />
-| <code>CH-019 w</code> | 40 | 28 → 68 | Rien |<br />
-| <code>CH-020 w</code> | 29 | 34 → 63 | Rien |</p>
-<p><strong>AUCUN DESSIN NEUF NE SE COMMANDE ICI — <code>CH-019</code> ET <code>CH-020</code> SONT DES RÉSEAUX, ET LES RÉSEAUX NE SE FONT PAS MAINTENANT</strong> (opérateur, 2026-08-10, redit après que les cinq incompatibles lui ont été<br />
-proposées à la reprise). <strong>Refaire une pièce de réseau est une génération de réseau</strong>, quelle qu&#039;en soit la raison : la décision porte sur le sujet, pas sur le motif. Les cinq premières lignes du<br />
-tableau restent donc en l&#039;état, hors jeu, jusqu&#039;à ce que les réseaux reviennent sur la table. <strong>Ne pas les reproposer.</strong></p>
-<p><strong>CE QUI RESTE FAISABLE, ET IL NE PASSE PAS PAR LE GÉNÉRATEUR : LE RECADRAGE DES SIX DERNIÈRES.</strong> Leur encre tient déjà dans les <code>84 px</code> du haut, donc la toile se découpe à <code>96 × 84</code> — zéro dessin,<br />
-zéro dépense. Reste à regarder le résultat : le centrage vertical d&#039;une amorce se juge à l&#039;œil, et <code>CH-019 e</code> est la seule dont la marge soit mince.</p>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">audit-journal</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span><span class="point-rang">7</span></p>
+    <h2>Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</h2>
+    <div class="point-corps"><p><strong>LE SUIVI A ÉTÉ ÉLAGUÉ LE 2026-08-11 SUR UNE AFFIRMATION, PAS SUR UNE VÉRIFICATION.</strong> Deux mille lignes retirées en disant que tout vivait ailleurs, sans l&#039;avoir établi. Elles sont archivées à<br />
+<code>doc/journal-des-seances.md</code> — versionné et citable —, mais <strong>une information qui n&#039;existe plus que là est perdue en pratique</strong> : ce fichier ne fait pas foi et personne ne l&#039;ouvre en reprenant.</p>
+<p>## CE QUE L&#039;AUDIT A DÉJÀ TROUVÉ, ET C&#039;EST CE QUI JUSTIFIE DE LE FINIR</p>
+<ul>
+<li><strong><code>~/projects/gatebeast-assets/</code> — l&#039;archive complète des images hors dépôt</strong>, tout ce qui a été produit depuis le début, versions dépassées comprises. <strong>C&#039;est elle qui rend vraie la phrase « rien<br />
+  n&#039;est jamais perdu » pour les images</strong>, et elle n&#039;était écrite que dans une section de séance du 2026-08-03. Vérifiée sur le disque, <strong>écrite aux règles du dépôt</strong>.</li>
+<li><strong>Le tableau des outils validés et de leurs versions.</strong> Les règles y renvoyaient « au tableau de <code>SUIVI.md</code> » — que l&#039;élagage venait d&#039;emporter. Déplacé à <code>doc/outils-exterieurs.md</code>, et le renvoi<br />
+  corrigé. <strong>Une liste que les règles citent est une donnée, pas un état d&#039;avancement.</strong></li>
+<li><strong>Les adresses des artefacts publiés.</strong> Les règles disaient qu&#039;elles sont « listées dans <code>SUIVI.md</code> », alors qu&#039;elles vivent depuis le 2026-08-07 dans <code>review-server/artefacts.json</code>, avec ses<br />
+  règles à <code>doc/artefacts.md</code>. Renvoi corrigé.</li>
+</ul>
+<p>## TROIS CONSTATS REPÉRÉS, PAS ENCORE PLACÉS</p>
+<ul>
+<li><strong><code>scikit-image</code> n&#039;a jamais été accordé</strong>, et sans lui le contrôle d&#039;axonométrie ne peut pas conclure : il ne sait lire que le contour extérieur d&#039;une sprite, jamais ses arêtes intérieures.</li>
+<li><strong>La tuile d&#039;herbe <code>CH-001</code> ne se raccorde pas bord à bord</strong> — constaté le 2026-08-03, produite avant qu&#039;une contrainte de raccord existe, jamais repris depuis.</li>
+<li><strong>Les outils pointaient vers l&#039;ancien emplacement</strong> après le déménagement du dépôt. Probablement réglé depuis, à vérifier avant d&#039;en faire quoi que ce soit.</li>
+</ul>
+<p>## CE QUI RESTE, ET COMMENT LE FAIRE</p>
+<p><strong>Environ 1 900 lignes sur 2 000 n&#039;ont pas été relues.</strong> Le protocole qui a payé : ne pas lire linéairement, mais <strong>chercher les marques d&#039;un fait sans foyer</strong> — un chemin hors du dépôt, un renvoi<br />
+vers <code>SUIVI.md</code>, un tableau, une version d&#039;outil, un « reste à faire ». Chaque trouvaille se déplace vers son foyer et le renvoi se corrige dans le même geste.</p>
+<p><strong>LA RÈGLE QUI EN SORT EST DÉJÀ ÉCRITE</strong> : on ne retire rien avant d&#039;avoir vérifié que le foyer existe, et l&#039;historique git n&#039;est pas un foyer.</p>
 </div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-10</p>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
     <p class="point-tete"><span class="point-ref">tri-profondeur</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 4</span><span class="point-attend">attend : agent</span><span class="point-rang">8</span></p>
@@ -305,116 +311,8 @@ reprise commence par sortir le module sans le brancher à personne : à ce stade
 </div>
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
   </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">commentaires-anglais</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">12</span></p>
-    <h2>Les commentaires français du code antérieur, à repasser en anglais au fil de l&#039;eau</h2>
-    <div class="point-corps"><p><strong>LA RÈGLE EST FIGÉE ET INCHANGEABLE : le code et ses commentaires sont en ANGLAIS AMÉRICAIN</strong> (opérateur, 2026-08-08). Elle a été un instant énoncée à l&#039;envers puis reprise le jour même ; ce point<br />
-reprend donc exactement le sens qu&#039;il avait, et il ne se rediscute plus.</p>
-<p><strong>CE QUI RESTE À REPRENDRE, ET C&#039;EST PLUS LARGE QUE LE CONSTAT D&#039;ORIGINE :</strong></p>
-<ul>
-<li>Le constructeur de la page des sprites et celui des plans, qui portaient déjà des commentaires français avant le 2026-08-07.</li>
-<li><strong>Tout ce qui a été écrit le 2026-08-07</strong> : le service des tâches, la commande du backlog, le constructeur de la page des tâches, les deux hooks, et une bonne part des blocs ajoutés au constructeur<br />
-  des sprites.</li>
-</ul>
-<p><strong>FAIT LE 2026-08-08</strong> : la commande du backlog et le service qui la porte sont entièrement en anglais, commentaires compris — d&#039;abord traduits en français par erreur, puis remis. Les noms de classes<br />
-français de la page des sprites sont passés en anglais dans le même mouvement : <code>mesures</code>, <code>tuile</code>, <code>anciennes</code>, <code>emprise</code>, <code>mot</code> et les autres.</p>
-<p><strong>LA FAÇON DE FAIRE EST ÉPROUVÉE, elle ne se réinvente pas</strong> : le commentaire passe en anglais, et <strong>la parole de l&#039;opérateur reste citée en français entre guillemets</strong>, avec sa date. Le code parle<br />
-anglais, la source garde sa langue.</p>
-<p><strong>Pourquoi au fil de l&#039;eau et pas en une passe</strong> : ces fichiers sont touchés tous les jours en ce moment, et une passe de traduction entrerait en collision avec le travail en cours. Chaque fichier<br />
-rouvert se traduit en le rouvrant.</p>
-<p><strong>CE QUI RESTE HORS DE CE POINT, ET MÉRITE LE SIEN</strong> : les clés du fichier d&#039;inventaire des sujets sont en français — <code>emprise</code>, <code>mesures</code>, <code>couvert</code>, <code>hauteur</code>, <code>variants</code>. La règle du dépôt les veut<br />
-en anglais. Les renommer touche la donnée et tout ce qui la lit, donc ce n&#039;est pas le même chantier que traduire un commentaire.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">largeur-du-suivi</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">13</span></p>
-    <h2>Le suivi enfreint lui-même le standard de largeur</h2>
-    <div class="point-corps"><p><strong>Le contrôle relève 108 écarts dans le document de suivi au 2026-08-07</strong> : des lignes de 200 à 1 080 caractères, et cinq paragraphes repliés trop court. <strong>Aucun n&#039;est de ce jour</strong> — tout ce qui a été écrit aujourd&#039;hui passe le contrôle.</p>
-<p><strong>Ce qui a changé la nature du point</strong> : les points ouverts ont quitté ce document le 2026-08-07 pour un fichier de données et une page. Une grande partie de ce que le document porte encore est donc <strong>de l&#039;histoire figée</strong> — l&#039;ancien tableau des points, des sections de séances passées, des analyses closes. Replier ligne par ligne un texte dont la moitié est destinée à disparaître serait du travail perdu deux fois.</p>
-<p><strong>La bonne façon de le refermer n&#039;est donc pas de replier, c&#039;est d&#039;élaguer</strong> : retirer ce que le backlog porte désormais, garder les constats, les décisions et leurs raisons, et replier ce qui reste. Ça se fait d&#039;un seul geste, quand le document sera relu à froid — pas en corrigeant 108 lignes une par une.</p>
-<p><strong>Statut : bloqué au sens propre</strong>, comme les commentaires français — pas par une décision de l&#039;opérateur, mais parce que la seule façon correcte de le faire dépend d&#039;un élagage qui n&#039;a pas encore eu lieu. La règle du dépôt le dit déjà : correction au fil de l&#039;eau, à mesure qu&#039;une section est retouchée.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-commit-seance</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
-    <h2>Écrire à la méthode commune : le commit se fait en fin de séance, jamais à la reprise</h2>
-    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08 : « tu dois commit à la fin d&#039;une session, pas au début, sinon tu ne sais plus ce qui a été fait ».</strong> À écrire à la méthode commune, protocole de<br />
-collaboration, avec son intention.</p>
-<p><strong>L&#039;intention</strong> : à la fin d&#039;une séance, l&#039;agent a encore en tête ce qu&#039;il vient de faire, et le message du commit peut le dire fidèlement. À la reprise, ce contexte est perdu : le message se rédige<br />
-d&#039;après les fichiers modifiés, ce qui donne une liste et non un récit, et ce qui a été tenté puis abandonné n&#039;y figure plus du tout.</p>
-<p><strong>C&#039;EST UNE RÈGLE DE PRATIQUE, PAS UNE INTERDICTION — précisé par l&#039;opérateur le 2026-08-08, et il a fallu qu&#039;il le redise.</strong> Elle dit *quand* commiter au mieux, elle n&#039;interdit rien : <strong>ce qui n&#039;a<br />
-pas été commité en fin de séance se commite forcément à la suivante</strong>, et il n&#039;y a là aucune contradiction à arbitrer. J&#039;y ai vu un conflit entre son ordre et sa règle et je l&#039;ai fait trancher pour<br />
-rien — une règle de pratique ne s&#039;oppose jamais à un ordre, elle dit comment bien faire quand rien ne s&#039;y oppose.</p>
-<p><strong>Ce que ça impose concrètement</strong> : l&#039;agent propose le commit <strong>avant de clore sa séance</strong>. S&#039;il ne l&#039;a pas fait, il le fait à la reprise, sans demander, en disant simplement que le message a été<br />
-reconstitué d&#039;après les fichiers.</p>
-<p><strong>Appliqué le 2026-08-08</strong> : le travail de la veille est commité sous « Les descriptions sortent du document, la pile devient une donnée, et deux journées de sprites entrent dans l&#039;historique », dont<br />
-le message porte cette mention en dernière ligne.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">noms-des-composants</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">15</span></p>
-    <h2>Écrire la règle : tout composant porte un nom, standard, anglais, et inscrit au glossaire</h2>
-    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « donne toujours des noms à tes composants (cohérent et standard) et je dois pouvoir savoir quel nom ça a » ; puis, quand j&#039;ai baptisé<br />
-le panneau latéral « tiroir » : « un nom technique est en anglais et reste en anglais, même en FR. La description peut dire tiroir pour la compréhension ».</p>
-<p><strong>CE QUE ÇA DIT, ET IL FAUT L&#039;ÉCRIRE QUELQUE PART :</strong></p>
-<ul>
-<li><strong>Tout composant d&#039;interface porte un nom</strong>, choisi dans le vocabulaire standard du métier plutôt qu&#039;inventé : un panneau latéral qui s&#039;ouvre sur un bord est un <code>drawer</code>, pas un « panneau de<br />
-  droite ». Un composant sans nom se redésigne à chaque phrase, et deux personnes n&#039;en parlent jamais pareil.</li>
-<li><strong>Le nom technique est en anglais et le reste, même en français.</strong> Il ne se traduit ni dans le code, ni dans une conversation, ni dans un document : c&#039;est le même mot partout. Le français sert à<br />
-  l&#039;expliquer — « le <code>drawer</code>, ce tiroir accolé au bord droit » —, jamais à le remplacer.</li>
-<li><strong>L&#039;opérateur doit pouvoir retrouver le nom sans lire le code</strong> : chaque composant nommé s&#039;inscrit au glossaire, avec ce qu&#039;il fait et comment il se ferme.</li>
-</ul>
-<p><strong>FAIT LE JOUR MÊME, ET C&#039;EST L&#039;EXEMPLE</strong> : le panneau qui porte la consigne d&#039;une version s&#039;appelle <code>drawer</code> — classes, identifiants et fonctions —, et il est inscrit au glossaire à côté de la <code>FSP</code>.<br />
-J&#039;avais d&#039;abord écrit <code>tiroir</code>, <code>ouvrirTiroir</code> et <code>fermerTiroir</code> : du français dans du code, ce que la règle du dépôt interdisait déjà.</p>
-<p><strong>OÙ L&#039;ÉCRIRE</strong> : à la méthode commune, avec les autres règles d&#039;écriture — elle ne doit rien à GateBeast. La règle du dépôt dit déjà que le code est en anglais ; ce qu&#039;elle ne disait pas, c&#039;est que<br />
-le nom d&#039;un composant en fait partie et qu&#039;il ne se traduit pas en parlant.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-ordre-depilage</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
-    <h2>Écrire la règle : un point engagé passe devant, et un gros point se découpe</h2>
-    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « ce qui est déjà in-progress est la prio ! Sauf si c&#039;est bloqué par un todo (mais là ça doit revenir en todo ou pending dependency) ».</p>
-<p><strong>L&#039;INTENTION</strong> : un point engagé porte un contexte que personne d&#039;autre n&#039;a — une page à moitié refaite, une décision à moitié appliquée —, et c&#039;est exactement ce qu&#039;un arrêt jette. Prendre un point<br />
-plus prioritaire par-dessus ne gagne pas une journée, elle perd celle qui est déjà dépensée.</p>
-<p><strong>CE QUE ÇA IMPOSE</strong> :</p>
-<ul>
-<li><strong>L&#039;ordre de dépilement met les points engagés en tête</strong>, quelle que soit leur priorité, et la priorité ne départage que le reste.</li>
-<li><strong>Un point qui ne peut pas avancer n&#039;est pas engagé.</strong> S&#039;il attend un autre point, il repasse en <code>todo</code> ou en <code>pending-dependency</code> avec l&#039;attendu nommé. Laisser « en cours » un point qui n&#039;avance<br />
-  pas est ce qui a fait paraître quatre chantiers ouverts alors qu&#039;aucun ne bougeait.</li>
-<li><strong>Corollaire, et l&#039;opérateur l&#039;a dit dans le même souffle</strong> : un point trop gros bloque trop de choses. Mieux vaut plusieurs petits points qu&#039;un seul qui en porte trois — le point « Page des<br />
-  sprites » en portait trois et restait ouvert alors que deux de ses trois sujets étaient faits.</li>
-</ul>
-<p><strong>FAIT LE JOUR MÊME</strong> : le service qui range la pile met les points engagés devant, et le point « Page des sprites » a été découpé en trois.</p>
-<p><strong>OÙ L&#039;ÉCRIRE</strong> : à la méthode commune, avec les règles de conduite — l&#039;ordre de dépilement ne doit rien à GateBeast.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
-  </article>
-  <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regle-constantes</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
-    <h2>Écrire la règle : des constantes préfixées, jamais de littéral recopié</h2>
-    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « utilise des constantes ou des constantes de classes, autant que tu peux ! Règle de code » ; puis « les constantes doivent être<br />
-préfixées ».</p>
-<p><strong>CE QUE ÇA DIT</strong> :</p>
-<ul>
-<li><strong>Toute valeur que le code compare ou range s&#039;écrit une fois, en constante</strong>, et se cite par elle partout ailleurs. Un littéral recopié ne se renomme pas, ne se retrouve pas, et une faute de frappe<br />
-  dans l&#039;une de ses copies ne lève rien : elle ne correspond simplement à rien. C&#039;est exactement ainsi qu&#039;un garde-fou en est venu à tester une référence qui n&#039;existait plus.</li>
-<li><strong>Une constante porte le préfixe de sa famille</strong> : <code>STATUS_TODO</code>, <code>STATUS_DONE</code>, <code>WAITING_AGENT</code>, <code>SERIES_QUESTION</code>. Sans préfixe, <code>TODO</code> et <code>AGENT</code> ne disent pas de quoi ils sont une valeur, et<br />
-  deux familles finissent par se disputer le même mot.</li>
-</ul>
-<p><strong>FAIT LE JOUR MÊME</strong> : les sept statuts d&#039;un point, les deux côtés qui peuvent l&#039;attendre et la lettre de la série des questions sont des constantes de classe préfixées ; la commande du backlog et<br />
-le constructeur de la page des sujets ne portent plus un seul littéral de statut.</p>
-<p><strong>CE QUI RESTE, ET SE FAIT AU FIL DE L&#039;EAU</strong> : les mêmes littéraux ailleurs — les verdicts d&#039;une image (<code>validee</code>, <code>a-reprendre</code>, <code>ecartee</code>), les actes de revue (<code>valider</code>, <code>reprendre</code>, <code>ecarter</code>),<br />
-les types de représentation, les noms de calques. Chacun est une famille qui mérite ses constantes préfixées.</p>
-<p><strong>OÙ L&#039;ÉCRIRE</strong> : à la méthode commune, avec les règles d&#039;écriture du code — elle ne doit rien à GateBeast.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
-  </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">describe-arg-mute</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">18</span></p>
+    <p class="point-tete"><span class="point-ref">describe-arg-mute</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">12</span></p>
     <h2>backlog.php describe accepte un texte en argument et l&#039;ignore en silence</h2>
     <div class="point-corps"><p>Constaté le 2026-08-08 en écrivant le point <code>droits-parent</code>. <code>describe &lt;REF&gt;</code> lit son texte sur l&#039;entrée standard, comme son bloc d&#039;usage le dit. Mais appelé avec le texte en argument positionnel —<br />
 <code>describe &lt;REF&gt; &quot;...&quot;</code> —, il ne refuse pas : il lit une entrée standard vide, écrase la description par la chaîne vide, et annonce « description reprise, 0 caractères ». Le message se lit comme un<br />
@@ -424,7 +322,7 @@ succès, et la description est perdue sans que personne le voie.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">bash-simple</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">19</span></p>
+    <p class="point-tete"><span class="point-ref">bash-simple</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">13</span></p>
     <h2>Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</h2>
     <div class="point-corps"><p><strong>LA DOC FAIT AUTORITÉ, LA MÉMOIRE NE SERT PAS</strong> (opérateur, 2026-08-08) : une consigne rangée dans la mémoire de l&#039;agent ne serait pas mieux respectée qu&#039;une règle écrite, et elle échappe à tout<br />
 le monde — elle ne se relit pas, ne se corrige pas, ne suit pas le dépôt. Ce qui doit tenir s&#039;écrit dans la documentation. Deux consignes données ce jour-là avaient été mises en mémoire ; la mémoire<br />
@@ -443,41 +341,44 @@ défaut est dans l&#039;application, pas dans la règle : il n&#039;y a rien à 
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">locales-francaises</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">20</span></p>
+    <p class="point-tete"><span class="point-ref">locales-francaises</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span><span class="point-rang">14</span></p>
     <h2>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</h2>
     <div class="point-corps"><p>Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="todo">
-    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">21</span></p>
+    <p class="point-tete"><span class="point-ref">regles-a-la-methode</span><span class="point-statut">À faire — dû, personne n&#039;y travaille</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : opérateur</span><span class="point-rang">15</span></p>
     <h2>Monter à la méthode commune les règles d&#039;outillage et d&#039;écriture, et elles seules</h2>
-    <div class="point-corps"><p><strong>DÉCISION DE L&#039;OPÉRATEUR, 2026-08-08, ET ELLE TRANCHE LE POINT : SEULE LA FAMILLE « OUTILLAGE ET ÉCRITURE » EST COMMUNE. Tout le reste est propre à ce projet et n&#039;en sort pas.</strong> Cette décision<br />
-annule le « non, pas encore » du 2026-08-07 : la question n&#039;était pas prématurée, elle était mal posée — elle demandait un tout ou rien, alors que le partage se fait famille par famille.</p>
-<p><strong>CE QUI MONTE À LA MÉTHODE COMMUNE — la famille « outillage et écriture », et rien d&#039;autre :</strong></p>
+    <div class="point-corps"><p><strong>DÉCISION DE L&#039;OPÉRATEUR, 2026-08-08 : SEULE LA FAMILLE « OUTILLAGE ET ÉCRITURE » EST COMMUNE.</strong> Tout le reste est propre à ce projet et n&#039;en sort pas. Cette décision annule le « non, pas encore »<br />
+du 2026-08-07 : la question n&#039;était pas prématurée, elle était mal posée — elle demandait un tout ou rien, alors que le partage se fait famille par famille.</p>
+<p><strong>MIGRER C&#039;EST DÉPLACER</strong> : les mêmes phrases à un autre endroit, pas une reformulation. Ce qui est propre à GateBeast et vit dans une de ces règles — le nom des dossiers, le chiffre de la largeur,<br />
+la liste des outils validés, le langage par défaut — <strong>reste ici, nommément</strong>, et la règle du dépôt garde une ligne qui renvoie à la méthode et porte ce qui lui appartient.</p>
+<p>## LE POINT EST DÉCOUPÉ, PARCE QU&#039;IL EST TROP GROS (2026-08-11)</p>
+<p>Sept règles à déplacer, chacune avec sa part propre à séparer : c&#039;est exactement le cas que la méthode nomme désormais — « un point trop gros bloque trop de choses, il se découpe avant d&#039;être pris ».<br />
+Elles se montent <strong>une par une</strong>, chacune dans son geste, et ce point porte le compte.</p>
+<p><strong>MONTÉES — 3 sur 7 :</strong></p>
 <ul>
-<li><strong>Tout script s&#039;ouvre par un bloc « Usage » et « Intention », en anglais</strong>, quel que soit son langage. L&#039;usage dit à quoi il sert et comment on l&#039;appelle ; l&#039;intention dit pourquoi il existe et<br />
-  pourquoi il fait ainsi. Un script écrit dans un langage de second choix ajoute à son intention pourquoi ce langage-là, en nommant la bibliothèque ou l&#039;outil qui n&#039;existe que là.</li>
-<li><strong>Un langage par défaut pour l&#039;outillage pérenne</strong>, et aucun remplacement brut de l&#039;existant : ce qui tourne et fait son travail y reste jusqu&#039;à ce qu&#039;une raison propre le fasse bouger.</li>
-<li><strong>Un outil non validé se demande, il ne s&#039;essaie pas.</strong> Chaque outil introduit devient une dépendance que quelqu&#039;un devra installer, comprendre et maintenir sur toutes les machines où le projet<br />
-  tourne. Un agent qui pense en avoir besoin exprime le besoin et attend.</li>
-<li><strong>Les clés des fichiers de données sont en anglais</strong>, au même titre que le code — ce sont les mêmes noms que le code manipule. Valeurs et textes destinés à l&#039;opérateur restent en français.</li>
-<li><strong>Tout rapport destiné à être lu est en Markdown</strong> ; ce qui se relit par machine reste du JSON, et les deux coexistent plutôt que l&#039;un n&#039;imite l&#039;autre.</li>
-<li><strong>Aucune écriture d&#039;historique sans ordre explicite de l&#039;opérateur</strong>, et jamais de mention d&#039;auteur nommant l&#039;agent : l&#039;opérateur est l&#039;unique auteur de ses commits.</li>
-<li><strong>Une seule largeur de ligne, qui remplace et annule tout autre standard de longueur</strong>, quelle qu&#039;en soit la provenance. Le chiffre reste celui que chaque projet fixe ; c&#039;est la règle de<br />
-  substitution qui est commune, pas la valeur.</li>
+<li>✅ <strong>Le bloc « Usage » et « Intention » en tête de tout script.</strong> À <code>execution.md</code>. Entièrement générale : rien n&#039;en restait à GateBeast, sinon que le langage de second choix à justifier est<br />
+  Python, ce que la règle du dépôt dit maintenant en une ligne.</li>
+<li>✅ <strong>Un langage par défaut pour l&#039;outillage pérenne</strong>, sans remplacement brut de ce qui marche. Reste ici : que ce langage soit <strong>PHP</strong>, et Python pour la mesure d&#039;image et le traitement de matrice.</li>
+<li>✅ <strong>Un outil non validé se demande, il ne s&#039;essaie pas</strong> — avec l&#039;interdit d&#039;aller chercher hors du dépôt, qui procède de la même cause. Reste ici : <strong>la liste des outils validés</strong>, tenue au suivi.</li>
 </ul>
-<p><strong>CE QUI RESTE À GATEBEAST</strong> : la conduite entre l&#039;opérateur et l&#039;agent, la pile et le suivi, la rigueur de l&#039;agent. Ces trois familles restent écrites dans les règles du dépôt et ne se recopient<br />
-nulle part. Le rangement des répertoires de travail reste ici aussi — il nomme des chemins, il ne vaut que pour ce dépôt.</p>
-<p><strong>CE QU&#039;IL RESTE À FAIRE, ET CE N&#039;EST PLUS UNE QUESTION :</strong> déplacer les sept règles ci-dessus vers <code>~/projects/conceptions/methode/</code>, les retirer des règles du dépôt, et laisser à leur place le<br />
-renvoi qui existe déjà vers la méthode commune. <strong>Migrer c&#039;est déplacer</strong> : pas une reformulation, pas un remaniement, les mêmes phrases à un autre endroit. Ce qui est propre à GateBeast et vit<br />
-aujourd&#039;hui dans une de ces règles — le nom des dossiers, le chiffre de la largeur, la liste des outils validés — reste ici, nommément.</p>
-<p><strong>Attention à l&#039;historique de l&#039;autre dépôt</strong> : la méthode commune est un dépôt distinct, et je n&#039;en gère pas les enregistrements. Le déplacement s&#039;y fait, l&#039;enregistrement s&#039;y demande à part.</p>
+<p><strong>RESTE À MONTER — 4 sur 7 :</strong></p>
+<ul>
+<li>Les clés des fichiers de données sont en anglais, valeurs et textes à l&#039;opérateur restant en français.</li>
+<li>Tout rapport destiné à être lu est en Markdown ; ce qui se relit par machine reste du JSON.</li>
+<li>Aucune écriture d&#039;historique sans ordre explicite, et jamais de mention d&#039;auteur nommant l&#039;agent.</li>
+<li>Une seule largeur de ligne, qui remplace et annule tout autre standard de longueur. <strong>Part propre : le chiffre, 200.</strong></li>
+</ul>
+<p><strong>CE QUI RESTE À GATEBEAST ET NE SE RECOPIE NULLE PART</strong> : la conduite entre l&#039;opérateur et l&#039;agent, la pile et le suivi, la rigueur de l&#039;agent, et le rangement des répertoires de travail — il nomme<br />
+des chemins, il ne vaut que pour ce dépôt.</p>
+<p><strong>ATTENTION À L&#039;HISTORIQUE DE L&#039;AUTRE DÉPÔT</strong> : la méthode commune est un dépôt distinct, dont l&#039;agent ne gère pas les enregistrements. Le déplacement s&#039;y fait, l&#039;enregistrement s&#039;y demande à part.</p>
 </div>
-    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-08</p>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">backlog-help</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">22</span></p>
+    <p class="point-tete"><span class="point-ref">backlog-help</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">16</span></p>
     <h2>backlog.php n&#039;a pas de sous-commande help, et une sous-commande inconnue tombe en erreur sèche</h2>
     <div class="point-corps"><p><strong>Ce qui est constaté</strong> : <code>php scripts/backlog.php help</code> tombe en <code>RuntimeException</code> — « help » n&#039;est pas une sous-commande. Toute sous-commande inconnue fait de même, et l&#039;appel sans argument<br />
 n&#039;affiche pas non plus l&#039;aide. Le bloc d&#039;usage en tête du fichier porte pourtant la liste complète des sous-commandes : l&#039;information existe, elle n&#039;est simplement pas atteignable depuis la ligne de<br />
@@ -495,7 +396,7 @@ qu&#039;elle fait. Les deux se traitent bien dans le même geste.</p>
     <p class="point-pied">Créé le 2026-08-09 · repris le 2026-08-09</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">sondes-servies</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">23</span></p>
+    <p class="point-tete"><span class="point-ref">sondes-servies</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">17</span></p>
     <h2>Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script</h2>
     <div class="point-corps"><p><strong>CE QUI EST CONSTATÉ, LE 2026-08-09</strong> : <code>php local/scripts/probe-fsp.php &lt;CODE&gt;</code> construit sa page sous <code>var/tmp/</code> et l&#039;ouvre en <code>file://</code>. Depuis que le style et le script de la page des sprites<br />
 vivent dans leurs propres fichiers, atteints par un chemin absolu, cette page sort <strong>nue</strong> : ni style, ni script. La sonde montre donc une page qui ne ressemble à rien de ce que l&#039;opérateur voit.</p>
@@ -511,7 +412,7 @@ contrôler, et c&#039;est la famille de défauts que ce dépôt paie le plus che
     <p class="point-pied">Créé le 2026-08-09 · repris le 2026-08-09</p>
   </article>
   <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">hauteur-monde</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">24</span></p>
+    <p class="point-tete"><span class="point-ref">hauteur-monde</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">18</span></p>
     <h2>La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</h2>
     <div class="point-corps"><p><strong>ÉCARTÉ EXPRESSÉMENT PAR L&#039;OPÉRATEUR LE 2026-08-10</strong> — « y&#039;a peut-être un truc à faire mais c&#039;est hors sujet ici » —, donc inscrit pour ne pas se perdre, et <strong>pas à traiter tant qu&#039;il ne le<br />
 demande pas</strong>.</p>
@@ -527,26 +428,7 @@ image fausse ; il est qu&#039;un lecteur la confonde de nouveau avec une mesure 
     <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-10</p>
   </article>
   <article class="point" data-statut="pending-decision">
-    <p class="point-tete"><span class="point-ref">essai-classement</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : la façon d&#039;éprouver l&#039;affichage sans fausser une remarque de l&#039;opérateur</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">25</span></p>
-    <h2>Comment éprouver l&#039;affichage d&#039;une remarque classée sans fausser une remarque de l&#039;opérateur</h2>
-    <div class="point-corps"><p><strong>CE QUI BLOQUE <code>W16 remarque-disparait</code>, ET RIEN D&#039;AUTRE.</strong> Toute la mécanique du classement est prouvée en ligne de commande ; il reste à <strong>regarder</strong> une remarque classée s&#039;afficher barrée et<br />
-grisée dans la page. Or il n&#039;existe aucune remarque classée : les trois remarques en attente sont celles de l&#039;opérateur sur <code>BT-001</code>, et en classer une revient à écrire sur sa parole un traitement<br />
-qui n&#039;a pas eu lieu.</p>
-<p><strong>LES TROIS FAÇONS D&#039;EN SORTIR :</strong></p>
-<ul>
-<li><strong>A — classer puis rouvrir.</strong> <code>handle</code> avec la raison « essai d&#039;affichage », tir d&#039;écran, puis <code>reopen</code>. C&#039;est exactement ce pour quoi <code>reopen</code> existe, et l&#039;essai dure une minute. Coût : la<br />
-  remarque de l&#039;opérateur porte un moment une trace d&#039;un classement qui n&#039;en était pas un.</li>
-<li><strong>B — attendre un classement réel.</strong> Rien n&#039;est touché, mais <code>W16</code> reste ouvert sans échéance, et l&#039;affichage restera non éprouvé aussi longtemps.</li>
-<li><strong>C — l&#039;opérateur dit laquelle des trois est réellement traitée</strong>, avec sa raison ; elle se classe pour de vrai et l&#039;affichage s&#039;éprouve dans la foulée.</li>
-</ul>
-<p><strong>RECOMMANDATION : A.</strong></p>
-<p><strong>CE QUI NE MARCHERAIT PAS, ET POURQUOI ON NE LE PROPOSE PAS</strong> : fabriquer une fausse remarque à côté, sur un chemin d&#039;image quelconque. La commande refuse un chemin qu&#039;aucune remarque ne concerne<br />
-— délibérément, pour ne pas inventer d&#039;entrée —, et contourner ce refus reviendrait à éprouver l&#039;affichage sur une donnée que le reste de la chaîne rejette.</p>
-</div>
-    <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-10</p>
-  </article>
-  <article class="point" data-statut="pending-decision">
-    <p class="point-tete"><span class="point-ref">stop-mi-tour</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : l&#039;arbitrage sur le désarmement quand le STOP n&#039;atteint aucun hook</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">26</span></p>
+    <p class="point-tete"><span class="point-ref">stop-mi-tour</span><span class="point-statut">À trancher — attend une décision de l&#039;opérateur : l&#039;arbitrage sur le désarmement quand le STOP n&#039;atteint aucun hook</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">19</span></p>
     <h2>Un STOP glissé en cours de tour n&#039;atteint aucun hook : la garde grogne, ou l&#039;agent désarme</h2>
     <div class="point-corps"><p><strong>CE QUI BLOQUE <code>W19 stop-priorite</code>, ET C&#039;EST TOUT CE QUI LUI RESTE.</strong> Les trois défauts réels sont corrigés, la mesure est faite en conditions réelles avec le mot de sonde <code>PING</code>, et elle conclut :<br />
 <strong>un message glissé pendant que l&#039;agent travaille n&#039;atteint ni le hook du prompt ni le transcrit que lit le hook de fin de tour.</strong> Seul l&#039;agent le reçoit. Ce n&#039;est pas un défaut de code, c&#039;est une<br />
@@ -1183,6 +1065,49 @@ ne correspondait plus à son plan.</p>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
   </article>
   <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">rune-forme</span><span class="point-statut">Fait — le travail est allé au bout : ce que le point visait, l&#039;arche etant confirmee bonne</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>Si l&#039;arche etait bonne, qu&#039;est-ce qui doit changer sur la rune de la creature</h2>
+    <div class="point-corps"><p><strong>CE QUI BLOQUE <code>S53 rune-creature</code>.</strong> Son libellé dit « la rune de la créature doit être une demi-lune comme sur la référence DA ». L&#039;opérateur, le 2026-08-11 : <strong>« arche, c&#039;était bien »</strong>. La<br />
+prémisse du point est donc démentie, et rien ne dit ce qui reste à changer.</p>
+<p><strong>CE QUI EST ÉTABLI, ET QUI NE SE REDEMANDE PAS :</strong></p>
+<ul>
+<li>La fiche de <code>SP-001</code> déclare une rune en <strong>arche</strong> — « un arc simple », turquoise, au milieu du front (<code>creatures-temoins.md</code>).</li>
+<li>L&#039;image <code>SP-001-1.png</code> porte bien cette arche : un arc simple ouvert vers le bas, en un seul trait, sans fermeture. <strong>Ce n&#039;est pas une demi-lune</strong>, qui serait fermée par sa corde.</li>
+<li>L&#039;opérateur confirme que cette forme convient. J&#039;avais commencé à corriger la fiche en « demi-lune » sur la foi du libellé du point ; <strong>corrigé et annulé dans la foulée</strong>, la fiche est intacte.</li>
+</ul>
+<p><strong>CE QUI RESTE INCONNU</strong> : ce que le point visait réellement. Trois lectures possibles, et elles n&#039;appellent pas le même travail —</p>
+<ul>
+<li><strong>A</strong> — la rune d&#039;une <strong>autre</strong> créature que <code>SP-001</code> doit devenir une demi-lune, et le libellé nomme la mauvaise.</li>
+<li><strong>B</strong> — la forme convient, et il ne reste que la seconde moitié du point : <strong>les variants de posture</strong> de la créature.</li>
+<li><strong>C</strong> — le point est caduc en entier et se ferme.</li>
+</ul>
+<p><strong>RECOMMANDATION : B</strong>, parce que c&#039;est la seule moitié du libellé que rien n&#039;a démentie. Mais je ne la prends pas sans réponse : <code>B</code> engage des générations d&#039;images, et <code>A</code> en engagerait sur un<br />
+sujet que je ne saurais pas nommer.</p>
+<p><strong>NOTE SUR LA RÉFÉRENCE DA</strong> : le libellé cite « la référence DA » sans dire laquelle. Aucun fichier de ce nom n&#039;a été retrouvé en la cherchant depuis le point ; si la réponse est <code>A</code>, il faudra<br />
+qu&#039;elle nomme l&#039;image.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Repondu par l&#039;operateur : la forme etait bonne, le defaut est que la rune n&#039;etait pas portee sur les generations neuves.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">tir-pont-ns</span><span class="point-statut">Fait — le travail est allé au bout : l&#039;accord pour la depense d&#039;une generation</span><span class="point-prio">priorité 2</span><span class="point-attend">attend : agent</span></p>
+    <h2>Tirer CH-021 shape-ns, la consigne du pont etant corrigee</h2>
+    <div class="point-corps"><p><strong>LE DIAGNOSTIC EST FAIT ET LA CONSIGNE EST CORRIGÉE</strong> — tout est au point <code>S54 pont-ns</code>, qui n&#039;attend plus que ce tir. En deux mots : la version livrée est le pont est-ouest tourné d&#039;un quart de<br />
+tour, son arche se présentant de face alors qu&#039;un tablier nord-sud s&#039;éloigne de la caméra et se regarde par-dessus. La fiche énonce désormais les deux vues et refuse explicitement l&#039;ouverture<br />
+d&#039;arche visible sur un pont nord-sud.</p>
+<p><strong>CE QUI SE DÉCIDE ICI, ET RIEN D&#039;AUTRE : LA DÉPENSE.</strong> Une génération se soumet, et une relance sur un sujet déjà tiré demande l&#039;accord de l&#039;opérateur.</p>
+<ul>
+<li><strong>A</strong> — Tirer <code>CH-021 shape-ns</code> seul. Une génération, deux minutes, et la maquette a son pont juste.</li>
+<li><strong>B</strong> — Attendre et le joindre à un lot plus large, quand d&#039;autres tirs seront décidés. Une seule montée en route pour plusieurs sujets, mais la maquette garde son pont faux en attendant.</li>
+<li><strong>C</strong> — Ne pas tirer : la forme est-ouest suffit aux compositions actuelles, et le nord-sud attend qu&#039;une scène l&#039;emploie.</li>
+</ul>
+<p><strong>RECOMMANDATION : A.</strong> Le défaut se voit dans la maquette, la cause est corrigée, et une pièce de tracé fausse se répète partout où la branche passe.</p>
+<p><strong>CE QUI NE SE REDEMANDE PAS</strong> : la forme est-ouest est juste et ne se retouche pas.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Question qui n&#039;avait pas lieu d&#039;etre : il etait deja decide que la consigne se corrige et que la sprite se regenere, sans redemander. La generation est lancee.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-11 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">le-centre-de-soin</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
     <h2>Le centre de soin (CDS) : descriptions à corriger, puis regénération en PA60</h2>
     <div class="point-corps"><p>La projection parallèle à 60 degrés de plongée (PA60) est désormais la valeur du projet, appliquée partout — y compris dans les deux phrases envoyées au générateur.</p>
@@ -1311,6 +1236,26 @@ légitimement rendre la main, et il faut qu&#039;il soit distinguable d&#039;une
 statuts sont définis, et tout ce qui aura à trier des points la lira au même endroit.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-08</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">pieces-plates-96</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
+    <h2>Refaire les huit pièces plates livrées en 96 x 96, la case en demande 96 x 84</h2>
+    <div class="point-corps"><p>Les pièces plates de chemin et de cours d&#039;eau étaient livrées sur une toile carrée alors que la case projetée fait <code>1 TX</code> sur <code>1 TY</code>.</p>
+<p>## SIX PIÈCES SONT RATTRAPÉES, SANS UNE SEULE GÉNÉRATION (2026-08-11)</p>
+<p><strong><code>CH-019</code> formes <code>n</code>, <code>e</code>, <code>w</code> et <code>CH-020</code> formes <code>ne</code>, <code>nw</code>, <code>w</code></strong> avaient toute leur encre dans le <code>1 TY</code> du haut : leur toile est simplement coupée à la case, et elles reviennent conformes.<br />
+Recadrées par <code>python3 local/scripts/crop-flat-pieces-to-tile.py --write</code>, inscrites une à une par <code>record-asset.py</code>, chacune en version neuve — <strong>rien n&#039;est écrasé</strong>, les versions carrées restent<br />
+sur le disque et passent en antérieures.</p>
+<p><strong>LE RECADRAGE SE REFUSE DÈS QU&#039;IL COUPERAIT DE L&#039;ENCRE</strong> : le script relève la limite basse du dessin et lève si elle descend sous la case. C&#039;est ce qui distingue une pièce rattrapable d&#039;une pièce<br />
+à redessiner, et ça ne repose pas sur la liste mais sur la mesure.</p>
+<p><strong>RÉGRESSION TROUVÉE ET CORRIGÉE EN CHEMIN</strong> : <code>record-asset.py</code> appelait l&#039;export sans la ref du variant, et l&#039;export la réclame depuis que la fourchette de hauteur vit au variant. La chaîne<br />
+d&#039;inscription était donc cassée depuis ce matin, sans que rien ne l&#039;ait montré — le premier appel réel l&#039;a fait tomber.</p>
+<p>## CE QUI RESTE, ET CE SONT DES RÉSEAUX</p>
+<p><strong>Cinq pièces débordent la case et demandent un dessin neuf</strong> : <code>CH-019 nesw</code> et <code>s</code>, <code>CH-020 n</code>, <code>s</code> et <code>es</code>. <strong>Ce sont des réseaux, et les réseaux ne se font pas maintenant</strong> (opérateur, deux fois<br />
+le 2026-08-10). La décision porte sur le sujet, pas sur le motif : refaire une pièce de tracé est une génération de tracé. <strong>Ne pas les reproposer.</strong></p>
+<p>Hors réseau, il ne reste plus que <code>BT-002 p2</code>, qui attend un écartement et non un dessin.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Les six pieces rattrapables sont recadrees et inscrites, sans generation. Les cinq restantes debordent la case et sont des reseaux, qui ne se font pas maintenant.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
   </article>
   <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">variant-au-plan</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 3</span><span class="point-attend">attend : agent</span></p>
@@ -1465,6 +1410,116 @@ pièces.</p>
     <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-07</p>
   </article>
   <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">commentaires-anglais</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span></p>
+    <h2>Les commentaires français du code antérieur, à repasser en anglais au fil de l&#039;eau</h2>
+    <div class="point-corps"><p>Les commentaires français du code antérieur, à repasser en anglais au fil de l&#039;eau.</p>
+<p>## FERMÉ LE 2026-08-11 : CE POINT N&#039;EST PAS UNE TÂCHE, C&#039;EST UNE PRATIQUE, ET ELLE EST ÉCRITE</p>
+<p><strong>Un point qui se fait « au fil de l&#039;eau » n&#039;est jamais fini</strong>, donc il ne se ferme jamais et il occupe une place dans la pile en permanence sans que rien n&#039;y avance. Ce qu&#039;il porte est une règle de<br />
+conduite, et une règle vit dans les règles.</p>
+<p><strong>LA RÈGLE EXISTE, MOT POUR MOT, AUX RÈGLES DU DÉPÔT</strong> : « un commentaire de code est en anglais américain, partout — pas seulement sous <code>scripts/</code> […] L&#039;existant qu&#039;on ne touche pas est toléré ; ce<br />
+qu&#039;on écrit ou modifie, jamais » (opérateur, 2026-08-08). Elle dit exactement ce que ce point demandait, et elle s&#039;applique à chaque fichier rouvert sans qu&#039;il faille un point pour s&#039;en souvenir.</p>
+<p><strong>LA FAÇON DE FAIRE, ÉPROUVÉE, RESTE CELLE-CI</strong> : le commentaire passe en anglais, et <strong>la parole de l&#039;opérateur reste citée en français entre guillemets</strong>, avec sa date. Le code parle anglais, la<br />
+source garde sa langue.</p>
+<p><strong>CE QUI EST FAIT DEPUIS L&#039;OUVERTURE DU POINT</strong> : la commande du backlog et son service, les noms de classes de la page des sprites, et <strong>les clés du référentiel des sujets, qui sont passées à<br />
+l&#039;anglais</strong> — c&#039;était la réserve nommée en fin de ce point, elle n&#039;a plus lieu d&#039;être.</p>
+<p><strong>CE QUI RESTE, ET QUI A SON PROPRE POINT</strong> : les noms de fichiers français, que <code>check-code-language.py</code> signale désormais — <code>S59 noms-scripts-fr</code>. C&#039;est un chantier distinct : renommer touche les<br />
+citations, traduire un commentaire non.</p>
+<p><strong>Fermé le 2026-08-11</strong> — La regle est ecrite aux regles du depot et s&#039;applique a chaque fichier rouvert : un point qui se fait au fil de l&#039;eau n&#039;est jamais fini et n&#039;a pas sa place dans la pile.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">largeur-du-suivi</span><span class="point-statut">Fait — le travail est allé au bout : l&#039;elagage du suivi : retirer ce que la pile porte desormais, puis replier ce qui reste, d&#039;un seul geste</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span></p>
+    <h2>Le suivi enfreint lui-même le standard de largeur</h2>
+    <div class="point-corps"><p><strong>Le contrôle relève 108 écarts dans le document de suivi au 2026-08-07</strong> : des lignes de 200 à 1 080 caractères, et cinq paragraphes repliés trop court. <strong>Aucun n&#039;est de ce jour</strong> — tout ce qui a été écrit aujourd&#039;hui passe le contrôle.</p>
+<p><strong>Ce qui a changé la nature du point</strong> : les points ouverts ont quitté ce document le 2026-08-07 pour un fichier de données et une page. Une grande partie de ce que le document porte encore est donc <strong>de l&#039;histoire figée</strong> — l&#039;ancien tableau des points, des sections de séances passées, des analyses closes. Replier ligne par ligne un texte dont la moitié est destinée à disparaître serait du travail perdu deux fois.</p>
+<p><strong>La bonne façon de le refermer n&#039;est donc pas de replier, c&#039;est d&#039;élaguer</strong> : retirer ce que le backlog porte désormais, garder les constats, les décisions et leurs raisons, et replier ce qui reste. Ça se fait d&#039;un seul geste, quand le document sera relu à froid — pas en corrigeant 108 lignes une par une.</p>
+<p><strong>Statut : bloqué au sens propre</strong>, comme les commentaires français — pas par une décision de l&#039;opérateur, mais parce que la seule façon correcte de le faire dépend d&#039;un élagage qui n&#039;a pas encore eu lieu. La règle du dépôt le dit déjà : correction au fil de l&#039;eau, à mesure qu&#039;une section est retouchée.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Elague le 2026-08-11 : les douze sections de seance sont retirees, seul l&#039;etat courant reste, et le document passe le controle de largeur. Rien n&#039;est perdu, l&#039;historique git porte le reste.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-07 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">regle-commit-seance</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span></p>
+    <h2>Écrire à la méthode commune : le commit se fait en fin de séance, jamais à la reprise</h2>
+    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08 : « tu dois commit à la fin d&#039;une session, pas au début, sinon tu ne sais plus ce qui a été fait ».</strong> À écrire à la méthode commune, protocole de<br />
+collaboration, avec son intention.</p>
+<p><strong>L&#039;intention</strong> : à la fin d&#039;une séance, l&#039;agent a encore en tête ce qu&#039;il vient de faire, et le message du commit peut le dire fidèlement. À la reprise, ce contexte est perdu : le message se rédige<br />
+d&#039;après les fichiers modifiés, ce qui donne une liste et non un récit, et ce qui a été tenté puis abandonné n&#039;y figure plus du tout.</p>
+<p><strong>C&#039;EST UNE RÈGLE DE PRATIQUE, PAS UNE INTERDICTION — précisé par l&#039;opérateur le 2026-08-08, et il a fallu qu&#039;il le redise.</strong> Elle dit *quand* commiter au mieux, elle n&#039;interdit rien : <strong>ce qui n&#039;a<br />
+pas été commité en fin de séance se commite forcément à la suivante</strong>, et il n&#039;y a là aucune contradiction à arbitrer. J&#039;y ai vu un conflit entre son ordre et sa règle et je l&#039;ai fait trancher pour<br />
+rien — une règle de pratique ne s&#039;oppose jamais à un ordre, elle dit comment bien faire quand rien ne s&#039;y oppose.</p>
+<p><strong>Ce que ça impose concrètement</strong> : l&#039;agent propose le commit <strong>avant de clore sa séance</strong>. S&#039;il ne l&#039;a pas fait, il le fait à la reprise, sans demander, en disant simplement que le message a été<br />
+reconstitué d&#039;après les fichiers.</p>
+<p><strong>Appliqué le 2026-08-08</strong> : le travail de la veille est commité sous « Les descriptions sortent du document, la pile devient une donnée, et deux journées de sprites entrent dans l&#039;historique », dont<br />
+le message porte cette mention en dernière ligne.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Ecrite a la methode commune, collaboration.md, avec sa nuance : c&#039;est une regle de pratique, elle n&#039;interdit rien et ne s&#039;oppose jamais a un ordre.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">noms-des-composants</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span></p>
+    <h2>Écrire la règle : tout composant porte un nom, standard, anglais, et inscrit au glossaire</h2>
+    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « donne toujours des noms à tes composants (cohérent et standard) et je dois pouvoir savoir quel nom ça a » ; puis, quand j&#039;ai baptisé<br />
+le panneau latéral « tiroir » : « un nom technique est en anglais et reste en anglais, même en FR. La description peut dire tiroir pour la compréhension ».</p>
+<p><strong>CE QUE ÇA DIT, ET IL FAUT L&#039;ÉCRIRE QUELQUE PART :</strong></p>
+<ul>
+<li><strong>Tout composant d&#039;interface porte un nom</strong>, choisi dans le vocabulaire standard du métier plutôt qu&#039;inventé : un panneau latéral qui s&#039;ouvre sur un bord est un <code>drawer</code>, pas un « panneau de<br />
+  droite ». Un composant sans nom se redésigne à chaque phrase, et deux personnes n&#039;en parlent jamais pareil.</li>
+<li><strong>Le nom technique est en anglais et le reste, même en français.</strong> Il ne se traduit ni dans le code, ni dans une conversation, ni dans un document : c&#039;est le même mot partout. Le français sert à<br />
+  l&#039;expliquer — « le <code>drawer</code>, ce tiroir accolé au bord droit » —, jamais à le remplacer.</li>
+<li><strong>L&#039;opérateur doit pouvoir retrouver le nom sans lire le code</strong> : chaque composant nommé s&#039;inscrit au glossaire, avec ce qu&#039;il fait et comment il se ferme.</li>
+</ul>
+<p><strong>FAIT LE JOUR MÊME, ET C&#039;EST L&#039;EXEMPLE</strong> : le panneau qui porte la consigne d&#039;une version s&#039;appelle <code>drawer</code> — classes, identifiants et fonctions —, et il est inscrit au glossaire à côté de la <code>FSP</code>.<br />
+J&#039;avais d&#039;abord écrit <code>tiroir</code>, <code>ouvrirTiroir</code> et <code>fermerTiroir</code> : du français dans du code, ce que la règle du dépôt interdisait déjà.</p>
+<p><strong>OÙ L&#039;ÉCRIRE</strong> : à la méthode commune, avec les autres règles d&#039;écriture — elle ne doit rien à GateBeast. La règle du dépôt dit déjà que le code est en anglais ; ce qu&#039;elle ne disait pas, c&#039;est que<br />
+le nom d&#039;un composant en fait partie et qu&#039;il ne se traduit pas en parlant.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Ecrite a la methode commune, execution.md : tout composant porte un nom du vocabulaire standard, en anglais, qui ne se traduit pas en parlant, et qui s&#039;inscrit au glossaire.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">regle-ordre-depilage</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span></p>
+    <h2>Écrire la règle : un point engagé passe devant, et un gros point se découpe</h2>
+    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08</strong> : « ce qui est déjà in-progress est la prio ! Sauf si c&#039;est bloqué par un todo (mais là ça doit revenir en todo ou pending dependency) ».</p>
+<p><strong>L&#039;INTENTION</strong> : un point engagé porte un contexte que personne d&#039;autre n&#039;a — une page à moitié refaite, une décision à moitié appliquée —, et c&#039;est exactement ce qu&#039;un arrêt jette. Prendre un point<br />
+plus prioritaire par-dessus ne gagne pas une journée, elle perd celle qui est déjà dépensée.</p>
+<p><strong>CE QUE ÇA IMPOSE</strong> :</p>
+<ul>
+<li><strong>L&#039;ordre de dépilement met les points engagés en tête</strong>, quelle que soit leur priorité, et la priorité ne départage que le reste.</li>
+<li><strong>Un point qui ne peut pas avancer n&#039;est pas engagé.</strong> S&#039;il attend un autre point, il repasse en <code>todo</code> ou en <code>pending-dependency</code> avec l&#039;attendu nommé. Laisser « en cours » un point qui n&#039;avance<br />
+  pas est ce qui a fait paraître quatre chantiers ouverts alors qu&#039;aucun ne bougeait.</li>
+<li><strong>Corollaire, et l&#039;opérateur l&#039;a dit dans le même souffle</strong> : un point trop gros bloque trop de choses. Mieux vaut plusieurs petits points qu&#039;un seul qui en porte trois — le point « Page des<br />
+  sprites » en portait trois et restait ouvert alors que deux de ses trois sujets étaient faits.</li>
+</ul>
+<p><strong>FAIT LE JOUR MÊME</strong> : le service qui range la pile met les points engagés devant, et le point « Page des sprites » a été découpé en trois.</p>
+<p><strong>OÙ L&#039;ÉCRIRE</strong> : à la méthode commune, avec les règles de conduite — l&#039;ordre de dépilement ne doit rien à GateBeast.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Ecrite a la methode commune, execution.md : un point engage passe devant, un point qui n&#039;avance pas repasse en attente avec son attendu nomme, et un point trop gros se decoupe avant d&#039;etre pris.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">regle-constantes</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 7</span><span class="point-attend">attend : agent</span></p>
+    <h2>Écrire la règle : des constantes préfixées, jamais de littéral recopié</h2>
+    <div class="point-corps"><p><strong>RÈGLE DONNÉE PAR L&#039;OPÉRATEUR, 2026-08-08, en deux temps</strong> : « utilise des constantes ou des constantes de classes, autant que tu peux ! Règle de code » ; puis « les constantes doivent être<br />
+préfixées ».</p>
+<p><strong>CE QUE ÇA DIT</strong> :</p>
+<ul>
+<li><strong>Toute valeur que le code compare ou range s&#039;écrit une fois, en constante</strong>, et se cite par elle partout ailleurs. Un littéral recopié ne se renomme pas, ne se retrouve pas, et une faute de frappe<br />
+  dans l&#039;une de ses copies ne lève rien : elle ne correspond simplement à rien. C&#039;est exactement ainsi qu&#039;un garde-fou en est venu à tester une référence qui n&#039;existait plus.</li>
+<li><strong>Une constante porte le préfixe de sa famille</strong> : <code>STATUS_TODO</code>, <code>STATUS_DONE</code>, <code>WAITING_AGENT</code>, <code>SERIES_QUESTION</code>. Sans préfixe, <code>TODO</code> et <code>AGENT</code> ne disent pas de quoi ils sont une valeur, et<br />
+  deux familles finissent par se disputer le même mot.</li>
+</ul>
+<p><strong>FAIT LE JOUR MÊME</strong> : les sept statuts d&#039;un point, les deux côtés qui peuvent l&#039;attendre et la lettre de la série des questions sont des constantes de classe préfixées ; la commande du backlog et<br />
+le constructeur de la page des sujets ne portent plus un seul littéral de statut.</p>
+<p><strong>CE QUI RESTE, ET SE FAIT AU FIL DE L&#039;EAU</strong> : les mêmes littéraux ailleurs — les verdicts d&#039;une image (<code>validee</code>, <code>a-reprendre</code>, <code>ecartee</code>), les actes de revue (<code>valider</code>, <code>reprendre</code>, <code>ecarter</code>),<br />
+les types de représentation, les noms de calques. Chacun est une famille qui mérite ses constantes préfixées.</p>
+<p><strong>OÙ L&#039;ÉCRIRE</strong> : à la méthode commune, avec les règles d&#039;écriture du code — elle ne doit rien à GateBeast.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Ecrite a la methode commune, execution.md : une valeur comparee s&#039;ecrit une fois en constante, prefixee du nom de sa famille, et un litteral recopie ne leve rien quand il est faux.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-08 · repris le 2026-08-11</p>
+  </article>
+  <article class="point" data-statut="done">
     <p class="point-tete"><span class="point-ref">une-page-archivee-ne</span><span class="point-statut">Fait — le travail est allé au bout</span><span class="point-prio">priorité 8</span><span class="point-attend">attend : agent</span></p>
     <h2>Une page archivée ne se reconstruit plus</h2>
     <div class="point-corps"><p>Celle du parc a été reconstruite plusieurs fois alors qu&#039;archivé veut dire « plus maintenu ». Repris par l&#039;opérateur, arrêté. Gardé ouvert comme rappel.</p>
@@ -1537,6 +1592,26 @@ variant portera une fourchette écrite pour lui. Ce qui reste hors fourchette ap
 <p><strong>Fermé le 2026-08-10</strong> — Mis en place le 2026-08-10 : variant_band lit height_min et height_max au variant, master_band supprimée, les 69 variants portent leur fourchette — amorces à relire —, les 31 pièces d&#039;assemblage fixées à 0,875 case sans jeu, export-asset prend --variant, et les rustines de la journée sont défaites.</p>
 </div>
     <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-10</p>
+  </article>
+  <article class="point" data-statut="done">
+    <p class="point-tete"><span class="point-ref">essai-classement</span><span class="point-statut">Fait — le travail est allé au bout : la façon d&#039;éprouver l&#039;affichage sans fausser une remarque de l&#039;opérateur</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span></p>
+    <h2>Comment éprouver l&#039;affichage d&#039;une remarque classée sans fausser une remarque de l&#039;opérateur</h2>
+    <div class="point-corps"><p><strong>CE QUI BLOQUE <code>W16 remarque-disparait</code>, ET RIEN D&#039;AUTRE.</strong> Toute la mécanique du classement est prouvée en ligne de commande ; il reste à <strong>regarder</strong> une remarque classée s&#039;afficher barrée et<br />
+grisée dans la page. Or il n&#039;existe aucune remarque classée : les trois remarques en attente sont celles de l&#039;opérateur sur <code>BT-001</code>, et en classer une revient à écrire sur sa parole un traitement<br />
+qui n&#039;a pas eu lieu.</p>
+<p><strong>LES TROIS FAÇONS D&#039;EN SORTIR :</strong></p>
+<ul>
+<li><strong>A — classer puis rouvrir.</strong> <code>handle</code> avec la raison « essai d&#039;affichage », tir d&#039;écran, puis <code>reopen</code>. C&#039;est exactement ce pour quoi <code>reopen</code> existe, et l&#039;essai dure une minute. Coût : la<br />
+  remarque de l&#039;opérateur porte un moment une trace d&#039;un classement qui n&#039;en était pas un.</li>
+<li><strong>B — attendre un classement réel.</strong> Rien n&#039;est touché, mais <code>W16</code> reste ouvert sans échéance, et l&#039;affichage restera non éprouvé aussi longtemps.</li>
+<li><strong>C — l&#039;opérateur dit laquelle des trois est réellement traitée</strong>, avec sa raison ; elle se classe pour de vrai et l&#039;affichage s&#039;éprouve dans la foulée.</li>
+</ul>
+<p><strong>RECOMMANDATION : A.</strong></p>
+<p><strong>CE QUI NE MARCHERAIT PAS, ET POURQUOI ON NE LE PROPOSE PAS</strong> : fabriquer une fausse remarque à côté, sur un chemin d&#039;image quelconque. La commande refuse un chemin qu&#039;aucune remarque ne concerne<br />
+— délibérément, pour ne pas inventer d&#039;entrée —, et contourner ce refus reviendrait à éprouver l&#039;affichage sur une donnée que le reste de la chaîne rejette.</p>
+<p><strong>Fermé le 2026-08-11</strong> — Question sans objet : l&#039;operateur a rappele qu&#039;une remarque traitee n&#039;est plus affichee du tout, pas affichee barree. Il n&#039;y avait donc aucun rendu a eprouver.</p>
+</div>
+    <p class="point-pied">Créé le 2026-08-10 · repris le 2026-08-11</p>
   </article>
 
   </details>

@@ -77,10 +77,24 @@ if ($command === 'next') {
 if ($command === 'list') {
     $withClosed = in_array('--all', $argv, true);
     $points = $backlog->ordered(!$withClosed);
-    foreach ($points as $point) {
+    // UN POINT « PROPOSÉ » N'EST PAS ACTIF, ET IL SORT DE LA LISTE DE TRAVAIL (opérateur, 2026-08-11). Il attend d'être validé ou classé : le mêler aux points dus
+    // le fait compter comme du travail en cours, et sa priorité le pousse parfois en tête d'une pile où il n'a rien à faire. Il vit donc à part, après les autres,
+    // sous son propre titre — visible, puisqu'il attend une réponse, mais jamais confondu avec ce qui est engagé.
+    $active = array_values(array_filter($points, static fn (array $point): bool => $point['status'] !== Backlog::STATUS_PROPOSED));
+    $proposed = array_values(array_filter($points, static fn (array $point): bool => $point['status'] === Backlog::STATUS_PROPOSED));
+
+    foreach ($active as $point) {
         echo line($point) . "\n";
     }
-    printf("\n%d point(s)%s.\n", count($points), $withClosed ? '' : ' ouverts');
+    printf("\n%d point(s)%s.\n", count($active), $withClosed ? '' : ' ouverts');
+
+    if ($proposed !== []) {
+        printf("\nPROPOSÉS — ils attendent d'être validés ou classés, et ne sont pas du travail en cours\n");
+        foreach ($proposed as $point) {
+            echo line($point) . "\n";
+        }
+        printf("\n%d point(s) proposé(s).\n", count($proposed));
+    }
     exit(0);
 }
 

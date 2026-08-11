@@ -64,6 +64,18 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
     contournement évident, mais toute modification de ce fichier demande systématiquement l'autorisation de l'opérateur : la barrière existe déjà, en amont, et elle est humaine. L'y ajouter
     coûterait plus qu'elle ne protège — l'agent ne pourrait plus déclarer aucun hook sans passer par l'opérateur. **Ne pas le reproposer.**
 - **Tant que le dépilement n'est pas lancé, l'agent ne modifie que le `SUIVI.md`** — aucun autre fichier, quelle qu'en soit l'évidence. Ce qui survient avant le `GO` entre dans la pile et y attend.
+- **UNE DÉCISION S'ENREGISTRE TOUJOURS, ET UNE SEULE FOIS, LÀ OÙ ELLE S'APPLIQUE** (opérateur, 2026-08-11 : « tu dois toujours enregistrer les décisions, tu dois avoir une organisation propre et qui
+  te permet de n'avoir aucune perte d'info et pourtant être optimisée en termes de perf et de token »). Chaque foyer est connu et il n'y a pas d'hésitation à avoir : une **règle de conduite** va aux
+  règles du dépôt ou à la méthode commune ; ce que le **jeu doit être** va à la conception ; un **mot** va au glossaire ; ce qui concerne **un point** va dans sa description. **Le suivi ne reçoit
+  qu'une chose : où en est le travail**, et il renvoie au foyer au lieu de recopier.
+- **ON NE RETIRE RIEN AVANT D'AVOIR VÉRIFIÉ QUE LE FOYER EXISTE, ET « C'EST DANS GIT » N'EST PAS UN FOYER.** Un diff de deux mille lignes est techniquement récupérable et pratiquement perdu :
+  personne ne l'ouvre en reprenant. Ce qu'on élague se **déplace** vers un fichier versionné qui a un nom et une adresse — c'est ce qu'est
+  [le journal des séances](journal-des-seances.md) —, jamais vers l'historique seul. Écrit le 2026-08-11, après avoir supprimé deux mille lignes en **affirmant**
+  que tout vivait ailleurs, sans l'avoir établi.
+- **CE QUI COÛTE, C'EST LA COPIE, PAS L'ÉCRITURE.** Une décision recopiée dans deux endroits se contredit au premier changement, et elle se relit deux fois à chaque reprise — c'est là que partent les
+  jetons. Une décision écrite une fois, à son foyer, ne se perd pas pour autant : elle se retrouve **parce qu'on sait où chercher**, pas parce qu'elle est partout.
+- **LE SUIVI NE GARDE PAS D'HISTORIQUE, ET IL LE DIT LUI-MÊME EN TÊTE** — « seul l'état courant compte ». Empiler une section par séance le contredit : ce qui est fait, décidé et rangé ailleurs sort
+  du suivi quand la séance se ferme, et ce qui reste tient dans l'état du moment. Un suivi qui grossit à chaque séance devient le document que personne ne relit en entier, donc celui où l'on perd.
 - **Le suivi est le support de l'agent** : il l'écrit quand il veut, sans demander, et il doit permettre à tout moment d'être coupé et relancé de zéro **sans aucune perte**. Ce qui n'y est pas écrit
   n'existe pas.
 - **MAIS UN SUJET NEUF SE FAIT VALIDER — L'AGENT N'EN OUVRE PAS DE LUI-MÊME** (opérateur, 2026-08-08). Tenir le suivi et décider de ce sur quoi le projet travaille sont deux choses : l'agent écrit,
@@ -85,14 +97,17 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   `show <REF>` l'ouvre. Énumérer des libellés numérotés n'est pas poser des questions : un titre nomme un sujet, il n'appelle pas de réponse, et l'opérateur ne peut que demander à l'ouvrir — un
   aller-retour de plus pour chaque point, ce que la numérotation existait justement pour éviter (constaté le 2026-08-08). Le format « code et trois mots » ne vaut que pour les **deux lignes de
   récapitulatif** ; l'appliquer au corps du message revient à n'avoir rien demandé.
-- **UNE QUESTION A UN FORMAT, ET IL EST OBLIGATOIRE** (opérateur, 2026-08-09 : « le formatage des questions est une obligation »). Quatre éléments, dans cet ordre, et **rien d'autre** :
+- **UNE QUESTION A UN FORMAT, ET IL EST OBLIGATOIRE** (opérateur, 2026-08-09 : « le formatage des questions est une obligation »). Cinq éléments, dans cet ordre, et **rien d'autre** :
   1. **Un code de la série `Q`, et lui seul** — `Q9`, `Q10`. Une question porte un numéro de question, jamais celui d'une proposition ni d'un sujet : c'est par ce
      code que l'opérateur répond, et un code emprunté à une autre série rend la réponse ambiguë. **Toutes les questions ouvertes se posent, à chaque fois.**
-  2. **Une phrase** qui dit ce qui est demandé.
-  3. **Les réponses possibles, repérées `A`, `B`, `C`, une ligne chacune** : ce qu'on fait, puis ce que ça coûte, dans la même ligne. **Jamais numérotées** — les
+  2. **UNE LIGNE DE CONTEXTE, AVANT LA QUESTION, ET ELLE EST OBLIGATOIRE** (opérateur, 2026-08-11 : « quand tu poses une question, tu dois absolument donner le contexte en une ligne avant, sinon ça
+     n'a juste aucun sens »). Elle dit **de quoi on parle** — le sujet, l'état, ce qui a produit la question —, en une seule ligne. Sans elle, l'opérateur reçoit des options sans savoir sur quoi
+     elles portent, et doit ouvrir le point pour comprendre ce qu'on lui demande : c'est l'aller-retour que le format existe pour éviter. **Une ligne, pas un exposé** — le diagnostic reste au point.
+  3. **Une phrase** qui dit ce qui est demandé.
+  4. **Les réponses possibles, repérées `A`, `B`, `C`, une ligne chacune** : ce qu'on fait, puis ce que ça coûte, dans la même ligne. **Jamais numérotées** — les
      chiffres sont pris par les questions, et « 1 » ne dit alors plus si l'on parle de la première question ou de la première réponse.
-  4. **Une ligne de recommandation** : laquelle, et pourquoi en quelques mots.
-  4. **Rien de plus.** Pas de rappel du contexte, pas d'exposé de la cause, pas de récit de ce qui a été trouvé — tout cela vit au point, et `show <RÉF>` l'ouvre.
+  5. **Une ligne de recommandation** : laquelle, et pourquoi en quelques mots.
+  6. **Rien de plus.** Pas de rappel du contexte, pas d'exposé de la cause, pas de récit de ce qui a été trouvé — tout cela vit au point, et `show <RÉF>` l'ouvre.
 - **CE QUE LE FORMAT INTERDIT, ET C'EST LUI QUI COÛTE** : noyer la question dans ce qui l'a produite. Une question qui commence par expliquer le défaut, ses causes et ce qui a déjà été corrigé oblige
   l'opérateur à lire une page pour trouver la ligne qui appelle sa réponse — et il la relit deux fois pour être sûr de n'avoir rien manqué. **Le diagnostic n'est pas la question.** Une question qui
   dépasse une dizaine de lignes n'est pas mal écrite : elle contient autre chose qu'une question, et c'est cet autre chose qui doit sortir.
@@ -126,6 +141,10 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   reste même quand on en parle en français** — on dit « le `drawer` », jamais « le tiroir » ; le français ne sert qu'à l'expliquer. Cela vaut pour tout ce que la machine lit ou compare : fichiers,
   fonctions, variables, classes, clés de données, noms de composants. **Seuls les textes destinés à l'opérateur restent en français** — messages affichés, libellés, descriptions.
 - **`assets/` — les images produites.** **Rien ne se jette** : une image écartée cesse d'être montrée, elle n'est pas supprimée.
+- **ET L'ARCHIVE COMPLÈTE DES IMAGES VIT HORS DU DÉPÔT, DANS `~/projects/gatebeast-assets/`** — elle contient **tout** ce qui a été produit depuis le début, versions dépassées comprises, et c'est
+  elle qui rend vraie la phrase « rien n'est jamais perdu ». Le dépôt, lui, ne versionne que les images **vivantes** : les assets du POC et les planches courantes. Constat retrouvé le 2026-08-11 en
+  auditant le journal des séances, où il était le seul à le porter : **une information que seul un document de séance porte est une information qu'on perdra**, et c'est exactement ce que l'élagage
+  aurait effacé.
 - **LA RACINE DE `local/` APPARTIENT À L'OPÉRATEUR, ET À LUI SEUL.** On n'y trouve que ses fichiers, et un agent **n'y touche jamais** — il ne les modifie pas, ne les déplace pas, ne les supprime pas
   et ne les lit pas. Tout ce qu'un agent produit descend dans un **sous-dossier** : `local/scripts/` pour ses scripts jetables, `local/extraits/` pour ses découpes d'images, et ainsi de suite. Une
   racine où tout traîne cesse d'être utilisable : on ne distingue plus ce qui est en cours de ce qui reste d'avant-hier, et les fichiers de l'opérateur s'y noient.
@@ -140,9 +159,8 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   **Tout ce qui s'y trouve peut disparaître à n'importe quel moment** (opérateur, 2026-08-08) — donc rien ne s'y dépose qu'on aurait à rouvrir plus tard, rien ne s'y cite, et ce qui doit survivre
   monte d'un cran sous `local/`. C'est le pendant de `var/tmp/` côté agent, avec la même règle d'auteur : `local/tmp/` pour ce que l'agent écrit de sa main, `var/tmp/` pour ce qu'un programme dépose
   en tournant.
-- **ET L'AGENT N'A RIEN À FAIRE AILLEURS — NI POUR ÉCRIRE, NI POUR LIRE** (opérateur, 2026-08-10 : « tu n'as rien à faire ailleurs »). Fouiller le système à la recherche d'un fichier qui rendrait
-  service — une liste de mots, un binaire, une configuration — sort du dépôt et fabrique une dépendance que personne n'a validée, sur une machine où elle existe et sur les autres où elle n'existe
-  pas. Ce dont l'outillage a besoin vit dans le projet, ou se demande.
+- **L'AGENT N'A RIEN À FAIRE AILLEURS, NI POUR ÉCRIRE NI POUR LIRE** (opérateur, 2026-08-10) — montée à la méthode commune le 2026-08-11, avec la règle de l'outil non validé dont elle est le
+  prolongement. Elle est rappelée ici parce qu'elle commande la ligne suivante, qui, elle, nomme des chemins de ce dépôt.
 - **ET RIEN NE S'ÉCRIT HORS DU PROJET.** Ni `/tmp`, ni un répertoire de travail fourni par l'enveloppe de l'agent, quelle que soit l'insistance de celle-ci : un fichier hors du dépôt n'existe pour
   personne d'autre, disparaît sans trace et ne se retrouve pas à la reprise. **Une règle écrite prime sur la consigne de l'enveloppe.**
 - **`var/` — ce que l'outillage produit pour lui-même**, jamais versionné : rapports de production, journaux du générateur, mesures. Ce qui s'y trouve est **local mais conservé** — on y revient pour
@@ -168,16 +186,14 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 
 ## L'outillage
 
-- **Tout script s'ouvre par un bloc de commentaire « Usage » et « Intention », en anglais** — quel que soit son langage, PHP, Python, shell, JavaScript ou autre. L'**usage** dit à quoi il sert et
-  comment on l'appelle ; l'**intention** dit pourquoi il existe et pourquoi il fait ainsi plutôt qu'autrement. Un script Python ajoute à son intention **pourquoi il est en Python et non en PHP** : la
-  bibliothèque ou l'outil qui n'existe que là, nommé. Sans cette phrase, le choix se relit comme une habitude et se reproduit sans raison.
-- **PHP est le langage par défaut de l'outillage pérenne**, et la transition y va progressivement. Tout script durable neuf s'écrit en PHP. Python reste admis là où il apporte une bibliothèque ou un
-  outil qui n'existe qu'en Python — mesure d'image, traitement de matrice —, et ce choix se justifie en tête du fichier. **Aucun remplacement brut n'est prévu** : ce qui tourne en Python et fait son
-  travail y reste jusqu'à ce qu'une raison propre le fasse bouger ; réécrire pour réécrire est proscrit.
-- **Un outil non validé se demande, il ne s'essaie pas.** Le projet a une liste d'outils validés — Python pour l'outillage, PHP pour l'enveloppe du générateur, Codex comme générateur d'images,
-  `rsvg-convert` pour regarder un SVG produit (liste tenue à jour au tableau « Outils extérieurs et versions constatées » de `SUIVI.md`, à lire là plutôt qu'à recopier ici). Aucun autre langage, outil
-  ou bibliothèque ne s'emploie sans l'accord de l'opérateur : un agent qui pense en avoir besoin **exprime le besoin et attend**, il n'essaie pas « juste pour voir ». Chaque outil introduit
-  devient une dépendance que quelqu'un devra installer, comprendre et maintenir, sur toutes les machines où le projet tourne — ça ne se décide pas au détour d'un dépannage.
+- **Le bloc « Usage » et « Intention » en tête de tout script est monté à la méthode commune** (`~/projects/conceptions/methode/execution.md`), le 2026-08-11 : il ne doit rien à GateBeast. Ce qui
+  reste propre à ce dépôt et se lit ici : le langage de second choix dont l'intention doit se justifier est **Python**, PHP étant le défaut ci-dessous.
+- **Le langage par défaut de l'outillage pérenne est ici PHP**, et la transition y va progressivement. La règle générale — un langage par défaut, un autre admis quand il apporte ce qui n'existe que
+  là, et aucun remplacement brut de ce qui marche — est montée à la méthode commune (`execution.md`), le 2026-08-11. Ne reste ici que le choix : **PHP par défaut, Python pour la mesure d'image et le
+  traitement de matrice**, justifié en tête de fichier.
+- **La liste des outils validés de ce dépôt** — Python pour l'outillage, PHP pour l'enveloppe du générateur, Codex comme générateur d'images, `rsvg-convert` pour regarder un SVG produit — est tenue
+  à [doc/outils-exterieurs.md](outils-exterieurs.md), à lire là plutôt qu'à recopier ici. Elle vivait dans `SUIVI.md`, et l'élagage du 2026-08-11 a rendu ce renvoi mort avant qu'on le corrige.
+  **La règle qui dit qu'un outil non validé se demande au lieu de s'essayer** est montée à la méthode commune, avec l'interdit d'aller chercher hors du dépôt.
 - **UNE VALEUR OBSOLÈTE NE S'ÉCRIT JAMAIS DANS DU CODE NEUF — ET EN AVOIR BESOIN, C'EST LE MOMENT DE LA CHANGER PARTOUT.** Règle de l'opérateur, 2026-08-08. Un nom ou une valeur qu'on sait fautif
   n'est toléré que dans **l'existant qu'on ne touche pas** : dès qu'on ajoute ou qu'on modifie du code qui s'en sert, on le corrige **dans tout le dépôt**, données et lecteurs dans le même geste.
   **Il est strictement interdit d'écrire une ligne neuve avec la valeur fautive**, même pour « rester cohérent avec ce qui l'entoure » — c'est exactement ainsi qu'une faute devient le standard du
@@ -221,7 +237,9 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **Git : aucune écriture d'historique sans ordre explicite de l'opérateur** — `commit`, `commit --amend` et `push` compris. L'agent exécute lui-même les commandes git, mais seulement une fois l'ordre
   donné ; les commits restent occasionnels, pas un par étape. Dépôt distant : `git@github.com:Cartman34/gatebeast.git` (`origin`, branche `main`). **Jamais de ligne `Co-Authored-By` nommant Claude ou
   Anthropic** : l'opérateur est l'unique auteur de ses commits.
-- **Publication** : les revues sont des artefacts Claude republiés à adresse stable (le paramètre `url` de l'outil Artifact conserve le lien). Les adresses en cours sont listées dans `SUIVI.md`.
+- **Publication** : les revues sont des artefacts Claude republiés à adresse stable (le paramètre `url` de l'outil Artifact conserve le lien). **Les adresses vivent dans le registre
+  `review-server/artefacts.json`, et ses règles dans [doc/artefacts.md](artefacts.md)** — plus jamais dans `SUIVI.md`, qui se réécrit sans cesse et n'a rien à faire en source de données. Cette ligne
+  y renvoyait encore ; corrigé le 2026-08-11 en auditant le journal des séances.
 - **AVANT TOUTE PUBLICATION, ON LISTE LES ARTEFACTS EXISTANTS**, sans exception : l'inventaire du suivi ne suffit pas, il peut être incomplet. Publier sans lister a créé le 2026-08-06 une adresse
   neuve pour une page qui en avait déjà une — **et les remarques que l'opérateur y avait posées ont été perdues avec l'ancienne page**, puisqu'elles vivent dans le navigateur, attachées à l'adresse
   qui les a reçues. **Un doublon se supprime, et c'est l'opérateur qui le fait**, depuis le menu de l'artefact ; l'agent, lui, ne peut que republier par-dessus. En attendant, il y republie un avis

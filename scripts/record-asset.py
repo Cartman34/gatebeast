@@ -171,7 +171,9 @@ def main(arguments):
     ref = options.get("variant") or MAIN_VIEW_REF
     variant = record(data, code, options["type"], ref, options.get("name"), footprint, height)
 
-    sprite, measures = export_asset.export(source)
+    # The ref travels to the export because the height band lives on the VARIANT since 2026-08-10, and the export judges the image against it. Left out, the export
+    # refuses — rightly: a file name names the subject, never the variant, and two variants of one subject may legitimately come back at different heights.
+    sprite, measures = export_asset.export(source, variant_ref=ref)
     target = export_asset.destination(source)
     # THE THEME NEEDS NO BRANCHING HERE EITHER: both paths are read off the files themselves, so whatever subtree the theme put them under is what gets recorded. The referentiel therefore carries
     # the theme without ever naming it, which is what lets a second theme exist without rewriting a single recorded path.

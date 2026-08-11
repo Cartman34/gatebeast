@@ -17,6 +17,17 @@
             "discarded": false,
             "rework": true,
             "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne"
+        },
+        "cutout/sol/CH-021_shape-ns-v3.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true
+        },
+        "cutout/creature/SP-001.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Il manque sa rune"
         }
     }
 }

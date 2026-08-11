@@ -666,6 +666,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-n-v2.png",
+              "master": "poc/sol/CH-019_shape-n-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 16,
+                  "top": 0,
+                  "right": 79,
+                  "bottom": 75,
+                  "width": 64,
+                  "height": 76
+                },
+                "contact_px": {
+                  "left": 37,
+                  "right": 59,
+                  "width": 23
+                },
+                "anchor_px": {
+                  "x": 48.0,
+                  "y": 76.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-019_shape-n.png",
               "master": "poc/sol/CH-019_shape-n.png",
               "image_number": 1,
@@ -701,7 +740,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-n_frame-01",
@@ -1130,6 +1169,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-e-v2.png",
+              "master": "poc/sol/CH-019_shape-e-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 31,
+                  "top": 18,
+                  "right": 95,
+                  "bottom": 78,
+                  "width": 65,
+                  "height": 61
+                },
+                "contact_px": {
+                  "left": 41,
+                  "right": 95,
+                  "width": 55
+                },
+                "anchor_px": {
+                  "x": 68.0,
+                  "y": 79.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-019_shape-e.png",
               "master": "poc/sol/CH-019_shape-e.png",
               "image_number": 1,
@@ -1165,7 +1243,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-e_frame-01",
@@ -1230,6 +1308,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-019_shape-w-v2.png",
+              "master": "poc/sol/CH-019_shape-w-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 28,
+                  "right": 58,
+                  "bottom": 67,
+                  "width": 59,
+                  "height": 40
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 48,
+                  "width": 49
+                },
+                "anchor_px": {
+                  "x": 24.0,
+                  "y": 68.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-019_shape-w.png",
               "master": "poc/sol/CH-019_shape-w.png",
               "image_number": 1,
@@ -1265,7 +1382,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-w_frame-01",
@@ -1492,6 +1609,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-ne-v2.png",
+              "master": "poc/sol/CH-020_shape-ne-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 37,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 60,
+                  "width": 59,
+                  "height": 61
+                },
+                "contact_px": {
+                  "left": 49,
+                  "right": 95,
+                  "width": 47
+                },
+                "anchor_px": {
+                  "x": 72.0,
+                  "y": 61.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-020_shape-ne.png",
               "master": "poc/sol/CH-020_shape-ne.png",
               "image_number": 1,
@@ -1527,7 +1683,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-ne_frame-01",
@@ -1684,6 +1840,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-w-v2.png",
+              "master": "poc/sol/CH-020_shape-w-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 34,
+                  "right": 61,
+                  "bottom": 62,
+                  "width": 62,
+                  "height": 29
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 52,
+                  "width": 53
+                },
+                "anchor_px": {
+                  "x": 26.0,
+                  "y": 63.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-020_shape-w.png",
               "master": "poc/sol/CH-020_shape-w.png",
               "image_number": 1,
@@ -1719,7 +1914,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-w_frame-01",
@@ -1794,6 +1989,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-020_shape-nw-v2.png",
+              "master": "poc/sol/CH-020_shape-nw-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 62,
+                  "bottom": 69,
+                  "width": 63,
+                  "height": 70
+                },
+                "contact_px": {
+                  "left": 0,
+                  "right": 52,
+                  "width": 53
+                },
+                "anchor_px": {
+                  "x": 26.0,
+                  "y": 70.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 84
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-020_shape-nw.png",
               "master": "poc/sol/CH-020_shape-nw.png",
               "image_number": 1,
@@ -1829,7 +2063,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             }
           ],
           "ref": "orientation-south_action-idle_shape-nw_frame-01",
@@ -6428,6 +6662,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ns-v4.png",
+              "master": "poc/sol/CH-021_shape-ns-v4.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 95,
+                  "bottom": 111,
+                  "width": 96,
+                  "height": 112
+                },
+                "contact_px": {
+                  "left": 20,
+                  "right": 75,
+                  "width": 56
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 112.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 112
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/sol/CH-021_shape-ns-v3.png",
               "master": "poc/sol/CH-021_shape-ns-v3.png",
               "image_number": 1,
@@ -6463,7 +6736,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
