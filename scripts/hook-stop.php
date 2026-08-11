@@ -76,8 +76,26 @@ if (time() - $armedAt > EXPIRY_SECONDS) {
     exit(0);
 }
 
-// GO AND STOP COME THROUGH THE PROMPT, AND THROUGH NOTHING ELSE (operator, 2026-08-09). This guard reads no order at all: it decides on the armed state, the
-// refusal ceiling and the backlog. The prompt hook arms and disarms, and it alone.
+// A STOP SLIPPED IN WHILE THE AGENT WORKED IS READ HERE, AND NOWHERE ELSE COULD READ IT (operator, 2026-08-11, after having to repeat the word five times). Such a
+// message never opens a turn, so the prompt hook — which fires on turn opening — never sees it; it goes into a queue, and the only trace of it is a
+// `queue-operation` entry in the transcript. This guard runs at the end of every turn, receives `transcript_path`, and already reads that file: it is the only
+// place where the word can be caught at the moment it matters, which is the very moment this guard is about to refuse.
+//
+// ONLY « STOP », NEVER « GO », AND THAT IS WHAT KEEPS THE 2026-08-09 REGRESSION CLOSED. Reading orders here was removed that day because a GO left over in the
+// conversation re-armed a dequeue nobody had asked for. A word that can only ever RELEASE the guard cannot arm anything, so the stale GO is harmless — it is not
+// read at all.
+//
+// AND THE READING IS BOUNDED TO THE CURRENT TURN, which is the other half of that same regression: see HookTranscript::queuedThisTurn.
+if ($transcriptPath !== '' && is_file($transcriptPath)) {
+    foreach (HookTranscript::get()->queuedThisTurn($transcriptPath) as $queued) {
+        if (HookWord::get()->order($queued) === 'STOP') {
+            $trace->disarm();
+            $trace->write('stop-log', 'LAISSE PASSER — STOP glissé en cours de tour, lu dans le transcrit');
+            fwrite(STDERR, "Le STOP envoyé pendant le tour a été lu dans le transcrit : le dépilement est désarmé.\n");
+            exit(0);
+        }
+    }
+}
 
 // THE APPLICATION SAYS ITSELF WHEN IT HAS ALREADY BEEN BLOCKED, and it must be listened to. On the self-test, one refusal is enough to prove the mechanism bites —
 // insisting would prove nothing more and would burn the ceiling for nothing.

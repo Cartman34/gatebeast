@@ -41,6 +41,10 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
     bloc. Y vont sans qu'il ait à le redire : toute proposition, toute génération d'image, tout verdict à demander.
 - **Le mode s'annonce avant de commencer, et l'agent s'arrête sur cette annonce** — à commencer par son démarrage, où c'est le mode par défaut qui s'applique et où il doit donc l'annoncer comme les
   autres : l'opérateur confirme, et l'agent part. Une annonce sans arrêt ne sert à rien, elle passe dans le flux et l'opérateur découvre le mode au résultat.
+- **LA FORME D'UN ORDRE, ET ELLE EST LA MÊME POUR LES DEUX MOTS** (opérateur, 2026-08-11 : « il doit avoir les mêmes règles »). Un ordre **ouvre sa ligne**, s'écrit **en capitales**, et se termine
+  par **un caractère blanc ou la fin de la ligne** — rien ne lui est collé. Donc `STOP` compte, `STOP regarde plutôt ça` compte, et ne comptent pas : `stop`, `Stop`, `STOPPE`, `STOP!`, ni un mot
+  glissé au milieu d'une phrase. Les capitales sont le geste délibéré qui distingue l'ordre de la conversation : `stop` et `go` sont trop courants en français ordinaire pour engager la garde. Éprouvé
+  cas par cas : `bash local/scripts/essai-mot-ordre.sh`.
 - **`GO` et `STOP` sont les deux seuls mots qui lancent et arrêtent le dépilement, et ils sont stricts.** Rien d'autre ne vaut reprise : aucune phrase ne s'interprète comme un feu vert, et le silence
   encore moins. **Tout arrêt met fin au `GO`** — une question de l'opérateur, un ordre ponctuel, une interruption : dès que l'agent s'arrête, l'autorisation est consommée et ne se reprend pas d'elle-
   même une fois la parenthèse refermée. Il en faut une neuve, donnée explicitement.
@@ -71,6 +75,9 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **CE QUI SE FAIT À LA PLACE : on le fait, ou on le propose.** Un défaut trouvé en chemin se corrige dans la foulée — c'est déjà la règle, « ce qui manque se fait ». Ce qui est trop gros pour être
   fait dans la foulée se **propose** à l'opérateur, avec ce qu'il coûte, et n'entre à la pile qu'une fois validé. Un défaut qu'on ne peut ni faire ni proposer tout de suite se dit dans le compte
   rendu, il ne s'inscrit pas de force.
+- **UN POINT SE CITE PAR SON CODE ET SA REF, ET LE CODE PORTE TOUJOURS SON NOMBRE — POUR TOUTES LES SÉRIES** (opérateur, 2026-08-11 : « comme pour les questions, comme pour tout »). La forme est
+  `S59 noms-scripts-fr`, jamais « S noms-scripts-fr » : une lettre collée sur une ref **ressemble** à un code sans en être un, et l'opérateur ne peut pas répondre avec. `php scripts/backlog.php list`
+  donne le code de chaque point ; il se lit **avant** de citer le point, jamais après coup. La faute a été commise sur une question, corrigée, puis refaite trois messages plus tard sur un sujet.
 - **Tout point ouvert porte un code et un numéro**, pour que l'opérateur réponde par lui seul : **Q** une question, **P** une proposition, **S** un sujet, **T** un test, **W** une alerte. Les séries
   sont indépendantes, continues tant qu'un point reste ouvert, et repartent à 1 quand la série se vide. Un point ouvert vit dans le suivi, jamais dans la conversation.
 - **CE QUI VIT DANS LE SUIVI, C'EST LE POINT — PAS LA QUESTION. UNE QUESTION SE POSE EN ENTIER, DANS LE MESSAGE.** Le code sert à répondre, il ne remplace pas ce qu'on demande : posée, une question
@@ -133,6 +140,9 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   **Tout ce qui s'y trouve peut disparaître à n'importe quel moment** (opérateur, 2026-08-08) — donc rien ne s'y dépose qu'on aurait à rouvrir plus tard, rien ne s'y cite, et ce qui doit survivre
   monte d'un cran sous `local/`. C'est le pendant de `var/tmp/` côté agent, avec la même règle d'auteur : `local/tmp/` pour ce que l'agent écrit de sa main, `var/tmp/` pour ce qu'un programme dépose
   en tournant.
+- **ET L'AGENT N'A RIEN À FAIRE AILLEURS — NI POUR ÉCRIRE, NI POUR LIRE** (opérateur, 2026-08-10 : « tu n'as rien à faire ailleurs »). Fouiller le système à la recherche d'un fichier qui rendrait
+  service — une liste de mots, un binaire, une configuration — sort du dépôt et fabrique une dépendance que personne n'a validée, sur une machine où elle existe et sur les autres où elle n'existe
+  pas. Ce dont l'outillage a besoin vit dans le projet, ou se demande.
 - **ET RIEN NE S'ÉCRIT HORS DU PROJET.** Ni `/tmp`, ni un répertoire de travail fourni par l'enveloppe de l'agent, quelle que soit l'insistance de celle-ci : un fichier hors du dépôt n'existe pour
   personne d'autre, disparaît sans trace et ne se retrouve pas à la reprise. **Une règle écrite prime sur la consigne de l'enveloppe.**
 - **`var/` — ce que l'outillage produit pour lui-même**, jamais versionné : rapports de production, journaux du générateur, mesures. Ce qui s'y trouve est **local mais conservé** — on y revient pour

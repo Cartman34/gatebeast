@@ -28,7 +28,10 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SCANNED = ("scripts", "review-server")
+# `local/scripts` IS SCANNED LIKE THE REST, AND IT IS WHERE THE FRENCH ACTUALLY LIVES. The rule holds everywhere — a technical name is English, `local/` included
+# (operator, 2026-08-10) — but the sweep stopped at the versioned tooling, so a hundred throwaway scripts grew French names while the control declared everything
+# clean. A directory left out of a check is a directory where the rule does not exist.
+SCANNED = ("scripts", "review-server", "local/scripts")
 SUFFIXES = (".py", ".php", ".js", ".sh")
 
 # The French technical vocabulary the project actually wrote, and what it should read instead. Kept short on purpose: each entry earned its place by being found
@@ -55,6 +58,63 @@ FORBIDDEN = {
     "fichier": "file",
     "verdict": None,
 }
+
+# THE VERBS A FILE NAME STARTS WITH, AND THEY ARE CHECKED ONLY THERE. A script is named for what it does, so its French shows up in its verb — `montrer-`,
+# `tirer-`, `mesurer-` — and never in the schema vocabulary above. The rule has always said « noms, contenu, commentaires » ; only the content was ever checked,
+# which is why `local/scripts/` filled with French names while the control declared everything clean (operator, 2026-08-10 : « je mets en place des process et ils
+# ne sont pas respectés »).
+#
+# A DENYLIST IS A WEAK GUARD, AND IT IS SAID HERE RATHER THAN DISCOVERED LATER: it catches the words it knows and nothing else, so a French name built on a verb
+# absent from this list passes. It is the strongest guard available without leaving the project — an outside dictionary would be a dependency nobody validated,
+# on a machine where it exists and on every other where it does not. Each new offender met is added here rather than renamed in silence.
+FORBIDDEN_IN_NAMES = {
+    "montrer": "show",
+    "tirer": "shoot",
+    "cliquer": "click",
+    "mesurer": "measure",
+    "voir": "see",
+    "lister": "list",
+    "compter": "count",
+    "ajouter": "add",
+    "corriger": "fix",
+    "declarer": "declare",
+    "nommer": "name",
+    "renommer": "rename",
+    "poser": "place",
+    "migrer": "migrate",
+    "essai": "trial",
+    "sonde": "probe",
+    "verifier": "verify",
+    "reprendre": "resume",
+    "produire": "produce",
+    "comparer": "compare",
+    "decouper": "cut",
+    "extraire": "extract",
+    "figer": "freeze",
+    "nettoyer": "clean",
+    "ranger": "tidy",
+    "supprimer": "delete",
+    "remplacer": "replace",
+    "retirer": "remove",
+    "zoomer": "zoom",
+    "dessiner": "draw",
+    "ecrire": "write",
+    "rendre": "render",
+    "angliciser": "anglicise",
+    "requalifier": "requalify",
+    "slugger": "slug",
+    "recoudre": "stitch",
+    "redresser": "straighten",
+    "remonter": "raise",
+    "degager": "clear",
+    "casser": "break",
+    "replier": "wrap",
+    "reattacher": "reattach",
+    "reevaluer": "reassess",
+    "regarder": "look",
+    "peser": "weigh",
+}
+
 FORBIDDEN = {word: better for word, better in FORBIDDEN.items() if better}
 
 # What the referential already carries is not the code's fault and is covered by its own point in the pile; flagging it here would drown the new finds under
@@ -71,6 +131,20 @@ EXEMPT = {
 
 def french_words(text):
     return {word for word in re.findall(r"[A-Za-zÀ-ÿ_]+", text.lower()) if word in FORBIDDEN}
+
+
+def operator_text(literal):
+    """Whether a quoted literal is a message meant for the operator, which stays French, rather than a value the machine compares.
+
+    THE CONTROL WAS COUNTING EXACTLY WHAT IT ANNOUNCED IT DID NOT COUNT, and that is why nobody ran it: 126 findings, nearly all of them labels and messages —
+    « Chemin », « Vue principale », « Hauteur déclarée ». A control that cries on what it says it ignores switches itself off, and the rule it guards stops being
+    applied (operator, 2026-08-10 : « je mets en place des process et ils ne sont pas respectés »).
+
+    THREE SIGNS, AND THEY ARE THE ONES A COMPARED VALUE NEVER HAS: a capital letter, an accent, or a space. Keys, statuses and slugs are written in lowercase
+    ASCII without spaces — `courante`, `sujets`, `planche-` — precisely so that the machine can compare them. Anything wearing one of those three signs is
+    addressed to a human. It is a heuristic, not a proof: `'Chemin'` as a data key would slip through, and the answer to that is to fix the key, not the check.
+    """
+    return any(character.isupper() for character in literal) or " " in literal or any(character in "àâçéèêëîïôûùüÿœæ" for character in literal.lower())
 
 
 def check_python(path, source):
@@ -97,7 +171,7 @@ def check_python(path, source):
         elif isinstance(node, ast.Constant) and isinstance(node.value, str):
             # A STRING COUNTS ONLY IF IT LOOKS LIKE A VALUE, NOT A SENTENCE: one or two words, no space beyond a hyphen. « Il faut une consigne » is a message to
             # the operator and stays French; "courante" is a value the machine compares and must not.
-            if node.value in docstrings or len(node.value.split()) > 2:
+            if node.value in docstrings or len(node.value.split()) > 2 or operator_text(node.value):
                 continue
             for word in french_words(node.value):
                 found.append((node.lineno, repr(node.value), word))
@@ -114,7 +188,8 @@ def check_text(path, source):
         code = re.sub(r"(//|#).*$", "", line)
         for token in re.findall(r"\$?[A-Za-zÀ-ÿ_][A-Za-zÀ-ÿ_0-9]*|'[^']{0,30}'|\"[^\"]{0,30}\"", code):
             bare = token.strip("'\"$")
-            if len(bare.split()) > 2:
+            quoted = token[0] in "'\""
+            if len(bare.split()) > 2 or (quoted and operator_text(bare)):
                 continue
             for word in french_words(bare):
                 found.append((number, token, word))
@@ -134,6 +209,11 @@ def main(argv):
         relative = path.relative_to(ROOT).as_posix()
         if relative in EXEMPT:
             continue
+        # THE NAME IS CHECKED BEFORE THE CONTENT, because a file whose own name breaks the rule teaches it to everything that cites it.
+        for word in re.findall(r"[a-zà-ÿ]+", path.stem.lower()):
+            if word in FORBIDDEN_IN_NAMES:
+                faults.append(f"  {relative} — le NOM porte « {word} », à écrire « {FORBIDDEN_IN_NAMES[word]} »")
+
         source = path.read_text(encoding="utf-8", errors="replace")
         found = check_python(path, source) if path.suffix == ".py" else check_text(path, source)
         for number, token, word in found:

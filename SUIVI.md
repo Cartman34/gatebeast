@@ -4,15 +4,58 @@
 
 Il se met à jour à chaque étape franchie. Il ne conserve pas d'historique : seul l'état courant compte (le versionnage garde le reste).
 
+## SÉANCE DU 2026-08-11 — LE `STOP` EN COURS DE TOUR EST RÉPARÉ
+
+**LE MOT EST DANS LE TRANSCRIT, SOUS `queue-operation`.** Chaque message glissé pendant que l'agent travaille y figure deux fois, `enqueue` puis `remove`. Le lecteur cherchait un autre porteur,
+`attachment.queued_command`, qui n'existe pas dans cette version du client : sa branche ne s'exécutait jamais, **et une branche qui ne se déclenche jamais ressemble à une absence** — c'est ce qui a
+fait conclure pendant deux jours que le mot n'arrivait nulle part.
+
+**DEUX CHEMINS LE LISENT MAINTENANT, ET LES DEUX SONT BORNÉS :**
+
+- **`hook-stop.php`**, à chaque fin de tour. Il ne lit que `STOP`, **jamais `GO`** — un mot qui ne peut que relâcher la garde ne peut rien armer, donc le vieux `GO` qui traîne est inoffensif. Et la
+  lecture est **bornée au tour courant, par position et non par date** : `HookTranscript::queuedThisTurn` repart de zéro à chaque entrée qui ouvre un tour. Aucune horloge, aucune dérive.
+- **`php scripts/check-stop-order.php <transcript.jsonl>`**, à la demande de l'agent, pour fermer la fenêtre entre le moment où l'opérateur écrit `STOP` et la fin du tour. **Il ne lève pas
+  l'interdit de toucher à son armement, il le tient** : l'agent ne peut pas lui dire de désarmer, le script va lire le transcrit et n'agit que si le dernier ordre y est un `STOP`.
+
+**ÉPROUVÉ** : `bash local/scripts/essai-stop-transcrit.sh` couvre les deux cas — le `STOP` du tour courant désarme, celui d'un tour précédent ne fait rien. Le second est le plus important.
+
+**HUIT CAS DE `test-stop-multiline.sh` RESTENT ROUGES**, et ils testent la lecture d'ordres retirée le 2026-08-09 : ils écrivent le `STOP` comme un message ouvrant un tour et attendent que la garde
+désarme. Supprimer des cas d'essai est une décision, pas un nettoyage — ils attendent l'arbitrage. **Cet essai fabriquait aussi un porteur inexistant**, corrigé : un essai qui invente sa charge
+n'éprouve que lui-même.
+
+## SÉANCE DU 2026-08-10, TROISIÈME PARTIE — POURQUOI UN PROCESS N'ÉTAIT PAS RESPECTÉ
+
+**LE `STOP` EN PLEIN TOUR EST LISIBLE, ET LA SONDE EXISTAIT DÉJÀ.** Le transcrit porte des entrées `queue-operation` — clés `type, operation, timestamp, sessionId, content` — où chaque message
+glissé en cours de tour apparaît deux fois : `enqueue` avec son contenu, puis `remove` ou `dequeue`. Le `STOP` de la séance y est. **`Q12 stop-mi-tour` est donc caduque** : la réponse n'est ni « la
+garde grogne » ni « l'agent désarme », c'est « on lit le mot ». Reste à faire : `hook-transcript.php` rend ces entrées, `hook-stop.php` y cherche le dernier ordre, en comptant un message une seule
+fois malgré ses deux lignes. Sonde : `php local/scripts/montrer-queue-operation.php <transcript.jsonl>`.
+
+**UN POINT SE DÉSIGNE PAR SON CODE ET SA REF, ET LE CODE PORTE UN NOMBRE — POUR TOUTES LES SÉRIES, PAS SEULEMENT LES QUESTIONS** (opérateur, 2026-08-11 : « comme pour les questions, comme pour
+tout »). La forme est `S59 noms-scripts-fr`, jamais « S noms-scripts-fr » : une lettre collée sur une ref ressemble à un code sans en être un, et l'opérateur ne peut pas répondre avec. `backlog.php
+list` donne le code de chaque point, et il se lit avant de citer quoi que ce soit. La faute a été faite sur `Q11`, corrigée, puis refaite trois messages plus tard sur `S59`. Les vrais codes
+sont **`Q11`** et **`Q12`**, et `backlog.php list` les donne. Le faux code avait même été écrit dans les attendus des deux points bloqués ; corrigé.
+
+**LES TROIS RAISONS POUR LESQUELLES LES NOMS FRANÇAIS SURVIVAIENT, ET AUCUNE N'ÉTAIT DE LA NÉGLIGENCE** : `check-code-language.py` ne lisait pas les noms de fichiers, ne balayait pas
+`local/scripts/`, et comptait les libellés destinés à l'opérateur — 126 signalements dont les faux. **Les trois sont corrigés.** Le contenu tombe à 109 signalements, tous réels, et **89 fichiers**
+sont signalés sur leur nom : `S59 noms-scripts-fr`, priorité 2. Rien n'est renommé — un renommage laissant une citation morte est pire que le nom français.
+
+**L'AGENT N'A RIEN À FAIRE HORS DU DÉPÔT, NI POUR LIRE NI POUR ÉCRIRE** (opérateur, 2026-08-10). Écrit aux règles du dépôt : chercher un dictionnaire système fabrique une dépendance que personne n'a
+validée, présente sur une machine et absente des autres.
+
 ## SÉANCE DU 2026-08-10, SECONDE PARTIE — LA PLUS IMPORTANTE EST LA PREMIÈRE
 
 **LA CONCLUSION QUI FONDE `W19` EST FAUSSE, ET C'EST MESURÉ.** Elle disait qu'un message glissé pendant que l'agent travaille n'atteint **ni** le hook du prompt **ni le transcrit**. La première
 moitié tient : `var/hooks/messages-log` ne porte rien entre le `GO` de 14:08:07 et le message de 14:15:05, alors que trois messages ont été envoyés entre les deux. **La seconde est démentie** :
 « Des questions » apparaît **9 fois** dans le transcrit de la session, `~/.claude/projects/-home-sowapps-projects-gatebeast/<session>.jsonl`. Le texte y est donc, et le hook de fin de tour lit ce
-fichier. **Si ça se confirme, le `STOP` en plein tour est réparable et `Q stop-mi-tour` devient caduque.**
+fichier. **Si ça se confirme, le `STOP` en plein tour est réparable et `Q12 stop-mi-tour` devient caduque.**
 
-**CE QUI MANQUE POUR TRANCHER, ET C'EST LE PROCHAIN GESTE** : sous quel **type d'entrée** ces messages se trouvent dans le transcrit. `shapes-log` a été écrit exactement pour ça. Ne pas conclure
-avant de l'avoir lu — c'est une conclusion trop vite tirée qui a fondé `W19`.
+**TROUVÉ, ET C'EST `queue-operation`.** Le transcrit porte un type d'entrée de ce nom, avec les clés `type, operation, timestamp, sessionId, content`. Chaque message glissé en cours de tour y
+apparaît **deux fois** : `enqueue` avec son contenu, puis `remove` ou `dequeue`. Relevé sur cette session : deux « Des questions ? », **et le `STOP`**. La sonde existait déjà —
+`php local/scripts/montrer-queue-operation.php <transcript.jsonl>`.
+
+**DONC LE HOOK DE FIN DE TOUR PEUT LIRE LE `STOP` EN PLEIN TOUR : IL LIT DÉJÀ CE FICHIER.** `Q12 stop-mi-tour` est **caduque** — sa réponse n'est ni `A` ni `B`, elle est « le mot est lisible, on le
+lit ». Ce qu'il reste à faire est du code, plus un arbitrage : `hook-transcript.php` doit rendre les entrées `queue-operation`, et `hook-stop.php` y chercher le dernier ordre comme il le fait déjà
+dans les messages de l'opérateur. **Attention à `enqueue` suivi de `remove`** : un même message compte une fois, pas deux.
 
 **LE PAYLOAD DU HOOK DU PROMPT, EN ENTIER, ET IL NE PORTE AUCUNE PILE** : `session_id`, `transcript_path`, `cwd`, `prompt_id`, `permission_mode`, `hook_event_name`, `prompt`, `session_title`. Rien
 d'autre. **`payload-log` est fidèle** : il reçoit la sortie brute de `STDIN` avant tout décodage, et l'écrivain n'ajoute qu'un horodatage.
@@ -85,7 +128,7 @@ n'a pas la hauteur du même chêne debout. **Tout est défait et remplacé, le 2
 - **LE BILAN DE FIN DE TÂCHE EST LA RAISON N°1 DE LA RÈGLE DU COMPTE RENDU EN UNE LIGNE**, pas son cas limite. « Msg beaucoup trop long » veut dire « je ne l'ai pas lu ».
 - **ET CHAQUE MESSAGE PORTE SON IDENTIFIANT**, en première et en dernière ligne — la règle existait, elle n'était pas appliquée.
 
-**UN SUJET ÉCARTÉ EXPRESSÉMENT, INSCRIT POUR NE PAS SE PERDRE** : `P hauteur-monde`, en `proposed`. La hauteur d'un sujet dans le monde n'a pas d'unité propre, distincte de `TX` et `TY` —
+**UN SUJET ÉCARTÉ EXPRESSÉMENT, INSCRIT POUR NE PAS SE PERDRE** : `P1 hauteur-monde`, en `proposed`. La hauteur d'un sujet dans le monde n'a pas d'unité propre, distincte de `TX` et `TY` —
 « peut-être un truc à faire, mais c'est hors sujet ici ». **Ne pas le reprendre sans demande.**
 
 **DEUX SPRITES REFAITES ET NON JUGÉES** : `TR-060-v7` (`576 × 864`, hauteur 9,0 cases, dans la fourchette) et `TR-063-v12` (`288 × 416`, 4,3 cases, dans la fourchette). **Ce que j'ai vu sur le

@@ -45,6 +45,21 @@ class HookTranscript
             // A MESSAGE SENT WHILE THE AGENT WORKS IS WRITTEN DOWN TOO, UNDER ITS OWN TYPE. It is not a « user » entry and it carries its text in `prompt`, not in
             // message.content — which is why a reader that only knew « user » found nothing and concluded the word had never arrived. Measured on 2026-08-09:
             // the operator's STOP was in the file all along, one field away.
+            // AND VOICI LE PORTEUR QUE LE CLIENT ÉCRIT RÉELLEMENT, mesuré le 2026-08-11 : `queue-operation`, avec `operation` et `content`. La branche
+            // `attachment/queued_command` ci-dessous connaissait un autre porteur, qui n'apparaît pas dans les transcrits de cette version — d'où la conclusion,
+            // fausse, que le mot n'atteignait jamais le fichier. Il y était, sous un type que personne n'avait regardé.
+            //
+            // SEUL `enqueue` COMPTE : chaque message y figure deux fois, une fois posé dans la file et une fois retiré quand l'agent le reçoit. Compter les deux
+            // ferait deux ordres d'un seul mot — sans conséquence pour un STOP, mais un GO suivi de son retrait vaudrait alors deux armements.
+            if ($type === 'queue-operation') {
+                if ((string) ($entry['operation'] ?? '') === 'enqueue') {
+                    $queued = trim((string) ($entry['content'] ?? ''));
+                    if ($queued !== '') {
+                        $said[] = $queued;
+                    }
+                }
+                continue;
+            }
             if ($type === 'attachment') {
                 $attachment = $entry['attachment'] ?? [];
                 if (is_array($attachment) && ($attachment['type'] ?? '') === 'queued_command') {
@@ -65,6 +80,40 @@ class HookTranscript
         }
 
         return $said;
+    }
+
+    /**
+     * The messages the operator slipped in WHILE THE AGENT WAS WORKING, during the current turn only. One per entry, in order.
+     *
+     * THE BOUND IS THE WHOLE POINT, AND IT IS POSITIONAL RATHER THAN DATED. A transcript holds the entire session, so reading it whole always finds an old word:
+     * a STOP from three hours ago would disarm for ever, and a GO from two hours ago re-armed a dequeue nobody had asked for — which is exactly why reading orders
+     * here was removed on 2026-08-09. The same trap had already caught `lastAgentText` on 2026-08-07, where the sentinel word of a previous turn replayed the
+     * refusal endlessly.
+     *
+     * WHERE THE BOUND SITS: at the last entry that OPENED a turn. Everything before it belongs to earlier turns and was already handled by the prompt hook — that
+     * is what the prompt hook IS. Everything after it was queued while this turn ran. No clock is involved, so nothing drifts and no duration has to be invented.
+     * A tool result is also a « user » entry but carries no text, so it never moves the bound.
+     *
+     * @return array<int, string>
+     */
+    public function queuedThisTurn(string $path): array
+    {
+        $queued = [];
+        foreach ($this->entries($path) as $entry) {
+            $type = (string) ($entry['type'] ?? '');
+            if ($type === 'user' && $this->text($entry) !== '') {
+                $queued = [];
+                continue;
+            }
+            if ($type === 'queue-operation' && (string) ($entry['operation'] ?? '') === 'enqueue') {
+                $content = trim((string) ($entry['content'] ?? ''));
+                if ($content !== '') {
+                    $queued[] = $content;
+                }
+            }
+        }
+
+        return $queued;
     }
 
     /**
