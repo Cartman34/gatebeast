@@ -26,7 +26,7 @@ fait conclure pendant deux jours que le mot n'arrivait nulle part.
 - **`php scripts/check-stop-order.php <transcript.jsonl>`**, à la demande de l'agent, pour fermer la fenêtre entre le moment où l'opérateur écrit `STOP` et la fin du tour. **Il ne lève pas
   l'interdit de toucher à son armement, il le tient** : l'agent ne peut pas lui dire de désarmer, le script va lire le transcrit et n'agit que si le dernier ordre y est un `STOP`.
 
-**ÉPROUVÉ** : `bash local/scripts/essai-stop-transcrit.sh` couvre les deux cas — le `STOP` du tour courant désarme, celui d'un tour précédent ne fait rien. Le second est le plus important.
+**ÉPROUVÉ** : `bash scripts/dev/trial-stop-transcrit.sh` couvre les deux cas — le `STOP` du tour courant désarme, celui d'un tour précédent ne fait rien. Le second est le plus important.
 
 **HUIT CAS DE `test-stop-multiline.sh` RESTENT ROUGES**, et ils testent la lecture d'ordres retirée le 2026-08-09 : ils écrivent le `STOP` comme un message ouvrant un tour et attendent que la garde
 désarme. Supprimer des cas d'essai est une décision, pas un nettoyage — ils attendent l'arbitrage. **Cet essai fabriquait aussi un porteur inexistant**, corrigé : un essai qui invente sa charge
@@ -37,7 +37,7 @@ n'éprouve que lui-même.
 **LE `STOP` EN PLEIN TOUR EST LISIBLE, ET LA SONDE EXISTAIT DÉJÀ.** Le transcrit porte des entrées `queue-operation` — clés `type, operation, timestamp, sessionId, content` — où chaque message
 glissé en cours de tour apparaît deux fois : `enqueue` avec son contenu, puis `remove` ou `dequeue`. Le `STOP` de la séance y est. **`Q12 stop-mi-tour` est donc caduque** : la réponse n'est ni « la
 garde grogne » ni « l'agent désarme », c'est « on lit le mot ». Reste à faire : `hook-transcript.php` rend ces entrées, `hook-stop.php` y cherche le dernier ordre, en comptant un message une seule
-fois malgré ses deux lignes. Sonde : `php local/scripts/montrer-queue-operation.php <transcript.jsonl>`.
+fois malgré ses deux lignes. Sonde : `php scripts/dev/show-queue-operation.php <transcript.jsonl>`.
 
 **UN POINT SE DÉSIGNE PAR SON CODE ET SA REF, ET LE CODE PORTE UN NOMBRE — POUR TOUTES LES SÉRIES, PAS SEULEMENT LES QUESTIONS** (opérateur, 2026-08-11 : « comme pour les questions, comme pour
 tout »). La forme est `S59 noms-scripts-fr`, jamais « S noms-scripts-fr » : une lettre collée sur une ref ressemble à un code sans en être un, et l'opérateur ne peut pas répondre avec. `backlog.php
@@ -60,7 +60,7 @@ fichier. **Si ça se confirme, le `STOP` en plein tour est réparable et `Q12 st
 
 **TROUVÉ, ET C'EST `queue-operation`.** Le transcrit porte un type d'entrée de ce nom, avec les clés `type, operation, timestamp, sessionId, content`. Chaque message glissé en cours de tour y
 apparaît **deux fois** : `enqueue` avec son contenu, puis `remove` ou `dequeue`. Relevé sur cette session : deux « Des questions ? », **et le `STOP`**. La sonde existait déjà —
-`php local/scripts/montrer-queue-operation.php <transcript.jsonl>`.
+`php scripts/dev/show-queue-operation.php <transcript.jsonl>`.
 
 **DONC LE HOOK DE FIN DE TOUR PEUT LIRE LE `STOP` EN PLEIN TOUR : IL LIT DÉJÀ CE FICHIER.** `Q12 stop-mi-tour` est **caduque** — sa réponse n'est ni `A` ni `B`, elle est « le mot est lisible, on le
 lit ». Ce qu'il reste à faire est du code, plus un arbitrage : `hook-transcript.php` doit rendre les entrées `queue-operation`, et `hook-stop.php` y chercher le dernier ordre comme il le fait déjà
@@ -84,7 +84,7 @@ déjà livrée** : refaire une pièce de `CH-019`, `CH-020` ou `OB-010` est une 
 la consigne « ne pas les reproposer ».
 
 **LA TAILLE DU FICHIER N'EST PAS LA HAUTEUR DESSINÉE, ET LA CONFONDRE COÛTE DES GÉNÉRATIONS.** Sur les onze pièces plates restantes, six ont toute leur encre dans le `1 TY` du haut : elles se
-rattrapent en **recadrant l'image, sans aucun dessin**. Mesure : `python3 local/scripts/measure-ink-off-band.py`.
+rattrapent en **recadrant l'image, sans aucun dessin**. Mesure : `python3 scripts/dev/measure-ink-off-band.py`.
 
 **LA TOILE SE PREND SUR LE COUVERT, PAS SUR L'EMPRISE** — `generate-sprite.py` et `export-asset.py` le lisent ainsi. **Trois sujets avaient perdu leur couvert au référentiel** (pommier `3 × 3`,
 sapin `2 × 2`, le chêne l'avait déjà retrouvé), si bien que les contrôles jugeaient une image de trois cases sur la fourchette d'une seule et la déclaraient fausse. **`TR-063` a failli être refaite
@@ -164,7 +164,7 @@ tentative de lire un ordre ailleurs a été retirée — elle avait armé un dé
 voit pas et refuse la fin de tour jusqu'à son plafond de cinq. Le mot renvoyé en ouverture de tour désarme aussitôt.
 
 **LES HOOKS SONT EN PHP** : `hook-word.php` (ce qui compte comme ordre), `hook-trace.php` (état, traces, armement, fuseau de la machine), `hook-transcript.php` (lecture du transcrit, employée par le
-seul mot d'épreuve), `hook-prompt.php`, `hook-stop.php`. Éprouvés par `local/scripts/essai-hook-prompt.sh`, `essai-hook-stop.sh`, `essai-stop-transcrit.sh`, `test-stop-multiline.sh`.
+seul mot d'épreuve), `hook-prompt.php`, `hook-stop.php`. Éprouvés par `scripts/dev/trial-hook-prompt.sh`, `trial-hook-stop.sh`, `trial-stop-transcrit.sh`, `test-stop-multiline.sh`.
 
 **LE HOOK DE BASE DE L'OPÉRATEUR EST BRANCHÉ** : `~/projects/local/hook/hook-pre-bash.sh`, déclaré en `PreToolUse` sur **`Bash` seul**. Il refuse les `;`, les `&&`, les `$(...)`, les redirections vers
 un fichier et les chemins absolus dans le dépôt. **Sur `Write` ou `Edit` il enferme l'agent** : il lit leur charge comme une ligne de commande et refuse tout — c'est arrivé, et il a fallu la main de
@@ -274,13 +274,13 @@ reconstruit par sa route : `php review-server/build.php /sprites`. **Les remarqu
 **QUATRE SONDES POUR REGARDER AU LIEU DE SUPPOSER, et elles ont chacune tranché un cas que la lecture du code avait raté :**
 
 - `php local/scripts/tirer-page.php <page construite>` — la page telle qu'elle s'ouvre, sans rien cliquer.
-- `php local/scripts/probe-fsp.php <CODE>` — ouvre le panneau d'un sujet et en fait un tir d'écran.
-- `php local/scripts/cliquer-bouton.php <page> <sélecteur>` — clique un bouton pour de vrai et rapporte ce que la page devient.
-- `php local/scripts/console-page.php <page>` — ce que dit la console du navigateur.
-- `php local/scripts/probe-comparaison.php <CODE> [hold]` — joue la comparaison en entier : ouvre, coche deux variants, quitte, et rapporte l'état à chaque étape.
+- `php scripts/dev/probe-fsp.php <CODE>` — ouvre le panneau d'un sujet et en fait un tir d'écran.
+- `php scripts/dev/click-bouton.php <page> <sélecteur>` — clique un bouton pour de vrai et rapporte ce que la page devient.
+- `php scripts/dev/console-page.php <page>` — ce que dit la console du navigateur.
+- `php scripts/dev/probe-comparaison.php <CODE> [hold]` — joue la comparaison en entier : ouvre, coche deux variants, quitte, et rapporte l'état à chaque étape.
   `hold` s'arrête avant de quitter, pour que le tir d'écran montre la comparaison au lieu de son absence.
-- `php local/scripts/probe-fermeture.php <CODE>` — reproduit le panneau visible sans pile derrière lui, clique la fermeture et dit si la page se débloque.
-- `php local/scripts/probe-debordement.php <page construite>` — dit si la page déborde en largeur, de combien, et **nomme les éléments responsables**. Un débordement ne se voit pas tant que rien
+- `php scripts/dev/probe-fermeture.php <CODE>` — reproduit le panneau visible sans pile derrière lui, clique la fermeture et dit si la page se débloque.
+- `php scripts/dev/probe-debordement.php <page construite>` — dit si la page déborde en largeur, de combien, et **nomme les éléments responsables**. Un débordement ne se voit pas tant que rien
   n'est aligné à droite : celui de la page des sprites, 84 px, était là depuis toujours.
 
 **UNE SONDE S'AJOUTE EN FIN DE FICHIER, JAMAIS AVANT `</body>`** : la page construite ne porte aucune balise `</body>`, donc un `str_replace` dessus ne change rien — la sonde rapporte alors un
@@ -290,7 +290,7 @@ essai propre sur une page qu'elle n'a jamais touchée. Constaté le 2026-08-08, 
 
 ## POUR REPRENDRE À FROID — 2026-08-07, fin de journée
 
-**CE QUI RESTE À FAIRE N'EST PLUS DANS CE DOCUMENT.** Les points ouverts vivent dans `review-server/subjects.json`, la page `/sujets` du serveur de revue (RS) les montre par priorité, et **une seule
+**CE QUI RESTE À FAIRE N'EST PLUS DANS CE DOCUMENT.** Les points ouverts vivent dans `review-server/tasks.json`, la page `/backlog` du serveur de revue (RS) les montre par priorité, et **une seule
 commande les lit et les écrit** : `php scripts/backlog.php`. `next` dit le prochain point à prendre, `list` les range, `show <REF>` en ouvre un en entier. Toute écriture reconstruit la page.
 
 **Ce document garde ce qui n'est pas de la donnée** : les constats, les décisions et leurs raisons. Son ancien tableau de points est figé et ne se tient plus.
@@ -391,7 +391,7 @@ donc ce qui a été produit avant elle sera à réexaminer.
 
 **Décisions du 2026-08-04, toutes écrites dans la conception.** On dit **opérateur**, jamais « propriétaire » (terme banni, [glossaire de la méthode](../conceptions/methode/glossaire.md)). Les **types sont fins** — un type regroupe ce qui s'échange sans incohérence : herbe, arbre, bosquet d'arbres, clôture, chemin, et non « végétation ». Le **passage** d'un sujet se déclare **côté par côté**, jamais il ne se déduit d'une forme : tout se traverse par défaut, un type peut renverser cette valeur, et **trois niveaux** — type, sujet, variant — se surchargent en ne portant que ce qu'ils définissent ; fermer deux côtés adjacents ferme ce qui est entre eux ; l'inventaire se revalide à chaque ajout. Le **catalogue est gelé** : un fichier neuf le remplacera, construit autour des **types, sujets, variants et représentations** — la sprite n'étant qu'une représentation parmi d'autres. Le **glossaire** a quitté la conception pour `doc/glossaire.md`, **biome** y est défini, et les **humains** sont réunis à l'inventaire sous `HU-nnn` — il n'y a pas de sujet « personnage-joueur ».
 
-**Nouvel outil — le plan de composition** ([sa fiche](doc/outils/plan-de-composition.md)) : `scripts/build-composition-plan.py` rend un plan à plat depuis un JSON déclaratif qui *est* le plan, avec des contrôles qui bloquent. Le moteur partagé est `scripts/composition_plan.py`. Premier plan produit : `assets/poc/cloture/plan-composition-OB-010-usage.json` — carré fermé, croix centrale, quatre antennes, les quinze formes de tracé exercées.
+**Nouvel outil — le plan de composition** ([sa fiche](doc/outils/plan-de-composition.md)) : `scripts/build-composition-plan.py` rend un plan à plat depuis un JSON déclaratif qui *est* le plan, avec des contrôles qui bloquent. Le moteur partagé est `scripts/plan_svg.py`. Premier plan produit : `assets/poc/cloture/plan-composition-OB-010-usage.json` — carré fermé, croix centrale, quatre antennes, les quinze formes de tracé exercées.
 
 **Les deux dettes sont soldées** (2026-08-04) : le **catalogue** est **gelé** — ni lu, ni écrit, ni supprimé — et remplacé par `assets/subjects.json`, le référentiel des sujets ; la **page de suivi des sprites** part désormais du disque, montre toute image existante, et pèse 0,47 Mo au lieu de 10,3.
 
@@ -449,7 +449,7 @@ donc ce qui a été produit avant elle sera à réexaminer.
 
 ## Fait le 2026-08-05, en fin de séance
 
-**La maquette du parc est montée** : `artefacts/parc/monter.php` lit le plan, demande au référentiel l'image courante de chaque sujet **selon la forme que la case déclare**, et pose tout à l'échelle du monde. Le sol de la cellule par défaut est carrelé sur toute la scène. Trois boutons font varier la case entre 24, 32 et 48 pixels — le zoom ne change que cette valeur, jamais les images. L'outil de revue y est le même que sur le plan, dupliqué et adapté puisque la scène est posée en pixels et non dans un repère SVG ; **les deux doivent converger un jour**.
+**La maquette du parc est montée** : `review-server/parc/monter.php` lit le plan, demande au référentiel l'image courante de chaque sujet **selon la forme que la case déclare**, et pose tout à l'échelle du monde. Le sol de la cellule par défaut est carrelé sur toute la scène. Trois boutons font varier la case entre 24, 32 et 48 pixels — le zoom ne change que cette valeur, jamais les images. L'outil de revue y est le même que sur le plan, dupliqué et adapté puisque la scène est posée en pixels et non dans un repère SVG ; **les deux doivent converger un jour**.
 
 **Les calques existent** : un plan accepte désormais deux sujets sur une même case tant que l'un des deux se pose **à plat** — sol, chemin, herbe, cours d'eau. Deux sujets qui se dressent restent refusés. C'est ce qui permet à un chemin de passer sous un bâtiment et d'atteindre une porte qui ne tombe jamais sur le bord bas de sa sprite.
 
@@ -459,7 +459,7 @@ donc ce qui a été produit avant elle sera à réexaminer.
 
 ## Les points ouverts ONT QUITTÉ CE DOCUMENT — 2026-08-07
 
-**Ils vivent dans `review-server/subjects.json`, et la page `/sujets` du serveur de revue (RS) les montre**, dans l'ordre des priorités, les ouverts d'abord. Demande de l'opérateur : une page RS de
+**Ils vivent dans `review-server/tasks.json`, et la page `/backlog` du serveur de revue (RS) les montre**, dans l'ordre des priorités, les ouverts d'abord. Demande de l'opérateur : une page RS de
 suivi des sujets, adossée à un fichier plutôt qu'à de la prose.
 
 **Une seule commande les écrit**, `php scripts/backlog.php`, et elle **reconstruit la page en sortant** — une page qui retarde sur ses données est pire que pas de page, parce qu'elle a l'air à jour.
@@ -1740,7 +1740,7 @@ demandé, aucun n'a été posé. Trois plans ont été écrits, vérifiés et de
 appartient à l'opérateur**.
 
 **Le plan A est retenu** (opérateur, 2026-08-05) : *le semis clairsemé*, les arbres dispersés sur toute la surface,
-sans zone privilégiée. Il vit en `assets/maquette/plan-composition-parc-a.json` et son dessin à côté. Les deux
+sans zone privilégiée. Il vit en `assets/maquette/plan-parc-a.json` et son dessin à côté. Les deux
 autres propositions — *la grande pelouse* et *les bosquets* — sont écartées et ne sont plus produites : garder deux
 plans écartés, c'est laisser croire qu'il reste un choix à faire.
 
@@ -1761,7 +1761,7 @@ du parc n'a rien à faire.
 
 La chaîne est toujours la même, et c'est une règle : **la ressource est produite par un script, puis incluse telle
 quelle dans la page — jamais fabriquée à la volée par la page.** La déclaration en JSON est lue par
-`scripts/build-composition-plan.py`, qui la vérifie et en produit le dessin ; puis `artefacts/parc/build.php` part
+`scripts/build-composition-plan.py`, qui la vérifie et en produit le dessin ; puis `review-server/parc/build.php` part
 de cette même déclaration — pour découvrir les plans, leur titre, leur grille et leurs notes — et **inclut le
 dessin déjà produit sans jamais le redessiner**. Un plan déclaré mais jamais dessiné arrête la construction de la
 page au lieu de passer inaperçu.
@@ -1977,7 +1977,7 @@ Les cinq premières tiennent la cible de lumière et l'échelle humaine. Détail
 | Commander un exemple d'usage | `generate-usage-sample.py` depuis un plan de composition |
 | Enfiler des demandes de sprite et les traiter au fil de l'eau | `sprite-queue.py` — file à `local/sprite-queue.jsonl`, reconstruction de la page sérialisée |
 | Rééchantillonner une image | `resize-image.py` |
-| Construire une page de revue | `build-planches-page.py`, `build-calibration-page.py`, et `artefacts/suivi-sprites/build.py` pour le suivi des sprites |
+| Construire une page de revue | `build-planches-page.py`, `build-calibration-page.py`, et `review-server/suivi-sprites/build.php` pour le suivi des sprites |
 | Regarder un SVG que j'ai produit | `rsvg-convert` vers un PNG dans `local/` — un agent ne sait pas lire un SVG, il lit une image matricielle |
 
 Les `generate-planche-*.py` et `generate-humans-calibration-*.py` sont conservés tels quels : un fichier par passage, ils ne se rejouent pas.

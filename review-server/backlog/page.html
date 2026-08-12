@@ -70,6 +70,11 @@
   --footprint-edge: #ff8a5c;
   --footprint-field: rgba(255, 138, 92, 0.16);
   --overhang-edge: #45e0e8;
+  /* AND THE OVERHANG IS NOW HATCHED, BECAUSE AN OUTLINE ALONE GETS LOST (operator, 2026-08-12: « on ne voit pas bien la couverture de dépassement »). A dashed
+   * frame says where the overhang ends, never what it covers — over a pale grove its own crown swallows it. The colour of the strokes is the overhang's, at the
+   * strength of a veil: the sprite is judged THROUGH them, so they situate it and never tint it. The geometry of the hatching — angle, width, spacing — is
+   * drawing, and it stays in the page's own sheet; what lives here is the colour, like every other token. */
+  --overhang-hatch: rgba(69, 224, 232, 0.20);
 
   /* THE SHAPE OF THINGS, NOT ONLY THEIR COLOUR. A theme that only swaps hexadecimals leaves the page exactly as square and as flat as it was — which is what the
    * operator answered to the first attempt: « Tu as juste changé un peu les couleurs ? je veux un peu plus de changements ». Radii, elevation and the ring of a
@@ -123,11 +128,11 @@
   .point-corps code { font-family: ui-monospace, monospace; font-size: .85em; color: var(--accent); }
   .point-pied { margin: 8px 0 0; font-size: .72rem; color: var(--muted); }
   /* LE STATUT SE VOIT AVANT D'ÊTRE LU : une pile où tout se ressemble oblige à lire chaque carte pour savoir laquelle bouge. */
-  .point[data-statut="in-progress"] { border-left: 3px solid var(--accent); }
-  .point[data-statut="pending-decision"] { border-left: 3px solid var(--state-rework-edge); }
-  .point[data-statut="pending-dependency"] { border-left: 3px solid var(--muted); }
-  .point[data-statut="waiting-external"] { border-left: 3px solid var(--state-dismissed-edge); }
-  .point[data-statut="done"], .point[data-statut="dismissed"] { opacity: .55; }
+  .point[data-status="in-progress"] { border-left: 3px solid var(--accent); }
+  .point[data-status="pending-decision"] { border-left: 3px solid var(--state-rework-edge); }
+  .point[data-status="pending-dependency"] { border-left: 3px solid var(--muted); }
+  .point[data-status="waiting-external"] { border-left: 3px solid var(--state-dismissed-edge); }
+  .point[data-status="done"], .point[data-status="dismissed"] { opacity: .55; }
   .clos { margin-top: 40px; }
   .clos summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
   .mien { margin: 12px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
@@ -175,10 +180,10 @@
   <h1>La pile</h1>
   <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
   décision qui t'appartient. <strong>Chaque carte porte ton vote</strong> : ce que tu veux voir traité, et ce que tu rejettes — une task rejetée sort de la pile. Le vote se retire en recliquant.</p>
-  <p class="compte">1 en attente de toi · 16 à moi · php scripts/backlog.php next</p>
+  <p class="compte">1 en attente de toi · 12 à moi · php scripts/backlog.php next</p>
   <div class="grid">
-  <article class="point" data-statut="proposed">
-    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+  <article class="point" data-status="proposed">
+    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
     <h2>Le hook de fin de tour ne connaît pas la fin de séance et refuse de laisser l&#039;agent s&#039;arrêter</h2>
     <details class="point-corps"><summary>Ce que ça engage</summary><p><strong><code>hook-stop.php</code> REFUSE LA FIN DE TOUR TANT QU&#039;IL RESTE DES TÂCHES, ET IL NE CONNAÎT PAS LA FIN DE SÉANCE.</strong> Le 2026-08-12, l&#039;opérateur écrit « Termine,<br />
 enregistre tout, fin de session » ; tout est terminé, enregistré, le serveur fermé — et le hook renvoie « TU NE T&#039;ARRÊTES PAS : 16 tâches sont encore à faire ».</p>
@@ -197,23 +202,19 @@ garderait tout son sens dans le seul cas où il a été écrit — un agent qui 
   </article>
   </div>
   <details class="clos">
-    <summary>Les 16 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
+    <summary>Les 12 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
     <ul class="mien">
-    <li><span class="point-ref">noms-scripts-fr</span> Renommer en anglais les 89 scripts au nom francais que le controle signale</li>
-    <li><span class="point-ref">verdicts-notifies</span> L&#039;agent doit être averti des verdicts neufs — le relevé à copier est retiré</li>
-    <li><span class="point-ref">index-refresh</span> L&#039;index ouvert ne s&#039;est pas rafraîchi quand une page a été ajoutée</li>
+    <li><span class="point-ref">outils-morts</span> Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</li>
     <li><span class="point-ref">dossiers-en-anglais</span> Les six répertoires d&#039;images portent des noms français</li>
-    <li><span class="point-ref">pas-de-rune-generee</span> Aucune rune ne se demande au générateur pour l&#039;instant</li>
     <li><span class="point-ref">comments-en-anglais</span> Les commentaires français du serveur de revue, à repasser en anglais</li>
     <li><span class="point-ref">audit-journal</span> Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</li>
-    <li><span class="point-ref">tri-profondeur</span> Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</li>
+    <li><span class="point-ref">fautes-unifiees</span> Les commandes n&#039;ont pas toutes le rendu unique des fautes</li>
     <li><span class="point-ref">comparaison-variants</span> La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</li>
     <li><span class="point-ref">bash-simple</span> Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</li>
     <li><span class="point-ref">locales-francaises</span> Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</li>
-    <li><span class="point-ref">backlog-help</span> backlog.php n&#039;a pas de sous-commande help, et une sous-commande inconnue tombe en erreur sèche</li>
+    <li><span class="point-ref">valeurs-fr-restantes</span> Les valeurs francaises restantes dans le code : 23, dont trois familles bloquees</li>
     <li><span class="point-ref">sondes-servies</span> Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script</li>
     <li><span class="point-ref">hauteur-monde</span> La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</li>
-    <li><span class="point-ref">outils-morts</span> Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</li>
     <li><span class="point-ref">service-sonde</span> Un service de sonde pour la page servie et la copie greffée</li>
     </ul>
   </details>
@@ -366,12 +367,18 @@ window.gatebeastNotes = (function () {
 
   document.getElementById('reload-button').addEventListener('click', function () { window.location.reload(); });
 
-  ask(function (signature) {
-    openingSignature = signature;
-    window.setInterval(function () {
-      if (announced) { return; }
-      ask(function (now) { if (now !== openingSignature) { announce(); } });
-    }, 2000);
-  });
+  /* THE WATCH IS INSTALLED WHATEVER THE FIRST CALL DOES, AND THAT IS THE WHOLE OF THE FIX. It used to be installed INSIDE the first answer, so a page loaded
+     while the server was down or restarting never asked again: it stayed open, looking alive, and deaf for the rest of the session. That is what happened to the
+     index on 2026-08-12 — « la page index ouverte ne s'est pas rafraîchie » — and no amount of rebuilding could have woken it.
+     A FAILED CALL LEAVES THE OPENING SIGNATURE UNKNOWN, and the first one that succeeds becomes it. The page then compares against what it actually saw, rather
+     than announcing a change it has no ground to claim. */
+  window.setInterval(function () {
+    if (announced) { return; }
+    ask(function (now) {
+      if (openingSignature === null) { openingSignature = now; return; }
+      if (now !== openingSignature) { announce(); }
+    });
+  }, 2000);
+  ask(function (signature) { if (openingSignature === null) { openingSignature = signature; } });
 })();
 </script>

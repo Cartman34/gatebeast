@@ -560,6 +560,30 @@
           "action": "idle",
           "shape": "plain",
           "ref": "orientation-west_action-idle_frame-01"
+        },
+        {
+          "orientation": "south",
+          "action": "walk",
+          "shape": "plain",
+          "ref": "orientation-south_action-walk_frame-01"
+        },
+        {
+          "orientation": "north",
+          "action": "walk",
+          "shape": "plain",
+          "ref": "orientation-north_action-walk_frame-01"
+        },
+        {
+          "orientation": "east",
+          "action": "walk",
+          "shape": "plain",
+          "ref": "orientation-east_action-walk_frame-01"
+        },
+        {
+          "orientation": "west",
+          "action": "walk",
+          "shape": "plain",
+          "ref": "orientation-west_action-walk_frame-01"
         }
       ],
       "_batch_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
@@ -3293,6 +3317,123 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v12.png",
+              "master": "poc/vegetation/TR-060-v12.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 576,
+                  "height": 900
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 30,
+                  "right": 575,
+                  "bottom": 868,
+                  "width": 576,
+                  "height": 839
+                },
+                "contact_px": {
+                  "left": 203,
+                  "right": 374,
+                  "width": 172
+                },
+                "anchor_px": {
+                  "x": 288.5,
+                  "y": 869.0
+                },
+                "master_size_px": {
+                  "width": 576,
+                  "height": 900
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 6,
+                  "rows": 6
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v11.png",
+              "master": "poc/vegetation/TR-060-v11.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 576,
+                  "height": 792
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 2,
+                  "right": 573,
+                  "bottom": 789,
+                  "width": 572,
+                  "height": 788
+                },
+                "contact_px": {
+                  "left": 262,
+                  "right": 311,
+                  "width": 50
+                },
+                "anchor_px": {
+                  "x": 286.5,
+                  "y": 790.0
+                },
+                "master_size_px": {
+                  "width": 576,
+                  "height": 792
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 6,
+                  "rows": 6
+                }
+              },
+              "status": "previous"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v10.png",
+              "master": "poc/vegetation/TR-060-v10.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 576,
+                  "height": 800
+                },
+                "silhouette_px": {
+                  "left": 3,
+                  "top": 3,
+                  "right": 572,
+                  "bottom": 795,
+                  "width": 570,
+                  "height": 793
+                },
+                "contact_px": {
+                  "left": 259,
+                  "right": 309,
+                  "width": 51
+                },
+                "anchor_px": {
+                  "x": 284.0,
+                  "y": 796.0
+                },
+                "master_size_px": {
+                  "width": 576,
+                  "height": 800
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 6,
+                  "rows": 6
+                }
+              },
+              "status": "previous"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/vegetation/TR-060-v9.png",
               "master": "poc/vegetation/TR-060-v9.png",
               "image_number": 1,
@@ -3328,7 +3469,7 @@
                   "rows": 6
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -3968,9 +4109,9 @@
       },
       "cover": {
         "columns": 3,
-        "rows": 3
+        "rows": 2
       },
-      "_cover_comment": "vegetation.md : « couvert 3 × 3 ». Perdu au référentiel, retrouvé le 2026-08-10 : les contrôles jugeaient une image de trois cases sur la fourchette d'une seule.",
+      "_cover_comment": "vegetation.md : « couvert 3 × 3 ». Perdu au référentiel, retrouvé le 2026-08-10 : les contrôles jugeaient une image de trois cases sur la fourchette d'une seule. Une case de PROFONDEUR retirée le 2026-08-12 sur ordre de l'opérateur — « commence déjà par enlever une case de hauteur de cover au pommier » : l'image revenait trop haute pour un pommier de verger.",
       "height": 3,
       "_height_comment": "vegetation.md : « hauteur 3 cases ».",
       "_passage_comment": "Aucune redéfinition : le type arbre ferme déjà tous les côtés par défaut, ce que confirme la mention « infranchissable » de l'inventaire (vegetation.md).",
@@ -3981,6 +4122,84 @@
           "shape": "plain",
           "_comment": "TR-063-v3 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). TR-063-v2 et TR-063 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v16.png",
+              "master": "poc/vegetation/TR-063-v16.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 420
+                },
+                "silhouette_px": {
+                  "left": 3,
+                  "top": 2,
+                  "right": 284,
+                  "bottom": 419,
+                  "width": 282,
+                  "height": 418
+                },
+                "contact_px": {
+                  "left": 110,
+                  "right": 178,
+                  "width": 69
+                },
+                "anchor_px": {
+                  "x": 144.0,
+                  "y": 420.0
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 420
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 2
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v15.png",
+              "master": "poc/vegetation/TR-063-v15.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 420
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 3,
+                  "right": 285,
+                  "bottom": 415,
+                  "width": 284,
+                  "height": 413
+                },
+                "contact_px": {
+                  "left": 120,
+                  "right": 165,
+                  "width": 46
+                },
+                "anchor_px": {
+                  "x": 142.5,
+                  "y": 416.0
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 420
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 3
+                }
+              },
+              "status": "previous"
+            },
             {
               "type": "sprite",
               "path": "cutout/vegetation/TR-063-v14.png",
@@ -4018,7 +4237,7 @@
                   "rows": 3
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -5674,6 +5893,84 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001-v15.png",
+              "master": "poc/batiment/BT-001-v15.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1280
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 20,
+                  "right": 1521,
+                  "bottom": 1230,
+                  "width": 1522,
+                  "height": 1211
+                },
+                "contact_px": {
+                  "left": 311,
+                  "right": 1222,
+                  "width": 912
+                },
+                "anchor_px": {
+                  "x": 766.5,
+                  "y": 1231.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1280
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/batiment/BT-001-v14.png",
+              "master": "poc/batiment/BT-001-v14.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1324
+                },
+                "silhouette_px": {
+                  "left": 6,
+                  "top": 6,
+                  "right": 1529,
+                  "bottom": 1319,
+                  "width": 1524,
+                  "height": 1314
+                },
+                "contact_px": {
+                  "left": 316,
+                  "right": 1224,
+                  "width": 909
+                },
+                "anchor_px": {
+                  "x": 770.0,
+                  "y": 1320.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1324
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "previous"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001-v13.png",
               "master": "poc/batiment/BT-001-v13.png",
               "image_number": 1,
@@ -5709,7 +6006,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -6729,6 +7026,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-002-v2.png",
+              "master": "poc/batiment/BT-002-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 480,
+                  "height": 575
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 6,
+                  "right": 479,
+                  "bottom": 544,
+                  "width": 480,
+                  "height": 539
+                },
+                "contact_px": {
+                  "left": 12,
+                  "right": 369,
+                  "width": 358
+                },
+                "anchor_px": {
+                  "x": 190.5,
+                  "y": 545.0
+                },
+                "master_size_px": {
+                  "width": 480,
+                  "height": 575
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 5,
+                  "rows": 4
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-002.png",
               "master": "poc/batiment/BT-002.png",
               "image_number": 1,
@@ -6764,7 +7100,7 @@
                   "rows": 4
                 }
               },
-              "status": "current",
+              "status": "previous",
               "verdict": "rework",
               "operator_comment": "Elle est très bien, mais je veux des variantes pour avoir trois ou quatre propositions, dont une qui revient aux couleurs de la référence assets/revue-da/da-b4-r15-scene.png."
             }
@@ -7666,6 +8002,206 @@
           "ref": "orientation-west_action-idle_frame-01",
           "height_min_ty": 1.76,
           "height_max_ty": 2.29
+        },
+        {
+          "ref": "orientation-south_action-walk_frame-01",
+          "label": "En marche vers le sud — de face",
+          "orientation": "south",
+          "action": "walk",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v7.png",
+              "master": "poc/personnage/HU-000-v7.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 176
+                },
+                "silhouette_px": {
+                  "left": 3,
+                  "top": 0,
+                  "right": 92,
+                  "bottom": 174,
+                  "width": 90,
+                  "height": 175
+                },
+                "contact_px": {
+                  "left": 26,
+                  "right": 48,
+                  "width": 23
+                },
+                "anchor_px": {
+                  "x": 37.0,
+                  "y": 175.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 176
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
+        },
+        {
+          "ref": "orientation-north_action-walk_frame-01",
+          "label": "En marche vers le nord — de dos",
+          "orientation": "north",
+          "action": "walk",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v8.png",
+              "master": "poc/personnage/HU-000-v8.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 192
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 1,
+                  "right": 93,
+                  "bottom": 191,
+                  "width": 93,
+                  "height": 191
+                },
+                "contact_px": {
+                  "left": 43,
+                  "right": 70,
+                  "width": 28
+                },
+                "anchor_px": {
+                  "x": 56.5,
+                  "y": 192.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
+        },
+        {
+          "ref": "orientation-east_action-walk_frame-01",
+          "label": "En marche vers l'est — de profil",
+          "orientation": "east",
+          "action": "walk",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v9.png",
+              "master": "poc/personnage/HU-000-v9.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 192
+                },
+                "silhouette_px": {
+                  "left": 8,
+                  "top": 2,
+                  "right": 87,
+                  "bottom": 191,
+                  "width": 80,
+                  "height": 190
+                },
+                "contact_px": {
+                  "left": 11,
+                  "right": 69,
+                  "width": 59
+                },
+                "anchor_px": {
+                  "x": 40.0,
+                  "y": 192.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
+        },
+        {
+          "ref": "orientation-west_action-walk_frame-01",
+          "label": "En marche vers l'ouest — de profil",
+          "orientation": "west",
+          "action": "walk",
+          "shape": "plain",
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v10.png",
+              "master": "poc/personnage/HU-000-v10.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 171
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 1,
+                  "right": 94,
+                  "bottom": 169,
+                  "width": 94,
+                  "height": 169
+                },
+                "contact_px": {
+                  "left": 1,
+                  "right": 82,
+                  "width": 82
+                },
+                "anchor_px": {
+                  "x": 41.5,
+                  "y": 170.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 171
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
+          "height_min_ty": 1.76,
+          "height_max_ty": 2.29
         }
       ]
     },
@@ -7784,6 +8320,84 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/creature/SP-001-v7.png",
+              "master": "poc/creature/SP-001-v7.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 1,
+                  "right": 94,
+                  "bottom": 113,
+                  "width": 94,
+                  "height": 113
+                },
+                "contact_px": {
+                  "left": 48,
+                  "right": 64,
+                  "width": 17
+                },
+                "anchor_px": {
+                  "x": 56.0,
+                  "y": 114.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/creature/SP-001-v6.png",
+              "master": "poc/creature/SP-001-v6.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 2,
+                  "right": 94,
+                  "bottom": 111,
+                  "width": 94,
+                  "height": 110
+                },
+                "contact_px": {
+                  "left": 16,
+                  "right": 67,
+                  "width": 52
+                },
+                "anchor_px": {
+                  "x": 41.5,
+                  "y": 112.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "previous"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/creature/SP-001-v5.png",
               "master": "poc/creature/SP-001-v5.png",
               "image_number": 1,
@@ -7819,7 +8433,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",

@@ -2,6 +2,7 @@
 /**
  * USAGE
  *   php scripts/check-review-pages.php — checks the built review pages still carry the behaviours the operator asked for. Run it after touching a page builder; it exits non-zero on any loss.
+ *   php scripts/check-review-pages.php -h|--help — this text
  *
  * INTENTION
  *   These behaviours were each asked for, built, then lost again when the page was rewritten — the comment cross three times over, the folded comment field twice in one day. Vigilance is not what
@@ -13,6 +14,10 @@
  */
 
 $root = dirname(__DIR__);
+require_once __DIR__ . '/Tools.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
+
 $page = $root . '/review-server/suivi-sprites/page.html';
 if (!is_file($page)) {
     fwrite(STDERR, "FAULT la page des sprites n'est pas construite — php review-server/build.php /sprites\n");
@@ -97,6 +102,34 @@ $rules = [
         'Le marquage des variants supporte un variant sans case à cocher',
         'un variant à produire n\'a pas de case : lire « .checked » sans vérifier levait, et la ligne suivante — celle qui engage la comparaison — n\'était jamais atteinte (2026-08-08)',
         fn (string $html): bool => (bool) preg_match('/var pick = variant\.querySelector\(\x27\.compare\x27\);/', $html),
+    ],
+    // CE QUI EST SAISI SURVIT À UN RECHARGEMENT, ET LES TROIS RÈGLES QUI SUIVENT TIENNENT CE SEUL COMPORTEMENT (opérateur, 2026-08-12 : « ta page de suivi de
+    // sprite a rafraîchi et ça a perdu ce que je notais alors qu'avant ça ne perdait jamais le formulaire et ce que je notais »). Il tient à trois mécanismes qui
+    // se cassent séparément — enregistrer, restituer, et n'enregistrer qu'une fois par pause — donc il se garde en trois règles : une seule les confondrait, et
+    // celle qui casse ne dirait pas laquelle. LA PREUVE VIVANTE EST AILLEURS : `php scripts/dev/probe-sprites-form-kept.php` pilote la page et mesure les deux
+    // sens ; ces règles-ci disent que le mécanisme est là, jamais qu'il tourne.
+    [
+        'Ce qui revient du dépôt est reposé dans le champ',
+        'sans cette ligne, un rechargement montre un champ vide alors que le texte est au dépôt — l\'opérateur le croit perdu et le retape (2026-08-12)',
+        fn (string $html): bool => (bool) preg_match('/field\.value = text;/', $html),
+    ],
+    [
+        'Les cases cochées reviennent du dépôt elles aussi',
+        'un verdict donné puis effacé à l\'écran par une reconstruction se redonne à l\'aveugle, et rien ne dit qu\'il était déjà là',
+        fn (string $html): bool => (bool) preg_match('/box\.checked = Boolean\(state\[id\]/', $html),
+    ],
+    [
+        'Une rafale de frappe ne part qu\'une fois, à la pause',
+        'une requête par touche portant chacune le texte entier : les réponses ne reviennent pas dans l\'ordre où elles partent — vingt-sept sur quarante hors place, mesuré — '
+            . 'et un instantané de frappe écrit après le texte complet le tronque, ce qu\'a subi le commentaire de BT-001-v14 (2026-08-12)',
+        fn (string $html): bool => str_contains($html, 'rememberSoon(id);') && (bool) preg_match('/timers\[id\] = window\.setTimeout/', $html),
+    ],
+    [
+        'La saisie est aussi gardée en local, et reversée tant que le serveur ne l\'a pas',
+        'le serveur est la copie qui compte, mais il ne reçoit pas toujours : « quand je tape ça doit enregistrer sur le serveur et à défaut au moins en local » '
+            . '(opérateur, 2026-08-12) — sans ce filet, ce qui est tapé avant la réponse du dépôt, ou juste avant un rechargement, n\'existe nulle part',
+        fn (string $html): bool => str_contains($html, 'function keepLocally(id)')
+            && (bool) preg_match('/localStorage\.setItem\(OUTBOX/', $html) && str_contains($html, 'readOutbox()'),
     ],
     [
         'La fermeture retombe sur le panneau visible quand la pile est vide',

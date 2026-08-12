@@ -1,9 +1,10 @@
 <?php
 /**
  * Usage: php review-server/backlog/build.php [sortie.html] — builds the open-points page of the review server (RS), served at /backlog.
+ *        php review-server/backlog/build.php -h|--help — this text, and nothing is built.
  *
  * Intention: what is left to do had no page. It lived as prose in SUIVI.md, where nothing could sort it or count it, and the operator had to read a long document to know what came next. The data
- * lives in review-server/subjects.json now, written only by scripts/backlog.php; this page is its reading, in priority order, open points first.
+ * lives in review-server/tasks.json now, written only by scripts/backlog.php; this page is its reading, in priority order, open points first.
  *
  * The long description is Markdown and is rendered as such — a point that cannot say what it means in more than a label is a point nobody can pick up cold.
  */
@@ -11,7 +12,10 @@
 $root = dirname(__DIR__, 2);
 require_once $root . '/review-server/bootstrap.php';
 require_once $root . '/review-server/lib/Backlog.php';
+require_once $root . '/scripts/Tools.php';
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 $outputPath = $argv[1] ?? __DIR__ . '/page.html';
 /**
@@ -93,8 +97,8 @@ function votes(string $ref): string
 function card(array $point, int $rank = null): string
 {
     return sprintf(
-        '  <article class="point" data-statut="%s">' . "\n"
-        . '    <p class="point-tete"><span class="point-ref">%s</span><span class="point-statut">%s</span>'
+        '  <article class="point" data-status="%s">' . "\n"
+        . '    <p class="point-tete"><span class="point-ref">%s</span><span class="point-status">%s</span>'
         . '<span class="point-prio">priorité %d</span><span class="point-attend">attend : %s</span>%s</p>' . "\n"
         . '    <h2>%s</h2>' . "\n"
         // LA DESCRIPTION EST REPLIÉE, ET LE VOTE PASSE DEVANT ELLE. Dépliée, elle enterre le vote sous plusieurs écrans — sur un mobile, il devient
@@ -159,11 +163,11 @@ $page = <<<'HTML'
   .point-corps code { font-family: ui-monospace, monospace; font-size: .85em; color: var(--accent); }
   .point-pied { margin: 8px 0 0; font-size: .72rem; color: var(--muted); }
   /* LE STATUT SE VOIT AVANT D'ÊTRE LU : une pile où tout se ressemble oblige à lire chaque carte pour savoir laquelle bouge. */
-  .point[data-statut="in-progress"] { border-left: 3px solid var(--accent); }
-  .point[data-statut="pending-decision"] { border-left: 3px solid var(--state-rework-edge); }
-  .point[data-statut="pending-dependency"] { border-left: 3px solid var(--muted); }
-  .point[data-statut="waiting-external"] { border-left: 3px solid var(--state-dismissed-edge); }
-  .point[data-statut="done"], .point[data-statut="dismissed"] { opacity: .55; }
+  .point[data-status="in-progress"] { border-left: 3px solid var(--accent); }
+  .point[data-status="pending-decision"] { border-left: 3px solid var(--state-rework-edge); }
+  .point[data-status="pending-dependency"] { border-left: 3px solid var(--muted); }
+  .point[data-status="waiting-external"] { border-left: 3px solid var(--state-dismissed-edge); }
+  .point[data-status="done"], .point[data-status="dismissed"] { opacity: .55; }
   .clos { margin-top: 40px; }
   .clos summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
   .mien { margin: 12px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }

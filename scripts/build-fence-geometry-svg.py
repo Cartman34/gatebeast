@@ -4,6 +4,7 @@
 USAGE
   python3 scripts/build-fence-geometry-svg.py <plan.json>
   Writes <plan>-geometrie.svg beside it.
+  python3 scripts/build-fence-geometry-svg.py -h|--help — this text
 
 INTENTION
   A drawing meant to specify an image has to look like that image, or it specifies nothing. Two
@@ -15,7 +16,7 @@ INTENTION
   - A POST IS A CYLINDER. Straight sides, an ellipse on top, a curved foot. A rounded rectangle with
     a disc perched above reads as a plank with a lid.
 
-  The proportions are MEASURED on the image the generator produced (local/measure-fence.py), not
+  The proportions are MEASURED on the image the generator produced (scripts/dev/measure-fence.py), not
   supposed: post diameter, rail thickness, the height of each rail. The drawing therefore specifies
   something already proved possible.
 
@@ -154,6 +155,9 @@ def build(source: Path) -> int:
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     if len(sys.argv) != 2:
         print(__doc__)
         raise SystemExit(2)

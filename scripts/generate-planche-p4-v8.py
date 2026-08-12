@@ -3,7 +3,15 @@
 Three fixes only: the light standard now in the shared base plus the water and foliage prescribed in
 their bright values (v7 measured 99.9 of luminance, under the 115-130 band); the second hut's outside
 stair lands ON THE WALKWAY, never in the water (the operator's remark); and a size reminder next to EVERY
-human (the audit found one of three)."""
+human (the audit found one of three).
+
+USAGE
+  A FROZEN PLATE PROMPT — a historical document, not a command to run again. It produced
+  assets/revue-da/planche-p4-marais-v8.png, and its prompt is frozen beside it in
+  assets/revue-da/prompt-p4-marais-v8.txt. It is kept so the exact text sent to the generator can be
+  read back next to the image it made. It takes no argument and answers no help: there is nothing to
+  call it with. Running it would spend a generation on a plate that already exists.
+"""
 import sys
 from pathlib import Path
 

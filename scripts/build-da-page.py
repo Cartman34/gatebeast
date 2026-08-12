@@ -74,16 +74,16 @@ def meta(path: Path) -> str:
             f"{par_case} px par case ({exact}) &nbsp;·&nbsp; cliquez pour agrandir")
 
 
-def consigne(key: str) -> str:
+def prompt(key: str) -> str:
     """The exact prompt used to produce the scene, so it can be judged alongside the result."""
     path = ASSETS / f"prompt-{key}-scene.txt"
     if not path.is_file():
         return ""
-    texte = path.read_text(encoding="utf-8")
-    echappe = texte.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    text = path.read_text(encoding="utf-8")
+    escaped = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-    return (f'<details class="consigne"><summary>Consigne de génération — {len(texte)} caractères, '
-            f'{len(texte.split())} mots</summary><pre>{echappe}</pre></details>')
+    return (f'<details class="consigne"><summary>Consigne de génération — {len(text)} caractères, '
+            f'{len(text.split())} mots</summary><pre>{escaped}</pre></details>')
 
 
 def section(key: str, name: str, note: str) -> str:
@@ -111,7 +111,7 @@ def section(key: str, name: str, note: str) -> str:
         </div>
         <figcaption>{meta(scene_file)}</figcaption>
       </figure>
-      {consigne(key)}
+      {prompt(key)}
       <div class="bas">
         <figure class="petite">
           {visual(creature_file, 640, 80, f"Créature témoin — {name}", "En cours…", "creature")}

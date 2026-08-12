@@ -11,6 +11,8 @@
  *     describe <REF> [@file|text]              replace the long description: from a file with @path, from the argument, or from standard input
  *     close <REF> [why]                        status "done", with an optional closing sentence
  *
+ *   php scripts/backlog.php -h|--help          this text
+ *
  * INTENTION
  *   The pile was prose in SUIVI.md: nothing could sort it, count it, or answer "what is next" without a human reading the whole document. Now a single command answers that, and the same command is
  *   the only thing that writes — a point edited by hand in two places diverges, which is exactly what happened between the SUIVI table and the artefact registry.
@@ -19,7 +21,17 @@
  */
 
 $root = dirname(__DIR__);
+require_once __DIR__ . '/Tools.php';
+require_once $root . '/review-server/lib/Faults.php';
 require_once $root . '/review-server/lib/Backlog.php';
+
+// ONE WAY TO FAIL, AND ONE PLACE THAT SHOWS IT (méthode, « Une seule façon d'échouer : l'exception »). The service that renders a fault on a console already
+// exists and the served pages use it; a command that wrote its own message to the error output would be a second rendering, in a second format, that nothing
+// calling it could recognise. Language warnings become exceptions in the same gesture, so nothing fails quietly with a wrong value.
+Faults::get()->asExceptions();
+Faults::get()->onConsole();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 $backlog = new Backlog($root);
 $command = $argv[1] ?? 'next';
@@ -242,4 +254,7 @@ if ($command === 'close') {
     exit(0);
 }
 
-throw new RuntimeException("FAULT « {$command} » n'est pas une sous-commande — next, list, show, add, set, describe, close.");
+// AN UNKNOWN SUBCOMMAND SHOWS THE USAGE, AND IT DOES SO BY RAISING — never by writing to the error output and exiting on its own. There is ONE way to fail in
+// this project and one place that renders it (`Faults::onConsole`), so a command that prints its own fault creates a second one, formatted differently, that
+// no chain calling it can recognise. What the message carries is the usage read from the head of THIS file, so there are never two lists to keep in step.
+throw new RuntimeException("« {$command} » n'est pas une sous-commande.\n\n" . implode("\n", Tools::get()->usageOf(__FILE__) ?? []));

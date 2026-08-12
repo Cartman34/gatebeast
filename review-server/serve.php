@@ -1,6 +1,7 @@
 <?php
 /**
  * Usage: php review-server/serve.php [port]   — the address it prints is the one to open; `php scripts/stop-review-server.php` closes it at the end of the session.
+ *        php review-server/serve.php -h|--help — this text, and no server is started.
  *
  * Intention: one command to start the review, so nobody has to remember the flags of the built-in server, and so the document root cannot be got wrong. THE ROOT IS THE REPOSITORY, not this folder:
  * a review page must be able to reach an image, a plan or a stylesheet where it actually lives, without any of them being copied here or encoded into the page. That is the very constraint that
@@ -12,7 +13,10 @@
  */
 
 require_once __DIR__ . '/bootstrap.php';
+require_once dirname(__DIR__) . '/scripts/Tools.php';
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 $root = dirname(__DIR__);
 $server = ReviewServer::get();

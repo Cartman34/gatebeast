@@ -4,6 +4,7 @@
 USAGE
   python3 scripts/run-fence-campaign.py            # lists what would be queued, queues nothing
   python3 scripts/run-fence-campaign.py --generate
+  python3 scripts/run-fence-campaign.py -h|--help  # this text, and nothing is queued
 
   Queuing is not generating: after --generate, the requests sit in the sprite queue as "pending" until
   someone drains it with
@@ -85,4 +86,7 @@ def main(generate: bool) -> int:
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     raise SystemExit(main("--generate" in sys.argv))

@@ -32,6 +32,26 @@ const CEILING = 5;
 /** The sentinel the agent writes when he wants to check that the hook still bites. Nobody writes it by accident. */
 const SELF_TEST_WORD = 'EPREUVE-DU-HOOK';
 
+/**
+ * Says, on the way out, what the operator has judged since the agent last looked — and says nothing when there is nothing.
+ *
+ * THE AGENT IS TOLD, IT NO LONGER HAS TO THINK OF ASKING (operator, 2026-08-11: « toi tu n'es pas encore notifié apparemment, tu ne vois pas les modifs »). He
+ * judges on the page while the agent works, and the data landed in the repository without anything pointing at it: on 2026-08-11 three images were judged and
+ * the agent found out an hour later, opening the file for another reason — two of those verdicts overturned a written rule.
+ *
+ * IT ANNOUNCES, IT NEVER REFUSES. The end of a turn is already refused for one reason, and a second one would make this hook the thing that never lets go. A
+ * notice on the way out is enough: what it writes comes back to the agent, which is all that was missing.
+ */
+function announceFreshVerdicts(): void
+{
+    $said = [];
+    $status = 0;
+    exec(sprintf('php %s new 2>&1', escapeshellarg(__DIR__ . '/remarks.php')), $said, $status);
+    if ($status === 1 && $said) {
+        fwrite(STDERR, implode("\n", $said) . "\n");
+    }
+}
+
 $payload = stream_get_contents(STDIN);
 $trace = HookTrace::get();
 $decoded = json_decode($payload, true);
@@ -130,6 +150,7 @@ if ($remaining === 0) {
         unlink($counter);
     }
     $trace->write('stop-log', 'LAISSE PASSER — plus aucune tâche à faire ni en cours');
+    announceFreshVerdicts();
     exit(0);
 }
 
@@ -143,6 +164,7 @@ if ($refusals > CEILING) {
     // standard error with exit 0, and an exit 0 shows the agent nothing: the guard simply went quiet, and nobody could tell why.
     $trace->write('stop-log', sprintf('LAISSE PASSER — plafond de %d refus consécutifs atteint, %d tâche(s) restaient', CEILING, $remaining));
     fwrite(STDERR, sprintf("Le hook a refusé %d fins de tour d'affilée et laisse passer celle-ci : %d tâche(s) restent à faire ou en cours, et rien n'avance.\n", CEILING, $remaining));
+    announceFreshVerdicts();
     exit(0);
 }
 
@@ -153,4 +175,6 @@ $trace->write('stop-log', sprintf('REFUSE — refus n°%d sur %d, %d tâche(s) r
 fwrite(STDERR, sprintf("TU NE T'ARRÊTES PAS : %d tâche(s) sont encore à faire ou en cours. Reprends la première sans rendre la main :\n", $remaining));
 fwrite(STDERR, '  ' . $first . "\n");
 fwrite(STDERR, "Une tâche qui ne peut pas avancer sans l'opérateur se passe en « blocked » avec sa raison écrite, elle ne se laisse pas en « todo ».\n");
+// AND ON THIS PATH TOO, WHICH IS THE MOST TRODDEN ONE: a verdict given while the agent works must reach it whatever the hook decides about the turn.
+announceFreshVerdicts();
 exit(2);

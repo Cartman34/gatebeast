@@ -5,17 +5,16 @@
  *   to be read, `.grid` around a set of cards. A page declares no width of its own any more.
  *
  * INTENTION
- *   LE FORMAT D'ÉCRAN SE STANDARDISE, ET IL ACCEPTE LE 4K (opérateur, 2026-08-12 : « standardise le format d'écran responsive acceptant les écrans 4K »). Chaque
- *   page déclarait sa propre largeur, et toutes disaient 1100 pixels : sur un écran 4K, un ruban au milieu de trois mille huit cents pixels de vide. Une valeur
- *   recopiée dans cinq pages est une valeur qu'on change dans trois.
+ *   ONE SCREEN FORMAT, AND IT TAKES 4K (operator, 2026-08-12: « standardise le format d'écran responsive acceptant les écrans 4K »). Every page declared its own
+ *   width and all of them said 1100 pixels: on a 4K screen, a ribbon in the middle of three thousand eight hundred pixels of nothing. A value copied into five
+ *   pages is a value one changes in three.
  *
- *   UNE LARGEUR DE PAGE N'EST PAS UNE LARGEUR DE LECTURE, et les confondre est ce qui produit les deux défauts opposés. Une page large sert à COMPARER — poser
- *   des vignettes côte à côte, voir quinze sujets d'un coup ; un texte, lui, cesse d'être lisible passé une soixantaine de caractères, et l'œil se perd en
- *   revenant à la ligne. Le conteneur prend donc tout l'écran, et le texte garde sa mesure à l'intérieur.
+ *   A PAGE WIDTH IS NOT A READING WIDTH, and confusing the two produces both opposite defects. A wide page is for COMPARING — thumbnails side by side, fifteen
+ *   subjects at a glance; a text stops being readable past sixty or so characters, the eye losing its place on the way back. So the container takes the whole
+ *   screen and the text keeps its measure inside it.
  *
- *   LA GRILLE SE REMPLIT, ELLE NE SE COMPTE PAS. Un nombre de colonnes écrit à la main est juste sur l'écran de celui qui l'a écrit et faux sur tous les autres :
- *   la grille déclare la largeur MINIMALE d'une carte et laisse le navigateur en poser autant qu'il peut. Sur un portable il en pose une, sur un 4K il en pose
- *   huit, et personne n'a rien à décider.
+ *   THE GRID FILLS ITSELF, IT IS NEVER COUNTED. A column count written by hand is right on the screen of whoever wrote it and wrong on every other: the grid
+ *   declares the MINIMUM width of a card and lets the browser lay down as many as it can — one on a phone, eight on a 4K, and nobody has anything to decide.
  */
 
 class Layout

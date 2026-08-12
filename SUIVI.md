@@ -12,6 +12,23 @@ la cible à `doc/conception/`, les mots au [glossaire](doc/glossaire.md), et tou
 document empilait une section par séance, ce que sa propre première ligne interdit. **Ce qui en a été retiré n'est pas dans un diff, il est dans
 [doc/journal-des-seances.md](doc/journal-des-seances.md)** — versionné, citable, et qui ne dit que le pourquoi des décisions passées, jamais l'état courant.
 
+### OÙ ON EN EST À LA FIN DU 2026-08-12
+
+**LE DÉPÔT EST SALE, ET DEUX POINTS L'ATTENDENT.** `W23 outils-morts` (retirer `scripts/sprite-queue.py` et `scripts/run-fence-campaign.py`, morts : ils
+appellent deux scripts fusionnés depuis dans `generate-sprite.py`) et `S80 dossiers-en-anglais` (renommer les six répertoires d'images, 180 fichiers et tous les
+chemins enregistrés, remarques de l'opérateur comprises) sont tous deux en `pending-dependency` sur **un enregistrement de l'état courant** : on ne supprime pas
+un fichier sale, et on ne déplace pas 180 fichiers par-dessus des modifications non enregistrées. **Un `git commit` les débloque.**
+
+**QUATRE SOUS-AGENTS ONT TRAVAILLÉ CE JOUR-LÀ**, et leur périmètre se recouvre — vérifier `git status` avant d'écrire dans ces zones : `page-de-revue`
+(`review-server/suivi-sprites/`), `outillage` (aides `-h`/`--help` des cent commandes, chemins cités, dette de langue), `migration-php` (analyse de la migration
+de la chaîne vers PHP, puis les commentaires français de `review-server/` hors page des sprites), `methode` (règles).
+
+**LE TRI DU JETABLE EST FAIT** : `local/scripts/` est vide, 145 scripts supprimés, 54 promus sous `scripts/dev/` avec leurs citations réécrites.
+
+**CE QUI ATTEND L'OPÉRATEUR SUR `/sprites`** : les quatre marches de l'humain (`HU-000-v7` à `v10`), le renardeau à l'est vu d'en haut (`SP-001-v7`), le pommier
+à quatre pommes (`TR-063-v16`), le chêne (`TR-060-v12`), le centre de soin (`BT-001-v15`, sa façade reste frontale — géométriquement, sans rotation, aucune face
+latérale ne peut apparaître), la ferme usée (`BT-002-v2`), le pont `ns` (`CH-021_shape-ns-v6`).
+
 ### Comment on démarre
 
 **LA SESSION S'OUVRE DEPUIS `~/projects/gatebeast`, ET C'EST IMPÉRATIF** — pas depuis le dossier parent, sans quoi les hooks déclarés dans `.claude/settings.json` ne se chargent pas, le `GO` n'arme
@@ -29,7 +46,7 @@ reconstruit par sa route : `php review-server/build.php /sprites`. **Ce serveur 
 il tient le port et le démarrage de la séance suivante échoue sur « Address already in use ». Les remarques de l'opérateur sont dans `review-server/notes/`, lues directement.
 
 **L'HABILLAGE D'UNE PAGE SE LIT DANS L'HISTORIQUE, JAMAIS DE MÉMOIRE** — deux fois le 2026-08-11, j'ai « restauré » ce qui était déjà là et affirmé à l'opérateur que c'était l'original.
-`bash local/scripts/list-page-themes.sh` sort la palette de la page des sprites à chaque commit qui l'a touchée, `list-page-fonts.sh` sa police. Ce qu'ils disent : `encre` à la migration du
+`bash scripts/dev/list-page-themes.sh` sort la palette de la page des sprites à chaque commit qui l'a touchée, `list-page-fonts.sh` sa police. Ce qu'ils disent : `encre` à la migration du
 2026-08-06, puis un thème `origine` écrit le 2026-08-08 **d'après le bloc sombre du constructeur Python** — le vert que l'opérateur a refusé. La page est revenue à `encre`, sans trame de fond et dans
 la police du système. **Un thème neuf est demandé** : `S64 theme-moderne`.
 
@@ -48,31 +65,35 @@ en argument ou sur l'entrée standard, et **refuse d'écrire quand il n'a rien r
 - `php scripts/check-page-selectors.php` — chaque sélecteur qu'un script cherche existe-t-il dans son balisage ? Un sélecteur qui ne trouve rien ne lève rien : le bouton ne fait simplement plus rien.
 - `php scripts/check-asset-theme.php` — aucun nom de thème hors de son module, et la complétude rapportée.
 - `python3 scripts/check-subjects.py` — le référentiel contre les fichiers réellement livrés.
-- `python3 scripts/check-code-language.py [fichiers]` — le vocabulaire technique français dans les **noms de fichiers** et les valeurs comparées. Balaie aussi `local/scripts/`.
+- `python3 scripts/check-code-language.py [fichiers]` — le vocabulaire technique français dans les **noms de fichiers** et les valeurs comparées. Balaie aussi `local/scripts/`. Il rend son
+  **verdict** et le compte par répertoire ; `--detail` rouvre la liste. `bash scripts/dev/show-language-debt.sh` la donne pour le seul code versionné : **48 signalements**, le reste étant dans le
+  jetable de l'agent.
+- **LES VERDICTS NEUFS SE LISENT, ILS NE SE CHERCHENT PLUS** : `php scripts/remarks.php new` dit ce que l'opérateur a jugé ou écrit depuis la dernière lecture et rend 1 s'il y a quelque chose,
+  `seen` marque le tout comme lu. **Le hook de fin de tour l'annonce tout seul**, sur chacune de ses sorties — il avertit, il ne refuse jamais pour ça.
 - `bash scripts/diff-prompts.sh` — réassemble les consignes et dit ce qui a bougé depuis la référence figée. Ne dessine rien. `--freeze` refige.
 - `python3 scripts/check-runes.py` — chaque rune déclarée au référentiel des créatures a sa forme, son tracé et sa couleur dans `assets/runes.json`, et réciproquement.
-  **Les vingt formes se regardent** : `python3 local/scripts/draw-runes-sheet.py` les dessine sur une planche, sous leur nom — une coordonnée ne se contrôle qu'à l'œil.
+  **Les vingt formes se regardent** : `python3 scripts/dev/draw-runes-sheet.py` les dessine sur une planche, sous leur nom — une coordonnée ne se contrôle qu'à l'œil.
 - `python3 scripts/set-rune-anchor.py --list` — les représentations de créature qui n'ont pas encore leur ancre de rune ; sans `--list`, elle se pose, et le point se lit sur la grille que
-  `python3 local/scripts/draw-anchor-grid.py <image>` dessine par-dessus la sprite grossie. **La rune posée se regarde** : `php local/scripts/see-placed-rune.php [individu]` la trace sur la sprite à
+  `python3 scripts/dev/draw-anchor-grid.py <image>` dessine par-dessus la sprite grossie. **La rune posée se regarde** : `php scripts/dev/see-placed-rune.php [individu]` la trace sur la sprite à
   trois grossissements — c'est là qu'on voit si la forme, la couleur, la taille et l'ancre s'accordent, et que la taille ne suit pas celle du porteur.
 
 **DEUX GÉNÉRATIONS DU MÊME VARIANT NE PARTENT PAS ENSEMBLE** : un verrou par variant sous `var/locks/`, pris avant tout le reste et rendu même sur échec, et
-l'inscription au référentiel sérialisée par un verrou global. Éprouvé par `bash local/scripts/trial-generation-lock.sh`, sans dépenser de génération.
+l'inscription au référentiel sérialisée par un verrou global. Éprouvé par `bash scripts/dev/trial-generation-lock.sh`, sans dépenser de génération.
 
-**LES ESSAIS DES HOOKS** : `bash local/scripts/essai-mot-ordre.sh` (la forme d'un ordre), `essai-hook-prompt.sh`, `essai-hook-stop.sh`, `essai-stop-transcrit.sh`, `test-stop-multiline.sh`. **Huit cas
+**LES ESSAIS DES HOOKS** : `bash scripts/dev/trial-mot-ordre.sh` (la forme d'un ordre), `trial-hook-prompt.sh`, `trial-hook-stop.sh`, `trial-stop-transcrit.sh`, `test-stop-multiline.sh`. **Huit cas
 de ce dernier sont rouges** : ils écrivent le `STOP` en entrée `user` du transcrit, soit la lecture d'ordres retirée le 2026-08-09, et non le porteur réel `queue-operation`. Ce sont des essais
 d'agent, dans le répertoire de l'agent : ils se réécrivent au fil du dépilement, sans rien demander.
 
-**LES SONDES, pour regarder au lieu de supposer** : `shoot-page.php` (la page telle qu'elle s'ouvre, fichier **ou adresse servie**), `probe-fsp.php`, `cliquer-bouton.php`, `console-page.php`,
+**LES SONDES, pour regarder au lieu de supposer** : `shoot-page.php` (la page telle qu'elle s'ouvre, fichier **ou adresse servie**), `probe-fsp.php`, `click-bouton.php`, `console-page.php`,
 `probe-comparaison.php`, `probe-fermeture.php`, `probe-debordement.php`, `probe-drawer-path.php` (le chemin dans le tiroir), `probe-handled-remark.php` (une remarque classée ne s'affiche plus),
 `probe-filter-state.php` (le compte sous les filtres), `probe-state-refresh.php` (l'état d'un sujet suit ses verdicts), `probe-theme-shot.php` (la page dans un thème forcé),
-`probe-orphans.php` (la section hors modèle), `montrer-queue-operation.php` (les messages glissés en cours de tour).
+`probe-orphans.php` (la section hors modèle), `show-queue-operation.php` (les messages glissés en cours de tour).
 
 **LE NAVIGATEUR DES SONDES NE S'ÉCRIT NULLE PART** : son chemin est la clé `browser` de `review-server/config.json`, et les trois gestes vivent dans le service `Browser` — `shot()` pour le tir
 d'écran, `dom()` pour la page après exécution de son script, `console()` pour ce qu'elle a imprimé. Un navigateur absent le dit et nomme le chemin cherché.
 
 **ET UNE SONDE N'ÉCRIT JAMAIS DANS LES DONNÉES DE L'OPÉRATEUR.** La page de revue enregistre chaque verdict sur le serveur au moment où on le coche : une sonde qui clique pour mesurer **écrit pour
-de vrai**. Dix entrées vides ont ainsi été déposées dans `review-server/notes/sprites.json` le 2026-08-11, puis retirées par `python3 local/scripts/clean-empty-verdicts.py --apply`. Toute sonde qui
+de vrai**. Dix entrées vides ont ainsi été déposées dans `review-server/notes/sprites.json` le 2026-08-11, et il a fallu les retirer une à une. Toute sonde qui
 clique neutralise l'envoi avant son premier clic. **Une sonde s'ajoute en fin de fichier, jamais avant `</body>`** : la page
 construite n'en porte pas, donc un `str_replace` dessus ne change rien et la sonde rapporte un essai propre sur une page qu'elle n'a jamais touchée.
 
@@ -80,7 +101,31 @@ construite n'en porte pas, donc un `str_replace` dessus ne change rien et la son
 depuis le disque, elle n'a ni style, ni script, ni état — tous ses boutons sont morts et toutes ses remarques vides. **Une sonde qui ouvre le fichier mesure la sonde**, et elle rapporte un défaut
 qui n'existe pas. La copie sondée s'écrit sous `var/tmp/` et se charge par l'adresse du serveur, `…/var/tmp/…`, donc de la même origine que lui. C'est le point `W21 sondes-servies`.
 
-**LES MESURES** : `python3 local/scripts/list-off-band-sprites.py` (les boîtes hors fourchette), `measure-ink-off-band.py` (la hauteur de l'encre, pas de la boîte).
+**LES MESURES** : `python3 scripts/dev/list-off-band-sprites.py` (les boîtes hors fourchette), `measure-ink-off-band.py` (la hauteur de l'encre, pas de la boîte).
+
+### CE QUI GOUVERNE UNE CONSIGNE — appris le 2026-08-12, au prix de vingt générations
+
+**LA CAMÉRA APPARTIENT AU SOCLE, ET UNE SPRITE NE PEUT PAS LA CHANGER** (opérateur : « l'angle, c'est 60°, aucune sprite ne doit pouvoir changer ça, c'est défini
+dans le socle »). Aucune fiche, aucun motif de reprise ne parle de prise de vue — même pour la confirmer : le générateur suit la clause la PLUS PROCHE du sujet,
+donc une redite proche bat le socle. Trois échecs en viennent : un chêne basculé en vue de dessus par un motif de reprise, une créature dessinée à hauteur d'œil
+parce que sa clause d'orientation disait « DE PROFIL », et un bâtiment en élévation parce que le socle disait « face avant, entière » sans dire ÉCRASÉE.
+
+**LE GÉNÉRATEUR N'A AUCUNE MÉMOIRE, ET ON NE LUI PARLE JAMAIS DU PASSÉ** (opérateur, même jour). Ni « la version précédente », ni « c'est la faute à ne pas
+refaire », ni la date d'un refus : il n'a rien vu de tout cela. Un motif de reprise est une PRESCRIPTION, placée en dernier parce que ce qui se lit en dernier
+pèse le plus. L'historique va au commentaire du code, jamais dans la consigne.
+
+**UN PARAMÈTRE SE DIT UNE FOIS, À SON NIVEAU** — socle, type, variante, fiche. Répété à deux niveaux, il se contredit dès que l'un gagne une précision : c'est
+arrivé à la caméra, dite au socle et redite au rappel final dans d'autres mots. Quand un texte doit paraître deux fois, il est INTERPOLÉ depuis une seule
+constante. **Et on reformule, on n'empile pas** : une clause qui a grossi se réécrit entière et plus courte.
+
+**CE QU'ON ÉCRIT SE LIT DANS LA CONSIGNE ASSEMBLÉE, JAMAIS DANS LE FICHIER SOURCE** : `python3 scripts/generate-sprite.py <SUJET> <VARIANTE>` sans `--generate`
+l'écrit sous `var/tmp/consignes/`. C'est là, et seulement là, que les contradictions se voient. Puis `bash scripts/diff-prompts.sh` dit ce qui a bougé sur les
+soixante-quinze, et `--freeze` refige une fois le changement voulu. Tout est écrit à
+[l'écriture des consignes](doc/conception/referentiels/visuel/assets/ecriture-des-consignes.md).
+
+**ET TROUVER UNE CAUSE N'EST PAS AVOIR TROUVÉ LA CAUSE** : on relit la consigne entière une fois la première trouvée. Les paramètres que chaque type doit fixer
+sont à [la grille des paramètres](doc/conception/referentiels/visuel/parametres-des-sujets.md), l'usure des bâtiments à
+[son nœud](doc/conception/referentiels/visuel/usure-des-batiments.md), et `php scripts/check-subject-parameters.php -v` nomme ce qu'une fiche laisse non fixé.
 
 ### Ce qui est vrai du modèle, et qu'aucun fichier ne dit à lui seul
 
@@ -114,7 +159,7 @@ référentiel pour savoir quelle vue elle porte, et retire direction, pose et pl
 
 **UN ORDRE GLISSÉ EN COURS DE TOUR EST LU** — entrées `queue-operation` du transcrit, par `hook-stop.php` à la fin du tour et par
 `php scripts/check-last-order.php <transcript.jsonl>` à la demande. Cette commande **arme sur un `GO` et désarme sur tout le reste** : c'est le dernier mot de
-l'opérateur qui décide, jamais l'agent. Elle rend 0 si le dépilement est armé, 1 sinon. Ses essais : `bash local/scripts/trial-last-order.sh`.
+l'opérateur qui décide, jamais l'agent. Elle rend 0 si le dépilement est armé, 1 sinon. Ses essais : `bash scripts/dev/trial-last-order.sh`.
 
 **LE HOOK DE BASE DE L'OPÉRATEUR EST BRANCHÉ** : `~/projects/local/hook/hook-pre-bash.sh`, en `PreToolUse` sur `Bash` seul. Il refuse les `;`, les `&&`, les `$(...)`, les redirections vers un
 fichier, les chemins absolus dans le dépôt et le `sed -i`. **Sur `Write` ou `Edit` il enfermerait l'agent** — il lit leur charge comme une ligne de commande.

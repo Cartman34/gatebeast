@@ -4,6 +4,7 @@
 USAGE
   python3 scripts/generate-sprite.py <REF DU SUJET> <REF DE LA VARIANTE> \\
       [--ref <image> | --plate <image>] [--model <nom>] [--rework "<motif>" | --rework @<fichier>] [--generate]
+  python3 scripts/generate-sprite.py -h|--help — ce texte, et rien n'est produit.
 
   --rework est la REPRISE UNIQUE que la chaîne de production autorise : le motif exact du rejet, cité
   en toutes lettres, ajouté en fin de consigne. Il ne se donne qu'une fois par version — une seconde
@@ -57,7 +58,7 @@ import shape_vocab
 import tile_scale
 
 # check-subjects.py is hyphenated, so it is loaded by path (record-asset.py already uses this mechanism
-# for the same file, and cut-asset.py before it).
+# for the same file, and the cutting step of the old chain before it).
 CHECK_SUBJECTS = Path(__file__).resolve().parent / "check-subjects.py"
 spec = importlib.util.spec_from_file_location("check_subjects", CHECK_SUBJECTS)
 check_subjects = importlib.util.module_from_spec(spec)
@@ -82,17 +83,30 @@ POSTS_TEXT = {
 # CE QU'ON VOIT DU PERSONNAGE SELON L'ORIENTATION QU'IL DÉCLARE, et rien d'autre : sa silhouette, ses vêtements et ses couleurs restent à sa description, qui ne
 # change pas d'une vue à l'autre. La phrase de posture vivait dans cette description, en toutes lettres et au sud — envoyée telle quelle pour la vue de dos, elle
 # demandait exactement le contraire de ce que la variante déclarait, et une consigne qui se contredit produit une image au hasard.
+#
+# AND NOT ONE OF THESE FOUR SAYS « PROFILE » OR « FRONT VIEW » ANY MORE, WHICH IS THE FAULT THAT COST THE MOST. « De profil » names an eye-level side view: it
+# contradicts the sixty-degree plunge the socle prescribes, and the generator obeys the clause closest to the subject — so it drew the creature at eye level and
+# the operator refused it, « mauvais angle caméra » (2026-08-12). These clauses now say only WHICH WAY THE SUBJECT IS TURNED; from where it is looked at belongs
+# to the socle, and to the socle alone.
 ORIENTATION_TEXT = {
-    "south": "IL EST TOURNÉ VERS NOUS, DE FACE : on voit son visage en entier et tout l'avant de son corps.",
-    "north": "IL EST TOURNÉ VERS LE FOND, DE DOS : on ne voit PAS son visage — on voit l'arrière de sa tête et tout l'arrière de son corps.",
-    # THE EAST VIEW IS SPELLED OUT HARDER THAN THE OTHERS, AND IT IS NOT A WHIM: it came back wrong twice on 2026-08-12 — a creature drawn facing left, which is
-    # the WEST view, and a human that came out deformed. A profile facing left is the common one, and a clause naming a side is answered by the habit rather than
-    # by the ask. So the direction is said three times and in three ways — where the face points, which edge of the image it points AT, and what one must NOT see.
-    "east": ("IL EST TOURNÉ VERS LA DROITE DE L'IMAGE, DE PROFIL. SON VISAGE, SON MUSEAU ET SON REGARD POINTENT VERS LE BORD DROIT de l'image, et son dos est du "
-             "côté du BORD GAUCHE. On voit un seul côté de sa tête, un seul œil, et c'est son flanc GAUCHE qui est tourné vers nous. Ce n'est PAS la vue de "
-             "l'ouest : un sujet qui regarde vers la gauche de l'image est un refus."),
-    "west": ("IL EST TOURNÉ VERS LA GAUCHE DE L'IMAGE, DE PROFIL. SON VISAGE, SON MUSEAU ET SON REGARD POINTENT VERS LE BORD GAUCHE de l'image, et son dos est du "
-             "côté du BORD DROIT. On voit un seul côté de sa tête, un seul œil, et c'est son flanc DROIT qui est tourné vers nous."),
+    "south": "IL EST TOURNÉ VERS NOUS : sa face avant, son visage et l'avant de son corps sont du côté du BAS de l'image.",
+    "north": "IL EST TOURNÉ VERS LE FOND : on ne voit PAS son visage — c'est l'arrière de sa tête et l'arrière de son corps qui sont tournés vers nous.",
+    # THE EAST VIEW IS SPELLED OUT HARDER THAN THE OTHERS, AND IT IS NOT A WHIM: it came back wrong three times on 2026-08-12, drawn turned left — which is the
+    # WEST view. Turning left is the common way to draw an animal, and a clause naming a side is answered by the habit rather than by the ask. So the direction is
+    # said three times and in three ways — where the muzzle points, which edge of the image it points AT, and where the back is.
+    "east": ("IL EST TOURNÉ VERS LA DROITE DE L'IMAGE. SON VISAGE, SON MUSEAU ET SON REGARD POINTENT VERS LE BORD DROIT, sa queue ou son dos vers le BORD GAUCHE, "
+             "et c'est son flanc GAUCHE qui est tourné vers nous. Un sujet qui regarde vers la gauche de l'image est la vue de l'ouest, et c'est un refus."),
+    "west": ("IL EST TOURNÉ VERS LA GAUCHE DE L'IMAGE. SON VISAGE, SON MUSEAU ET SON REGARD POINTENT VERS LE BORD GAUCHE, sa queue ou son dos vers le BORD DROIT, "
+             "et c'est son flanc DROIT qui est tourné vers nous."),
+}
+
+# WHAT THE SUBJECT IS DOING — an axis the model has always declared and the prompt never carried. Asked for the four walking views of the human on 2026-08-12, the
+# assembled prompt said nothing about walking at all: it would have produced a standing figure, and the reproach made to the image would have had no ground. The
+# resting action says nothing, as a default should; every other action names the pose it wants, once, here.
+ACTION_TEXT = {
+    "walk": ("IL EST EN TRAIN DE MARCHER, ET CELA SE VOIT SANS AMBIGUÏTÉ : une jambe est portée en avant, pied posé, l'autre est en arrière et son talon se "
+             "décolle ; les bras balancent en opposition aux jambes, celui du côté de la jambe avancée partant en arrière. Son buste est légèrement penché dans "
+             "le sens de la marche. Ce n'est pas une pose arrêtée : figée, la silhouette doit se lire comme quelqu'un qui avance, pas comme quelqu'un qui pose."),
 }
 
 
@@ -385,6 +399,14 @@ def draw(code: str, variant_ref: str, reference: Path, generate: bool, plate: Pa
     low = f"{declared['height_min_ty']}".replace(".", ",")
     high = f"{declared['height_max_ty']}".replace(".", ",")
     band_px = f"{round(floor)} à {round(ceiling)} pixels"
+    # WHERE THE SUBJECT SETS DOWN, IN PIXELS, AND IT IS A PARAMETER RATHER THAN A HABIT (opérateur, 2026-08-12 : « le milieu de la base d'un arbre doit être dans
+    # le milieu de son emprise, sinon tu ne pourras rien ajouter devant », puis « certains sprites ne seront pas centrés au milieu de leur emprise mais le sujet
+    # et le variant doivent pouvoir réécrire ça »). It resolves level by level, exactly like the passage does: the variant wins over the subject, the subject over
+    # the default — the middle of the bottom edge of the footprint, which the catalogue already calls the pose point.
+    # SAID IN PIXELS BECAUSE AN APPROXIMATION PRODUCES AN APPROXIMATION: « centré » was read as « à peu près au milieu », and a foot two tiles off centre makes
+    # the tile in front of it unusable. The height is a band, so only the horizontal position can be a figure; the vertical one is the ground line itself.
+    anchor = declared.get("anchor") or subject.get("anchor") or {"x": 0.5}
+    pose_x = round(anchor["x"] * master["width"])
     # THE GROUND RECTANGLE, SAID AS THE CAMERA ACTUALLY SEES IT — and read from the model, never retyped. The clause used to claim the depth was respected "tile
     # for tile" while the dimensions clause said the camera crushed it: a plain contradiction, and one that pushes the generator towards perspective depth cues to
     # make a ten-deep rectangle read as ten deep inside fewer tiles of image.
@@ -424,7 +446,11 @@ def draw(code: str, variant_ref: str, reference: Path, generate: bool, plate: Pa
         free_clause = "Les bords " + " et ".join(free) + " restent libres : rien ne les touche." if free else ""
         join_clause = (f"LA PIÈCE DEMANDÉE : le sujet passe par le CENTRE de la case et rejoint le bord {reach}, et eux seuls.\n{free_clause}")
     else:
-        join_clause = ("LE SUJET EST SEUL DANS SA CASE : il ne rejoint aucun bord, rien ne se prolonge hors de lui, et il ne s'assemble avec rien.")
+        # IT SPEAKS OF THE NEIGHBOUR, NOT OF THE EDGE. « Il ne rejoint aucun bord » said the opposite of a sheet ordering a building to fill its footprint « jusqu'à
+        # ses deux bords » — the same word, twenty lines apart, for two different things. A fence or another building may be laid AGAINST this subject on the map,
+        # which is the renderer's business and never the generator's (opérateur, 2026-08-12).
+        join_clause = ("CE SUJET NE S'ASSEMBLE AVEC AUCUN VOISIN : sa matière ne se prolonge dans aucune case voisine, ne se raccorde à rien et ne fusionne avec "
+                       "rien. Il se dessine ENTIER, ses quatre côtés compris, et occupe toute l'emprise annoncée jusqu'à ses limites.")
 
     # LA CLAUSE D'ORIENTATION NE VAUT QUE POUR CE QUI TOURNE, et le modèle le dit tout seul : un type dont le lot déclare plusieurs orientations a des sujets qui
     # se présentent autrement selon la vue — un personnage, une créature —, tandis qu'un chemin, un arbre ou une clôture n'en déclarent qu'une et ne tournent pas.
@@ -439,6 +465,17 @@ def draw(code: str, variant_ref: str, reference: Path, generate: bool, plate: Pa
             raise SystemExit(f"FAULT {code} tourne, et l'orientation demandée est {facing!r} — aucune clause n'existe pour elle, et une vue sans clause "
                              f"reprendrait celle du sud sans le dire. Orientations connues : {', '.join(sorted(ORIENTATION_TEXT))}.")
         orientation_clause = f"CE QU'ON VOIT DE LUI : {ORIENTATION_TEXT[facing]}"
+
+    # CE QU'IL FAIT SE DIT AUSSI, ET IL NE SE DISAIT NULLE PART. The action is declared on every variant and was carried by no clause: asked for a walking human,
+    # the assembled prompt spoke only of an orientation, so it would have drawn a standing one. Refused rather than guessed — an unknown action would silently
+    # produce the resting pose under another name, which is the transparent fault this repository forbids.
+    doing = declared.get("action", "idle")
+    action_clause = ""
+    if doing != "idle":
+        if doing not in ACTION_TEXT:
+            raise SystemExit(f"FAULT {code} demande l'action {doing!r}, et aucune clause n'existe pour elle — sans clause, l'image reviendrait au repos sans le "
+                             f"dire. Actions connues : repos, {', '.join(sorted(ACTION_TEXT))}.")
+        action_clause = f"CE QU'IL FAIT : {ACTION_TEXT[doing]}"
 
     composition_clause = ""
     if applies_composition:
@@ -519,12 +556,15 @@ et tu redresses tout ce que la scène montre de convergent.
     # GROUND OF THE REJECTION" — but nothing could state that ground: relaunching meant drawing the same prompt again at random, which is not a retry, it is a
     # second draw. The clause comes LAST, after the camera reminder, because what the generator reads last weighs the most; and it names what was missed without
     # restating the subject, whose sheet already says it — repeating the sheet would fix nothing, since the sheet is precisely what was just followed badly.
+    # AND IT SPEAKS OF NO PAST, BECAUSE THE GENERATOR HAS NONE (opérateur, 2026-08-12 : « l'agent IA n'a aucune connaissance de l'historique, on ne doit PAS lui en
+    # parler »). It used to open with « la version précédente a été rejetée » — a sentence about an image this generator never saw, in a session that never
+    # happened for it. What is left is what a retry actually is: the point that matters most, said positively, and placed last because what is read last weighs
+    # the most. The motive text itself must be written the same way, prescriptive and not narrative.
     rework_clause = ""
     if rework:
         rework_clause = (
-            "\nREPRISE — LA VERSION PRÉCÉDENTE A ÉTÉ REJETÉE SUR CE POINT PRÉCIS, ET C'EST LE SEUL À CORRIGER :\n"
+            "\nCE POINT EST LE PLUS IMPORTANT DE TOUTE LA CONSIGNE, ET IL PRIME SUR TOUT LE RESTE :\n"
             f"{rework}\n"
-            "Tout le reste de l'image précédente était juste et se reprend tel quel : même plan, même palette, même matière, même lumière, même projection.\n"
         )
 
     prompt = f"""{asset_common.CONTEXTE_FR}
@@ -547,6 +587,9 @@ LE BORD DU FOND FAIT EXACTEMENT LA MÊME LARGEUR QUE LE BORD DE DEVANT, et les d
 interdite. Il occupe le BAS de l'image, et sa dernière rangée tolère un léger débord pour que la matière se raccorde à ce qui l'entoure.
 TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
 entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+LE POINT DE POSE EST UNE MESURE, PAS UNE IMPRESSION : le MILIEU DE LA BASE du sujet — le pied du tronc, le seuil du bâtiment, le centre de la touffe — tombe à
+EXACTEMENT {pose_x} PIXELS du bord gauche de l'image, et repose sur le bord BAS de l'image. Décalé, le sujet empêche de poser quoi que ce soit devant lui sur la
+carte.
 
 LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
 
@@ -563,6 +606,7 @@ LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge trans
 LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 {code} : {description}
 {orientation_clause}
+{action_clause}
 
 {asset_common.extra_clause(extras)}
 
@@ -686,6 +730,11 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 
 
 if __name__ == "__main__":
+    # ASKED BEFORE ANYTHING ELSE: every other path through this block can spend a generation. Here and not at module level — this file is imported by name
+    # elsewhere, and a guard on the import path would stop its caller the moment that caller is itself run with --help.
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     argv = sys.argv[1:]
     if len(argv) < 2:
         print(__doc__)

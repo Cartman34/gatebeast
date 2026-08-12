@@ -3,6 +3,8 @@
 
 Usage:
   python3 scripts/check-code-language.py [files...]   — checks the files given, or all of scripts/ and review-server/ when none are.
+  python3 scripts/check-code-language.py -v           — the findings one by one; without it, the verdict and the count per directory.
+  python3 scripts/check-code-language.py -h           — this text.
   Exits non-zero on any find, naming the file, the line and the word.
 
 Intention:
@@ -148,6 +150,59 @@ def operator_text(literal):
     return any(character.isupper() for character in literal) or " " in literal or any(character in "àâçéèêëîïôûùüÿœæ" for character in literal.lower())
 
 
+# A DELIMITED PATTERN CARRYING PATTERN SYNTAX, and both halves are required. The delimiters alone would swallow `'/planche-'`, which is a real path fragment and a
+# real find; the escapes alone would fire on any string holding a backslash.
+REGEX_DELIMITED = re.compile(r"^([/~#@%!])(?:\\.|(?!\1).)+\1[a-zA-Z]*$", re.S)
+REGEX_SYNTAX = re.compile(r"\\[sdwbSDWB]|\(\?|\[\^|\{\d")
+
+
+def is_regex(literal):
+    """Whether a quoted literal is a PATTERN rather than a value the machine compares.
+
+    A PATTERN THAT READS FRENCH PROSE MUST BE WRITTEN IN FRENCH, and reporting it asks for the impossible: the inventory writes « hauteur 8 cases » in the
+    operator's language, so the expression that finds that line spells « hauteur » too. Translating it would not make the code more English — it would stop the
+    expression matching anything at all, in silence, which is the exact failure this project forbids by name. So the word inside a pattern is data being read,
+    never a name being written, and it is left alone.
+    """
+    return bool(REGEX_DELIMITED.match(literal)) and bool(REGEX_SYNTAX.search(literal))
+
+
+def label_columns(tree):
+    """The string constants that sit in a COLUMN OF LABELS, and are therefore shown rather than compared.
+
+    A PLATE'S COMPOSITION IS A TABLE, AND ONE OF ITS COLUMNS IS FRENCH ON PURPOSE. `("road", 1, 12, 18, 12, "chemin")` names a kind in its first position — a
+    value the machine compares, English, rightly guarded — and in its last the words written on the drawing for the operator to read. One-word labels wear none
+    of the three signs that mark prose, so « chemin » was reported while « chemin du bord de falaise », three lines below and exactly the same thing, was not.
+
+    THE COLUMN IS WHAT IS RECOGNISED, NEVER THE WORD. Among tuples of the same length gathered in one list, a position whose strings are MOSTLY prose is a label
+    column, and the short ones sharing it are labels too. Nothing else in the file is exempted, and a table with no prose in it is not one — which is why the
+    first position, holding `road` and `rock`, stays guarded.
+    """
+    labels = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.List, ast.Tuple)):
+            continue
+        rows = [row for row in node.elts if isinstance(row, ast.Tuple)]
+        if len(rows) < 3 or len({len(row.elts) for row in rows}) != 1:
+            continue
+        for position in range(len(rows[0].elts)):
+            cells = [row.elts[position] for row in rows]
+            strings = [cell for cell in cells if isinstance(cell, ast.Constant) and isinstance(cell.value, str)]
+            if len(strings) != len(cells):
+                continue
+            # AN EMPTY CELL IS NEITHER A LABEL NOR A COMPARED VALUE, so it votes on neither side.
+            written = [cell for cell in strings if cell.value != ""]
+            prose = [cell for cell in written if operator_text(cell.value) or len(cell.value.split()) > 2]
+            # TWO SENTENCES ARE ENOUGH, AND A MAJORITY IS THE WRONG TEST. What separates the two kinds of column is not how many labels are long but whether the
+            # column can hold a sentence AT ALL: a column of compared values — `road`, `rock`, `water` — never does, by construction, while a column of labels
+            # does as soon as one thing needs more than a word to name it. Asking for a majority made the answer depend on how many short names a plate happened
+            # to use: p5's column passed with fourteen sentences, p6's failed with fourteen of its own, and the two hold exactly the same kind of thing. Two
+            # rather than one so that a single accident cannot open a column.
+            if len(prose) >= 2:
+                labels.update(id(cell) for cell in strings)
+    return labels
+
+
 def check_python(path, source):
     """Names and compared values only — a docstring or a displayed message is prose and stays French."""
     found = []
@@ -155,6 +210,7 @@ def check_python(path, source):
         tree = ast.parse(source)
     except SyntaxError:
         return found
+    labels = label_columns(tree)
     docstrings = set()
     for node in ast.walk(tree):
         if isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
@@ -174,25 +230,71 @@ def check_python(path, source):
             # the operator and stays French; "courante" is a value the machine compares and must not.
             if node.value in docstrings or len(node.value.split()) > 2 or operator_text(node.value):
                 continue
+            if id(node) in labels or is_regex(node.value):
+                continue
             for word in french_words(node.value):
                 found.append((node.lineno, repr(node.value), word))
     return found
 
 
 def check_text(path, source):
-    """For PHP, JavaScript and shell: identifiers and short quoted values, comments skipped by line."""
+    """For PHP, JavaScript and shell: identifiers and short quoted values, comments skipped.
+
+    THE LITERALS COME OUT OF THE LINE FIRST, AND THAT IS THE WHOLE ORDER OF THIS FUNCTION. It used to capture quoted strings of up to thirty characters and scan
+    the raw line for identifiers — so a longer message, which is precisely what a sentence addressed to the operator is, was never seen as a literal at all: its
+    words were read one by one as if they were identifiers, and « FAUTE le fichier de remarques est illisible » was reported as a French symbol. Five of the
+    five findings on scripts/remarks.php were of that family, all of them messages the rule explicitly keeps in French.
+
+    A CONTROL THAT CRIES ON WHAT IT ANNOUNCES IT IGNORES SWITCHES ITSELF OFF — it is written above, it was paid for once already, and it had come back by
+    two more doors, both closed here: a block comment read line by line, and a line of markup.
+    """
     found = []
-    comment = re.compile(r"^\s*(//|#|\*|/\*)")
+    line_comment = re.compile(r"^\s*(//|#)")
+    # AN ESCAPED QUOTE DOES NOT CLOSE A STRING, and forgetting it left the tail of a message being read as code: « ...dit POURQUOI elle l\'est — consigne
+    # corrigée » ended at the apostrophe, and « consigne » was reported as a symbol.
+    literal = re.compile(r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"")
+    inside_block = False
     for number, line in enumerate(source.splitlines(), 1):
-        if comment.match(line):
+        # A BLOCK COMMENT IS FOLLOWED FROM LINE TO LINE, NEVER RECOGNISED ONE LINE AT A TIME. Its continuation lines carry no marker of their own — a docblock
+        # writes ` * `, but an ordinary `/* … */` paragraph just indents — so they were read as code, and any punctuation the French prose happened to contain
+        # was enough to make them look like it. « Ce qui dépasse se parcourt en largeur ; … » held a semicolon, and « largeur » was reported as a symbol.
+        code = line
+        if inside_block:
+            closing = code.find("*/")
+            if closing == -1:
+                continue
+            code = code[closing + 2:]
+            inside_block = False
+        code = re.sub(r"/\*.*?\*/", " ", code)
+        opening = code.find("/*")
+        if opening != -1:
+            inside_block = True
+            code = code[:opening]
+        if line_comment.match(code):
             continue
-        code = re.sub(r"(//|#).*$", "", line)
-        for token in re.findall(r"\$?[A-Za-zÀ-ÿ_][A-Za-zÀ-ÿ_0-9]*|'[^']{0,30}'|\"[^\"]{0,30}\"", code):
-            bare = token.strip("'\"$")
-            quoted = token[0] in "'\""
-            if len(bare.split()) > 2 or (quoted and operator_text(bare)):
+        code = re.sub(r"(//|#).*$", "", code)
+        for token in literal.findall(code):
+            bare = token.strip("'\"")
+            if len(bare.split()) > 2 or operator_text(bare) or is_regex(bare):
                 continue
             for word in french_words(bare):
+                found.append((number, token, word))
+        # What is left once the strings are gone is code, and only code: names of variables, functions, classes, keys.
+        # A LINE THAT CARRIES NO CODE AT ALL IS NOT SCANNED FOR NAMES. A page builder holds whole sentences of French prose inside a heredoc — markup, a
+        # paragraph shown to the operator — and every word of them was being read as an identifier. The sign is mechanical and cheap: code punctuates, prose
+        # does not. No `$`, no assignment, no call, no arrow, no brace: nothing here is a name.
+        rest = literal.sub(' ', code)
+        if not re.search(r"[$=(){}\[\];]|->|::", rest):
+            continue
+        # AND A LINE OF MARKUP IS READ FOR ITS CODE ONLY, never for its words. `<p class="lede">Ce que le monde contient, sujet par sujet …` keeps the `=` of its
+        # attribute once the quoted value is gone, so the sentence behind the tag was read word by word as identifiers. What a tag encloses is shown to the
+        # operator and stays French — but a builder does interpolate real names in there, so the line is not skipped outright: only what CARRIES THE MARKS OF
+        # CODE is kept — a `$variable`, a `call(`, what follows `->` or `::`. Attribute values are literals and were already read as such just above.
+        names = re.findall(r"\$?[A-Za-zÀ-ÿ_][A-Za-zÀ-ÿ_0-9]*", rest)
+        if re.search(r"</[A-Za-z]|<[A-Za-z][\w-]*(\s[^<>]*)?/?>", rest):
+            names = re.findall(r"\$[A-Za-zÀ-ÿ_]\w*|[A-Za-zÀ-ÿ_]\w*(?=\s*\()|(?<=->)\w+|(?<=::)\w+", rest)
+        for token in names:
+            for word in french_words(token.strip('$')):
                 found.append((number, token, word))
     return found
 
@@ -201,8 +303,13 @@ def main(argv):
     # LE VERDICT D'ABORD, LE DÉTAIL SUR DEMANDE (methode/execution.md, « Une sortie qui inonde le contexte »). Six cent neuf lignes partaient dans le contexte de
     # l'appelant à chaque passage, tronquées avant la fin : l'outil ne disait même plus tout ce qu'il avait trouvé. Il rend maintenant son compte par répertoire,
     # ce qui suffit à savoir où est la dette, et `--detail` rouvre la liste entière.
-    detail = "--detail" in argv
-    argv = [a for a in argv if a != "--detail"]
+    # THE OPTION IS THE ONE EVERYONE KNOWS, `-v` / `--verbose`, and never a name invented for the occasion (operator, 2026-08-12). It was `--detail` for half a
+    # day: clear, and unfindable without reading the help, which is exactly what a universal convention gives for free.
+    detail = "-v" in argv or "--verbose" in argv
+    if "-h" in argv or "--help" in argv:
+        print(__doc__.strip())
+        return 0
+    argv = [a for a in argv if a not in ("-v", "--verbose")]
     if argv:
         targets = [pathlib.Path(a).resolve() for a in argv]
     else:
@@ -239,7 +346,7 @@ def main(argv):
         if detail:
             print("\n".join(faults), file=sys.stderr)
         else:
-            print(f"\n{len(faults)} ligne(s) de détail tues — « --detail » les rouvre.", file=sys.stderr)
+            print(f"\n{len(faults)} ligne(s) de détail tues — « -v » les rouvre.", file=sys.stderr)
         print("Les commentaires et les textes destinés à l'opérateur restent en français ; les noms et les valeurs comparées, jamais.", file=sys.stderr)
         return 1
 

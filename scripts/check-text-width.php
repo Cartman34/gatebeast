@@ -6,6 +6,8 @@
  *   Reports every line that breaks the project's single width standard, on any file given: a line over the ceiling, and a run of text lines folded far below it. Prints a verdict and nothing else when
  *   the files are clean; exits 1 as soon as one line is at fault, so it can gate a commit or a hand-off. Run it on whatever was just written, before showing it to anyone.
  *
+ *   php scripts/check-text-width.php -h|--help — this text
+ *
  * INTENTION
  *   The ceiling is 200 characters and it is the project's ONLY length standard (AGENTS.md). Agents break it in one direction far more often than the other: they fold their text to eighty or a hundred
  *   characters, because that is the habit they arrive with and because the file they are editing is already folded that way. Both reasons are forbidden — a rule that is written outranks anything the
@@ -17,6 +19,10 @@
  *
  *   In PHP because it is the project's default language for durable tooling, and this needs no library that only Python has.
  */
+
+require_once __DIR__ . '/Tools.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 const CEILING = 200;
 const FOLD_WIDTH = 150;

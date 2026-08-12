@@ -1,6 +1,7 @@
 <?php
 /**
  * Usage: php scripts/check-plan-couverts.php <plan.json> [<plan.json>...]
+ *        php scripts/check-plan-couverts.php -h|--help — this text
  *
  * Reports every subject standing inside another subject's couvert — a whole tree growing under an oak's crown, which does not happen.
  *
@@ -15,6 +16,10 @@
  */
 
 $root = __DIR__ . '/..';
+require_once __DIR__ . '/Tools.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
+
 $plans = array_slice($argv, 1);
 if ($plans === []) {
     fwrite(STDERR, "Usage: php scripts/check-plan-couverts.php <plan.json> [<plan.json>...]\n");

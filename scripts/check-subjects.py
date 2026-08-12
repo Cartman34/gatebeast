@@ -10,7 +10,8 @@ code must actually be inscribed there) and the disk (a produced file must be cla
 it is invisible to the referentiel even while it sits on disk).
 
 Generates nothing, writes nothing.
-Usage: python3 check-subjects.py
+Usage: python3 scripts/check-subjects.py
+       python3 scripts/check-subjects.py -h|--help — this text
 """
 import json
 import re
@@ -354,4 +355,10 @@ def main(verbose=False):
 
 
 if __name__ == "__main__":
+    # ASKED HERE AND NOT AT MODULE LEVEL: this file is imported by path by generate-sprite.py,
+    # check-asset.py and record-asset.py, and a guard on the import path would stop each of them dead
+    # the moment they are themselves called with --help.
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main("--verbose" in sys.argv[1:]))

@@ -6,6 +6,8 @@
  *   Reads the LAST thing the operator said in that transcript — whether it opened a turn or was slipped in while the agent worked — and puts the dequeue in the
  *   state that word calls for: a GO arms it, anything else disarms it. Says what it found either way, and exits 0 when it armed, 1 when it disarmed.
  *
+ *   php scripts/check-last-order.php -h|--help — this text
+ *
  * INTENTION
  *   THE AGENT MUST BE ABLE D'OBÉIR SANS RIEN DÉCIDER (operator, 2026-08-11, then 2026-08-12: « il faut rendre générique la commande que tu utilises pour vérifier
  *   qu'un stop a été donné pour qu'elle accepte aussi le go — ainsi tu seras capable de vérifier toi-même quand un go ou un stop a été donné et d'actualiser le
@@ -20,9 +22,12 @@
  *   this from becoming the 2026-08-09 regression where an old word re-armed the dequeue at every end of turn.
  */
 
+require_once __DIR__ . '/Tools.php';
 require_once __DIR__ . '/hook-trace.php';
 require_once __DIR__ . '/hook-transcript.php';
 require_once __DIR__ . '/hook-word.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 $path = $argv[1] ?? '';
 if ($path === '' || !is_file($path)) {

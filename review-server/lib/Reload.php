@@ -114,13 +114,19 @@ HTML;
 
   document.getElementById('reload-button').addEventListener('click', function () { window.location.reload(); });
 
-  ask(function (signature) {
-    openingSignature = signature;
-    window.setInterval(function () {
-      if (announced) { return; }
-      ask(function (now) { if (now !== openingSignature) { announce(); } });
-    }, {$pulse});
-  });
+  /* THE WATCH IS INSTALLED WHATEVER THE FIRST CALL DOES, AND THAT IS THE WHOLE OF THE FIX. It used to be installed INSIDE the first answer, so a page loaded
+     while the server was down or restarting never asked again: it stayed open, looking alive, and deaf for the rest of the session. That is what happened to the
+     index on 2026-08-12 — « la page index ouverte ne s'est pas rafraîchie » — and no amount of rebuilding could have woken it.
+     A FAILED CALL LEAVES THE OPENING SIGNATURE UNKNOWN, and the first one that succeeds becomes it. The page then compares against what it actually saw, rather
+     than announcing a change it has no ground to claim. */
+  window.setInterval(function () {
+    if (announced) { return; }
+    ask(function (now) {
+      if (openingSignature === null) { openingSignature = now; return; }
+      if (now !== openingSignature) { announce(); }
+    });
+  }, {$pulse});
+  ask(function (signature) { if (openingSignature === null) { openingSignature = signature; } });
 })();
 </script>
 JS;

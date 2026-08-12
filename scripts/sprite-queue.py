@@ -6,6 +6,7 @@ USAGE
   python3 scripts/sprite-queue.py add <requests.json>   # a JSON list of request dicts
   python3 scripts/sprite-queue.py run [--workers N]      # drain the queue continuously
   python3 scripts/sprite-queue.py status                 # print how many requests are in each state
+  python3 scripts/sprite-queue.py -h|--help              # this text, and nothing is queued or drained
 
 A request dict is one of:
   {"kind": "subject", "code": "TR-063", "reference": "path/relative.png" | None}
@@ -321,4 +322,7 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     raise SystemExit(main(sys.argv[1:]))

@@ -46,6 +46,7 @@ THREE QUESTIONS THE CATALOGUE ANSWERS
 
 Usage:
   python3 asset_catalog.py [--lot v0|target] [<code> ...]
+  python3 asset_catalog.py -h|--help                      this text
 """
 import json
 import sys
@@ -540,4 +541,7 @@ def main(arguments):
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main(sys.argv[1:]))

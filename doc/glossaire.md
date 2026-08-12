@@ -10,7 +10,7 @@ qui porte le même nom parce qu'il est de même nature : seul son périmètre di
 répandu dans le code, les textes et les habitudes.
 
 **Le français fait foi.** C'est la langue dans laquelle les termes sont pensés et arbitrés, et celle de l'interface de la 0.x. L'anglais servira le code, le nom du jeu et l'internationalisation
-([vision](../../vision.md)) : à terme, interface et lore existeront dans les deux langues.
+([vision](conception/vision.md)) : à terme, interface et lore existeront dans les deux langues.
 
 **L'anglais est l'anglais américain.** Orthographe américaine sans exception — `center` et non `centre`, `color` et non `colour`, `catalog` et non `catalogue` —, dans le glossaire comme dans le code.
 
@@ -41,7 +41,8 @@ rien noter du tout et de découvrir la question de traduction une fois le mot r�
 
 ## Termes de production visuelle
 
-Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qui les portent sont dans [rendu en calques](../technique/rendu-en-calques.md) et [assets](../visuel/assets/index.md).
+Le vocabulaire de la fabrication et de l'affichage des images. Les décisions qui les portent sont dans
+[rendu en calques](conception/referentiels/technique/rendu-en-calques.md) et [assets](conception/referentiels/visuel/assets/index.md).
 
 | Français | Anglais | Ce que c'est |
 |---|---|---|

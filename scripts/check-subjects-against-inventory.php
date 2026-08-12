@@ -6,6 +6,8 @@
  *   Reads every subject declared in `assets/subjects.json`, finds its line in `doc/conception/referentiels/visuel/inventaire/`, and reports every figure that differs:
  *   footprint, cover, height. Exits non-zero as soon as one differs, or as soon as a subject has no readable line. Read-only — it changes nothing.
  *
+ *   php scripts/check-subjects-against-inventory.php -h|--help — this text
+ *
  * INTENTION
  *   THE INVENTORY IS AUTHORITATIVE AND THE REFERENTIEL IS A COPY OF IT, so the two drift and nothing said so. Found on 2026-08-10: the oak TR-060 carried height 6
  *   against the inventory's 8, the fir TR-065 carried 6 against 4, and BOTH quoted the inventory as saying the wrong figure — a citation that names its source and
@@ -18,6 +20,10 @@
  */
 
 $root = dirname(__DIR__);
+require_once __DIR__ . '/Tools.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
+
 $inventoryDirectory = $root . '/doc/conception/referentiels/visuel/inventaire';
 
 $subjects = json_decode(file_get_contents($root . '/assets/subjects.json'), true, 512, JSON_THROW_ON_ERROR)['subjects'];

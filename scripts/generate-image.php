@@ -6,6 +6,7 @@
  * output path, and yields the produced file.
  *
  * Usage: php gatebeast/scripts/generate-image.php <output.png> "<description>" [<output2.png> "<description2>" ...]
+ *        php scripts/generate-image.php -h|--help — this text, and nothing is generated
  *
  * The IMAGE_JOBS environment variable overrides how many generations run at once, and IMAGE_MODEL names the model the agent should run on — left unset, the
  * agent uses its own configured default. Each finished job prints "SESSION <output> <id>", the id a session is reopened with (`codex exec resume <id>`).
@@ -14,6 +15,11 @@
  * framing and prohibitions belong to the caller, not to this tool.
  * Limits: an existing file is never regenerated (delete it to redo); one generation may take up to 15 minutes.
  */
+
+require_once __DIR__ . '/Tools.php';
+
+// ASKED BEFORE ANYTHING ELSE, and here it matters more than elsewhere: every other path through this file can spend a generation, and a generation costs money.
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 const DEFAULT_JOBS = 12;
 const JOB_TIMEOUT = 900;
@@ -60,8 +66,8 @@ function startJob(array $task): ?array {
 	$target = realpath($directory) . '/' . basename($output);
 	// Given relative to the root the agent runs in, so it writes exactly where the chain expects the image — it no longer works inside the output folder.
 	$relative = str_starts_with($target, $root . '/') ? substr($target, strlen($root) + 1) : $target;
-	// Said in as many words because the agent runs at the project root and finds the project's own generation tooling there: one run answered by EXECUTING
-	// scripts/generate-sprite-subject.py and looping back into the chain instead of drawing, and produced nothing. Its task is to draw, and only that.
+	// Said in as many words because the agent runs at the project root and finds the project's own generation tooling there: one run answered by EXECUTING the
+	// sprite command it found and looping back into the chain instead of drawing, and produced nothing. Its task is to draw, and only that.
 	$prompt = $task['description']
 		. "\n\nTU ES UN ILLUSTRATEUR. TA SEULE TÂCHE EST DE GÉNÉRER CETTE IMAGE et de l'enregistrer au format PNG dans ./$relative. Aucun autre fichier."
 		. "\nTu génères l'image toi-même, avec ton propre outil de génération d'images. N'exécute AUCUN script du dépôt, n'appelle aucun outil du projet et"

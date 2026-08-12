@@ -1,4 +1,5 @@
 """Usage: python3 scripts/check-axonometry.py <image.png> [...] — measures whether a sprite holds the world's parallel projection, and reports what it found.
+       python3 scripts/check-axonometry.py -h|--help — this text
 
 WHAT IT CAN AND CANNOT DECIDE, SAID PLAINLY. A single drawing of an unknown object carries no ground truth: nothing in the pixels says which edges were MEANT to be vertical, so no measurement can
 prove a projection. What CAN be measured is the one thing the projection forbids — CONVERGENCE. Under a parallel projection, the two sides of an upright volume stay parallel; under a perspective
@@ -195,6 +196,9 @@ def main(paths):
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     if len(sys.argv) < 2:
         sys.exit("Usage: python3 scripts/check-axonometry.py <image.png> [...]")
     sys.exit(main(sys.argv[1:]))

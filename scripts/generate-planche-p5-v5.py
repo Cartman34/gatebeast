@@ -5,7 +5,15 @@ STAIR was simply not drawn — a small work with no declared footprint gets lost
 emprise, its own step count and its own paragraph; the plateau was far too empty (43.8% of load), so the
 filling is prescribed as LISTED MASSES with footprints instead of a dressing proportion; SP-001 came out
 oversized. Plus the current standard: the light band from the shared base, and a size reminder next to
-EVERY human (the audit found three of five)."""
+EVERY human (the audit found three of five).
+
+USAGE
+  A FROZEN PLATE PROMPT — a historical document, not a command to run again. It produced
+  assets/revue-da/planche-p5-falaise-v5.png, and its prompt is frozen beside it in
+  assets/revue-da/prompt-p5-falaise-v5.txt. It is kept so the exact text sent to the generator can be
+  read back next to the image it made. It takes no argument and answers no help: there is nothing to
+  call it with. Running it would spend a generation on a plate that already exists.
+"""
 import sys
 from pathlib import Path
 

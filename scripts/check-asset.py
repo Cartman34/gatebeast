@@ -32,6 +32,7 @@ WHAT IS MEASURED
 Usage:
   python3 check-asset.py <path> [...]         paths relative to assets/, or absolute
   python3 check-asset.py --code CH-010 <path> force the referentiel's sujet instead of guessing it
+  python3 check-asset.py -h|--help            this text
 """
 import importlib.util
 import json
@@ -46,7 +47,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from plate_metrics import DARK_MAX, LUMINANCE_MAX, LUMINANCE_MIN
 
 # check-subjects.py is hyphenated, so it is loaded by path rather than imported by name (the same
-# mechanism record-asset.py already uses for cut-asset.py).
+# mechanism record-asset.py already uses for export-asset.py).
 CHECK_SUBJECTS = Path(__file__).resolve().parent / "check-subjects.py"
 spec = importlib.util.spec_from_file_location("check_subjects", CHECK_SUBJECTS)
 check_subjects = importlib.util.module_from_spec(spec)
@@ -235,8 +236,8 @@ def report(path, profile, data):
     rgb = numpy.asarray(raw.convert("RGB"))
     height, width = rgb.shape[:2]
     is_ground = profile is not None and profile.type in GROUND_TYPES
-    # CE SONT DES NOMS DE RÉPERTOIRE, PAS DES VALEURS DE TYPE, et c'est pourquoi ils restent français quand `GROUND_TYPES` est passé à l'anglais le 2026-08-12 :
-    # les dossiers du disque viennent du préfixe du code (`CH` → `sol`), pas du type déclaré. Les traduire, c'est déplacer des fichiers — une autre task.
+    # THESE ARE DIRECTORY NAMES, NOT TYPE VALUES, which is why they stayed French when `GROUND_TYPES` went English on 2026-08-12: the folders on disk come from
+    # the code prefix (`CH` -> `sol`), not from the declared type. Translating them means moving files — a separate task.
     if profile is None and path.parent.name in ("sol", "chemin"):
         is_ground = True
 
@@ -411,4 +412,7 @@ def main(arguments):
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main(sys.argv[1:]))

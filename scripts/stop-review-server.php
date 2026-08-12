@@ -2,6 +2,7 @@
 /**
  * USAGE
  *   php scripts/stop-review-server.php [port]
+ *   php scripts/stop-review-server.php -h|--help — this text
  *
  *   Closes the review server left listening on the port — the configured one unless another is given — and says so. Run it before leaving the session: the server does not outlive the session, and a
  *   server left running holds the port, so the next session's `php review-server/serve.php` dies on "Address already in use". Reports and exits 0 when no server is there: nothing to close is no
@@ -24,7 +25,10 @@
 const SERVER_GRACE_MICROSECONDS = 5_000_000;
 const SERVER_POLL_MICROSECONDS = 200_000;
 
+require_once __DIR__ . '/Tools.php';
 require_once dirname(__DIR__) . '/review-server/bootstrap.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 bootBuild();
 
 $server = ReviewServer::get();

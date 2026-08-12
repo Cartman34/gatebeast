@@ -28,6 +28,7 @@ Usage:
   --frame      the image's own number within its variant (glossaire: frame-01, frame-02...) — not a
                version number, defaults to 1
   --dry-run    show what would be written, touch nothing
+  -h|--help    this text
 """
 import importlib.util
 import json
@@ -217,4 +218,7 @@ def main(arguments):
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main(sys.argv[1:]))

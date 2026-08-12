@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """Self-validation of the catalogue module: addressing, parsing, fallback, round-trip, missing lists.
 
-Generates nothing and writes nothing outside this sandbox.
-Run from the workspace root: python3 gatebeast/local/check-catalog.py
+USAGE
+  python3 scripts/check-catalog.py       the verdict: how many checks passed, and which profiles are incomplete
+  python3 scripts/check-catalog.py -v    the walk-through, check by check
+  python3 scripts/check-catalog.py -h    this text
+
+INTENTION
+  Generates nothing and writes nothing outside its own sandbox file. A failing check raises on the spot, carrying the label of what it was proving.
 """
 import sys
 from pathlib import Path
@@ -18,7 +23,10 @@ checks = 0
 # A CHECKER PRINTS ITS VERDICT, NOT ITS REASONING (methode/execution.md, "Une sortie qui inonde le contexte"). Seventy-three "ok" lines landed in the caller's
 # context on every run, one per check that passed — nothing a reader acts on, and the cost is paid by everything they do next. What fails still speaks: an
 # assertion carries the label of the check it broke. `--detail` brings the walk-through back when one wants to read it.
-DETAIL = "--detail" in sys.argv
+DETAIL = "-v" in sys.argv or "--verbose" in sys.argv
+if "-h" in sys.argv or "--help" in sys.argv:
+    print(__doc__.strip())
+    raise SystemExit(0)
 
 
 def expect(condition, label):
@@ -205,4 +213,4 @@ expect(real.missing(lot="v0") == incomplete,
 
 sandbox.unlink()
 print(f"{checks} checks passed. Incomplete in v0: {', '.join(incomplete) or 'nobody'}."
-      + ("" if DETAIL else " Run with --detail for the walk-through."))
+      + ("" if DETAIL else " Run with -v for the walk-through."))

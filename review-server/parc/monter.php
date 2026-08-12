@@ -1,6 +1,7 @@
 <?php
 /**
- * Usage: php review-server/parc/monter.php
+ * Usage: php review-server/parc/monter.php [plan.json]
+ *        php review-server/parc/monter.php -h|--help — this text, and nothing is mounted.
  *
  * Builds review-server/parc/maquette.html — the park mock-up itself: every sprite the plan declares, laid on its own cell, at the scale of the world.
  *
@@ -16,11 +17,14 @@
  */
 
 $root = __DIR__ . '/../..';
+require_once "$root/scripts/Tools.php";
 require_once "$root/scripts/Capture.php";
 require_once "$root/review-server/bootstrap.php";
 // Le tracé de rune n'est pas un service que toute page charge : seule la maquette compose des sujets sur des cases, donc seule elle en a besoin.
 require_once "$root/review-server/lib/Rune.php";
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 // THE SERVED ROUTE IS THE THIRD ARGUMENT: this mounter produces the mock-up served at /parc/maquette, but also a SOURCE of the Campagne page, melted elsewhere. A source carries no reload notice —
 // the final page would otherwise hold two of them, on a route that is not its own. That absence of a route is `null`, never an empty string: an empty string is a string holding nothing, which is
 // not the same as having no route at all. A command line can only carry text, so the emptiness it hands over is brought back to null right here.
@@ -106,9 +110,14 @@ function runeOn(array $subjects, array $cell, string $image, float $width, int $
             }
         }
     }
+    // NO ANCHOR MEANS NO RUNE, AND THAT IS NOT A FAULT SINCE 2026-08-12: the operator asked for the runes to be taken off — « pour l'instant, ne mets pas les
+    // runes », the three anchors that existed having been placed at spots nobody chose. Raising here stopped the whole Campagne mock-up from building, which is
+    // a blocked mock-up for a mark that is deliberately absent. It is REPORTED to whoever ran the build, and the scene is mounted without it.
     if ($anchor === null) {
-        throw new RuntimeException("la case ({$cell['column']},{$cell['row']}) déclare l'individu « {$cell['individual']} », et l'image {$image} n'a pas "
-            . "d'ancre de rune — posez-la par « python3 scripts/set-rune-anchor.py » avant de le poser dans la scène.");
+        fwrite(STDERR, sprintf("sans rune : la case (%d,%d) déclare « %s », et %s n'a pas d'ancre — « python3 scripts/set-rune-anchor.py » la pose.\n",
+            $cell['column'], $cell['row'], $cell['individual'], $image));
+
+        return '';
     }
     $scale = $width / $imageWidth;
 
@@ -190,7 +199,11 @@ foreach ($plan['cells'] as $cell) {
     }
     $byLayer[$layer][] = $cell;
 }
-usort($byLayer[DEPTH_SORTED_LAYER], fn ($one, $other) => $one['row'] <=> $other['row']);
+// THE DEPTH KEY IS THE FRONT ROW, NOT THE FIRST ONE. What decides which of two subjects hides the other is where each one ENDS towards the viewer: a building
+// ten rows deep, laid at row 5, has its façade at row 14, and everything standing between the two is BEHIND it. Sorted on its first row it was drawn before all
+// of them, so a tree at row 9 came out in front of a wall that stands two rows closer to the eye. A one-tile subject is unaffected — its first row is its front
+// one — which is why the fault stayed invisible for as long as the park held nothing but trees and fences.
+usort($byLayer[DEPTH_SORTED_LAYER], fn ($one, $other) => ($one['row'] + ($one['rows'] ?? 1)) <=> ($other['row'] + ($other['rows'] ?? 1)));
 $ordered = array_merge(...array_values($byLayer));
 
 $missing = [];

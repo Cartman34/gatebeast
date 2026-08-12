@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 """Human scale calibration, fourth attempt — operator's request: 3 men, 3 women, 2 children, each shown
 STANDING on the top row and, directly below, the SAME person SITTING. French prompt, sizes in tiles and
-image ratios only — never pixels for elements (frame size stays, the backend needs it)."""
+image ratios only — never pixels for elements (frame size stays, the backend needs it).
+
+USAGE
+  A FROZEN CALIBRATION PROMPT — a historical document, not a command to run again. It produced
+  assets/revue-da/calibration-humains-v4.png, the sheet the human scale of every later plate is held
+  to. It is kept so the exact text sent to the generator can be read back next to the image it made.
+  It takes no argument and answers no help: there is nothing to call it with. Running it would spend
+  a generation on a sheet that already exists.
+"""
 import subprocess
 import sys
 from pathlib import Path

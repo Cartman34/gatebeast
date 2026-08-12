@@ -4,7 +4,15 @@ scale (so the scale is hammered at the head, next to every human, and again at t
 empty (38.9% of load — free dressing raised to one tile in three and the coastal planting widened),
 luminance far too high (147.7 — bright but never overexposed, deep golden sand, no burnt white), and
 ghost paths (the segment list is hammered as exhaustive and repeated at the end). Composition otherwise
-carried from v4."""
+carried from v4.
+
+USAGE
+  A FROZEN PLATE PROMPT — a historical document, not a command to run again. It produced
+  assets/revue-da/planche-p6-plage-v5.png, and its prompt is frozen beside it in
+  assets/revue-da/prompt-p6-plage-v5.txt. It is kept so the exact text sent to the generator can be
+  read back next to the image it made. It takes no argument and answers no help: there is nothing to
+  call it with. Running it would spend a generation on a plate that already exists.
+"""
 import sys
 from pathlib import Path
 

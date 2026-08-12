@@ -4,6 +4,7 @@
  *
  *   php review-server/build.php /maquette-campagne
  *   php review-server/build.php
+ *   php review-server/build.php -h|--help   — this text, and nothing is rebuilt.
  *
  * Intention: a page took three commands with long paths and an easily-forgotten empty argument, and rebuilding it meant reading the declaration to find them. The declaration already carries those
  * commands — this runs them. One page, one command, and no incantation to remember.
@@ -13,7 +14,10 @@
  */
 
 require_once __DIR__ . '/bootstrap.php';
+require_once dirname(__DIR__) . '/scripts/Tools.php';
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 $root = dirname(__DIR__);
 $pages = require __DIR__ . '/pages.php';

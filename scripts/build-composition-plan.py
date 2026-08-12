@@ -2,6 +2,7 @@
 """Render any composition plan from its declaration. The standard entry point.
 
 Usage: python3 scripts/build-composition-plan.py <plan.json>
+       python3 scripts/build-composition-plan.py -h|--help — this text
 
 The JSON beside the SVG IS the plan. It says how big the grid is, what a cell holds when nothing is
 declared for it, and then, cell by cell, WHICH SUBJECT stands there and WHICH NEIGHBOURS it joins.
@@ -342,6 +343,9 @@ def build(source: Path) -> int:
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     if len(sys.argv) != 2:
         print(__doc__)
         raise SystemExit(2)

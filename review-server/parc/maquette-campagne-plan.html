@@ -61,6 +61,19 @@
   /* The lines drawn ON an image — the footprint grid and its axes over a sprite. Light, because they lie on the picture, not on the interface. */
   --overlay: rgba(255, 255, 255, 0.32);
   --overlay-soft: rgba(255, 255, 255, 0.17);
+  /* THE GROUND FOOTPRINT AND THE OVERHANG ARE TWO DIFFERENT THINGS AND MUST NEVER LOOK ALIKE (operator, 2026-08-12: « sur tous les affichages, je dois voir
+   * clairement les cases avec emprise et les cases de débordement — avec le nouveau thème, j'ai perdu une partie à ce niveau-là »). They took the interface
+   * accent and a white overlay, both chosen for text on a dark ground and both washed out over a bright sprite. Two saturated hues instead, opposed to each
+   * other and to everything a sprite of this world carries: warm coral for what touches the ground, cold cyan for what a volume overhangs. The fill under the
+   * footprint stays faint — it situates the rectangle, it must not tint the image being judged. */
+  --footprint-edge: #ff8a5c;
+  --footprint-field: rgba(255, 138, 92, 0.16);
+  --overhang-edge: #45e0e8;
+  /* AND THE OVERHANG IS NOW HATCHED, BECAUSE AN OUTLINE ALONE GETS LOST (operator, 2026-08-12: « on ne voit pas bien la couverture de dépassement »). A dashed
+   * frame says where the overhang ends, never what it covers — over a pale grove its own crown swallows it. The colour of the strokes is the overhang's, at the
+   * strength of a veil: the sprite is judged THROUGH them, so they situate it and never tint it. The geometry of the hatching — angle, width, spacing — is
+   * drawing, and it stays in the page's own sheet; what lives here is the colour, like every other token. */
+  --overhang-hatch: rgba(69, 224, 232, 0.20);
 
   /* THE SHAPE OF THINGS, NOT ONLY THEIR COLOUR. A theme that only swaps hexadecimals leaves the page exactly as square and as flat as it was — which is what the
    * operator answered to the first attempt: « Tu as juste changé un peu les couleurs ? je veux un peu plus de changements ». Radii, elevation and the ring of a

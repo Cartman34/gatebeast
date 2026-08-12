@@ -147,34 +147,82 @@ IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jam
 aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
 s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette."""
 
-CAMERA_FR = """\
-Caméra : AXONOMÉTRIE ORTHOGRAPHIQUE — une PROJECTION PARALLÈLE, et surtout PAS une perspective. AUCUN POINT DE
-FUITE, AUCUNE CONVERGENCE : les arêtes verticales sont verticales et parallèles entre elles d'un bout à l'autre
-de l'image, et les arêtes qui s'enfoncent vers le fond restent parallèles entre elles au lieu de se rapprocher.
-Deux murs opposés d'un même bâtiment ne penchent JAMAIS l'un vers l'autre, et une façade ne s'évase pas vers le
-bas. C'est le rendu d'un plan technique, pas celui d'un appareil photo.
-AUCUNE ROTATION AUTOUR DE LA VERTICALE : on regarde droit dans l'axe de la grille du monde, jamais en
-biais et jamais de trois quarts. Un sujet qui a une face avant la présente DE FRONT, entière, et son
-corps s'enfonce derrière elle vers le haut de l'image. Ce que tu produis EST une projection parallèle, exactement
-comme une vue isométrique : ce qui change est seulement l'orientation, sans la rotation de 45 degrés autour de la
-verticale qu'une isométrie classique applique. La projection, elle, est bien parallèle, et sans aucune exception.
-Forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de
-rôle. On regarde le sujet d'en haut ET un peu de face : ses
-faces supérieures dominent, mais ses faces tournées vers nous restent visibles et lui donnent son
-volume. Pas d'horizon, pas de ciel, pas de point de fuite. Lumière : soleil de fin de matinée
-venant du HAUT À GAUCHE, franc et clair ; le sujet est pleinement éclairé, ses faces tournées vers le
-bas restent lisibles, l'ombrage se fait en deux bandes claires."""
+# THE PLUNGE, WRITTEN ONCE AND ONLY ONCE. It is the value the whole world is drawn under, and it appeared
+# in two texts in two wordings — the camera clause and the closing reminder. A technical parameter said
+# twice is a parameter that contradicts itself the first time one of the two is made more precise
+# (opérateur, 2026-08-12). Both now interpolate this string, so there is one text and two placements.
+#
+# AND ITS TWO FIGURES ARE READ FROM tile_scale, NEVER TYPED HERE. They were typed once, on 2026-08-12, and
+# the ground figure came out as 83 — recomputed from sin(60°), which is the one operation tile_scale forbids
+# by name: the published depth is 84 and "is therefore not to be 'corrected' to 83: that would undo a
+# decision, not repair a mistake" (tile_scale, from the operator's decision of 2026-08-08). The generator was
+# then told, for every image, a ground scale one pixel short of the one the pixel ladder publishes. A prompt
+# that retypes a pivot value is a copy like any other, and it drifts the same way — so it interpolates.
+# THE UNSQUASHED UNIT COMES FIRST, AND WITHOUT IT THE OTHER TWO ARE ONLY A RATIO (opérateur, 2026-08-12 :
+# « TY et TX restent la référence pour parler d'une case avec 96 px »). The clause used to give the two
+# FORESHORTENED figures alone — 48 across the height, 84 into the ground — and never TX, the one length the
+# camera leaves alone. Two squashed numbers with nothing to anchor them fix a proportion, not a scale, so
+# nothing in the prompt said how big a tile actually is: the oak came back drawn at its canvas height
+# instead of its eight metres. TX is the reference the other two are measured against, so it is said first.
+PLUNGE_WIDTH_PX = tile_scale.FILE_TILE_WIDTH
+PLUNGE_HEIGHT_PX = round(tile_scale.FILE_TILE_WIDTH * tile_scale.STANDING_HEIGHT_FACTOR)
+PLUNGE_DEPTH_PX = tile_scale.FILE_TILE_DEPTH
+PLUNGE_FR = f"""\
+Forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de rôle. On regarde le sujet d'en
+haut ET un peu de face, et cet angle se vérifie par TROIS MESURES, pas à l'impression. UNE CASE DE LARGE — un
+mètre gauche-droite, la seule longueur que la caméra n'écrase pas — occupe {PLUNGE_WIDTH_PX} PIXELS dans l'image, et c'est
+l'unité de référence à laquelle les deux autres se comparent. UN MÈTRE DE HAUTEUR — une face verticale, un mur,
+un flanc — en occupe {PLUNGE_HEIGHT_PX}, soit la moitié. UN MÈTRE AU SOL QUI S'ENFONCE VERS LE FOND — une face horizontale, un
+toit, un dos, une dalle — en occupe {PLUNGE_DEPTH_PX}, soit presque la totalité. Les faces horizontales dominent donc
+largement, et les verticales sont écrasées de moitié : c'est ce qui sépare cette vue d'une élévation. On voit le
+DESSUS de ce qui est posé au sol."""
+
+# FOUR CONSTRAINTS, EACH SAID ONCE — projection, orientation, plunge, light. This clause had grown by
+# accumulation: every failed image added its paragraph on top of the previous ones, so the same thing was
+# prescribed three times in three wordings and the fourth reader could no longer tell which one ruled
+# (opérateur, 2026-08-12 : « au lieu de reformuler proprement au bon endroit, tu empiles les consignes »).
+# Nothing was dropped in the rewrite: what each paragraph forbade is still forbidden, said in the one place
+# where it belongs. What DID go is the history — why a rule exists belongs in a comment, never in a prompt.
+CAMERA_FR = f"""\
+Caméra : AXONOMÉTRIE ORTHOGRAPHIQUE, une PROJECTION PARALLÈLE et jamais une perspective. LA RÈGLE SE VÉRIFIE FACE
+PAR FACE, ET C'EST AINSI QU'IL FAUT LA LIRE : chaque face rectangulaire du sujet — un mur, un pan de toit, une
+porte, une dalle — se dessine comme un PARALLÉLOGRAMME, dont les deux côtés opposés sont STRICTEMENT PARALLÈLES et
+de MÊME LONGUEUR. Un pan de toit qui se rétrécit vers le faîtage, un mur plus étroit en haut qu'en bas, deux
+murs opposés qui penchent l'un vers l'autre : ce sont trois perspectives, et chacune suffit à faire refuser
+l'image. Les arêtes verticales restent verticales et parallèles entre elles d'un bout à l'autre de l'image ; celles
+qui s'enfoncent vers le fond restent parallèles entre elles. AUCUN POINT DE FUITE, NULLE PART.
+AUCUNE ROTATION AUTOUR DE LA VERTICALE : on regarde droit dans l'axe de la grille du monde, jamais de trois
+quarts. Un sujet qui a une face avant la présente DE FRONT, entière.
+{PLUNGE_FR}
+Lumière : soleil de fin de matinée venant du HAUT À GAUCHE, franc et clair, et de là SEULEMENT — jamais de la
+caméra. Ce qui est exposé au ciel reçoit la lumière ; ce qu'une masse surplombe est dans son ombre, et le reste
+franchement plus sombre : le dessous d'une couronne, les branches sous le feuillage, l'intérieur d'un porche, le
+pied d'un mur. Un sujet éclairé uniformément sur toute sa surface est un sujet sans volume. L'ombrage se fait en
+deux bandes claires, et les faces tournées vers le bas restent lisibles. Pas d'horizon, pas de ciel."""
 
 # The camera, said again as the LAST word of every asset prompt. Stating it once at the top is not
 # enough: everything after it — the framing, the piece asked for, the sheet — talks about a map seen
 # from above, and on a flat subject (a path, a gate leaf) that wins over a clause read twenty lines
 # earlier. Constated on the paths and on the gates, whose prompts carried the camera clause word for
 # word and came out drawn flat anyway. Positive prescription: it says what to draw, never what to avoid.
+#
+# AND IT QUOTES THE SAME SENTENCE, IT NO LONGER PARAPHRASES IT (opérateur, 2026-08-12 : « les paramètres
+# techniques ne doivent être précisés qu'une fois, c'est le meilleur moyen d'éviter les contradictions
+# […] tu dupliques et tu te contredis, et c'est du débug »). The two texts said the same thing in
+# different words, so the day one of them gained a precision — the wall being FORESHORTENED, added the
+# same day — the other went on saying the older, vaguer version twenty lines later. One text, placed
+# twice, cannot drift.
+# THE CLOSING REMINDER POINTS AT THE PLUNGE, IT DOES NOT REPRINT IT. Placing it last is deliberate — what
+# reads last weighs most on the generator — but the position is what does the work, not a second copy of the
+# text. It used to interpolate PLUNGE_FR whole, so the three measures were stated twice in every consigne;
+# sharing one string stopped the two from DIVERGING but not from REPEATING, which is the fault the operator
+# named on 2026-08-12: « les paramètres techniques ne doivent être précisés qu'une fois […] tu dois éviter le
+# renforcement comme une brute ». What is kept here is only what this position adds and the clause above does
+# not say: that the plunge applies to the SUBJECT, not just to the map it stands on.
 RAPPEL_CAMERA_FR = """\
-RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE : L'ANGLE DE PRISE DE VUE EST CELUI DÉCRIT PLUS HAUT — une forte
-plongée à SOIXANTE DEGRÉS sous l'horizontale, en projection parallèle. On voit le sujet d'en haut ET un peu de face :
-ses faces supérieures sont largement visibles, et son volume se lit. C'est la CARTE qui est vue de
-dessus ; le sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face."""
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE — L'ANGLE DE PRISE DE VUE EST EXACTEMENT CELUI DÉCRIT PLUS HAUT, avec
+ses trois mesures ; aucune ligne de cette consigne ne l'assouplit. C'est la CARTE qui est vue de dessus ; le
+sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face."""
 
 CADRAGE_CUTOUT = f"""\
 UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout

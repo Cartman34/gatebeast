@@ -3,6 +3,7 @@
  * USAGE
  *   php scripts/check-page-selectors.php [pages construites] — checks that every class, id and data- attribute the JavaScript of a built page looks for actually
  *   EXISTS in that page's markup. Without arguments it checks every built review page. Exits non-zero on any miss.
+ *   php scripts/check-page-selectors.php -h|--help — this text
  *
  * INTENTION
  *   A SELECTOR THAT MATCHES NOTHING FAILS IN SILENCE, AND THAT IS THE WHOLE PROBLEM. `document.querySelectorAll('.tile')` returning an empty list throws no
@@ -18,6 +19,10 @@
  */
 
 $root = dirname(__DIR__);
+require_once __DIR__ . '/Tools.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
+
 $pages = $argv;
 array_shift($pages);
 if (!$pages) {

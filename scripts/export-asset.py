@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Turn a master render into a deliverable: resized to delivery definition, nothing else.
 
-Step 5 of the production chain, replacing cut-asset.py. The master already carries its own real alpha
+Step 5 of the production chain, replacing the cutting step it used to hold. The master carries its own real alpha
 — the generator stopped rendering a magenta field a while ago — so nothing here needs to be keyed,
 cropped, de-fringed or hole-filled: the only thing separating a master from a deliverable is that the
 delivery is not sized for a master's job (a wide margin for cascading references, a definition picked
@@ -55,6 +55,7 @@ Usage:
   python3 export-asset.py <path> [...]        paths under assets/poc/, or absolute
   python3 export-asset.py --dry-run <path>    measure only, write nothing
   python3 export-asset.py --out <dir> <path>  write elsewhere than assets/cutout/
+  python3 export-asset.py -h|--help           this text
   python3 export-asset.py --force <path>      export despite a briefing-fault mismatch — reviewed
                                                case by case, see --force above; never the default
 """
@@ -65,6 +66,7 @@ from pathlib import Path
 
 import numpy
 from PIL import Image
+
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import tile_scale
@@ -304,4 +306,9 @@ def main(arguments):
 
 
 if __name__ == "__main__":
+    # ASKED HERE AND NOT AT MODULE LEVEL: record-asset.py imports this file by path, and a guard on the
+    # import path would stop it the moment it is itself called with --help.
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main(sys.argv[1:]))

@@ -1,5 +1,5 @@
 /* THE PAGE READS IN THE SYSTEM'S OWN FAMILY, SIXTEEN PIXELS, as it did when it was migrated — read out of the history, not remembered: `bash
-   local/scripts/list-page-fonts.sh` shows `font: 16px/1.55 ui-sans-serif, system-ui, sans-serif` from the move to the server on 2026-08-07 until 2026-08-08,
+   scripts/dev/list-page-fonts.sh` shows `font: 16px/1.55 ui-sans-serif, system-ui, sans-serif` from the move to the server on 2026-08-07 until 2026-08-08,
    when the same pass that imposed the green palette also switched the body to monospace at fifteen. The operator has now asked for both back (2026-08-11: « La
    police est restée changée, pour moi tu n'as pas vraiment bien restauré »). Monospace stays where it earns its place — file names, refs, measurements, codes —
    never as the voice of the whole page. */
@@ -135,7 +135,14 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
    IT MUST NOT LOOK LIKE THE FOOTPRINT (operator, 2026-08-12: « je dois voir clairement les cases avec emprise et les cases de débordement, avec le nouveau
    thème j'ai perdu une partie à ce niveau-là »). Two things to tell apart, so two colours and two line styles: the footprint is a solid accented rectangle, the
    overhang a dashed one in its own colour. Both are theme tokens — never a value written here. */
-.footprint-cover { position: absolute; inset: 0; border: 1px dashed var(--overhang-edge); }
+/* ET IL EST HACHURÉ, PARCE QU'UN CONTOUR SEUL SE PERD (opérateur, 2026-08-12 : « on ne voit pas bien la couverture de dépassement »). Le tireté dit où le
+   débordement s'arrête, jamais ce qu'il couvre : sur un bosquet clair, sa propre couronne l'avale. Les hachures le REMPLISSENT sans le masquer — traits d'un
+   pixel, écartés de huit, dans la couleur du débordement au voile près : c'est la règle de cette feuille, « la grille ne masque jamais l'image », et une sprite
+   se juge AU TRAVERS. L'angle et l'écart sont du dessin et vivent ici ; la couleur est un jeton, déclarée dans les trois thèmes sous `--overhang-hatch`. */
+.footprint-cover {
+  position: absolute; inset: 0; border: 1px dashed var(--overhang-edge);
+  background-image: repeating-linear-gradient(45deg, var(--overhang-hatch) 0 1px, transparent 1px 8px);
+}
 .footprint-axis { position: absolute; background: var(--overlay); }
 .footprint-axis--x { left: 0; right: 0; bottom: 0; height: 1px; }
 .footprint-axis--y { top: 0; bottom: 0; left: 50%; width: 1px; }
@@ -209,8 +216,11 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
    AND THE FACTOR IS COMPUTED WHEN THE DRAWER OPENS, never beyond what it can show (operator, 2026-08-12: « si l'image est plus large que le drawer, ça pose
    souci »). Doubling without looking sent a sixteen-tile sprite to fifteen hundred pixels inside a thousand-pixel drawer: it was read through a scrollbar. It is
    openVersion() that sets the `zoom`, because it alone knows the width available at the moment it opens. */
-.version-image .picture img { image-rendering: pixelated; }
-.version-image { margin: 0 0 16px; overflow: auto; }
+/* ITS WIDTH IS SET IN JAVASCRIPT, IN PIXELS, at the moment the drawer opens — see openVersion(): only then is the available room known. What CSS holds is the
+   ceiling, so an image can never spill out of the panel even if the script is ever skipped. */
+.version-image .picture img { image-rendering: pixelated; max-width: 100%; height: auto; }
+.version-image .picture { max-width: 100%; }
+.version-image { margin: 0 0 16px; }
 .text-open {
   margin: 6px 0 10px;
   padding: 10px 12px;
@@ -310,6 +320,12 @@ body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: var(--drawer-wi
 /* AN EARLIER VERSION IS A CARD LIKE THE CURRENT ONE, only quieter: same width, same grid, same measurements, a background one shade duller so it is not mistaken
    for the one that stands. They line up in a column, the most recent on top, the way the referential ranks them. */
 .previous { padding: 8px; border: 1px dashed var(--line); border-radius: 4px; opacity: .85; }
+/* THE GENERATOR SESSION IS AN ADDRESS ONE COPIES, so it is set in monospace and made selectable — never a sentence. */
+.session { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 6px 0 0; }
+.session-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.session code { font-family: var(--mono); font-size: .72rem; color: var(--ink); word-break: break-all; user-select: all; }
+/* WHAT WAS WRITTEN ON AN EARLIER VERSION IS SHOWN, NOT OFFERED FOR EDITING: quiet, indented, plainly a quotation of a past decision. */
+.past-comment { margin: 4px 0 0; padding-left: 8px; border-left: 2px solid var(--line); font-size: .78rem; color: var(--muted); white-space: pre-wrap; }
 .fold { margin-top: 6px; font-size: .8rem; color: var(--muted); }
 .fold summary { cursor: pointer; }
 .fold pre { max-height: 40vh; overflow: auto; white-space: pre-wrap; font-size: .74rem; }

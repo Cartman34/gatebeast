@@ -1,6 +1,7 @@
 <?php
 /**
  * Usage: php review-server/inventory/build.php [sortie.html] — builds the page that lists the subjects of the GAME, served at /inventory.
+ *        php review-server/inventory/build.php -h|--help — this text, and nothing is built.
  *
  * Intention: THE OPERATOR HAD ASKED FOR IT AND IT WAS LOST (2026-08-12: « j'avais demandé une page pour recenser les sujets, c'est fait ? »). No page said what a
  * subject IS. `/backlog` carries the open points of the project — it was called `/sujets`, which misled the operator onto it — and `/sprites` speaks of images.
@@ -15,7 +16,10 @@ $root = dirname(__DIR__, 2);
 require_once $root . '/review-server/bootstrap.php';
 require_once $root . '/review-server/lib/Inventory.php';
 require_once $root . '/review-server/lib/Thumbnail.php';
+require_once $root . '/scripts/Tools.php';
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 $outputPath = $argv[1] ?? __DIR__ . '/page.html';
 /**

@@ -4,7 +4,15 @@ scale). Carried in: the global light standard (115-130, dark <=10%, positive pre
 the shared base), the operator's new PAVING RULE — every non-adjoining building is SURROUNDED by a paved
 band and ALWAYS connected to the street network — plus the v6 residual faults: SP-011 horn hardened
 against the horse drift, SP-005 against the rabbit, SP-001 against the real fox cub, the square and the
-terraced pair at their FULL footprint, grass surfaces listed positively."""
+terraced pair at their FULL footprint, grass surfaces listed positively.
+
+USAGE
+  A FROZEN PLATE PROMPT — a historical document, not a command to run again. It produced
+  assets/revue-da/planche-p2-bourg-v7.png, and its prompt is frozen beside it in
+  assets/revue-da/prompt-p2-bourg-v7.txt. It is kept so the exact text sent to the generator can be
+  read back next to the image it made. It takes no argument and answers no help: there is nothing to
+  call it with. Running it would spend a generation on a plate that already exists.
+"""
 import sys
 from pathlib import Path
 

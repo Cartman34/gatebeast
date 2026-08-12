@@ -4,9 +4,10 @@
 Usage:
   python3 scripts/set-rune-anchor.py --path cutout/creature/SP-001.png --x 48 --y 54 [--tilt 0] [--dry-run]
   python3 scripts/set-rune-anchor.py --list
+  python3 scripts/set-rune-anchor.py -h|--help — this text
 
   --path is the delivered path of the representation, as the referential spells it. --x and --y are read off the image, in its own
-  pixels, origin top left — `python3 local/scripts/draw-anchor-grid.py <image>` draws the grid they are read from. --tilt is the
+  pixels, origin top left — `python3 scripts/dev/draw-anchor-grid.py <image>` draws the grid they are read from. --tilt is the
   inclination in degrees, for a surface that is not facing the viewer; it defaults to 0, which is a plain upright rune.
 
 Intention:
@@ -104,4 +105,7 @@ def main():
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main())

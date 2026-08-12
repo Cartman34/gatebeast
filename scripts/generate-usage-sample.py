@@ -13,13 +13,14 @@ The draft is written to local/ — never beside the image. A prompt only lands i
 its image is produced, and it is frozen from then on.
 
 Usage: python3 scripts/generate-usage-sample.py <plan.json> [--ref <image>] [--model <name>] [--generate]
+       python3 scripts/generate-usage-sample.py -h|--help — this text, and nothing is generated
 
   --model a model to run the generator on, instead of its own configured default (e.g. gpt-5.6-sol).
           It is a setting of the run and never enters the consigne, which stays the same text whatever
           produced it; the report names the model all the same, so two runs can be compared.
 
   --ref   a style reference already validated (e.g. a reference plate). Same mechanism as
-          generate-sprite-trace.py's own --ref: the file is dropped in the generator's working
+          generate-sprite.py's own --ref: the file is dropped in the generator's working
           directory, and the consigne says it gives the TREATMENT, the MATERIAL and the LIGHT —
           never the subject, which stays the fiche's alone.
 """
@@ -227,6 +228,10 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 
 
 if __name__ == "__main__":
+    # ASKED BEFORE ANYTHING ELSE HERE: every other path through this block can spend a generation.
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     if len(sys.argv) < 2:
         print(__doc__)
         raise SystemExit(2)

@@ -6,8 +6,8 @@
             "rework": true,
             "comment": "Consignes toujours non respectées, c'est de la merde. Le parallèle n'est pas présent. tu dois vraiment te remettre en question et tester TOUTE la consigne",
             "handled": {
-                "date": "2026-08-11",
-                "reason": "Reprise livrée le 2026-08-11 en v12, sur ce motif exact — le verdict se donne maintenant sur la v12."
+                "date": "2026-08-12",
+                "reason": "Cause trouvée et corrigée à la fiche : elle demandait de voir le mur jusqu'au sol sans dire sous quel angle, d'où une façade en élévation. BT-001-v14 est produite sous la caméra du monde."
             }
         },
         "cutout/batiment/BT-001_proposition-p2-v5.png": {
@@ -54,7 +54,7 @@
         "cutout/personnage/HU-000-v2.png": {
             "rework": false,
             "discarded": false,
-            "approved": false,
+            "approved": true,
             "comment": ""
         },
         "cutout/vegetation/TR-064_densite-dense-v8.png": {
@@ -109,7 +109,11 @@
             "approved": false,
             "discarded": false,
             "rework": true,
-            "comment": "Tu n'as pas respecté la demande !!! reviens à la version 5 !"
+            "comment": "Tu n'as pas respecté la demande !!! reviens à la version 5 !",
+            "handled": {
+                "date": "2026-08-12",
+                "reason": "Reprise sur la v5 : TR-063-v14 a retrouvé la couronne pleine et ronde, avec ses pommes réparties."
+            }
         },
         "cutout/vegetation/TR-060-v8.png": {
             "approved": false,
@@ -121,7 +125,11 @@
             "approved": false,
             "discarded": false,
             "rework": true,
-            "comment": "Elle doit avoir plus de marques du temps (moyen) et de la nature (léger)"
+            "comment": "Elle doit avoir plus de marques du temps (moyen) et de la nature (léger)",
+            "handled": {
+                "date": "2026-08-12",
+                "reason": "BT-002-v2 porte l'usure moyenne et la nature légère : tuiles manquantes, crépi tombé par plaques, fissure, volet dégondé, lierre sur un pignon."
+            }
         },
         "cutout/batiment/BT-002_proposition-p3-v4.png": {
             "rework": false,
@@ -168,6 +176,72 @@
             "approved": true
         },
         "cutout/personnage/HU-000-v4.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/vegetation/TR-065-v12.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/vegetation/TR-060-v9.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true
+        },
+        "cutout/batiment/BT-002-v2.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Moins de casse, un peu plus de saleté. faut que ça paraisse ancien mais faut pas en faire de trop non plus !!!"
+        },
+        "cutout/batiment/BT-001-v14.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Mieux pas vu parallèle stricte non respectée. c'est comment à tous les batiments !! Donc ça ne doit pas être rpécisé dans lad escription batiment ou la consigne additionnelles, c'est DANS LES BATIMENTS !!! (voir plus que les batiments mais peut de choses sont vraiment carr"
+        },
+        "cutout/batiment/BT-001_proposition-p2-v7.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true
+        },
+        "cutout/batiment/BT-001_proposition-p3-v7.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true
+        },
+        "cutout/batiment/BT-001-v15.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "A rendre parallèles. TOUS les batiments doivent respecter la vue parallèle !! C'es timpératif ! et ce n'es tpas à préciser pour chaque batiment ou chaque sprite, c'est le socle. "
+        },
+        "cutout/personnage/HU-000-v6.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/creature/SP-001-v5.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Orienté du mauvais coté et mauvais angle caméra"
+        },
+        "cutout/creature/SP-001-v6.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Mauvais angle"
+        },
+        "cutout/vegetation/TR-063-v16.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Diminuer la hauteur de cover de 1 case"
+        },
+        "cutout/vegetation/TR-060-v12.png": {
             "rework": false,
             "discarded": false,
             "approved": true

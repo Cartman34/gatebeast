@@ -75,35 +75,35 @@ def meta(path: Path) -> str:
             f"{width / TILES_X:.0f} px par case ({exact}) &nbsp;·&nbsp; cliquez pour agrandir")
 
 
-def consigne(key: str) -> str:
+def prompt(key: str) -> str:
     path = ASSETS / f"prompt-{key}.txt"
     if not path.is_file():
         return ""
-    texte = path.read_text(encoding="utf-8")
-    echappe = texte.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    text = path.read_text(encoding="utf-8")
+    escaped = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-    return (f'<details class="consigne"><summary>Consigne de génération — {len(texte)} caractères</summary>'
-            f'<pre>{echappe}</pre></details>')
+    return (f'<details class="consigne"><summary>Consigne de génération — {len(text)} caractères</summary>'
+            f'<pre>{escaped}</pre></details>')
 
 
 def plan(key: str) -> str:
     """The composition plan: what was asked, to compare with what was produced. SVG when it exists
     (layout of elements and their bounds, per the operator), ASCII kept as fallback."""
-    racine = re.sub(r"-v\d+$", "", key)
-    svg = ASSETS / f"plan-{racine}.svg"
+    stem = re.sub(r"-v\d+$", "", key)
+    svg = ASSETS / f"plan-{stem}.svg"
     if svg.is_file():
         return (f'<details class="consigne"><summary>Plan de la composition — ce qui était demandé'
                 f'</summary><div class="plan-svg">{svg.read_text(encoding="utf-8")}</div></details>')
-    path = ASSETS / f"plan-{racine}.txt"
+    path = ASSETS / f"plan-{stem}.txt"
     if not path.is_file():
         return ""
-    texte = path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8")
 
     return (f'<details class="consigne"><summary>Plan de la composition — ce qui était demandé</summary>'
-            f'<pre class="plan">{texte}</pre></details>')
+            f'<pre class="plan">{text}</pre></details>')
 
 
-def rapport(key: str) -> str:
+def report(key: str) -> str:
     """The plate's report: the score alone by default, the full table one click away.
 
     Built by build-plate-reports.py — mechanical checks recomputed from the image and the prompt, eye
@@ -112,33 +112,33 @@ def rapport(key: str) -> str:
     path = ASSETS / f"rapport-{key}.json"
     if not path.is_file():
         return ""
-    donnees = json.loads(path.read_text(encoding="utf-8"))
-    reussis, total = donnees["score"]["reussis"], donnees["score"]["total"]
-    part = reussis / total if total else 0
-    teinte = "bon" if part >= 0.8 else ("moyen" if part >= 0.6 else "faible")
-    marque = {"ok": ("réussi", "ok"), "faute": ("échec", "faute"),
-              "remarque": ("remarque", "remarque")}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    passed, total = data["score"]["reussis"], data["score"]["total"]
+    share = passed / total if total else 0
+    shade = "bon" if share >= 0.8 else ("moyen" if share >= 0.6 else "faible")
+    mark = {"ok": ("réussi", "ok"), "faute": ("échec", "faute"),
+            "remarque": ("remarque", "remarque")}
 
-    lignes = []
-    for controle in donnees["mecanique"]:
-        libelle, classe = marque[controle["verdict"]]
-        lecture = f'<br><span class="lecture">{controle["note"]}</span>' if controle["note"] else ""
-        lignes.append(
-            f'<tr><td>{controle["nom"]}</td><td><span class="pastille {classe}">{libelle}</span></td>'
-            f'<td>{controle["mesure"]}{lecture}</td><td>{controle["cible"]}</td></tr>')
+    rows = []
+    for check in data["mecanique"]:
+        label, css = mark[check["verdict"]]
+        reading = f'<br><span class="lecture">{check["note"]}</span>' if check["note"] else ""
+        rows.append(
+            f'<tr><td>{check["nom"]}</td><td><span class="pastille {css}">{label}</span></td>'
+            f'<td>{check["mesure"]}{reading}</td><td>{check["cible"]}</td></tr>')
     observations = []
-    for vue in donnees["critique"]:
-        libelle, classe = marque[vue["verdict"]]
+    for view in data["critique"]:
+        label, css = mark[view["verdict"]]
         observations.append(
-            f'<tr><td>{vue["nom"]}</td><td><span class="pastille {classe}">{libelle}</span></td>'
-            f'<td>{vue["note"]}</td></tr>')
+            f'<tr><td>{view["nom"]}</td><td><span class="pastille {css}">{label}</span></td>'
+            f'<td>{view["note"]}</td></tr>')
 
     return f"""<details class="consigne rapport">
-        <summary><span class="score {teinte}">{reussis}/{total}</span> Rapport de la planche —
-          {reussis} contrôles réussis sur {total}</summary>
+        <summary><span class="score {shade}">{passed}/{total}</span> Rapport de la planche —
+          {passed} contrôles réussis sur {total}</summary>
         <h4>Vérification mécanique</h4>
         <table><thead><tr><th>Contrôle</th><th>Résultat</th><th>Mesure</th><th>Cible</th></tr></thead>
-          <tbody>{"".join(lignes)}</tbody></table>
+          <tbody>{"".join(rows)}</tbody></table>
         <h4>Passe critique</h4>
         <table><thead><tr><th>Observation</th><th>Résultat</th><th>Détail</th></tr></thead>
           <tbody>{"".join(observations)}</tbody></table>
@@ -185,9 +185,9 @@ def section(key: str, name: str, note: str) -> str:
         </div>
         <textarea data-note="{key}" placeholder="Dire pourquoi — ce qui accroche, ce qui gêne."{disabled}></textarea>
       </div>
-      {"" if plan_as_visual else rapport(key)}
+      {"" if plan_as_visual else report(key)}
       {"" if plan_as_visual else plan(key)}
-      {consigne(key)}
+      {prompt(key)}
     </section>"""
 
 
@@ -359,7 +359,7 @@ PAGE = f"""<title>GateBeast — Planches de référence</title>
       jugent par rapport à lui, jamais entre elles.
       <div><button class="comparer" id="voir-retirages">Voir les retirages</button></div>
     </div>
-    {consigne("b4-r15-scene")}
+    {prompt("b4-r15-scene")}
   </section>
   <section class="reference">
     <header>

@@ -22,6 +22,41 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   règle elle-même est montée à la méthode commune** (`~/projects/conceptions/methode/execution.md`, « Un seul standard de longueur de ligne ») le 2026-08-12 : qu'il n'y ait qu'un standard, qu'il
   remplace et annule tous les autres, que tout texte cherche à l'atteindre, et que replier plus court soit une substitution interdite. Ne restent ici que le chiffre et le nom de l'outil.
 
+## Ce qui passe devant, et il n'y a qu'une exception
+
+**LES SPRITES SONT LE CŒUR MÉTIER, ET RIEN NE PASSE DEVANT SAUF UN BLOCAGE** (opérateur, 2026-08-12 : « je veux ABSOLUMENT que les sprites avancent !! […] je veux que tu arrêtes de mettre en prio
+des trucs devant !!! Le seul truc plus prio, c'est un blocage de l'app/maquette »). L'ordre est celui-ci, et il ne se rediscute pas séance par séance :
+
+1. **Un blocage de l'application ou de la maquette** — ce qui empêche de produire ou de juger.
+2. **Les sprites** : les produire, les faire juger, et **déboguer les consignes** quand une image revient fausse.
+3. **Tout le reste**, dette technique comprise.
+
+**ET LA DETTE SE DÉLÈGUE PLUTÔT QUE DE PASSER DEVANT.** Une passe de renommage, une aide à écrire, un commentaire à traduire : c'est du volume, pas du jugement — ça part à un sous-agent avec un
+cadre fermé pendant que l'agent principal tient les sprites. L'inverse est admis si le sujet de sprite est lui-même mécanique et la dette délicate, mais **les deux ne s'arrêtent jamais tous les
+deux**.
+
+**Ce que ça coûte quand on l'oublie** : une séance entière peut passer en outillage, en tri et en règles — chacun de ces gestes étant juste pris isolément — sans qu'une seule sprite avance. C'est
+arrivé le 2026-08-12, et c'est ce qui a fait écrire cette règle.
+
+## Le système se change quand il gêne, il ne se subit pas
+
+**QUAND L'ORGANISATION NE CONVIENT PAS À L'OPÉRATEUR, L'AGENT S'ADAPTE DE LUI-MÊME** (opérateur, 2026-08-12 : « tu dois t'adapter tout seul, tu dois être malléable […] tu te bases trop sur le
+système en place alors qu'il faut faire des améliorations, aucun système ne sera parfait, surtout si on ne fait aucune amélioration »). Les règles de ce dépôt sont un outil, pas une excuse : un rituel
+qui coûte à l'opérateur se **corrige**, il ne se sert pas une fois de plus en disant qu'il est écrit.
+
+**Ce que ça veut dire concrètement, et c'est ce qui a été payé le 2026-08-12 :**
+
+- **Décider plutôt que demander.** Une question dont l'agent a déjà toutes les informations n'est pas une question, c'est un report. Quatre l'ont été le même jour, sur un tri dont le rapport portait
+  déjà chaque élément de réponse. Ce qui se demande, c'est ce qui engage l'opérateur — un arbitrage, un coût, une direction —, jamais ce qui se déduit d'une analyse qu'on vient de faire. **Le test
+  qui tranche est monté à la méthode commune** (`collaboration.md`, « Comment l'agent s'organise » et « Un lot que l'agent qualifie lui-même de "sans ambiguïté" ») : il ne se recopie pas ici.
+- **Envoyer plutôt que rendre compte.** Un compte rendu qui précède l'action alors que l'action était possible fait attendre deux fois. **Et une question d'assistant ne se transfère jamais à
+  l'opérateur** — c'est l'agent principal qui y répond (`execution.md`, « Des assistants persistants »).
+- **Changer la règle qui gêne, dans la foulée.** Le format d'une question, le récapitulatif de fin de message, l'ordre de la pile : quand l'un d'eux ralentit au lieu d'aider, il se réécrit ici, tout
+  de suite, avec la raison. Une règle qu'on applique en sachant qu'elle nuit est une faute d'agent, pas une obéissance.
+
+**Intention :** un cadre ne vaut que par ce qu'il rend possible. Figé, il devient l'endroit où l'on se réfugie pour ne pas juger — et l'opérateur se retrouve à piloter une organisation au lieu de
+piloter son projet.
+
 ## Les modes de travail et la conduite
 
 - **Deux modes de travail, et l'opérateur seul les fixe.** Un **mode** dit qui décide de l'avancée entre deux gestes de l'agent — lui-même, ou l'opérateur.
@@ -34,7 +69,7 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **LA FORME D'UN ORDRE, ET ELLE EST LA MÊME POUR LES DEUX MOTS** (opérateur, 2026-08-11 : « il doit avoir les mêmes règles »). Un ordre **ouvre sa ligne**, s'écrit **en capitales**, et se termine
   par **un caractère blanc ou la fin de la ligne** — rien ne lui est collé. Donc `STOP` compte, `STOP regarde plutôt ça` compte, et ne comptent pas : `stop`, `Stop`, `STOPPE`, `STOP!`, ni un mot
   glissé au milieu d'une phrase. Les capitales sont le geste délibéré qui distingue l'ordre de la conversation : `stop` et `go` sont trop courants en français ordinaire pour engager la garde. Éprouvé
-  cas par cas : `bash local/scripts/essai-mot-ordre.sh`.
+  cas par cas : `bash scripts/dev/trial-mot-ordre.sh`.
 - **`GO` et `STOP` sont les deux seuls mots qui lancent et arrêtent le dépilement, et ils sont stricts.** Rien d'autre ne vaut reprise : aucune phrase ne s'interprète comme un feu vert, et le silence
   encore moins. **Tout arrêt met fin au `GO`** — une question de l'opérateur, un ordre ponctuel, une interruption : dès que l'agent s'arrête, l'autorisation est consommée et ne se reprend pas d'elle-
   même une fois la parenthèse refermée. Il en faut une neuve, donnée explicitement.
@@ -47,7 +82,7 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   **Elle lit le DERNIER mot de l'opérateur et met la garde dans l'état qu'il commande** : un `GO` arme, tout le reste désarme. Elle rend 0 quand le dépilement est
   armé, 1 quand il ne l'est pas. **Elle ne viole pas la règle suivante, elle la tient** : l'agent ne peut rien lui dicter — c'est le transcrit qui décide, et le
   transcrit est la parole de l'opérateur. Sans elle, un mot glissé en cours de tour n'est lu par personne avant le tour suivant, et l'état ment dans un sens comme
-  dans l'autre. Ses essais : `bash local/scripts/trial-last-order.sh`.
+  dans l'autre. Ses essais : `bash scripts/dev/trial-last-order.sh`.
 - **L'ÉTAT D'ARMEMENT DU DÉPILEMENT N'APPARTIENT PAS À L'AGENT, ET IL N'A JAMAIS À Y TOUCHER — NI POUR L'EFFACER, NI POUR L'ÉCRIRE.** `var/hooks/dequeue-armed` est écrit par le hook du prompt, et par
   lui seul : le `GO` de l'opérateur l'arme, son `STOP` le désarme, il expire seul au bout de trois heures. Une garde qu'on peut retirer soi-même n'est pas une garde, et un armement qu'on peut écrire
   soi-même est un ordre qu'on se donne à la place de l'opérateur. **Les deux gestes ont été faits le 2026-08-08**, et chacun tenait à une confusion que voici levée :
@@ -56,7 +91,7 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   - **Un hook qui n'arme pas est un défaut à constater, pas à compenser.** Il s'inscrit à la pile avec ce qui a été observé. Le suppléer à la main donne une page qui a l'air juste et une garde qui ne
     garde rien — soit exactement l'inconvénient qu'on croyait corriger, en pire, puisqu'il ne se voit plus.
   - **L'empêchement est mécanique, pas moral** : `scripts/hook-guard-dequeue.sh`, déclaré en `PreToolUse`, refuse toute commande et toute écriture qui touche à cet état ou à la garde elle-même. La
-    lecture reste libre — l'agent doit pouvoir dire si le dépilement est armé. Ses essais : `bash local/scripts/essai-garde-depilement.sh`.
+    lecture reste libre — l'agent doit pouvoir dire si le dépilement est armé. Ses essais : `bash scripts/dev/trial-garde-depilement.sh`.
   - **`.claude/settings.json` n'est PAS dans la liste des fichiers gardés, et c'est délibéré** (opérateur, 2026-08-08). Débrancher la garde en modifiant le fichier qui la déclare serait le chemin de
     contournement évident, mais toute modification de ce fichier demande systématiquement l'autorisation de l'opérateur : la barrière existe déjà, en amont, et elle est humaine. L'y ajouter
     coûterait plus qu'elle ne protège — l'agent ne pourrait plus déclarer aucun hook sans passer par l'opérateur. **Ne pas le reproposer.**

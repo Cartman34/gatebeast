@@ -66,6 +66,11 @@
   --footprint-edge: #ff8a5c;
   --footprint-field: rgba(255, 138, 92, 0.16);
   --overhang-edge: #45e0e8;
+  /* AND THE OVERHANG IS NOW HATCHED, BECAUSE AN OUTLINE ALONE GETS LOST (operator, 2026-08-12: « on ne voit pas bien la couverture de dépassement »). A dashed
+   * frame says where the overhang ends, never what it covers — over a pale grove its own crown swallows it. The colour of the strokes is the overhang's, at the
+   * strength of a veil: the sprite is judged THROUGH them, so they situate it and never tint it. The geometry of the hatching — angle, width, spacing — is
+   * drawing, and it stays in the page's own sheet; what lives here is the colour, like every other token. */
+  --overhang-hatch: rgba(69, 224, 232, 0.20);
 
   /* THE SHAPE OF THINGS, NOT ONLY THEIR COLOUR. A theme that only swaps hexadecimals leaves the page exactly as square and as flat as it was — which is what the
    * operator answered to the first attempt: « Tu as juste changé un peu les couleurs ? je veux un peu plus de changements ». Radii, elevation and the ring of a

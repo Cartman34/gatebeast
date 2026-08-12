@@ -1,6 +1,7 @@
 <?php
 /**
  * Usage: php review-server/parc/build.php
+ *        php review-server/parc/build.php -h|--help — this text, and nothing is built.
  *
  * Builds review-server/parc/page.html — the page of the park mock-up: the composition plan retained for it, commentable cell by cell, and later the mounted mock-up itself.
  *
@@ -19,7 +20,10 @@
 
 $root = __DIR__ . '/../..';
 require_once $root . '/review-server/bootstrap.php';
+require_once $root . '/scripts/Tools.php';
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 // THE SERVED ROUTE IS THE THIRD ARGUMENT: this page is served at /parc, but the same builder also produces a SOURCE of the Campagne page, melted into another one. A source carries no reload notice
 // — the final page would otherwise hold two of them, on a route that is not its own. That absence of a route is `null`, never an empty string: an empty string is a string holding nothing, which is
 // not the same as having no route at all. A command line can only carry text, so the emptiness it hands over is brought back to null right here.

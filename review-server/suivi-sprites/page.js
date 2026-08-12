@@ -31,14 +31,68 @@
   /* THE PAGE SENDS THE ENTRY IT CHANGED, NOT EVERYTHING IT KNOWS (2026-08-11, after a morning of verdicts was lost). The server lays what arrives over what it
      holds, key by key, so sending one image's verdict is enough — and sending all of them is how a stale tab used to erase what another had just written. When
      no image is named, everything goes: that is the hand-over of what was typed before the repository answered, and there the whole state IS the change. */
+  /* THE LOCAL WRITE COMES FIRST, ET ELLE N'EST JAMAIS SAUTÉE: every path that means to keep something goes through here or through rememberSoon, so the net is
+     posed in ONE place instead of at each of the three call sites — one forgotten site is a silent hole, and it is the site nobody thinks about that loses. It is
+     posed BEFORE the `ready` guard on purpose: what is typed while the repository has not answered is precisely what the net exists for. */
   function remember(id) {
+    if (id) { keepLocally(id); }
     if (!ready) {
       if (id) { pending[id] = true; }
       return;
     }
+    /* A SEND THAT IS ABOUT TO HAPPEN IS DROPPED WHEN ONE HAPPENS NOW: the timer would repeat the same entry a moment later, and repeating a send is exactly what
+       reopens the race below. */
+    if (id && timers[id]) {
+      window.clearTimeout(timers[id]);
+      delete timers[id];
+    }
     var change = {};
     if (id) { change[id] = state[id]; }
     window.gatebeastNotes.save(SECTION, id ? change : state);
+  }
+
+  /* ONE SEND PER PAUSE, NOT ONE PER KEYSTROKE — AND IT IS A LOSS OF TEXT, NOT A MATTER OF ECONOMY (operator, 2026-08-12: « ta page de suivi de sprite a rafraîchi
+     et ça a perdu ce que je notais »). Every character sent its own request, each carrying THE WHOLE comment as it stood at that instant, and the server lays what
+     arrives over what it holds. The answers do not come back in the order they were sent — measured on this very server, twenty-seven of forty out of place — so a
+     mid-typing snapshot can be written AFTER the full text and truncate it. That is what the stored comment of BT-001-v14 shows: it stops in the middle of a word.
+     A single send once typing rests removes the race instead of narrowing it: two requests for one image are never in flight together, a rest being a hundred times
+     the round trip measured here.
+     THE REST IS THE ONE THE PILE PAGE ALREADY WAITS, and it is written here because these two pages hold their own; if a third needs it, it moves to the module
+     they share rather than being copied a third time. */
+  var TYPING_REST = 400;
+  var timers = {};
+
+  /* AND IL Y A UNE SECONDE ÉCRITURE, QUI EST UN FILET (operator, 2026-08-12: « normalement quand je tape ça doit enregistrer sur le serveur et à défaut au moins
+     en local »). The server is the copy that counts; the browser keeps what the server has NOT received — the keystrokes typed before it answered, those a reload
+     cut off, those a stopped server refused. The write itself is taken back from where it worked, `git show fbdd9fd:review-server/suivi-sprites/build.php`,
+     function `retenir()`: the same try/catch, and the same reason for it — a frame may refuse storage, and the page must still work with the server alone.
+     IT HOLDS WHAT IS OWED, NOT A SECOND COPY OF EVERYTHING. A full mirror of the state would come back at the next load and lay a stale tab's judgement over a
+     fresher one — the very loss the server-side merge was written to stop. What is written here is an OUTBOX: the entries touched since the last load, dropped
+     one by one as soon as a load shows the server holding the same thing. Its limit, written rather than discovered: an entry the server did receive and which
+     was then changed ELSEWHERE reads as not received, so this net would pour the older one back. It waits on a save that tells its caller it has landed. */
+  var OUTBOX = 'gatebeast-suivi-sprites-attente';
+  function readOutbox() {
+    try { return JSON.parse(localStorage.getItem(OUTBOX)) || {}; } catch (error) { return {}; }
+  }
+  function keepLocally(id) {
+    try {
+      var held = readOutbox();
+      held[id] = state[id];
+      localStorage.setItem(OUTBOX, JSON.stringify(held));
+    } catch (error) { /* a frame may refuse storage: the page still works, with the server as its only copy */ }
+  }
+  function setOutbox(held) {
+    try { localStorage.setItem(OUTBOX, JSON.stringify(held)); } catch (error) { /* same refusal, same answer */ }
+  }
+  /* THE SERVER WAITS FOR THE PAUSE, THE BROWSER NEVER DOES: the local write costs nothing and cannot be reordered, so it happens at EVERY keystroke — which is
+     what makes the pause safe to wait for. Delaying both would trade one loss for another. */
+  function rememberSoon(id) {
+    keepLocally(id);
+    if (timers[id]) { window.clearTimeout(timers[id]); }
+    timers[id] = window.setTimeout(function () {
+      delete timers[id];
+      remember(id);
+    }, TYPING_REST);
   }
 
   /* WHAT ARRIVES FROM THE REPOSITORY IS RENDERED ONTO THE PAGE, AND THAT IS A FUNCTION OF ITS OWN. The first render happens at wiring time, over a still-empty
@@ -88,6 +142,44 @@
   /* THE LINE THAT ANNOUNCED AN OLDER VERSION'S COMMENT WENT AWAY WITH ITS REASON (2026-08-12): it existed because only the current version showed notes, so a
      remark written on a reworked version became invisible. Every version now carries its own, on its own card — the older one says it itself, right there.
      Checked before removal: that is what the task asked for. */
+  /* WHAT AN EARLIER VERSION SHOWS COMES FROM THE STORE TOO, AND WITHOUT THIS IT SHOWED ALMOST NOTHING: its verdict and its comment are built out of the
+     referential, which carries neither — eighteen of the twenty-eight judgements the operator has given bear on an earlier version and live in
+     review-server/notes/sprites.json alone, under the path of the image. The card said « Jamais jugée » over each of them.
+     WHAT THE STORE DOES NOT NAME KEEPS WHAT WAS BUILT, exactly as variantStateNow does: no verdict ticked here means « I know no more than the build did », not
+     « never judged ». A FILED REMARK STILL DOES NOT SHOW ITS TEXT (operator, 2026-08-11): the verdict says what was decided, the text stays kept and unshown. */
+  function verdictOf(said) {
+    if (said.rework) { return window.GATEBEAST_STATE_OWED[0]; }
+    if (said.discarded) { return window.GATEBEAST_STATE_OWED[1]; }
+    if (said.approved) { return window.GATEBEAST_STATE_VALIDATED; }
+
+    return null;
+  }
+  function renderPast() {
+    Array.prototype.forEach.call(document.querySelectorAll('.past'), function (block) {
+      var said = state[block.getAttribute('data-id')];
+      if (!said) { return; }
+      var now = verdictOf(said);
+      var word = block.querySelector('.verdict');
+      if (word && now) {
+        word.className = 'verdict verdict--' + now;
+        word.textContent = window.GATEBEAST_STATE_LABELS[now] || now;
+      }
+      var text = said.handled ? '' : (said.comment || '');
+      var line = block.querySelector('.past-comment');
+      if (!text) {
+        if (line) { line.remove(); }
+
+        return;
+      }
+      if (!line) {
+        line = document.createElement('p');
+        line.className = 'past-comment';
+        block.appendChild(line);
+      }
+      line.textContent = text;
+    });
+  }
+
   function render() {
     Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
       var id = box.getAttribute('data-id');
@@ -127,6 +219,7 @@
       if (clearButton) { clearButton.hidden = !text.trim() || Boolean(handled); }
       if (opener) { opener.setAttribute('title', handled ? 'Remarque traitée le ' + handled.date + ' — ' + handled.reason : 'Commentaire'); }
     });
+    renderPast();
     /* The survey count keeps itself up to date on `change`: it need not know where the state came from, only that it moved. */
     document.dispatchEvent(new Event('change'));
     /* AND THE TILES FOLLOW THE VERDICTS THAT JUST ARRIVED: this runs when the repository answers, so the states shown are those of the stored verdicts and not
@@ -214,8 +307,13 @@
       if (state[id] && state[id].handled) { return; }
       state[id] = state[id] || {};
       state[id].comment = field.value;
-      remember(id);
+      rememberSoon(id);
     });
+    /* AND LEAVING THE FIELD SENDS AT ONCE, WITHOUT WAITING FOR THE REST: the page reloads itself when it is rebuilt, and what is owed to the server must not be
+       sitting in a timer at that moment. Clicking a verdict, opening a version, closing the panel — every one of those takes the focus, so the text is safe
+       before the gesture that follows it. ONLY WHAT IS OWED GOES: a field one merely passes through has no timer waiting, and sending on every blur would put a
+       request on the wire for a text nobody touched. */
+    field.addEventListener('blur', function () { if (timers[id]) { remember(id); } });
   });
 
   /* LEAVING A COMPARISON WITHOUT LEAVING THE SUBJECT (operator, 2026-08-07): the only way out was to untick each variant one by one, or to close the panel — which
@@ -457,23 +555,26 @@
     /* THE DRAWER SAYS WHAT IT IS SHOWING (operator, 2026-08-12: « quand j'ouvre le drawer, il doit annoncer clairement le nom du sujet et le nom du variant »).
        It announced « La version en entier », which is true of every one of them and names none: opened from a board of fifteen variants, one no longer knew
        which was on screen. Both names are already in the page — the subject at the head of its card, the variant on its own — so they are READ, not recomposed. */
-    var fiche = carte.closest('.fsp');
-    var sujet = fiche ? fiche.querySelector('.fsp-title') : null;
-    var variante = carte.closest('.variant').querySelector('.variant-name');
+    var panel = carte.closest('.fsp');
+    var subjectTitle = panel ? panel.querySelector('.fsp-title') : null;
+    var variantHeading = carte.closest('.variant').querySelector('.variant-name');
     /* THE NAME IS READ WITHOUT ITS BADGE: the « principal » mark lives inside the same heading, so taking its whole text gave « Vue principaleprincipal ». Only
        the direct text of the heading is its name; what is nested in it is a label about it. */
-    var nom = '';
-    if (variante) {
-      Array.prototype.forEach.call(variante.childNodes, function (piece) {
-        if (piece.nodeType === 3) { nom += piece.textContent; }
+    var variantName = '';
+    if (variantHeading) {
+      Array.prototype.forEach.call(variantHeading.childNodes, function (piece) {
+        if (piece.nodeType === 3) { variantName += piece.textContent; }
       });
-      nom = nom.trim();
+      variantName = variantName.trim();
     }
-    var ancienne = carte.classList.contains('previous') ? ' — version antérieure' : '';
-    drawerTitle.textContent = (sujet ? sujet.textContent.trim() : '') + (nom ? ' · ' + nom : '') + ancienne;
-    var nom = carte.querySelector('.variant-file');
-    drawerPath.textContent = nom ? nom.textContent : '';
-    drawerPath.hidden = !nom;
+    var olderMark = carte.classList.contains('previous') ? ' — version antérieure' : '';
+    drawerTitle.textContent = (subjectTitle ? subjectTitle.textContent.trim() : '')
+      + (variantName ? ' · ' + variantName : '') + olderMark;
+    /* TWO NAMES BECAUSE THEY ARE TWO THINGS — and they shared one, `nom`, declared twice in the same function: the title read the first, the path overwrote it
+       with the second on the next line. It worked by order of execution alone, which is the kind of thing that breaks the day a line moves. */
+    var fileName = carte.querySelector('.variant-file');
+    drawerPath.textContent = fileName ? fileName.textContent : '';
+    drawerPath.hidden = !fileName;
     drawerBody.textContent = '';
     /* THE DRAWER IS SHOWN BEFORE ANYTHING IS MEASURED: hidden, it reports a width of zero, and a magnification computed on that would fall back to one for every
        image. */
@@ -488,13 +589,29 @@
       /* THE MAGNIFICATION IS MEASURED, NOT DECREED: twice for a one-tile sprite, less as soon as it would no longer fit the drawer, never below one — an image
          one has come to look at closely is not shrunk. The available width is taken from the drawer itself, which is already at its size since its style does
          not depend on its content. */
-      var vignette = image.querySelector('img');
-      /* THE ROOM IS MEASURED ON THE BODY THAT WILL HOLD THE IMAGE, not on the drawer around it: the drawer's own width still counts its padding, and a sprite
-         sized against it comes out a few pixels too wide — which is a scrollbar, which is the very thing being fixed. */
-      var place = drawerBody.clientWidth - 8;
-      var facteur = 2;
-      if (vignette && vignette.width) { facteur = Math.max(1, Math.min(2, place / vignette.width)); }
-      clone.style.zoom = String(facteur);
+      /* THE IMAGE IS GIVEN A WIDTH IN PIXELS, AND THAT IS THE WHOLE OF IT. Two attempts failed before this one, both for the same reason — a size expressed
+         RELATIVE to something that did not move. `width: 200%` measured the image against a wrapper the wrapper took from the image, and `zoom` was read off a
+         drawer width that is zero while it is still hidden. An absolute width has no such loop: the wrapper takes the image's size, and the footprint grid,
+         which is laid on the wrapper in percentages, follows it exactly.
+         TWICE THE THUMBNAIL, BUT NEVER WIDER THAN THE PANEL (operator, 2026-08-12, twice: « si l'image est plus large que le drawer, ça pose souci », then « tu
+         n'as pas résolu le problème de sprite très grand »). A sixteen-tile building is therefore shown smaller than twice, and whole. */
+      var vignette = clone.querySelector('img');
+      if (vignette) {
+        var natural = Number(vignette.getAttribute('width')) || vignette.width;
+        var tall = Number(vignette.getAttribute('height')) || vignette.height;
+        /* BOUNDED ON BOTH SIDES, AND THE RATIO IS NEVER TOUCHED (operator, 2026-08-12: « dans le drawer, les sprites doivent tout de même avoir une taille
+           maximum et garder leurs proportions »). Only the WIDTH is set, in pixels; the height follows on its own. A ceiling on the height would have to be
+           expressed as a width too — capping both in CSS distorts, since the browser then honours two contradictory sizes. So the height ceiling is converted
+           into the width it allows, and the smallest of the three wins: twice the thumbnail, the room across, the room down. */
+        var room = drawer.getBoundingClientRect().width - 32;
+        var ceiling = window.innerHeight * 0.7;
+        var byHeight = tall ? (ceiling * natural) / tall : room;
+        var shown = Math.max(1, Math.round(Math.min(natural * 2, room, byHeight)));
+        vignette.style.width = shown + 'px';
+        vignette.style.height = 'auto';
+        vignette.removeAttribute('width');
+        vignette.removeAttribute('height');
+      }
       grande.appendChild(clone);
       drawerBody.appendChild(grande);
       /* AND THIS IS THE IMAGE THE RUNE IS PLACED ON: the clone inherits no listener, and this is where one can aim accurately. */
@@ -624,6 +741,19 @@
     ready = true;
     pending = {};
     if (restored.length) { remember(); }
+    /* AND CE QUE LE FILET LOCAL PORTE EST REVERSÉ ICI, ENTRY BY ENTRY, AND ONLY WHAT THE SERVER DOES NOT ALREADY HOLD (operator, 2026-08-12: « à défaut au moins en
+       local »). An entry the server hands back identical HAS landed: it leaves the net. One that differs never arrived — a reload that cut the send, a server that
+       was down — so it is laid over what was received, put back on the wire, and KEPT in the net until a load shows it landed. Nothing is dropped on the strength
+       of having been sent: a send is not an arrival, and this whole mechanism exists because the difference was paid for. */
+    var net = readOutbox();
+    var owed = Object.keys(net).filter(function (id) { return JSON.stringify(state[id]) !== JSON.stringify(net[id]); });
+    var still = {};
+    owed.forEach(function (id) {
+      state[id] = net[id];
+      still[id] = net[id];
+    });
+    setOutbox(still);
+    owed.forEach(function (id) { remember(id); });
     render();
   });
 

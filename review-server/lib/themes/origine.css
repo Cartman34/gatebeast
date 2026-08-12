@@ -75,6 +75,9 @@
   --footprint-edge: #e4562a;
   --footprint-field: rgba(228, 86, 42, 0.14);
   --overhang-edge: #0d8f97;
+  /* The overhang is hatched, not merely outlined: a dashed frame gets lost over a pale sprite (operator, 2026-08-12). Same colour, at the strength of a veil —
+   * the sprite is judged through it. Declared in the three themes under the same name; the geometry of the hatching lives in the page's own sheet. */
+  --overhang-hatch: rgba(13, 143, 151, 0.22);
 }
 
 /* The original's dark, applied when the system asks for it — and only there, save the explicit overrides below. */

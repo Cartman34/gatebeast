@@ -5,7 +5,15 @@ the v5 report: the trees came out BROADLEAF instead of pines (described positive
 the sheepfold rendered far under its eight tiles and open like a shed instead of pierced by a door, the
 SP-016 pair had four legs instead of six, SP-005 came out as a dragonet, the left edge joint was barely
 legible, and the plate was too dark (95.8 of luminance, 20.4% dark) — the shared base now carries the
-light standard, and the rock is prescribed in its pale values here."""
+light standard, and the rock is prescribed in its pale values here.
+
+USAGE
+  A FROZEN PLATE PROMPT — a historical document, not a command to run again. It produced
+  assets/revue-da/planche-p3-contreforts-v6.png, and its prompt is frozen beside it in
+  assets/revue-da/prompt-p3-contreforts-v6.txt. It is kept so the exact text sent to the generator can
+  be read back next to the image it made. It takes no argument and answers no help: there is nothing
+  to call it with. Running it would spend a generation on a plate that already exists.
+"""
 import sys
 from pathlib import Path
 

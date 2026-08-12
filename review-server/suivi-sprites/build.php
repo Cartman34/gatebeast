@@ -1,6 +1,7 @@
 <?php
 /**
  * Usage: php review-server/suivi-sprites/build.php [sortie.html]
+ *        php review-server/suivi-sprites/build.php -h|--help — this text, and nothing is built.
  *
  * Builds the sprite tracking page in PHP: a grid of subjects, and one full-screen popin per subject holding its variants, their versions and the actions.
  *
@@ -19,7 +20,10 @@ require_once $root . '/review-server/lib/Thumbnail.php';
 // The rune service is still required although the page draws no rune for now (see runeMark): the drawing comes back by calling it again, and dropping the
 // require with the call would turn a one-line return into a hunt through the history.
 require_once $root . '/review-server/lib/Rune.php';
+require_once $root . '/scripts/Tools.php';
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 const SCREEN_PIXELS_PER_TILE = 24;   // what a tile measures on screen — the project's own value, held by scripts/tile_scale.py
 const COMPARE_PIXELS_PER_TILE = 48;  // what a tile measures inside the full-screen panel, where images are judged and compared (operator, 2026-08-06)
@@ -283,6 +287,39 @@ function textButton(string $label, string $path, string $root): string
  * alone is what sent the search after the wrong cause more than once. When they are absent they say nothing: the project's first images predate the rule that
  * freezes a prompt beside its master.
  */
+/**
+ * The generator session that produced this version, read from its own production report.
+ *
+ * ONE ASKS IT OF AN IMAGE, NOT OF A DIRECTORY (operator, 2026-08-12: « pour chaque version, faut que je puisse trouver l'ID de la session qui l'a générée »).
+ * The report has always carried it, and the page has always offered to open the report — but finding an identifier meant opening a text of several hundred lines
+ * and hunting through it. It is a piece of DATA about the version, so it sits with the measurements, in one line one can copy.
+ *
+ * IT IS READ, NEVER STORED A SECOND TIME: the report is the only place that knows it, and a copy in the referential would be a second truth to keep in step.
+ */
+function generatorSession(string $root, array $representation): string
+{
+    $master = $representation['master'] ?? null;
+    if (!$master) {
+        return '';
+    }
+    $report = $root . '/var/generations/sprites/' . pathinfo($master, PATHINFO_FILENAME) . '-rapport.md';
+    // NO REPORT, NO LINE, AND THAT IS NOT A FAULT: the project's first images predate the report. What IS a fault is a report that carries no session, and it says
+    // so to whoever ran the build rather than showing nothing — a silently absent line is exactly the transparent error this repository forbids.
+    if (!is_file($report)) {
+        return '';
+    }
+    // THE LABEL IS WRITTEN IN BOLD IN THE REPORT — « **Session du générateur :** `…` » — so the closing stars sit BETWEEN the colon and the identifier. The first
+    // spelling of this expression stopped at the colon, matched nothing anywhere, and the line never appeared on a single version: the feature looked absent
+    // rather than broken. The stars are optional so that a report written without them still reads.
+    if (preg_match('/Session du générateur\s*:\**\s*`([^`]+)`/u', (string) file_get_contents($report), $found) !== 1) {
+        fwrite(STDERR, "SANS SESSION : {$report} ne porte pas « Session du générateur ».\n");
+
+        return '';
+    }
+
+    return sprintf('<p class="session"><span class="session-label">Session du générateur</span><code>%s</code></p>', escape($found[1]));
+}
+
 function frozenPrompt(string $root, array $representation): string
 {
     $master = $representation['master'] ?? null;
@@ -384,7 +421,7 @@ function grid(array $subject, array $spread, int $width, int $height): string
  * await a point.
  *
  * NOTHING ELSE IS REMOVED, and the drawing comes back by calling Rune again here: the shapes, the colours, the constant size and the placing tool are untouched,
- * and `php local/scripts/see-placed-rune.php` still draws a placed rune outside this page. What this waits on is S53 rune-creature. The mechanism itself is in
+ * and `php scripts/dev/see-placed-rune.php` still draws a placed rune outside this page. What this waits on is S53 rune-creature. The mechanism itself is in
  * the history — `git show HEAD:review-server/suivi-sprites/build.php` — and is taken back from there rather than rewritten from memory.
  */
 function runeMark(string $code, array $subject, array $representation, int $shownWidth): string
@@ -402,6 +439,25 @@ function runeMark(string $code, array $subject, array $representation, int $show
  * THE ENTRY ZONE STAYS FOLDED AND THE « + » BUTTON OPENS IT (operator, 2026-08-06 then 2026-08-07): unfolded by default it takes as much height as the three
  * acts together, for a field filled one time in ten.
  */
+/**
+ * AN EARLIER VERSION IS READ, IT IS NOT VOTED ON (operator, 2026-08-12: « sur une version antérieure, aucun intérêt de voter, je dois juste voir le commentaire
+ * et ce qui a été voté »). Its verdict was given once and will not change: offering three buttons and an entry field on it invites a gesture that means nothing,
+ * and doubles the controls on screen for a card nobody acts on. What it owes is the opposite — showing what WAS decided, plainly.
+ */
+/**
+ * AND IT IS FILED UNDER THE PATH OF ITS IMAGE, LIKE A LIVE ONE, BECAUSE THAT IS WHERE ITS JUDGEMENT ACTUALLY LIVES. Built from the referential alone, this block
+ * said « Jamais jugée » over eighteen of the twenty-eight verdicts the operator has given: they sit in review-server/notes/sprites.json, keyed by image path, and
+ * the referential carries none of them. The page therefore rewrites this block from the store as soon as it answers — see render() — and the key is what lets it
+ * find it. What is built stays the fallback, for a version judged in the referential and never touched here.
+ */
+function readOnlyNotes(string $key, ?string $state, string $comment): string
+{
+    $said = $state ? sprintf('<p class="verdict verdict--%s">%s</p>', escape($state), escape(STATE_LABELS[$state])) : '<p class="verdict">Jamais jugée</p>';
+
+    return sprintf('<div class="past" data-id="%s">%s%s</div>', escape($key), $said,
+        $comment === '' ? '' : sprintf('<p class="past-comment">%s</p>', escape($comment)));
+}
+
 function notes(string $key, string $comment): string
 {
     return sprintf(
@@ -414,7 +470,7 @@ function notes(string $key, string $comment): string
     );
 }
 
-function representation(Thumbnail $thumbnails, string $root, string $code, array $subject, array $spread, array $representation): string
+function representation(Thumbnail $thumbnails, string $root, string $code, array $subject, array $spread, array $representation, string $extra = '', bool $editable = true): string
 {
     // THE SCALE IS FIXED AND THE SAME FOR EVERY SUBJECT: forty-eight pixels per tile in the panel, a tile staying a tile from one subject to the next. A large oak
     // therefore takes four times the width of a fence, which is the truth of the world; thumbnails all of one width let you neither compare two subjects nor see
@@ -447,7 +503,7 @@ function representation(Thumbnail $thumbnails, string $root, string $code, array
 
     return sprintf('%s<div class="variant-image">%s</div>%s%s'
         . '<button type="button" class="open-version" data-for="%s">Voir cette version</button>'
-        . '<div class="version-full" data-version="%s" hidden>%s%s</div>',
+        . '<div class="version-full" data-version="%s" hidden>%s%s%s</div>',
         version($root, $representation),
         $picture,
         // THE VERDICT IS SHOWN THROUGH THE SAME VOCABULARY AS EVERYTHING ELSE: the stored French value is translated once, and the page speaks one language to itself.
@@ -455,12 +511,14 @@ function representation(Thumbnail $thumbnails, string $root, string $code, array
         // THE JUDGEMENT STAYS ON THE GRID, IT IS NOT IN THE DRAWER (operator, 2026-08-12: « ça devait rester sur la grille de variant, faut que je puisse le
         // donner rapidement »). Moved into the drawer, a verdict asked for two more gestures — open, then close — for an image one knows what to think of on
         // sight. It stays filed under the path of ITS image, so every version keeps its own, earlier ones included.
-        notes($key, $representation['operator_comment'] ?? ''),
+        // AN EARLIER VERSION SHOWS WHAT WAS DECIDED, IT DOES NOT OFFER TO DECIDE AGAIN.
+        $editable ? notes($key, $representation['operator_comment'] ?? '') : readOnlyNotes($key, $state, $representation['operator_comment'] ?? ''),
         escape($key), escape($key),
         // THE IMAGE IS NOT COPIED HERE, AND THAT IS A FAULT CAUGHT AT BUILD TIME: written a second time, it took the page from 37 to 71 MB — a thumbnail is a
         // file written out IN FULL inside the page. The drawer picks it up from the card at the moment it opens, so none is ever duplicated.
-        measurements($representation, $subject),
-        frozenPrompt($root, $representation)
+        measurements($representation, $subject) . generatorSession($root, $representation),
+        frozenPrompt($root, $representation),
+        $extra
     );
 }
 
@@ -474,21 +532,24 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
         $current = $inventory->currentRepresentation($variant);
         // TWO NAMES BECAUSE THEY ARE TWO THINGS: $current is the current representation, a piece of data; $rendered is its markup. They shared one name for a
         // moment, during a vocabulary migration, and the page stopped building — the markup arrived where the data was expected.
-        $rendered = $current
-            ? representation($thumbnails, $root, $code, $subject, $spread, $current)
-            : '<div class="variant-image"><p class="to-produce">À produire</p></div>';
         $comment = $current['operator_comment'] ?? '';
         $previous = $inventory->previousRepresentations($variant);
         $identifier = $code . ' ' . $ref;
+        // EARLIER VERSIONS QUIT THE GRID FOR THE DRAWER (operator, 2026-08-12: « dans la grille, je ne suis pas censé voir les versions antérieures »). The grid
+        // is where one judges what has just come out; an ancestor there doubles every card, and the vote form it carried invited a gesture that means nothing on
+        // an image already judged. They are folded inside the CURRENT version's panel, read-only — their verdict and their comment, nothing to click.
         $anciennes = '';
         foreach ($previous as $old) {
-            // THE SAME PRESENTATION AS THE CURRENT ONE, NO SPECIAL CASE (operator, 2026-08-07): its image at the same scale with its footprint grid, its file
-            // name, its date, its verdict, its measurements and its prompt. It is by holding it against the current one that one decides whether the retake served.
             // AN EARLIER VERSION CARRIES ITS PATH IN THE MARKUP, and that is what makes its comments findable: a remark is filed under the path of the image it
             // judges, so without that path the page has no way of knowing a text exists on an older one.
             $anciennes .= sprintf('<article class="previous" data-version="%s">%s</article>',
-                escape($old['path'] ?? ''), representation($thumbnails, $root, $code, $subject, $spread, $old));
+                escape($old['path'] ?? ''), representation($thumbnails, $root, $code, $subject, $spread, $old, '', false));
         }
+        $past = $anciennes === '' ? '' : sprintf('<details class="fold"><summary>%d version%s antérieure%s</summary><div class="previous-list">%s</div></details>',
+            count($previous), count($previous) > 1 ? 's' : '', count($previous) > 1 ? 's' : '', $anciennes);
+        $rendered = $current
+            ? representation($thumbnails, $root, $code, $subject, $spread, $current, $past)
+            : '<div class="variant-image"><p class="to-produce">À produire</p></div>';
         // THE JUDGEMENT BLOCK LEFT THE VARIANT FOR THE VERSION (operator, 2026-08-12): every version now carries its own notes under its own image, earlier ones
         // included, which showed none. The variant keeps none, and the line announcing « an older version carries a comment » has lost its reason — the older one
         // shows it itself, right there. Checked before removal, as the task asked.
@@ -520,8 +581,9 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
             escape($variant['label'] ?? 'Vue principale'),
             ($variant['main'] ?? false) ? '<span class="variant-main" title="Le variant de référence du sujet">principal</span>' : '',
             $rendered,
-            $anciennes ? '<details class="fold"><summary>' . count($previous) . ' version' . (count($previous) > 1 ? 's' : '')
-                . ' antérieure' . (count($previous) > 1 ? 's' : '') . '</summary><div class="previous-list">' . $anciennes . '</div></details>' : '',
+            // NOTHING MORE ON THE CARD: the earlier versions went into the current version's panel just above, and the card ends with what it is for — one image,
+            // one verdict.
+            '',
             $review
         );
     }

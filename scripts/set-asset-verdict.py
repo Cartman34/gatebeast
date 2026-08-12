@@ -9,6 +9,7 @@ Usage:
   --variant matches a variant by its proposition value ("p2"), its ref, or its label; "main"
   picks the main view. --version matches the tail of the delivered path ("v4", or the file name).
   --verdict is one of approved, rework, discarded. Repeat --version to judge several at once.
+  -h|--help prints this text and writes nothing.
 
 Intention:
   NOTHING WROTE THESE TWO FIELDS, AND THEY DECIDE WHAT THE NEXT GENERATION COPIES. The command picks
@@ -148,4 +149,7 @@ def main():
 
 
 if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main())

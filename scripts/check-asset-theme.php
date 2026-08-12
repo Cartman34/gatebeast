@@ -3,6 +3,7 @@
  * USAGE
  *   php scripts/check-asset-theme.php — checks the asset theme is honoured: no theme name written outside the module that owns it, every recorded image sitting under the current theme's subtree,
  *   and a coverage report saying how complete the theme is. Exits non-zero on a defect.
+ *   php scripts/check-asset-theme.php -h|--help — this text
  *
  * INTENTION
  *   A theme answers for the whole game or it is not the current theme, and the current one is chosen in one place in the code (operator, 2026-08-07). Neither half of that holds by itself: a theme
@@ -13,6 +14,9 @@
  */
 
 $root = dirname(__DIR__);
+require_once __DIR__ . '/Tools.php';
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 /** Le module qui détient la valeur. C'est le SEUL fichier où un nom de thème a le droit d'être écrit. */
 const THEME_MODULE = 'scripts/asset_theme.py';

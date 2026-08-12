@@ -4,6 +4,7 @@
 USAGE
   python3 scripts/check-runes.py — reads assets/runes.json and doc/conception/referentiels/contenu/creatures-temoins.md, and reports what is missing on either
   side. Prints its verdict and what is wrong, nothing else.
+  python3 scripts/check-runes.py -h|--help — this text
 
 INTENTION
   The rune is traced at render from declared data, so a rune the data does not carry is a creature that will be drawn bare, and a shape nobody claims is dead
@@ -86,4 +87,9 @@ def main():
 # LOADED WITHOUT RUNNING: the prompt builder imports `load()` from here, and a module that checks and exits the moment it is imported would take its caller down
 # with it. The check is the command's job, not the file's.
 if __name__ == "__main__":
+    # ASKED HERE AND NOT AT MODULE LEVEL: asset_common.py imports this file by path, so a guard on the
+    # import path would print the help and stop the caller the day it is run with --help of its own.
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__.strip())
+        raise SystemExit(0)
     sys.exit(main())

@@ -5,7 +5,15 @@ SP-007 pair rabbit-like; the brook was drawn one or two columns off and the bott
 are now anchored to each other rather than merely listed; the cottage access ran past its door to the
 edge; one surplus conifer. Plus the current standard: light band in the shared base, a size reminder
 next to EVERY human (the audit found two of four), and the ground prescribed SURFACE BY SURFACE — "these
-ways and nothing else" was not enough on its own."""
+ways and nothing else" was not enough on its own.
+
+USAGE
+  A FROZEN PLATE PROMPT — a historical document, not a command to run again. It produced
+  assets/revue-da/planche-p1-campagne-v8.png, and it is kept so the exact text sent to the generator
+  can be read back beside the image it made. Its prompt is also frozen next to it, in
+  assets/revue-da/prompt-p1-campagne-v8.txt. It takes no argument and answers no help: there is
+  nothing to call it with. Running it would spend a generation on a plate that already exists.
+"""
 import sys
 from pathlib import Path
 

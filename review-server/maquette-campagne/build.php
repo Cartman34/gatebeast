@@ -1,6 +1,7 @@
 <?php
 /**
- * Usage: build the Maquette Campagne page, whenever its plan or its mounted mock-up has been produced again.
+ * Usage: php review-server/maquette-campagne/build.php — builds the Maquette Campagne page, whenever its plan or its mounted mock-up has been produced again.
+ *        php review-server/maquette-campagne/build.php -h|--help — this text, and nothing is built.
  *
  * Builds ONE page holding the two views of Maquette Campagne: its composition plan, and the mock-up mounted from it. Two sections, folded or unfolded at will, each remembering its own state from
  * one visit to the next, and each keeping the review tools it already has.
@@ -15,7 +16,10 @@
 $root = dirname(__DIR__, 2);
 $here = __DIR__;
 require_once $root . '/review-server/bootstrap.php';
+require_once $root . '/scripts/Tools.php';
 bootBuild();
+
+Tools::get()->helpIfAsked($argv, __FILE__);
 
 // Services are taken here, at the top, once.
 $favicon = Favicon::get();
@@ -23,12 +27,12 @@ $reload = Reload::get();
 
 $sources = [
     // Both sources are produced WITHOUT a reload notice (empty third argument to their builder): this page is the one that carries it, once, on its own route.
-    ['cle' => 'plan', 'titre' => 'Le plan de composition', 'fichier' => "$root/review-server/parc/maquette-campagne-plan.html", 'prefixe' => null,
-     'quoi' => 'Ce que la scène déclare, case par case : quel sujet est posé où, et quels bords chaque pièce rejoint. Les raccords y sont vérifiés par calcul.'],
+    ['key' => 'plan', 'title' => 'Le plan de composition', 'file' => "$root/review-server/parc/maquette-campagne-plan.html", 'prefix' => null,
+     'what' => 'Ce que la scène déclare, case par case : quel sujet est posé où, et quels bords chaque pièce rejoint. Les raccords y sont vérifiés par calcul.'],
     // LE PRÉFIXE EST UN SYMBOLE DE CODE, DONC IL EST ANGLAIS (opérateur, 2026-08-12 : « ça ne peut pas être mq car ça ne veut rien dire en anglais et les
     // symboles de code sont forcément en anglais »). C'était l'abréviation française de « maquette » ; c'est désormais le mot que le métier emploie, `mockup`.
-    ['cle' => 'maquette', 'titre' => 'La maquette montée', 'fichier' => "$root/review-server/parc/maquette-campagne-montee.html", 'prefixe' => 'mockup-',
-     'quoi' => 'Les sprites posées sur leurs cases, à l\'échelle du monde : le sol d\'abord, puis ce qui se dresse dessus.'],
+    ['key' => 'maquette', 'title' => 'La maquette montée', 'file' => "$root/review-server/parc/maquette-campagne-montee.html", 'prefix' => 'mockup-',
+     'what' => 'Les sprites posées sur leurs cases, à l\'échelle du monde : le sol d\'abord, puis ce qui se dresse dessus.'],
 ];
 
 // The names both pages use. Prefixing one side is enough to tell them apart, and it is the mock-up that gets prefixed — the plan carries more of them, and the less one touches, the less one
@@ -102,28 +106,28 @@ $blocks = '';
 $allStyles = '';
 $allScripts = '';
 foreach ($sources as $source) {
-    if (!is_file($source['fichier'])) {
-        throw new RuntimeException("{$source['fichier']} n'existe pas — construis d'abord le plan et la maquette de la scène");
+    if (!is_file($source['file'])) {
+        throw new RuntimeException("{$source['file']} n'existe pas — construis d'abord le plan et la maquette de la scène");
     }
-    $html = file_get_contents($source['fichier']);
+    $html = file_get_contents($source['file']);
     $style = contentsOf($html, 'style');
     $script = contentsOf($html, 'script');
     $body = bodyOf($html);
-    if ($source['prefixe']) {
-        $style = prefixClasses($style, $source['prefixe']);
-        $script = prefixClasses($script, $source['prefixe']);
-        $body = prefixClasses($body, $source['prefixe']);
+    if ($source['prefix']) {
+        $style = prefixClasses($style, $source['prefix']);
+        $script = prefixClasses($script, $source['prefix']);
+        $body = prefixClasses($body, $source['prefix']);
     }
-    $allStyles .= "\n/* ---- {$source['cle']} ---- */\n" . $style;
-    $allScripts .= "\n/* ---- {$source['cle']} ---- */\n" . $script;
+    $allStyles .= "\n/* ---- {$source['key']} ---- */\n" . $style;
+    $allScripts .= "\n/* ---- {$source['key']} ---- */\n" . $script;
     $blocks .= <<<HTML
 
-  <section class="volet" data-cle="{$source['cle']}">
+  <section class="volet" data-key="{$source['key']}">
     <button type="button" class="plier" aria-expanded="true">
       <span class="chevron" aria-hidden="true">▾</span>
-      <span class="titre">{$source['titre']}</span>
+      <span class="titre">{$source['title']}</span>
     </button>
-    <p class="volet-quoi">{$source['quoi']}</p>
+    <p class="volet-quoi">{$source['what']}</p>
     <div class="volet-corps">{$body}</div>
   </section>
 
@@ -184,16 +188,16 @@ $page = <<<'HTML'
   try { plis = JSON.parse(localStorage.getItem(MEMOIRE)) || {}; } catch (erreur) { plis = {}; }
 
   document.querySelectorAll('.volet').forEach(function (volet) {
-    var cle = volet.dataset.cle;
+    var key = volet.dataset.key;
     var bouton = volet.querySelector('.plier');
     function appliquer(plie) {
       volet.dataset.plie = plie ? 'oui' : 'non';
       bouton.setAttribute('aria-expanded', plie ? 'false' : 'true');
-      plis[cle] = plie;
+      plis[key] = plie;
       try { localStorage.setItem(MEMOIRE, JSON.stringify(plis)); } catch (erreur) { /* un cadre peut refuser le stockage : le pli vaut alors pour la visite */ }
     }
     bouton.addEventListener('click', function () { appliquer(volet.dataset.plie !== 'oui'); });
-    appliquer(Boolean(plis[cle]));
+    appliquer(Boolean(plis[key]));
   });
 })();
 </script>
