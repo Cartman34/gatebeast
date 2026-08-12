@@ -15,6 +15,7 @@ Two families, because one has a subject to lift out of the image and the other d
 - TILE assets (ground): there is no subject and nothing to lift out. The material fills the frame edge
   to edge and is asked to repeat seamlessly with itself.
 """
+import importlib.util
 import re
 import subprocess
 import sys
@@ -22,7 +23,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import tile_scale
-from plate_common import HUMANS, INDIVIDUALS, SPECIES, STYLE_FR
+from plate_common import HUMANS, SPECIES, STYLE_FR
+
+# The rune data, read from its own file rather than from a copy kept here. Imported by path because the file name carries a dash, and it is safe to import: the
+# check it performs runs on the command, never on the import.
+_runes_spec = importlib.util.spec_from_file_location("check_runes", Path(__file__).resolve().parent / "check-runes.py")
+check_runes = importlib.util.module_from_spec(_runes_spec)
+_runes_spec.loader.exec_module(check_runes)
 
 PROJECT = Path(__file__).resolve().parents[2]
 TOOL = "gatebeast/scripts/generate-image.php"
@@ -422,14 +429,14 @@ def fiche(code: str) -> tuple:
     """Resolve a code to (taille, description) — creature individual, human, element, or the player."""
     if code == JOUEUR[0]:
         return JOUEUR[1], JOUEUR[2]
-    if code in INDIVIDUALS:
-        species, rune = INDIVIDUALS[code]
-        description, position = SPECIES[species]
+    individuals = check_runes.load()["individuals"]
+    if code in individuals:
+        # LA SPRITE SE PRODUIT SANS SA RUNE, ET LA CONSIGNE N'EN PARLE PLUS (rendu-en-calques.md, décision du 2026-08-11) : la rune se trace au rendu, sur
+        # l'ancre que l'image déclare. La clause qui la décrivait ici demandait au générateur de dessiner ce qu'on lui reprochait ensuite d'avoir dessiné —
+        # jamais deux fois la même, jamais à la bonne taille. Un individu n'est donc plus qu'un porteur : sa consigne est celle de son espèce, mot pour mot.
+        description, _position = SPECIES[individuals[code]["species"]]
         taille = "2 cases au sol" if "two tiles of ground" in description else "1 case au sol"
-        return taille, (f"{description} Sa rune, un seul trait continu et scintillant, {position} : "
-                        f"{rune}. La rune LUIT DOUCEMENT sans éclairer : elle ne projette aucune "
-                        f"lumière, ne rayonne pas, ne fait pas de halo, et elle ÉPOUSE la courbure du "
-                        f"corps au lieu d'être plaquée à plat.")
+        return taille, description
     if code in HUMANS:
         return "entre 1,75 et 2 cases debout", HUMANS[code]
     # LES ÉLÉMENTS NE SONT PLUS SERVIS D'ICI : leurs descriptions vivent dans assets/descriptions/, un fichier par description, lu en entier. La copie qui

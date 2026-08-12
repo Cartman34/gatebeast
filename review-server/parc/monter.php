@@ -18,6 +18,8 @@
 $root = __DIR__ . '/../..';
 require_once "$root/scripts/Capture.php";
 require_once "$root/review-server/bootstrap.php";
+// Le tracé de rune n'est pas un service que toute page charge : seule la maquette compose des sujets sur des cases, donc seule elle en a besoin.
+require_once "$root/review-server/lib/Rune.php";
 bootBuild();
 // THE SERVED ROUTE IS THE THIRD ARGUMENT: this mounter produces the mock-up served at /parc/maquette, but also a SOURCE of the Campagne page, melted elsewhere. A source carries no reload notice —
 // the final page would otherwise hold two of them, on a route that is not its own. That absence of a route is `null`, never an empty string: an empty string is a string holding nothing, which is
@@ -49,10 +51,10 @@ const SCREEN_PIXELS_PER_TILE = SCREEN_TILE_WIDTH;
  * and characters — and ended up in the ground: a character standing behind a tuft would have been drawn in front of it. A stream declares `decor-au-sol` — one
  * walks on it — and was sorted by depth alongside buildings. A second truth beside the referential always ends up contradicting it; this one already had.
  */
-const LAYER_ORDER = ['sol', 'decor-au-sol', 'monde', 'dessus', 'interface'];
+const LAYER_ORDER = ['ground', 'ground-decor', 'world', 'above', 'interface'];
 // Depth sorting applies ONLY within the living world: that is where what stands and what moves are found. A ground sorted by depth means nothing, and an
 // overhead layer sorted by depth would fall behind what it is meant to cover.
-const DEPTH_SORTED_LAYER = 'monde';
+const DEPTH_SORTED_LAYER = 'world';
 
 // THE PLAN AND THE OUTPUT ARE ARGUMENTS, the park being only the default: there will be other mock-ups — the 32 × 24 reference scene first (operator, 2026-08-06) — and a mounter that can only
 // mount one map forces you to copy it for the next. One mounter, as many mock-ups as needed.
@@ -79,6 +81,42 @@ function shapeKey(array $joins): string
     }
 
     return $key;
+}
+
+/**
+ * The rune of the individual this cell declares, traced over the sprite — nothing at all when the cell declares none.
+ *
+ * L'INDIVIDU EST UNE DONNÉE DE LA SCÈNE, PAS DE L'IMAGE (opérateur, 2026-08-12) : la sprite est celle de l'espèce, et c'est la case qui dit qui se tient là. Sans
+ * ce nom il n'y a rien à tracer, et c'est un silence normal, pas une faute — la plupart des cases ne portent pas de créature.
+ *
+ * DEUX ÉCHELLES SE CROISENT ICI, ET LES CONFONDRE POSE LA MARQUE À CÔTÉ. L'ancre est déclarée dans les pixels de l'image LIVRÉE ; la scène affiche cette image à
+ * une autre largeur. Le point se ramène donc au rapport des deux, et la taille de la rune se prend sur la case telle qu'elle est vue à l'écran, jamais sur
+ * l'image. La rune manquante d'un individu déclaré, elle, lève : une case qui nomme quelqu'un et ne le marque pas serait un silence qu'on ne verrait jamais.
+ */
+function runeOn(array $subjects, array $cell, string $image, float $width, int $imageWidth, int $columns): string
+{
+    if (empty($cell['individual'])) {
+        return '';
+    }
+    $anchor = null;
+    foreach ($subjects[$cell['subject']]['variants'] ?? [] as $variant) {
+        foreach ($variant['representations'] ?? [] as $representation) {
+            if (($representation['path'] ?? '') === $image) {
+                $anchor = $representation['rune_anchor_px'] ?? null;
+            }
+        }
+    }
+    if ($anchor === null) {
+        throw new RuntimeException("la case ({$cell['column']},{$cell['row']}) déclare l'individu « {$cell['individual']} », et l'image {$image} n'a pas "
+            . "d'ancre de rune — posez-la par « python3 scripts/set-rune-anchor.py » avant de le poser dans la scène.");
+    }
+    $scale = $width / $imageWidth;
+
+    return Rune::get()->svg($cell['individual'], [
+        'x' => $anchor['x'] * $scale,
+        'y' => $anchor['y'] * $scale,
+        'tilt_deg' => $anchor['tilt_deg'] ?? 0,
+    ], $width / $columns);
 }
 
 /** The image a subject shows on THIS cell: the variant whose shape matches what the cell joins, and its current representation.
@@ -202,7 +240,8 @@ foreach ($ordered as $cell) {
     $depth = (int) ($bottom / SCREEN_TILE_DEPTH);
     ?>
 <div class="pose s-<?= $token ?>" title="<?= htmlspecialchars($code, ENT_QUOTES) ?>"
-     style="left: <?= $left ?>px; top: <?= $bottom - $height ?>px; width: <?= $width ?>px; height: <?= $height ?>px; z-index: <?= $depth ?>"></div>
+     style="left: <?= $left ?>px; top: <?= $bottom - $height ?>px; width: <?= $width ?>px; height: <?= $height ?>px; z-index: <?= $depth ?>"><?=
+     runeOn($subjects, $cell, $image, $width, $imageWidth, $spread['columns']) ?></div>
     <?php
 }
 $scene = $capture->take();
@@ -252,7 +291,8 @@ $capture->start();
   :root { --paper: var(--bg); --surface: var(--card); }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
-  .wrap { width: min(100%, 1760px); margin: 0 auto; padding: 2rem 1rem 4rem; display: flex; flex-direction: column; gap: 1.4rem; }
+  /* La largeur et les marges viennent du format commun (Layout) ; ne reste ici que ce qui est propre à cette page : sa colonne et l'espace entre ses blocs. */
+  .wrap { display: flex; flex-direction: column; gap: 1.4rem; }
   .eyebrow { margin: 0; font-family: var(--mono); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
   h1 { margin: .3rem 0 0; font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 650; letter-spacing: -.02em; }
   .lede { margin: .5rem 0 0; max-width: 64ch; color: var(--muted); }
@@ -342,7 +382,6 @@ $capture->start();
       <button type="button" class="zoom" data-zoom="32" aria-pressed="false">32 px</button>
       <button type="button" class="zoom" data-zoom="48" aria-pressed="false">48 px</button>
     </span>
-    <button type="button" class="copier">Copier le récapitulatif</button>
   </div>
 
   <div class="zone">
@@ -368,6 +407,9 @@ $capture->start();
       <div class="saisie-boutons">
         <button type="button" class="poser">Attacher la remarque</button>
         <button type="button" class="supprimer" hidden>Supprimer</button>
+        <?php // LA MAQUETTE HÉRITE DE LA RÉOUVERTURE EN REJOIGNANT L'OUTIL COMMUN : le plan savait classer une remarque traitée et la rouvrir, elle non, alors
+              // que le besoin y était le même. C'est le seul écart de comportement assumé par la convergence, et il ajoute au lieu de retirer. ?>
+        <button type="button" class="rouvrir" hidden>Rouvrir</button>
         <button type="button" class="annuler">Annuler</button>
       </div>
     </div>
@@ -376,7 +418,8 @@ $capture->start();
   <div class="remarques">
     <div class="remarques-head">
       <h3>Les remarques</h3>
-      <button type="button" class="copier">Copier le récapitulatif</button>
+      <?php // PLUS AUCUN RELEVÉ À COPIER (opérateur, 2026-08-12 : « tous les mécanismes avec relevé doivent disparaitre, tout doit être mis sur le serveur »).
+            // Même raison que sur le plan : les remarques vont au serveur en s'écrivant, et se lisent par `php scripts/remarks.php list`. ?>
       <button type="button" class="effacer">Tout effacer</button>
     </div>
     <p class="remarques-vides">Aucune remarque pour l'instant.</p>
@@ -395,14 +438,7 @@ $capture->start();
 (function () {
   var scene = document.getElementById('scene');
   var zone = scene.closest('.zone');
-  var survol = zone.querySelector('.survol');
-  var saisie = zone.querySelector('.saisie');
-  var saisieOu = zone.querySelector('.saisie-ou');
-  var saisieTexte = zone.querySelector('textarea');
-  var supprimer = zone.querySelector('.supprimer');
-  var liste = document.querySelector('.remarques ul');
-  var vide = document.querySelector('.remarques-vides');
-  var effacer = document.querySelector('.effacer');
+  // Les éléments de l'outil de remarques ne se cherchent plus ici : l'outil commun les prend lui-même, par les sélecteurs que l'adaptateur lui donne en entier.
 
   var cote = Number(scene.dataset.cote);
   // LA PROFONDEUR EST UN SECOND PAS, ET ELLE VAUT POUR L'AXE VERTICAL. Une case projetee fait 24 sur 21 : se servir de la largeur pour les deux axes decale la
@@ -469,204 +505,81 @@ $capture->start();
     bouton.addEventListener('click', function () { zoomer(Number(bouton.dataset.zoom)); });
   });
 
-  var remarques = [];
-  var vise = null;
+  /* L'OUTIL DE REMARQUES EST CELUI DU PLAN, IL N'EN EXISTE PLUS DEUX (opérateur, 2026-08-12 : « tu dois unifier les fonctionnements autant que possible et en
+     évitant absolument les régressions »). Quatre cent cinquante lignes vivaient ici, à l'identique de celles du plan : l'état des remarques, la saisie, la
+     liste, le retrait, l'effacement, l'échappement, le dialogue avec le serveur. Elles ont divergé — le plan savait classer une remarque traitée et la rouvrir,
+     la maquette ne l'a jamais su, alors que le besoin y était le même. Ce que la maquette hérite au passage, c'est exactement ce classement.
+     NE RESTE ICI QUE CE QUI DÉPEND DU SUPPORT : où est la case sous le curseur, comment on marque une case, sous quel nom la section range ses remarques, et si
+     un clic est bien un clic — cette scène se déplace à la souris, le plan non. */
+  /* LA SECTION EST L'ENVELOPPE ENTIÈRE, PAS LA ZONE DU DESSIN, et c'est une distinction qui casse tout si on la manque : la liste des remarques, le compte des
+     vides et le bouton d'effacement vivent À CÔTÉ de la zone, pas dedans. Cherchés depuis la zone, ils ne se trouvent pas — et l'outil s'attacherait à une
+     section dont il ne trouve aucun élément. La zone, elle, reste le repère où se posent la saisie et le survol : c'est ce que `zone` dit à l'outil. */
+  window.gatebeastRemarks.attach(scene.closest('.wrap'), {
+    selectors: {
+      'saisie': '.saisie',
+      'saisie-ou': '.saisie-ou',
+      'poser': '.poser',
+      'annuler': '.annuler',
+      'supprimer': '.supprimer',
+      'rouvrir': '.rouvrir',
+      'remarques-liste': '.remarques ul',
+      'remarques-vides': '.remarques-vides',
+      'effacer': '.effacer',
+      'survol': '.survol'
+    },
+    section: 'maquette',
+    surface: scene,
+    zone: zone,
+    titre: 'Maquette du parc',
 
-  /* LES REMARQUES VIVENT DANS LE DÉPÔT, PAS DANS LE NAVIGATEUR (opérateur, 2026-08-07). Elles s'y perdaient dès que l'adresse changeait, elles n'étaient lisibles que par celui qui les
-     avait écrites, et il fallait les recopier à la main dans la conversation. Le serveur les tient : la page les demande en s'ouvrant, et lui rend la liste entière à chaque changement. */
-  function retenir() {
-    if (window.gatebeastNotes) { window.gatebeastNotes.save('maquette', remarques); }
-  }
-
-  /* La case sous un point de l'écran. La scène est posée en pixels, pas dans un repère à échelle : la case se lit directement, au décalage du cadre près et à ce que le
-     cadre a défilé de côté. */
-  function caseSous(x, y) {
-    var cadre = scene.getBoundingClientRect();
-    // The cell reads at the current scale: the measured frame is already that of the scaled scene, so the size of a cell on screen is too.
-    var pas = cote * echelle;
-    var pasProfond = profondeur * echelle;
-    var colonne = Math.floor((x - cadre.left) / pas) + 1;
-    var ligne = Math.floor((y - cadre.top) / pasProfond) + 1;
-    if (colonne < 1 || ligne < 1 || colonne > colonnes || ligne > lignes) {
-      return null;
-    }
-
-    return {colonne: colonne, ligne: ligne};
-  }
-
-  function nature(ou) {
-    var code = cases[ou.colonne + ',' + ou.ligne];
-
-    return code ? (noms[code] || code) + ' · ' + code : defaut;
-  }
-
-  function marquer() {
-    Array.prototype.forEach.call(scene.querySelectorAll('.marque'), function (ancien) { ancien.remove(); });
-    remarques.forEach(function (remarque) {
-      var carre = document.createElement('div');
-      carre.className = 'marque';
-      carre.style.left = ((remarque.colonne - 1) * cote) + 'px';
-      carre.style.top = ((remarque.ligne - 1) * profondeur) + 'px';
-      carre.style.width = cote + 'px';
-      carre.style.height = profondeur + 'px';
-      scene.appendChild(carre);
-    });
-  }
-
-  function afficher() {
-    liste.innerHTML = '';
-    vide.hidden = remarques.length > 0;
-    remarques.forEach(function (remarque) {
-      var ligne = document.createElement('li');
-      var ou = document.createElement('span');
-      ou.className = 'ou';
-      ou.textContent = '(' + remarque.colonne + ',' + remarque.ligne + ')';
-      var quoi = document.createElement('span');
-      quoi.className = 'quoi';
-      quoi.textContent = remarque.texte;
-      var retirer = document.createElement('button');
-      retirer.type = 'button';
-      retirer.textContent = 'Retirer';
-      retirer.addEventListener('click', function () {
-        remarques.splice(remarques.indexOf(remarque), 1);
-        retenir();
-        marquer();
-        afficher();
-      });
-      ligne.appendChild(ou);
-      ligne.appendChild(quoi);
-      ligne.appendChild(retirer);
-      liste.appendChild(ligne);
-    });
-  }
-
-  scene.addEventListener('mousemove', function (evenement) {
-    var ou = caseSous(evenement.clientX, evenement.clientY);
-    if (!ou) {
-      survol.hidden = true;
-      return;
-    }
-    var cadre = zone.getBoundingClientRect();
-    survol.textContent = '(' + ou.colonne + ',' + ou.ligne + ') ' + nature(ou);
-    survol.hidden = false;
-    survol.style.left = Math.max(4, Math.min(evenement.clientX - cadre.left + 14, cadre.width - survol.offsetWidth - 4)) + 'px';
-    survol.style.top = Math.max(4, evenement.clientY - cadre.top - survol.offsetHeight - 10) + 'px';
-  });
-
-  scene.addEventListener('mouseleave', function () { survol.hidden = true; });
-
-  scene.addEventListener('click', function (evenement) {
-    // Dragging the map attaches no remark: without this, every move with the mouse would open the input on whatever cell the finger came up on.
-    if (glisse) {
-      glisse = false;
-      return;
-    }
-    var ou = caseSous(evenement.clientX, evenement.clientY);
-    if (!ou) {
-      return;
-    }
-    vise = ou;
-    saisieOu.textContent = 'Case (' + ou.colonne + ',' + ou.ligne + ') — ' + nature(ou);
-    var deja = remarques.filter(function (remarque) {
-      return remarque.colonne === ou.colonne && remarque.ligne === ou.ligne;
-    })[0];
-    saisieTexte.value = deja ? deja.texte : '';
-    supprimer.hidden = !deja;
-    saisie.hidden = false;
-
-    var cadre = zone.getBoundingClientRect();
-    var gauche = evenement.clientX - cadre.left + 14;
-    var dessus = evenement.clientY - cadre.top + 14;
-    saisie.style.left = Math.max(8, Math.min(gauche, cadre.width - saisie.offsetWidth - 8)) + 'px';
-    saisie.style.top = Math.max(8, Math.min(dessus, cadre.height - saisie.offsetHeight - 8)) + 'px';
-    saisieTexte.focus({preventScroll: true});
-  });
-
-  zone.querySelector('.poser').addEventListener('click', function () {
-    var texte = saisieTexte.value.trim();
-    if (!vise || !texte) {
-      return;
-    }
-    remarques = remarques.filter(function (remarque) {
-      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
-    });
-    remarques.push({colonne: vise.colonne, ligne: vise.ligne, texte: texte});
-    retenir();
-    saisie.hidden = true;
-    vise = null;
-    marquer();
-    afficher();
-  });
-
-  supprimer.addEventListener('click', function () {
-    if (!vise) {
-      return;
-    }
-    remarques = remarques.filter(function (remarque) {
-      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
-    });
-    retenir();
-    saisie.hidden = true;
-    vise = null;
-    marquer();
-    afficher();
-  });
-
-  zone.querySelector('.annuler').addEventListener('click', function () {
-    saisie.hidden = true;
-    vise = null;
-  });
-
-  Array.prototype.forEach.call(document.querySelectorAll('.copier'), function (copier) {
-    copier.addEventListener('click', function () {
-      var texte = 'Maquette du parc\n' + (remarques.length ? remarques.map(function (remarque) {
-        return '(' + remarque.colonne + ',' + remarque.ligne + ') : ' + remarque.texte;
-      }).join('\n') : 'Aucune remarque.');
-      // The copy goes through a hidden field: the direct call to the clipboard is refused in the frame this page used to live in.
-      var holder = document.createElement('textarea');
-      holder.value = texte;
-      holder.setAttribute('readonly', 'readonly');
-      holder.style.position = 'fixed';
-      holder.style.opacity = '0';
-      document.body.appendChild(holder);
-      holder.select();
-      var done = false;
-      try {
-        done = document.execCommand('copy');
-      } catch (erreur) {
-        done = false;
+    /* La case sous un point de l'écran. La scène est posée en pixels, pas dans un repère à échelle : la case se lit directement, au décalage du cadre près.
+       La profondeur est un SECOND PAS, pour l'axe vertical — une case projetée fait 24 sur 21, et se servir de la largeur pour les deux axes décale la lecture
+       d'une case tous les sept rangs. */
+    caseSous: function (x, y) {
+      var cadre = scene.getBoundingClientRect();
+      var colonne = Math.floor((x - cadre.left) / (cote * echelle)) + 1;
+      var ligne = Math.floor((y - cadre.top) / (profondeur * echelle)) + 1;
+      if (colonne < 1 || ligne < 1 || colonne > colonnes || ligne > lignes) {
+        return null;
       }
-      document.body.removeChild(holder);
-      copier.textContent = done ? 'Copié' : 'Copie refusée';
-      setTimeout(function () { copier.textContent = 'Copier le récapitulatif'; }, 1600);
-    });
-  });
 
-  effacer.addEventListener('click', function () {
-    remarques = [];
-    retenir();
-    marquer();
-    afficher();
-  });
+      return {colonne: colonne, ligne: ligne};
+    },
 
-  document.addEventListener('keydown', function (evenement) {
-    if (evenement.key === 'Escape' && !saisie.hidden) {
-      saisie.hidden = true;
-      vise = null;
+    nature: function (ou) {
+      var code = cases[ou.colonne + ',' + ou.ligne];
+
+      return code ? (noms[code] || code) + ' · ' + code : defaut;
+    },
+
+    /* Le déplacement de la carte se termine par un clic sur la case où le doigt s'est relevé : sans ce refus, chaque déplacement ouvrait la saisie. */
+    clicIgnore: function () {
+      if (!glisse) {
+        return false;
+      }
+      glisse = false;
+
+      return true;
+    },
+
+    /* Les marques se posent PAR-DESSUS la scène, en pixels de son repère à elle : la scène est une pile d'éléments, pas un dessin vectoriel. */
+    marquer: function (marques) {
+      Array.prototype.forEach.call(scene.querySelectorAll('.marque'), function (ancien) { ancien.remove(); });
+      marques.forEach(function (marque) {
+        var carre = document.createElement('div');
+        /* LA CLASSE S'ÉCRIT EN CLAIR, JAMAIS DANS UN TERNAIRE, et le contrôle des sélecteurs l'a prouvé sur-le-champ : la passe de renommage de la page fusionnée
+           reconnaît `className = 'marque'`, pas `className = a ? 'marque …' : 'marque'`. L'élément gardait alors l'ancien nom pendant que la règle et le nettoyage
+           prenaient le nouveau — la marque devenait invisible et rien ne l'aurait dit. Le classement se voit par l'opacité, posée ici, sans classe à inventer. */
+        carre.className = 'marque';
+        carre.style.opacity = marque.reglee ? '0.35' : '1';
+        carre.style.left = ((marque.colonne - 1) * cote) + 'px';
+        carre.style.top = ((marque.ligne - 1) * profondeur) + 'px';
+        carre.style.width = cote + 'px';
+        carre.style.height = profondeur + 'px';
+        scene.appendChild(carre);
+      });
     }
   });
-
-  /* Les remarques arrivent du serveur, donc APRÈS l'ouverture de la page : on dessine une première fois sans elles, puis de nouveau quand elles sont là. Attendre pour tout afficher rendrait la
-     page inerte le temps d'un aller-retour, pour un contenu qui n'est presque jamais long. */
-  marquer();
-  afficher();
-  if (window.gatebeastNotes) {
-    window.gatebeastNotes.load('maquette', function (chargees) {
-      remarques = chargees;
-      marquer();
-      afficher();
-    });
-  }
 })();
 </script>
 <?= $notesScript ?>

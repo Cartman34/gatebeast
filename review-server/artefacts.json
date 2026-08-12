@@ -17,11 +17,21 @@
             "address": "https://claude.ai/code/artifact/cf3f2ac3-903c-43fb-ac91-c8e0129ab949"
         },
         {
-            "name": "Suivi des sujets",
-            "description": "ce qui reste à faire, dans l'ordre des priorités",
+            "name": "La pile",
+            "description": "ce qu'il reste à faire, une carte par task, et le vote de l'opérateur sur ce qui passe devant",
             "state": "alive",
-            "state_text": "vivant, servi en local depuis le 2026-08-07",
-            "_adresse_absente": "Cette page n'a jamais été publiée : elle naît sur le serveur de revue (RS) et n'a donc pas d'adresse publiée. L'entrée existe pour que l'index la montre et que sa card mène au local."
+            "state_text": "vivant, servi en local depuis le 2026-08-07 et publié le 2026-08-12 pour le mobile",
+            "address": "https://claude.ai/code/artifact/72263dd1-1017-4e33-b407-76e6a22227aa",
+            "_publiee_pourquoi": "Publiée à la demande de l'opérateur, qui n'a que son mobile : l'artefact n'appelle aucun serveur, ses votes tiennent dans le",
+            "_publiee_pourquoi_suite": "navigateur, et le relevé se copie pour me les transmettre. C'est la seule raison pour laquelle un relevé subsiste — il n'y a là aucun autre canal."
+        },
+        {
+            "name": "Inventaire du monde",
+            "description": "ce que le monde contient, la description de chacun en entier, et un vote par carte",
+            "state": "alive",
+            "state_text": "vivant, servi en local depuis le 2026-08-12 et publié le même jour pour le mobile",
+            "address": "https://claude.ai/code/artifact/b158b6f3-5e52-4acb-85db-88df564a3712",
+            "_publiee_pourquoi": "Publiée à la demande de l'opérateur, qui n'a que son mobile : l'artefact ne peut appeler aucun serveur, ses votes tiennent donc dans le navigateur et un relevé se copie pour me les transmettre. C'est la seule page où le relevé subsiste, et c'est parce qu'il n'y a là aucun autre canal."
         },
         {
             "name": "Suivi des sprites",

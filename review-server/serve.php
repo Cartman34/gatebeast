@@ -1,10 +1,12 @@
 <?php
 /**
- * Usage: php review-server/serve.php [port]   — then open http://localhost:8080/ ; Ctrl+C stops it.
+ * Usage: php review-server/serve.php [port]   — the address it prints is the one to open; `php scripts/stop-review-server.php` closes it at the end of the session.
  *
  * Intention: one command to start the review, so nobody has to remember the flags of the built-in server, and so the document root cannot be got wrong. THE ROOT IS THE REPOSITORY, not this folder:
  * a review page must be able to reach an image, a plan or a stylesheet where it actually lives, without any of them being copied here or encoded into the page. That is the very constraint that
  * publishing imposed and that serving locally removes.
+ *
+ * The address is not written here: it is configured in review-server/config.json and handed out by the ReviewServer service, so a port changed there changes everywhere at once.
  *
  * No new tool: `php -S` is PHP's own server, already installed wherever this project runs. Nothing to add on any machine.
  */
@@ -13,12 +15,16 @@ require_once __DIR__ . '/bootstrap.php';
 bootBuild();
 
 $root = dirname(__DIR__);
-$port = (int) ($argv[1] ?? 8080);
-if ($port < 1024 || $port > 65535) {
-    throw new RuntimeException("le port doit être compris entre 1024 et 65535, reçu « {$argv[1]} »");
+$server = ReviewServer::get();
+$port = $server->portFrom($argv[1] ?? null);
+
+// THE PORT IS LOOKED AT BEFORE THE SERVER IS CALLED, so that the answer is the one that helps: a server left running by an earlier session is the ordinary case here, and `php -S` only says "Address
+// already in use" before dying, which names neither what is holding it nor the command that frees it. Ten and a half hours were lost to exactly that this morning.
+if (!$server->portIsFree($port)) {
+    throw new RuntimeException("le port {$port} est déjà tenu — « php scripts/stop-review-server.php {$port} » ferme le serveur qui le tient.");
 }
 
-$command = sprintf('php -S localhost:%d -t %s %s', $port, escapeshellarg($root), escapeshellarg(__DIR__ . '/router.php'));
-printf("La revue est servie sur http://localhost:%d/ — Ctrl+C pour l'arrêter.\n", $port);
+$command = sprintf('php -S %s:%d -t %s %s', $server->host(), $port, escapeshellarg($root), escapeshellarg(__DIR__ . '/router.php'));
+printf("La revue est servie sur %s/ — Ctrl+C pour l'arrêter.\n", $server->baseUrl($port));
 passthru($command, $status);
 exit($status);

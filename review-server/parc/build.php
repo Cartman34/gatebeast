@@ -130,8 +130,6 @@ foreach ($declarations as $file) {
       <button type="button" class="zoom" data-zoom="48" aria-pressed="false">48 px</button>
     </span>
     <button type="button" class="taille">Ajuster à la fenêtre</button>
-    <?php // Le récapitulatif se copie AUSSI d'ici, en tête du plan : la page vit dans un cadre qui ne défile pas de lui-même, donc un bouton posé tout en bas se cherche. ?>
-    <button type="button" class="copier">Copier le récapitulatif</button>
   </div>
 
   <div class="zone">
@@ -176,7 +174,9 @@ foreach ($declarations as $file) {
   <div class="remarques">
     <div class="remarques-head">
       <h3>Les remarques</h3>
-      <button type="button" class="copier">Copier le récapitulatif</button>
+      <?php // PLUS AUCUN RELEVÉ À COPIER (opérateur, 2026-08-12 : « tous les mécanismes avec relevé doivent disparaitre, tout doit être mis sur le serveur »).
+            // Le bouton existait pour donner un texte à coller dans la conversation, faute de canal. Les remarques s'enregistrent sur le serveur depuis le
+            // 2026-08-07 et `php scripts/remarks.php list` les imprime depuis le dépôt : le canal existe, et il ne passe plus par un écran. ?>
       <button type="button" class="effacer">Tout effacer</button>
     </div>
     <p class="remarques-vides">Aucune remarque pour l'instant.</p>
@@ -381,7 +381,20 @@ document.querySelectorAll('.plan').forEach(function (section) {
   /* L'ADAPTATEUR DU PLAN : les trois seules choses qui dépendent du support. Tout le reste — l'état des remarques, la saisie, la liste, le classement des traitées,
      la copie, l'effacement, les raccourcis, le dialogue avec le stockage — vit une seule fois dans review-server/lib/Remarks.php. */
   window.gatebeastRemarks.attach(section, {
-    prefix: '.',
+    /* CHAQUE ÉLÉMENT EST NOMMÉ EN ENTIER, en clair, et c'est ce qui rend cet outil servable deux fois sur la même page : la passe de renommage de la page
+       fusionnée réécrit ces sélecteurs-là, alors qu'elle ne peut rien voir d'un nom assemblé à l'exécution. */
+    selectors: {
+      'saisie': '.saisie',
+      'saisie-ou': '.saisie-ou',
+      'poser': '.poser',
+      'annuler': '.annuler',
+      'supprimer': '.supprimer',
+      'rouvrir': '.rouvrir',
+      'remarques-liste': '.remarques ul',
+      'remarques-vides': '.remarques-vides',
+      'effacer': '.effacer',
+      'survol': '.survol'
+    },
     section: 'plan',
     surface: dessin,
     zone: section.querySelector('.zone'),

@@ -60,7 +60,8 @@ foreach ($plans as $file) {
 
     // Un sujet SOUS un couvert n'est un problème que s'il se dresse : l'herbe et le sol poussent très bien à l'ombre d'un arbre, et c'est même ce qu'on veut.
     // Un cours d'eau est aussi plat qu'un chemin : il coule sous les branches sans gêner personne, et l'oublier faisait déplacer la rivière pour préserver un arbre.
-    $flat = ['sol', 'chemin', 'herbe', 'cours-d-eau'];
+    // Les valeurs de type sont en anglais depuis le 2026-08-12 ; le calque « sol », lui, garde son nom — deux notions, un seul mot autrefois.
+    $flat = ['ground', 'path', 'grass', 'stream'];
     foreach ($canopies as $canopy) {
         for ($c = $canopy['left']; $c <= $canopy['right']; $c++) {
             for ($r = $canopy['top']; $r <= $canopy['bottom']; $r++) {

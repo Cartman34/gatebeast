@@ -114,7 +114,7 @@ def _load_sujets() -> dict:
 # a second truth beside the referential, and it was already wrong on two of its four entries: grass declares the `monde` layer because it stands up, and a stream
 # declares `decor-au-sol` because one walks on it. Two subjects clash on a cell when they share a LAYER — that is the whole rule, and it is the same one the
 # mounter uses to stack them.
-DEFAULT_LAYER = "monde"
+DEFAULT_LAYER = "world"
 
 # A variant field and the type key that declares it are the same word, singular and plural — and the plural is not built by adding an "s" once the vocabulary is
 # English: `density` gives `densities`. The irregular pairs are declared once, as they are in generate-sprite.py, and never derived by string surgery.

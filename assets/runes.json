@@ -6,53 +6,238 @@
   "_stroke": "Chaque forme est UN SEUL TRAIT CONTINU, tracé sans lever le crayon : c'est la règle du visuel. Bouts et jointures arrondis, épaisseur 8 unités du carré.",
   "_square": "Les coordonnées vivent dans un carré de 100 sur 100, origine en haut à gauche. Le rendu le pose à la taille absolue que fixe la règle : la rune est",
   "_square_suite": "calibrée sur une créature d'une case et ne grandit pas avec son porteur (referentiels/visuel/index.md).",
+  "size_tx": 0.25,
+  "_size": "LA TAILLE DE LA RUNE, EN LARGEUR DE CASE : le côté du carré de référence vaut un quart de case, soit 24 pixels pour une case de 96. Le nombre n'était",
+  "_size_suite": "écrit nulle part — la règle disait « constante, calibrée sur une créature d'une case » et la consigne des planches « environ un quart de case », ce qui",
+  "_size_fin": "laissait chaque lecteur poser le sien. Elle est CONSTANTE : elle ne se multiplie jamais par la taille du porteur, une grande créature portant la même",
+  "_size_pourquoi": "marque qu'une petite. C'est la valeur pivot du tracé — l'ancre dit où, celle-ci dit combien.",
   "_colors": "Les couleurs sont celles du référentiel de contenu, dites en mots là-bas et en code ici. Ces codes sont posés d'après ces mots et se règlent à l'œil",
   "_colors_suite": "sur la première image qui les portera : c'est la seule part de ce fichier qui n'est pas déjà décidée ailleurs.",
   "shapes": {
-    "arche": { "label": "arche", "_says": "un arc simple, ouvert vers le bas", "path": "M 18 74 A 34 34 0 0 1 82 74" },
-    "croissant": { "label": "croissant", "_says": "un croissant de lune, d'un seul trait", "path": "M 66 16 A 40 40 0 1 0 66 84 A 30 30 0 1 1 66 16" },
-    "spirale": { "label": "spirale", "_says": "une spirale qui s'enroule vers le centre", "path": "M 84 50 A 34 34 0 1 1 50 16 A 22 22 0 1 1 72 38 A 11 11 0 1 1 61 27" },
-    "crochet": { "label": "crochet", "_says": "un trait droit qui se recourbe en crochet à son pied", "path": "M 40 14 L 40 62 A 20 20 0 0 0 76 62" },
-    "vague": { "label": "vague", "_says": "une ondulation continue, couchée", "path": "M 12 58 C 28 24 44 92 60 58 C 72 32 82 44 90 52" },
-    "chevron": { "label": "chevron", "_says": "deux branches réunies en pointe, vers le haut", "path": "M 18 72 L 50 26 L 82 72" },
-    "anneau": { "label": "anneau", "_says": "un cercle fermé", "path": "M 50 16 A 34 34 0 1 1 49.9 16" },
-    "goutte": { "label": "goutte", "_says": "une larme fermée d'un seul trait, pointe en haut", "path": "M 50 12 C 74 42 84 58 76 72 A 30 30 0 0 1 24 72 C 16 58 26 42 50 12" },
-    "boucle-croisee": { "label": "boucle croisée", "_says": "un lacet fermé qui se croise une fois", "path": "M 50 20 C 84 40 84 78 50 78 C 16 78 16 40 50 20 L 50 86" },
-    "double-courbe": { "label": "double courbe", "_says": "un S allongé", "path": "M 74 22 C 74 8 38 10 38 30 C 38 50 74 52 74 72 C 74 90 38 90 30 76" },
-    "boucle-ouverte": { "label": "boucle ouverte", "_says": "une boucle qui ne se referme pas", "path": "M 26 78 C 12 46 40 16 62 28 C 80 38 74 66 54 66 A 18 18 0 0 1 54 30" },
-    "couronne-ouverte": { "label": "couronne ouverte", "_says": "trois pointes d'un seul trait", "path": "M 14 74 L 30 34 L 46 66 L 62 26 L 78 66 L 88 44" },
-    "flamme": { "label": "flamme", "_says": "une ondulation dressée", "path": "M 50 88 C 34 68 66 58 50 34 C 44 24 48 16 56 10" },
-    "roseau-plie": { "label": "roseau plié", "_says": "une tige droite qui ploie à sa tête", "path": "M 44 88 L 44 36 C 44 18 66 14 78 24" },
-    "rafale": { "label": "rafale", "_says": "trois traits liés d'un seul geste", "path": "M 14 34 L 74 34 A 10 10 0 1 0 66 22 M 14 54 L 84 54 M 14 74 L 60 74 A 9 9 0 1 0 53 63" },
-    "strate": { "label": "strate", "_says": "un zigzag horizontal", "path": "M 12 40 L 34 40 L 34 60 L 56 60 L 56 40 L 78 40 L 78 60 L 90 60" },
-    "vague-double": { "label": "vague double", "_says": "deux ondulations parallèles, liées à un bout",
-      "path": "M 12 40 C 28 18 44 62 60 40 C 72 24 82 32 90 38 L 90 56 C 82 62 72 70 60 58 C 44 40 28 84 12 62" },
-    "volute": { "label": "volute", "_says": "une volute qui s'ouvre en s'élevant",
-      "path": "M 22 82 C 22 52 48 40 62 52 C 74 62 66 80 54 74 C 44 69 48 56 60 52 C 76 46 86 30 78 16" },
-    "double-anneau-lie": { "label": "double anneau lié", "_says": "deux anneaux tenus par le même trait",
-      "path": "M 36 32 A 18 18 0 1 1 36 68 A 18 18 0 1 1 72 68 A 18 18 0 1 1 72 32 A 18 18 0 1 1 36 32" },
-    "meandre": { "label": "méandre", "_says": "un méandre à angles droits", "path": "M 12 76 L 12 30 L 44 30 L 44 60 L 68 60 L 68 40 L 88 40" }
+    "arch": {
+      "label": "arche",
+      "_says": "un arc simple, ouvert vers le bas",
+      "path": "M 18 74 A 34 34 0 0 1 82 74"
+    },
+    "crescent": {
+      "label": "croissant",
+      "_says": "un croissant de lune, d'un seul trait",
+      "path": "M 66 16 A 40 40 0 1 0 66 84 A 30 30 0 1 1 66 16"
+    },
+    "spiral": {
+      "label": "spirale",
+      "_says": "une spirale qui s'enroule vers le centre",
+      "path": "M 86 50 A 36 36 0 0 1 14 50 A 28 28 0 0 1 70 50 A 20 20 0 0 1 30 50 A 12 12 0 0 1 54 50"
+    },
+    "hook": {
+      "label": "crochet",
+      "_says": "un trait droit qui se recourbe en crochet à son pied",
+      "path": "M 40 14 L 40 62 A 20 20 0 0 0 76 62"
+    },
+    "wave": {
+      "label": "vague",
+      "_says": "une ondulation continue, couchée",
+      "path": "M 12 58 C 28 24 44 92 60 58 C 72 32 82 44 90 52"
+    },
+    "chevron": {
+      "label": "chevron",
+      "_says": "deux branches réunies en pointe, vers le haut",
+      "path": "M 18 72 L 50 26 L 82 72"
+    },
+    "ring": {
+      "label": "anneau",
+      "_says": "un cercle fermé",
+      "path": "M 50 16 A 34 34 0 1 1 49.9 16"
+    },
+    "teardrop": {
+      "label": "goutte",
+      "_says": "une larme fermée d'un seul trait, pointe en haut",
+      "path": "M 50 12 C 74 42 84 58 76 72 A 30 30 0 0 1 24 72 C 16 58 26 42 50 12"
+    },
+    "crossed-loop": {
+      "label": "boucle croisée",
+      "_says": "un lacet fermé qui se croise une fois",
+      "path": "M 30 88 C 40 68 62 62 68 48 A 26 26 0 1 0 32 48 C 38 62 60 68 70 88"
+    },
+    "double-curve": {
+      "label": "double courbe",
+      "_says": "un S allongé",
+      "path": "M 74 22 C 74 8 38 10 38 30 C 38 50 74 52 74 72 C 74 90 38 90 30 76"
+    },
+    "open-loop": {
+      "label": "boucle ouverte",
+      "_says": "une boucle qui ne se referme pas",
+      "path": "M 26 78 C 12 46 40 16 62 28 C 80 38 74 66 54 66 A 18 18 0 0 1 54 30"
+    },
+    "open-crown": {
+      "label": "couronne ouverte",
+      "_says": "trois pointes d'un seul trait",
+      "path": "M 14 74 L 30 34 L 46 66 L 62 26 L 78 66 L 88 44"
+    },
+    "flame": {
+      "label": "flamme",
+      "_says": "une ondulation dressée",
+      "path": "M 50 88 C 34 68 66 58 50 34 C 44 24 48 16 56 10"
+    },
+    "bent-reed": {
+      "label": "roseau plié",
+      "_says": "une tige droite qui ploie à sa tête",
+      "path": "M 44 88 L 44 36 C 44 18 66 14 78 24"
+    },
+    "gust": {
+      "label": "rafale",
+      "_says": "trois traits liés d'un seul geste",
+      "path": "M 14 34 L 74 34 A 10 10 0 1 0 66 22 M 14 54 L 84 54 M 14 74 L 60 74 A 9 9 0 1 0 53 63"
+    },
+    "strata": {
+      "label": "strate",
+      "_says": "un zigzag horizontal",
+      "path": "M 12 40 L 34 40 L 34 60 L 56 60 L 56 40 L 78 40 L 78 60 L 90 60"
+    },
+    "double-wave": {
+      "label": "vague double",
+      "_says": "deux ondulations parallèles, liées à un bout",
+      "path": "M 12 32 C 24 14 36 50 50 32 C 62 18 74 46 88 32 C 94 40 94 54 88 62 C 74 76 62 48 50 62 C 36 80 24 44 12 62"
+    },
+    "volute": {
+      "label": "volute",
+      "_says": "une volute qui s'ouvre en s'élevant",
+      "path": "M 44 64 A 7 7 0 0 1 30 64 A 13 13 0 0 1 56 64 A 20 20 0 0 1 36 44 C 44 32 58 24 78 16"
+    },
+    "linked-rings": {
+      "label": "double anneau lié",
+      "_says": "deux anneaux tenus par le même trait",
+      "path": "M 50 50 A 18 18 0 0 1 14 50 A 18 18 0 0 1 50 50 A 18 18 0 0 1 86 50 A 18 18 0 0 1 50 50"
+    },
+    "meander": {
+      "label": "méandre",
+      "_says": "un méandre à angles droits",
+      "path": "M 12 76 L 12 30 L 44 30 L 44 60 L 68 60 L 68 40 L 88 40"
+    }
   },
+  "_species": "L'ESPÈCE DE CHAQUE INDIVIDU EST DÉCLARÉE, JAMAIS DÉDUITE DE SON CODE. Elle se lisait dans une copie de l'outillage, à côté d'une seconde copie des runes ; celle-ci est partie, et le",
+  "_species_suite": "lien devait aller quelque part. Il vient ici parce que le fichier tient déjà les individus. Découper « SP-001-1 » pour en tirer « SP-001 » marcherait aujourd'hui et serait faux",
+  "_species_fin": "le jour où un individu porte un autre code : un programme n'a pas à deviner ce qu'une donnée peut dire.",
   "individuals": {
-    "SP-001-1": { "shape": "arche", "color": "#3fd3c6", "_color_says": "turquoise" },
-    "SP-002-1": { "shape": "croissant", "color": "#f2e6a0", "_color_says": "jaune pâle" },
-    "SP-002-2": { "shape": "spirale", "color": "#f2e6a0", "_color_says": "jaune pâle" },
-    "SP-003-1": { "shape": "crochet", "color": "#f6f9ff", "_color_says": "blanc lumineux" },
-    "SP-004-1": { "shape": "vague", "color": "#7fd8bd", "_color_says": "vert d'eau" },
-    "SP-005-1": { "shape": "chevron", "color": "#f39441", "_color_says": "orange" },
-    "SP-006-1": { "shape": "anneau", "color": "#3f6fd6", "_color_says": "bleu profond" },
-    "SP-007-1": { "shape": "goutte", "color": "#f08bb4", "_color_says": "rose" },
-    "SP-007-2": { "shape": "boucle-croisee", "color": "#f7bcd2", "_color_says": "rose pâle, plus petit que SP-007-1" },
-    "SP-008-1": { "shape": "double-courbe", "color": "#4fc0b0", "_color_says": "bleu-vert" },
-    "SP-009-1": { "shape": "boucle-ouverte", "color": "#d08a4e", "_color_says": "cuivre" },
-    "SP-010-1": { "shape": "couronne-ouverte", "color": "#efd79a", "_color_says": "or pâle" },
-    "SP-011-1": { "shape": "flamme", "color": "#d8dee6", "_color_says": "argent" },
-    "SP-012-1": { "shape": "roseau-plie", "color": "#a9d6ef", "_color_says": "bleu glacier" },
-    "SP-013-1": { "shape": "rafale", "color": "#f4f6f8", "_color_says": "blanc" },
-    "SP-014-1": { "shape": "strate", "color": "#8fbf7a", "_color_says": "vert mousse" },
-    "SP-015-1": { "shape": "vague-double", "color": "#3fd3c6", "_color_says": "turquoise" },
-    "SP-016-1": { "shape": "volute", "color": "#e9dc9a", "_color_says": "jaune paille" },
-    "SP-016-2": { "shape": "double-anneau-lie", "color": "#e9dc9a", "_color_says": "jaune paille" },
-    "SP-017-1": { "shape": "meandre", "color": "#5fd6a0", "_color_says": "vert jade lumineux" }
+    "SP-001-1": {
+      "species": "SP-001",
+      "shape": "arch",
+      "color": "#3fd3c6",
+      "_color_says": "turquoise"
+    },
+    "SP-002-1": {
+      "species": "SP-002",
+      "shape": "crescent",
+      "color": "#f2e6a0",
+      "_color_says": "jaune pâle"
+    },
+    "SP-002-2": {
+      "species": "SP-002",
+      "shape": "spiral",
+      "color": "#f2e6a0",
+      "_color_says": "jaune pâle"
+    },
+    "SP-003-1": {
+      "species": "SP-003",
+      "shape": "hook",
+      "color": "#f6f9ff",
+      "_color_says": "blanc lumineux"
+    },
+    "SP-004-1": {
+      "species": "SP-004",
+      "shape": "wave",
+      "color": "#7fd8bd",
+      "_color_says": "vert d'eau"
+    },
+    "SP-005-1": {
+      "species": "SP-005",
+      "shape": "chevron",
+      "color": "#f39441",
+      "_color_says": "orange"
+    },
+    "SP-006-1": {
+      "species": "SP-006",
+      "shape": "ring",
+      "color": "#3f6fd6",
+      "_color_says": "bleu profond"
+    },
+    "SP-007-1": {
+      "species": "SP-007",
+      "shape": "teardrop",
+      "color": "#f08bb4",
+      "_color_says": "rose"
+    },
+    "SP-007-2": {
+      "species": "SP-007",
+      "shape": "crossed-loop",
+      "color": "#f7bcd2",
+      "_color_says": "rose pâle, plus petit que SP-007-1"
+    },
+    "SP-008-1": {
+      "species": "SP-008",
+      "shape": "double-curve",
+      "color": "#4fc0b0",
+      "_color_says": "bleu-vert"
+    },
+    "SP-009-1": {
+      "species": "SP-009",
+      "shape": "open-loop",
+      "color": "#d08a4e",
+      "_color_says": "cuivre"
+    },
+    "SP-010-1": {
+      "species": "SP-010",
+      "shape": "open-crown",
+      "color": "#efd79a",
+      "_color_says": "or pâle"
+    },
+    "SP-011-1": {
+      "species": "SP-011",
+      "shape": "flame",
+      "color": "#d8dee6",
+      "_color_says": "argent"
+    },
+    "SP-012-1": {
+      "species": "SP-012",
+      "shape": "bent-reed",
+      "color": "#a9d6ef",
+      "_color_says": "bleu glacier"
+    },
+    "SP-013-1": {
+      "species": "SP-013",
+      "shape": "gust",
+      "color": "#f4f6f8",
+      "_color_says": "blanc"
+    },
+    "SP-014-1": {
+      "species": "SP-014",
+      "shape": "strata",
+      "color": "#8fbf7a",
+      "_color_says": "vert mousse"
+    },
+    "SP-015-1": {
+      "species": "SP-015",
+      "shape": "double-wave",
+      "color": "#3fd3c6",
+      "_color_says": "turquoise"
+    },
+    "SP-016-1": {
+      "species": "SP-016",
+      "shape": "volute",
+      "color": "#e9dc9a",
+      "_color_says": "jaune paille"
+    },
+    "SP-016-2": {
+      "species": "SP-016",
+      "shape": "linked-rings",
+      "color": "#e9dc9a",
+      "_color_says": "jaune paille"
+    },
+    "SP-017-1": {
+      "species": "SP-017",
+      "shape": "meander",
+      "color": "#5fd6a0",
+      "_color_says": "vert jade lumineux"
+    }
   }
 }

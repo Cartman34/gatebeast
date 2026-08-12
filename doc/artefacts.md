@@ -17,8 +17,9 @@ en est le travail et se réécrit sans cesse, tandis qu'une adresse est durable 
 **Un artefact, un sujet, plusieurs supports possibles.** Le même artefact peut être servi à plusieurs endroits — une page Claude aujourd'hui, une adresse chez le générateur ou un hébergement propre
 demain. Chaque support porte son **identifiant** quand il en a un, parce que c'est lui qui permet de republier au bon endroit ; l'adresse complète, elle, se lit et se colle.
 
-**Depuis le 2026-08-07, le support de travail est le serveur local.** Les pages de revue qu'on utilise vivent sous `review-server/` et se regardent sur `http://localhost:8080/`, une commande les
-sert toutes (`php review-server/serve.php`). Les artefacts Claude ne disparaissent pas pour autant : ils restent inscrits ici, leurs adresses restent valables, et il pourra y en avoir d'autres. Ce
+**Depuis le 2026-08-07, le support de travail est le serveur local.** Les pages de revue qu'on utilise vivent sous `review-server/` et une commande les sert toutes (`php review-server/serve.php`).
+**L'adresse n'est pas écrite ici : elle est configurée dans `review-server/config.json`, et `php review-server/url.php` la dit** — le port se change là, une fois, et tout le suit. Les artefacts
+Claude ne disparaissent pas pour autant : ils restent inscrits ici, leurs adresses restent valables, et il pourra y en avoir d'autres. Ce
 registre continue donc de faire foi pour ce qui est **publié** — ce qui est servi en local n'a pas d'adresse à tenir, c'est tout l'intérêt.
 
 **Quatre états, et seuls ces quatre-là.** **Vivant** : on s'en sert, il se republie. **Archivé** : plus actif, mais consultable, et son adresse reste valable — archiver n'est pas supprimer. **Clos** :
@@ -46,7 +47,7 @@ l'état vivait à deux endroits et que je n'en avais changé qu'un. Il n'en a pl
 **Nulle part ici.** La liste — nom, description, état, adresse, ce qui produit chaque artefact — vit dans `review-server/artefacts.json`, et **la recopier ici serait exactement la faute que ce
 document vient de corriger** : deux listes divergent toujours, et c'est celle que personne ne lit qui reste juste.
 
-**Pour la voir, on ouvre l'index** : `php review-server/serve.php`, puis `http://localhost:8080/`. Il montre les quatre états, chacun dans sa section, chaque artefact avec son adresse. C'est la même
+**Pour la voir, on ouvre l'index** : `php review-server/serve.php`, puis l'adresse qu'il imprime. Il montre les quatre états, chacun dans sa section, chaque artefact avec son adresse. C'est la même
 liste que le fichier, rendue lisible — et c'est la seule façon de la consulter sans ouvrir de fichier, comme le veut la règle qui demande qu'une donnée sortie de la documentation reste consultable.
 
 **Une entrée mal formée ne fait pas taire l'index** : elle est écartée et signalée en bas de page, avec ce qui cloche. Un état inconnu, un nom manquant, une adresse qui n'en est pas une : chacun se

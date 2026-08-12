@@ -11,10 +11,20 @@
 
 return [
     [
-        'route' => '/sujets',
-        'title' => 'Suivi des sujets',
-        'file' => 'suivi-sujets/page.html',
-        'build' => 'php review-server/suivi-sujets/build.php',
+        // NI CETTE PAGE NI L'INVENTAIRE NE PORTENT PLUS LE MOT « SUJET » (opérateur, 2026-08-12) : il nommait à la fois les points du projet et les choses du
+        // monde, et renommer une seule des deux n'aurait rien réglé — celui qui lit garde le mot en tête et retourne sur l'autre.
+        'route' => '/backlog',
+        'title' => 'La pile',
+        'file' => 'backlog/page.html',
+        'build' => 'php review-server/backlog/build.php',
+    ],
+    [
+        // L'INVENTAIRE DIT CE QU'UN SUJET EST, LA PAGE DES SPRITES OÙ EN SONT SES IMAGES : deux questions, deux pages. Demandée par l'opérateur, et perdue une
+        // fois avant d'être inscrite (2026-08-12).
+        'route' => '/inventory',
+        'title' => 'Inventaire du monde',
+        'file' => 'inventory/page.html',
+        'build' => 'php review-server/inventory/build.php',
     ],
     [
         'route' => '/sprites',

@@ -145,6 +145,20 @@ class Backlog
         return $points;
     }
 
+    /**
+     * Un point attend-il quelque chose de l'opérateur ?
+     *
+     * UN SEUL CRITÈRE, TENU ICI ET NULLE PART AILLEURS (opérateur, 2026-08-12 : « actualise la page “la pile” pour n'avoir que les topics qui ont besoin d'une
+     * réponse »). Trois états et trois seulement le réclament, et chacun le dit déjà par lui-même : `proposed` attend son accord, `pending-decision` attend
+     * qu'il tranche, et `waiting = operator` attend une réponse quel que soit le statut. Tout le reste est du travail dû, dont il a déjà dit ce qu'il voulait —
+     * le remettre devant lui à chaque lecture, c'est lui faire revoter ce qu'il a voté et noyer les trois cartes qui, elles, l'attendent vraiment.
+     */
+    public function awaitsOperator(array $point): bool
+    {
+        return $point['waiting'] === self::WAITING_OPERATOR
+            || in_array($point['status'], [self::STATUS_PROPOSED, self::STATUS_PENDING_DECISION], true);
+    }
+
     /** Une tâche se retrouve par sa ref — le slug — ou par son code interne : tout ce qui est déjà écrit dans le projet cite le second, et le premier est celui qui se lit. */
     public function find(string $ref): ?array
     {

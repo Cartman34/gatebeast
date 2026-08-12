@@ -54,7 +54,7 @@
         "cutout/personnage/HU-000-v2.png": {
             "rework": false,
             "discarded": false,
-            "approved": true,
+            "approved": false,
             "comment": ""
         },
         "cutout/vegetation/TR-064_densite-dense-v8.png": {
@@ -104,6 +104,73 @@
             "approved": false,
             "discarded": false,
             "rework": true
+        },
+        "cutout/vegetation/TR-063-v13.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Tu n'as pas respecté la demande !!! reviens à la version 5 !"
+        },
+        "cutout/vegetation/TR-060-v8.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Revenir à la v5 avec un tronc plus fin, il s'évase en gross racines qui entrent dans le sol et semblent impraticables. Il faut corriger l'angle de vue aussi, ça doit être le même pour tous. je ne compnrends pas pourquoi cet arbre est différent. Revois entierement la description s'il faut."
+        },
+        "cutout/batiment/BT-002.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Elle doit avoir plus de marques du temps (moyen) et de la nature (léger)"
+        },
+        "cutout/batiment/BT-002_proposition-p3-v4.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/batiment/BT-002_proposition-p2.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/sol/CH-021_shape-ns-v5.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "le style n'est toujours pas bon, ça doit être le même style que EW, si ça ne produit pas le bon truc, tu dois corriger. on ne doit pas laisser ça au hasard"
+        },
+        "cutout/creature/SP-001-v2.png": {
+            "approved": true,
+            "discarded": false,
+            "rework": false,
+            "comment": ""
+        },
+        "cutout/creature/SP-001-v4.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "dans le mauvais sent. Vers l'est, c'est la droite. là il regarde à gauche."
+        },
+        "cutout/creature/SP-001-v3.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/personnage/HU-000-v5.png": {
+            "approved": false,
+            "discarded": false,
+            "rework": true,
+            "comment": "Sprite déformé, ce n'es tpas le premier a avoir un soucis avec l'est"
+        },
+        "cutout/personnage/HU-000-v3.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/personnage/HU-000-v4.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
         }
     }
 }

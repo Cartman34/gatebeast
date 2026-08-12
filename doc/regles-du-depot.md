@@ -18,19 +18,9 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   sont un **écart à corriger**, pas un exemple à suivre. On ne s'inspire de l'existant **que** là où aucune règle n'est écrite. Un agent qui aligne son travail sur ce qu'il voit autour de lui applique
   un standard que personne n'a décidé, et le propage : c'est ainsi qu'une faute d'un agent devient « le standard du projet » au bout de trois reprises. **Un standard se définit, il ne se déduit
   jamais**, et l'existant fautif se corrige au fil de l'eau, à mesure qu'on le croise.
-- **Ce qu'on vient d'écrire se contrôle avant d'être montré** : `php scripts/check-text-width.php <fichiers>` sur tout fichier touché. La vigilance seule ne tient pas — le pli d'origine d'un agent
-  revient dès qu'il ne le contrôle pas explicitement, et c'est au contrôle mécanique de l'arrêter, pas à sa mémoire.
-- **200 caractères par ligne, et c'est le SEUL standard de longueur du projet — impératif.** Il **remplace et annule tous les autres**, sans exception et quelle que soit leur provenance.
-  **Les exemples qui suivent ne forment PAS une liste fermée** — ils illustrent, ils ne délimitent pas : les 79 de PEP 8, les 88 d'un formateur Python, les 120 d'un style PHP, les 80 d'un usage
-  Markdown, les 72 d'un message de commit, et toute habitude d'agent. Tout autre standard de longueur, nommé ici ou non, tombe de la même façon. Un agent qui replie son
-  texte plus court applique un standard qu'il s'est apporté lui-même : c'est cette substitution qui est interdite, pas seulement le dépassement.
-- **Le plafond de 200 vaut partout, et TOUT texte cherche à l'atteindre.** « Tout » se prend au pied de la lettre : **tout fichier texte du projet, quel qu'il soit**, et ce qui suit n'en est qu'un
-  échantillon, jamais la liste complète — documents, `SUIVI.md`, descriptions, notes, **commentaires et documentation embarquée dans le code**, **messages de commit**, **le texte que le code porte et
-  produit, soit toute chaîne de caractères écrite dans un fichier de code : message de faute, message d'avancement, libellé, fragment de consigne assemblé**, consignes de génération, fichiers de
-  configuration, scripts. Un support absent de cette énumération suit la même règle : aucun n'a de règle à lui. Seules les **instructions** — le code exécutable lui-même — n'ont rien à remplir : elles
-  restent aussi courtes que la lisibilité le demande, avec pour seule obligation de ne pas franchir le plafond.
-- **Une ligne repliée à quatre-vingts caractères double le nombre de lignes sans rien ajouter** et rallonge chaque relecture ; un texte replié court se rediffe entièrement au premier mot changé.
-  Ce qui est déjà écrit ne se reprend pas pour cette seule raison ; ce qui s'écrit maintenant respecte la convention.
+- **LA LARGEUR DE LIGNE DU PROJET EST DE 200 CARACTÈRES, et l'outil qui la contrôle est `php scripts/check-text-width.php <fichiers>`**, à lancer sur tout fichier touché avant de le montrer. **La
+  règle elle-même est montée à la méthode commune** (`~/projects/conceptions/methode/execution.md`, « Un seul standard de longueur de ligne ») le 2026-08-12 : qu'il n'y ait qu'un standard, qu'il
+  remplace et annule tous les autres, que tout texte cherche à l'atteindre, et que replier plus court soit une substitution interdite. Ne restent ici que le chiffre et le nom de l'outil.
 
 ## Les modes de travail et la conduite
 
@@ -51,6 +41,13 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **UN `GO` OU UN `STOP` ENVOYÉ PENDANT QUE L'AGENT TRAVAILLE VAUT COMME ORDRE, MAIS N'ARME NI NE DÉSARME RIEN.** `UserPromptSubmit` ne se déclenche que sur un message qui **ouvre** un tour :
   un message glissé en cours de tour est bien reçu et bien lu par l'agent, mais aucun hook ne le voit. Mesuré le 2026-08-08 — deux `GO` en cours de tour n'ont rien armé, le même `GO` en ouverture de
   tour a armé dans la seconde. **L'agent obéit à l'ordre, dit que l'état ne le reflète pas, et n'y touche pas** ; à l'opérateur de renvoyer le mot en ouverture de tour s'il veut la garde armée.
+- **UN ORDRE REÇU EN COURS DE TOUR SE FAIT LIRE PAR LA COMMANDE, IMMÉDIATEMENT — CE N'EST PAS FACULTATIF** (opérateur, 2026-08-12 : « j'ai lancé un stop mais tu
+  n'as pas appelé la commande de check, tu dois le faire », puis « il faut rendre générique la commande pour qu'elle accepte aussi le go »).
+  `php scripts/check-last-order.php <transcrit.jsonl>`, le transcrit étant le `.jsonl` le plus récent sous `~/.claude/projects/-home-sowapps-projects-gatebeast/`.
+  **Elle lit le DERNIER mot de l'opérateur et met la garde dans l'état qu'il commande** : un `GO` arme, tout le reste désarme. Elle rend 0 quand le dépilement est
+  armé, 1 quand il ne l'est pas. **Elle ne viole pas la règle suivante, elle la tient** : l'agent ne peut rien lui dicter — c'est le transcrit qui décide, et le
+  transcrit est la parole de l'opérateur. Sans elle, un mot glissé en cours de tour n'est lu par personne avant le tour suivant, et l'état ment dans un sens comme
+  dans l'autre. Ses essais : `bash local/scripts/trial-last-order.sh`.
 - **L'ÉTAT D'ARMEMENT DU DÉPILEMENT N'APPARTIENT PAS À L'AGENT, ET IL N'A JAMAIS À Y TOUCHER — NI POUR L'EFFACER, NI POUR L'ÉCRIRE.** `var/hooks/dequeue-armed` est écrit par le hook du prompt, et par
   lui seul : le `GO` de l'opérateur l'arme, son `STOP` le désarme, il expire seul au bout de trois heures. Une garde qu'on peut retirer soi-même n'est pas une garde, et un armement qu'on peut écrire
   soi-même est un ordre qu'on se donne à la place de l'opérateur. **Les deux gestes ont été faits le 2026-08-08**, et chacun tenait à une confusion que voici levée :
@@ -78,6 +75,17 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   du suivi quand la séance se ferme, et ce qui reste tient dans l'état du moment. Un suivi qui grossit à chaque séance devient le document que personne ne relit en entier, donc celui où l'on perd.
 - **Le suivi est le support de l'agent** : il l'écrit quand il veut, sans demander, et il doit permettre à tout moment d'être coupé et relancé de zéro **sans aucune perte**. Ce qui n'y est pas écrit
   n'existe pas.
+- **CE QUE L'OPÉRATEUR DEMANDE S'AJOUTE ; CE QUE L'AGENT VOIT SE PROPOSE** (opérateur, 2026-08-12 : « y'a pas mal de topics qui ont été demandés et tu en as fait
+  des propositions au lieu de les ajouter, du coup la demande est redondante »). Une demande formulée **est** la validation : la remettre en proposition la lui
+  fait valider une seconde fois, et elle attend pendant ce temps. Le doute se tranche à la source : **s'il l'a dit, c'est une task ; si c'est moi qui l'ai vu,
+  c'est une proposition.**
+- **UNE RÉGRESSION SE CORRIGE SANS DEMANDER** (même relevé) — « les régressions doivent être corrigées sans demander. Sauf si ça impacte ou risque une autre
+  régression ou si une décision fonctionnelle est à prendre ». Les deux exceptions sont les siennes et elles sont étroites : un correctif qui menace autre chose,
+  ou un choix de fonctionnement à faire. Hors de là, ce qui marchait et ne marche plus se répare, point.
+- **CE QUI EST DEMANDÉ SUR LA PAGE DE REVUE DES SPRITES SE FAIT SANS REDEMANDER** (même relevé) — « ce que je demande avec la page de review sprite doit être fait
+  sans le demander, c'est moi qui te l'ai demandé ». Une remarque posée sur une image est un ordre déjà donné : elle ne se refait pas valider en conversation.
+- **LA PILE SE RELIT, ET CE QUI N'A PLUS D'OBJET SE FERME** (même relevé : « pas mal de topics sont obsolètes aussi »). Une task dont le motif a disparu reste
+  sinon à encombrer chaque lecture, et fait passer pour du travail dû ce qui n'existe plus.
 - **MAIS UN SUJET NEUF SE FAIT VALIDER — L'AGENT N'EN OUVRE PAS DE LUI-MÊME** (opérateur, 2026-08-08). Tenir le suivi et décider de ce sur quoi le projet travaille sont deux choses : l'agent écrit,
   met à jour, décrit et ferme librement, et il ajoute sans demander **ce que l'opérateur lui dit d'ajouter**. Ouvrir un sujet que personne n'a demandé, non : « tu risques de t'enfoncer dans une
   mauvaise pratique sans vérification ». Un point ouvert oriente le travail de toutes les séances suivantes, et un agent qui remplit lui-même sa propre pile finit par travailler sur ce qu'il a décidé
@@ -116,6 +124,12 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   questions »). La ligne « attente opérateur » ne porte donc que l'un ou l'autre, et **rien d'autre n'y figure** : ce qui attend vraiment une réponse se pose comme question, au format, dans le corps
   du message ; le reste sort du récapitulatif. Un sujet nommé en trois mots dans cette ligne **ressemble** à une demande sans en être une — l'opérateur ne peut pas y répondre, et il doit demander ce
   qu'on attend de lui, soit exactement l'aller-retour que le récapitulatif existe pour éviter. Ce qui se juge sur la page de revue s'y juge : ce n'est pas une attente de message.
+- **LE SERVEUR DE REVUE SE FERME AVANT DE CLORE LA SÉANCE, ET C'EST L'AGENT QUI LE FAIT** (opérateur, 2026-08-12 : « en fin de session, il faut que tu fermes le serveur »). Une commande :
+  `php scripts/stop-review-server.php`. Laissé ouvert, il tient le port, et le démarrage de la séance suivante échoue sur « Address already in use » — c'est arrivé le 2026-08-12, sur un serveur qui
+  écoutait depuis dix heures et demie. Le geste va avec la mise à jour du suivi et la proposition de commit : c'est la même fin de séance.
+- **UN SOUS-AGENT CONTRÔLE PAR COMMANDES NUES, ET SEULEMENT CE QU'IL A TOUCHÉ** (opérateur, 2026-08-12 : « attention avec xargs »). Un tube, un `find`, un `xargs` ne s'analysent pas : la garde
+  redemande l'autorisation à chaque appel, et l'interruption tombe au milieu du travail. `php -l <fichier>` fichier par fichier, `php scripts/check-text-width.php <liste>` en une seule commande. Et le
+  balayage d'un répertoire entier pour contrôler dix-sept fichiers élargit le périmètre sans le dire : un exécutant contrôle **ce qu'il a modifié**, nommément. Cela s'écrit dans sa consigne.
 - **Toute génération d'image part en tâche de fond** — on ne l'attend jamais. Plus généralement, tout ce dont l'agent n'a pas besoin pour continuer part en tâche de fond et rend la main aussitôt.
 - **On dépile, on ne commente pas la pile.** Constater ce qui manque et le dire n'est pas un travail : ce qui manque se fait. Une tâche ne remonte à l'opérateur que si elle est finie, ou si elle est
   bloquée par une décision qui lui appartient. **Ce qui fait sortir un sujet du dépilement, et rien d'autre : une question, un inconnu, une incohérence, ou quelque chose que l'agent veut proposer.**
@@ -185,6 +199,15 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 - **Ce qu'on écrit à la place** : on lève, avec le nom de ce qui manquait et l'endroit où on le cherchait. Un outil qui ne peut pas conclure dit « je ne peux pas conclure » — ce n'est pas un verdict
   favorable. Un repli n'est légitime que s'il est **décidé, écrit et annoncé** : la page qui n'enregistre rien quand le serveur est absent le dit dans son commentaire et dans le suivi, et c'est ce
   qui la distingue d'une page qui perd les données en silence.
+- **CE QUI A DÉJÀ MARCHÉ SE REPREND À SA SOURCE, JAMAIS DE MÉMOIRE** (opérateur, 2026-08-12 : « je ne comprends pas que tu développes un truc qui fonctionne et
+  quand tu dois le refaire, tu refais les mêmes erreurs et ça ne fonctionne pas — tu dois éviter de refaire encore et encore les mêmes erreurs »). Un mécanisme
+  retiré vit dans l'historique : `git show <commit>:<fichier>` le rend intact, avec les corrections que ses allers-retours avaient payées. **Réécrit de mémoire,
+  il revient avec les fautes d'origine et sans les correctifs** — c'est le même coût que la règle « migrer, c'est déplacer » chiffre déjà, appliqué au temps au
+  lieu de l'espace. Payé le jour même : le relevé, retiré le matin et réécrit l'après-midi, est revenu cassé.
+- **ET UN ÉCHAPPEMENT NE SE DEVINE PAS DANS UN HEREDOC INTERPOLÉ.** `<<<'JS'` (avec quotes) livre le texte tel quel ; `<<<JS` (sans quotes) fait lire à PHP les
+  séquences d'échappement, si bien qu'un `\n` destiné à une chaîne JavaScript devient un **vrai saut de ligne** au milieu de cette chaîne : le script cesse de
+  s'analyser, la page perd tout son comportement, et **rien ne le dit** — le bouton est là et ne fait rien. Un saut de ligne pour le JavaScript s'écrit `\\n`, et
+  ce qui produit du script se contrôle en l'ouvrant, jamais en le relisant.
 - **Un défaut de cette famille se paie en outil, pas en vigilance.** Il ne se voit pas : aucun relecteur ne peut l'attraper à l'œil, puisqu'il n'y a rien à voir. À chaque fois qu'on en trouve un,
   on se demande quel contrôle mécanique l'aurait vu, et on l'écrit — c'est ainsi que sont nés `check-page-selectors.php` et `diff-prompts.sh`.
 
@@ -206,9 +229,8 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
   du code qui explique le code. La règle vaut pour tout ce qu'un développeur lit : commentaires, blocs d'usage et d'intention, noms. **Seuls les textes destinés à
   l'opérateur restent en français** — messages affichés, libellés, descriptions, et les citations de sa parole, qui se rapportent mot pour mot. L'existant qu'on ne
   touche pas est toléré ; ce qu'on écrit ou modifie, jamais (opérateur, 2026-08-08).
-- **Les clés des fichiers de données sont en anglais**, au même titre que le code — ce sont les mêmes noms que le code manipule. Une clé française oblige tout lecteur à mélanger les deux langues dans
-  la même expression, et le mélange se propage par imitation au fichier suivant. Ne vaut que pour les clés : valeurs et textes destinés à l'opérateur — consignes de génération comprises — restent en
-  français. Anglais américain, comme partout ailleurs (`doc/glossaire.md`).
+- **Les clés des fichiers de données sont en anglais** — règle montée à la méthode commune le 2026-08-12, sous « Tout le code est en anglais ». Reste propre à ce dépôt : l'anglais est **américain**,
+  comme partout ailleurs (`doc/glossaire.md`), et les textes qui restent en français comprennent **les consignes de génération**.
 
 ## La production d'images
 
@@ -226,21 +248,22 @@ Cette section commande toutes les autres : elle ne dit pas quoi faire, elle dit 
 
 ## L'écriture et les libellés
 
+- **QUAND UN MOT EST AMBIGU, PLUS AUCUNE PAGE NE LE PORTE — PAS MÊME CELLE QUI L'EMPLOIE À BON DROIT** (opérateur, 2026-08-12 : « quand y'a ambiguïté, tu ne dois nommer AUCUNE page avec le terme
+  ambigu, c'est le seul moyen d'éviter ça »). Renommer une seule des deux ne suffit pas : celui qui lit garde le mot en tête et retourne sur l'autre. **Payé le 2026-08-12** — « sujet » nommait à la
+  fois les points du projet et les choses du monde, l'opérateur a cherché des boutons de vote sur la page des points, et il a fallu trois allers-retours pour découvrir qu'on ne parlait pas de la même
+  page. Le mot ambigu se retire des **deux** noms, et chacune prend un nom qui ne se confond avec rien.
 - **Tout libellé et tout titre affiché commence par une majuscule** — « Vue principale », jamais « vue principale ». Une seule majuscule, celle du début : elle ne se répète pas à chaque mot. Les codes
   et les adresses techniques gardent leur casse exacte, celle des fichiers (`OB-010`, `cutout/cloture/...`), aucune majuscule ajoutée. Une interface où la casse varie d'un libellé à l'autre donne
   l'impression que personne ne l'a relue — c'est le genre de détail qui se corrige une fois par page tant que la règle n'existe pas.
 - **ON PARLE EN CASES, JAMAIS EN PIXELS** (opérateur, 2026-08-10). Toute mesure adressée à l'opérateur — message, question, compte rendu, libellé de page — se dit dans l'unité du jeu : « une case et
   demie », pas « 132 px ». Le pixel reste ce que le code calcule et ce que l'échelle fait foi ; il n'est pas ce dont on parle. Un chiffre en pixels oblige son lecteur à refaire la division pour savoir
   de quoi il s'agit, et deux hauteurs comparées en pixels ne se comparent plus dès que la finesse du maître change.
-- **Tout rapport destiné à être lu est en Markdown — règle générale.** Un rapport se relit, se cite, se colle dans une conversation et s'affiche dans une page : le Markdown lui donne titres, tableaux
-  et blocs de code sans rien coûter, là où le texte brut oblige chaque lecteur à refaire la mise en forme dans sa tête. Ne vaut que pour ce qui se lit : ce qui se relit par machine — évaluations,
-  mesures, catalogues — reste du JSON, et les deux coexistent plutôt que l'un n'imite l'autre.
+- **Tout rapport destiné à être lu est en Markdown** — règle montée à la méthode commune le 2026-08-12 (`execution.md`), sans rien qui reste propre à ce dépôt.
 
 ## Le versionnage et la publication
 
-- **Git : aucune écriture d'historique sans ordre explicite de l'opérateur** — `commit`, `commit --amend` et `push` compris. L'agent exécute lui-même les commandes git, mais seulement une fois l'ordre
-  donné ; les commits restent occasionnels, pas un par étape. Dépôt distant : `git@github.com:Cartman34/gatebeast.git` (`origin`, branche `main`). **Jamais de ligne `Co-Authored-By` nommant Claude ou
-  Anthropic** : l'opérateur est l'unique auteur de ses commits.
+- **Aucune écriture d'historique sans ordre explicite** — règle montée à la méthode commune le 2026-08-12 (`execution.md`), avec l'interdit de toute ligne `Co-Authored-By` nommant l'agent. Reste
+  propre à ce dépôt : **le distant est `git@github.com:Cartman34/gatebeast.git`** (`origin`, branche `main`).
 - **Publication** : les revues sont des artefacts Claude republiés à adresse stable (le paramètre `url` de l'outil Artifact conserve le lien). **Les adresses vivent dans le registre
   `review-server/artefacts.json`, et ses règles dans [doc/artefacts.md](artefacts.md)** — plus jamais dans `SUIVI.md`, qui se réécrit sans cesse et n'a rien à faire en source de données. Cette ligne
   y renvoyait encore ; corrigé le 2026-08-11 en auditant le journal des séances.

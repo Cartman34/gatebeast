@@ -25,14 +25,17 @@ $sources = [
     // Both sources are produced WITHOUT a reload notice (empty third argument to their builder): this page is the one that carries it, once, on its own route.
     ['cle' => 'plan', 'titre' => 'Le plan de composition', 'fichier' => "$root/review-server/parc/maquette-campagne-plan.html", 'prefixe' => null,
      'quoi' => 'Ce que la scène déclare, case par case : quel sujet est posé où, et quels bords chaque pièce rejoint. Les raccords y sont vérifiés par calcul.'],
-    ['cle' => 'maquette', 'titre' => 'La maquette montée', 'fichier' => "$root/review-server/parc/maquette-campagne-montee.html", 'prefixe' => 'mq-',
+    // LE PRÉFIXE EST UN SYMBOLE DE CODE, DONC IL EST ANGLAIS (opérateur, 2026-08-12 : « ça ne peut pas être mq car ça ne veut rien dire en anglais et les
+    // symboles de code sont forcément en anglais »). C'était l'abréviation française de « maquette » ; c'est désormais le mot que le métier emploie, `mockup`.
+    ['cle' => 'maquette', 'titre' => 'La maquette montée', 'fichier' => "$root/review-server/parc/maquette-campagne-montee.html", 'prefixe' => 'mockup-',
      'quoi' => 'Les sprites posées sur leurs cases, à l\'échelle du monde : le sol d\'abord, puis ce qui se dresse dessus.'],
 ];
 
 // The names both pages use. Prefixing one side is enough to tell them apart, and it is the mock-up that gets prefixed — the plan carries more of them, and the less one touches, the less one
 // breaks. CSS identifiers and JS selectors go through this same table, so nothing can end up renamed on one side only.
 const PARTAGES = ['plan', 'dessin', 'zone', 'survol', 'saisie', 'saisie-ou', 'saisie-boutons', 'poser', 'supprimer', 'rouvrir', 'annuler', 'remarques',
-    'remarques-head', 'remarques-vides', 'copier', 'effacer', 'taille', 'zooms', 'zoom', 'marque', 'ou', 'quoi', 'retirer', 'barre', 'mode', 'wrap',
+    // « copier » est sorti de cette table le 2026-08-12 avec le bouton qu'elle renommait : plus aucun relevé ne se copie, sur aucune des deux vues.
+    'remarques-head', 'remarques-vides', 'effacer', 'taille', 'zooms', 'zoom', 'marque', 'ou', 'quoi', 'retirer', 'barre', 'mode', 'wrap',
     'eyebrow', 'lede', 'notes', 'tally', 'source', 'dit', 'rest', 'code', 'number', 'scene', 'scene-cadre', 'scene-piste', 'pose', 'trou', 'manquants',
     'compte', 'remarque--reglee', 'reelle', 'fixe', 'tire'];
 

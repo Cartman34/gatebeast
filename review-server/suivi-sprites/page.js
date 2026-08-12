@@ -44,6 +44,50 @@
   /* WHAT ARRIVES FROM THE REPOSITORY IS RENDERED ONTO THE PAGE, AND THAT IS A FUNCTION OF ITS OWN. The first render happens at wiring time, over a still-empty
      state, because the repository answers afterwards; when it answers, everything has to be laid down again — boxes, fields, unfolded zones, filled markers.
      Without that second pass the operator would see a blank page and believe his verdicts lost, while they are right there. */
+  /* A RUNE ANCHOR IS PLACED WITH ONE CLICK, THE WAY A VERDICT IS GIVEN, AND THE SERVER IS THE ONE THAT WRITES. The point is read in the pixels of the DELIVERED
+     image, never in those of the screen: the card shows the sprite at another width, and the ratio between the two is carried by the markup. Without that
+     conversion, a point placed on the forehead of a fox cub seen large would land on its belly in the file.
+
+     THE PAGE DOES NOT RELOAD ITSELF AFTER THE WRITE: the mark follows the cursor at once, and the file is written by the tool that owns it. A page rebuilding
+     itself at every click would lose the reading position in the middle of a judgement.
+
+     THE ANCHOR IS NOW PLACED IN THE DRAWER, NOT ON THE THUMBNAIL, and that follows directly from the click that opens a version (operator, 2026-08-12). Two
+     gestures cannot share one click on one element: on the grid, clicking the image opens the version; in the drawer, where it is large, the click places the
+     rune — which is in any case the right place to aim at a pixel. The wiring is a function because it serves twice: at page load for whatever is not inside a
+     card, and on the CLONE the drawer builds, which carries none of its original's listeners. */
+  function wireAnchor(picture) {
+    picture.addEventListener('click', function (event) {
+      var box = picture.getBoundingClientRect();
+      var scale = Number(picture.getAttribute('data-delivered')) / box.width;
+      var x = Math.round((event.clientX - box.left) * scale * 10) / 10;
+      var y = Math.round((event.clientY - box.top) * scale * 10) / 10;
+      fetch('/rune-anchor', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({path: picture.getAttribute('data-anchor-for'), x: x, y: y})
+      }).then(function (answer) {
+        return answer.json().then(function (said) { return {ok: answer.ok, said: said}; });
+      }).then(function (result) {
+        /* WHAT FAILS SAYS SO, LOUDLY AND ON THE PAGE: a swallowed refusal would let the mark move on screen while the file received nothing — the transparent
+           fault this repository forbids by name. The message is the tool's own, word for word. */
+        if (!result.ok) {
+          picture.setAttribute('data-anchor-fault', result.said.fault || 'refus sans motif');
+          return;
+        }
+        picture.removeAttribute('data-anchor-fault');
+        var mark = picture.querySelector('.rune');
+        if (mark) {
+          var side = parseFloat(mark.getAttribute('width'));
+          mark.style.left = ((x / scale) - side / 2) + 'px';
+          mark.style.top = ((y / scale) - side / 2) + 'px';
+        }
+      });
+    });
+  }
+
+  /* THE LINE THAT ANNOUNCED AN OLDER VERSION'S COMMENT WENT AWAY WITH ITS REASON (2026-08-12): it existed because only the current version showed notes, so a
+     remark written on a reworked version became invisible. Every version now carries its own, on its own card — the older one says it itself, right there.
+     Checked before removal: that is what the task asked for. */
   function render() {
     Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
       var id = box.getAttribute('data-id');
@@ -55,8 +99,15 @@
          traitée, elle est conservée de ton côté mais plus affichée dans l'interface »). It used to be shown struck through and grey, which is still showing it.
          The text stays in the store with its date and its reason — scripts/remarks.php writes the mark, `reopen` puts the remark back on display. */
       var handled = state[id] && state[id].handled;
-      var text = (!handled && state[id] && state[id].comment) || '';
+      var text = (state[id] && state[id].comment) || '';
+      /* THE TEXT IS PUT BACK IN THE FIELD EVEN WHEN THE REMARK IS FILED, and that is the whole of the fix (operator, 2026-08-11: « je dois pouvoir retrouver les
+         commentaires d'une version dans l'interface »). Hiding it had emptied the field as well, so opening the zone showed a blank box: the remark was kept, and
+         unreachable from the page. It stays FOLDED — a filed remark is not shown by default, that rule is unchanged — but the « + » now opens onto what was
+         written, read-only, with the date and the reason of its filing. Cacher n'est pas ranger. */
       field.value = text;
+      /* AND IT IS RESIZED THE MOMENT ITS TEXT ARRIVES: the repository answers after the first render, so a field filled here would keep the height it had when
+         it was empty — the remark would be there, and only its first two lines readable. */
+      fitComment(field);
       /* THE FIELD OF A FILED REMARK IS READ-ONLY, and that is what makes hiding it safe: typing into a box we have just emptied would write the empty text over
          the remark being kept, which is the silent loss this rule exists to prevent. Reopening it is one command away. */
       field.readOnly = Boolean(handled);
@@ -66,10 +117,14 @@
       if (zone && handled) { zone.hidden = true; }
       if (opener) {
         opener.setAttribute('data-filled', text.trim() ? 'true' : 'false');
+        /* THE OPENER SAYS WHICH OF THE TWO IT CARRIES: a remark still waiting, or one already dealt with. Without it both look alike once folded, and the only way
+           to tell them apart is to open each one — which is the round trip this line removes. */
+        opener.setAttribute('data-handled', handled ? 'true' : 'false');
         opener.setAttribute('aria-expanded', zone && !zone.hidden ? 'true' : 'false');
       }
       var clearButton = document.querySelector('.clear-comment[data-id="' + id + '"]');
-      if (clearButton) { clearButton.hidden = !text.trim(); }
+      /* A FILED REMARK OFFERS NO CLEARING: the field is read-only, so the button would write nothing and merely look broken. `remarks.php reopen` puts it back. */
+      if (clearButton) { clearButton.hidden = !text.trim() || Boolean(handled); }
       if (opener) { opener.setAttribute('title', handled ? 'Remarque traitée le ' + handled.date + ' — ' + handled.reason : 'Commentaire'); }
     });
     /* The survey count keeps itself up to date on `change`: it need not know where the state came from, only that it moved. */
@@ -129,11 +184,32 @@
     });
   });
 
+  /* A COMMENT FIELD IS AS TALL AS WHAT IT HOLDS: two lines at rest, opening as one types up to FOUR lines, after which it scrolls. Taken back verbatim from the
+     original Python builder — `git show fbdd9fd^:artefacts/suivi-sprites/build.py`, function `fitNote` — because it had been lost in a rewrite (operator,
+     2026-08-12: « j'avais déjà fait implémenter que cette zone de texte doit grandir quand y'a du contenu… tu as perdu la fonctionnalité en cours de route »).
+     THE HEIGHT IS MEASURED HERE RATHER THAN SET IN CSS because it depends on the text once wrapped to the field's own width, which only layout knows. Resetting
+     the height to "auto" before reading scrollHeight is what lets a field that has grown come back down when the text is deleted.
+     TWO LINES AT REST, FOUR AT MOST. Measured alone, a single line gives a slot too shallow to write in — it reads as a broken input rather than a field, and the
+     first wrapped word is already hidden. */
+  function fitComment(field) {
+    var style = window.getComputedStyle(field);
+    var line = parseFloat(style.lineHeight);
+    var edges = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+    var frame = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) + edges;
+    field.style.height = 'auto';
+    var floor = Math.round(line * 2 + frame);
+    var ceiling = Math.round(line * 4 + frame);
+    field.style.height = Math.max(floor, Math.min(field.scrollHeight + edges, ceiling)) + 'px';
+  }
+
   Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (field) {
     var id = field.getAttribute('data-id');
-    if (state[id] && state[id].comment && !state[id].handled) { field.value = state[id].comment; }
+    if (state[id] && state[id].comment) { field.value = state[id].comment; }
     field.readOnly = Boolean(state[id] && state[id].handled);
+    fitComment(field);
+    field.addEventListener('focus', function () { fitComment(field); });
     field.addEventListener('input', function () {
+      fitComment(field);
       /* A FILED REMARK IS NEVER OVERWRITTEN FROM THE PAGE: its box is read-only and empty, so what would be saved here is the emptiness we put there ourselves. */
       if (state[id] && state[id].handled) { return; }
       state[id] = state[id] || {};
@@ -214,6 +290,7 @@
       state[id] = state[id] || {};
       state[id].comment = field.value;
       remember(id);
+      fitComment(field);
       paint();
     });
     field.addEventListener('input', function () { held = null; paint(); });
@@ -240,7 +317,10 @@
      EVERY variant. Whatever a page verdict does not say keeps the built state: a variant with no image stays to produce, and a verdict written in the
      referential and never touched here stays what it is. */
   function variantStateNow(article) {
-    var built = article.getAttribute('data-state');
+    /* THE BUILT STATE IS KEPT APART, BECAUSE `data-state` IS NOW REWRITTEN: it is the fallback used when no verdict is ticked here, and a fallback overwritten
+       with the computed value falls back on nothing — unticking a verdict would leave the variant showing the state just removed. */
+    if (!article.hasAttribute('data-built')) { article.setAttribute('data-built', article.getAttribute('data-state') || ''); }
+    var built = article.getAttribute('data-built');
     var box = article.querySelector('.acts input');
     if (!box) { return built; }
     var verdict = state[box.getAttribute('data-id')] || {};
@@ -264,6 +344,14 @@
      shows, and that is the kind of gap one only notices after being misled by it. */
   function refreshStates() {
     var counts = {};
+    /* THE STATE WRITTEN ON A VARIANT'S HEAD FOLLOWS THE VERDICT JUST TICKED, like the subject tile's: computed once at build time, it would announce « à juger »
+       on a variant validated under the reader's own eyes — the defect reported on 2026-08-11 for subjects, and it would hold here for the same reason. */
+    Array.prototype.forEach.call(document.querySelectorAll('.variant'), function (variant) {
+      var now = variantStateNow(variant);
+      variant.setAttribute('data-state', now);
+      var word = variant.querySelector('.variant-state');
+      if (word) { word.textContent = window.GATEBEAST_STATE_LABELS[now] || now; }
+    });
     Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
       var panel = document.getElementById('fsp-' + tile.getAttribute('data-subject'));
       if (!panel) { return; }
@@ -331,14 +419,111 @@
     document.body.classList.add('drawer-open');
   }
   function closeDrawer() {
+    returnVersion();
     drawer.hidden = true;
     document.body.classList.remove('drawer-open');
   }
+  /* SECTION BUTTONS UNFOLD IN PLACE, THEY NO LONGER OPEN THE DRAWER (operator, 2026-08-12): the drawer now carries A WHOLE VERSION, not a text. A button opening
+     a drawer that holds something else forced a step backwards to read the next section. */
   Array.prototype.forEach.call(document.querySelectorAll('.open-text'), function (button) {
     button.addEventListener('click', function () {
       var carrier = button.nextElementSibling;
-      openDrawer(button.getAttribute('data-title'), button.getAttribute('data-path'), carrier ? carrier.textContent : '');
+      var deja = button.nextElementSibling && button.nextElementSibling.nextElementSibling;
+      if (deja && deja.classList.contains('text-open')) {
+        deja.remove();
+        button.setAttribute('aria-expanded', 'false');
+
+        return;
+      }
+      var bloc = document.createElement('pre');
+      bloc.className = 'text-open';
+      bloc.textContent = carrier ? carrier.textContent : '';
+      button.parentNode.insertBefore(bloc, carrier.nextSibling);
+      button.setAttribute('aria-expanded', 'true');
     });
+  });
+
+  /* THE DRAWER CARRIES ONE VERSION, AND IT OPENS FROM THAT VERSION ITSELF. Its content is already in the page, folded under the card: it is MOVED, never copied
+     — a copy would duplicate the images, which are written out in full in the page, and would double its weight. */
+  var drawerHome = null;
+  var drawerNode = null;
+  function openVersion(carrier) {
+    var carte = carrier.closest('.variant, .previous');
+    var full = carte.querySelector('.version-full');
+    if (!full) { return; }
+    returnVersion();
+    drawerHome = full.parentNode;
+    drawerNode = full;
+    /* THE DRAWER SAYS WHAT IT IS SHOWING (operator, 2026-08-12: « quand j'ouvre le drawer, il doit annoncer clairement le nom du sujet et le nom du variant »).
+       It announced « La version en entier », which is true of every one of them and names none: opened from a board of fifteen variants, one no longer knew
+       which was on screen. Both names are already in the page — the subject at the head of its card, the variant on its own — so they are READ, not recomposed. */
+    var fiche = carte.closest('.fsp');
+    var sujet = fiche ? fiche.querySelector('.fsp-title') : null;
+    var variante = carte.closest('.variant').querySelector('.variant-name');
+    /* THE NAME IS READ WITHOUT ITS BADGE: the « principal » mark lives inside the same heading, so taking its whole text gave « Vue principaleprincipal ». Only
+       the direct text of the heading is its name; what is nested in it is a label about it. */
+    var nom = '';
+    if (variante) {
+      Array.prototype.forEach.call(variante.childNodes, function (piece) {
+        if (piece.nodeType === 3) { nom += piece.textContent; }
+      });
+      nom = nom.trim();
+    }
+    var ancienne = carte.classList.contains('previous') ? ' — version antérieure' : '';
+    drawerTitle.textContent = (sujet ? sujet.textContent.trim() : '') + (nom ? ' · ' + nom : '') + ancienne;
+    var nom = carte.querySelector('.variant-file');
+    drawerPath.textContent = nom ? nom.textContent : '';
+    drawerPath.hidden = !nom;
+    drawerBody.textContent = '';
+    /* THE DRAWER IS SHOWN BEFORE ANYTHING IS MEASURED: hidden, it reports a width of zero, and a magnification computed on that would fall back to one for every
+       image. */
+    drawer.hidden = false;
+    /* THE IMAGE IS CLONED WHEN THE DRAWER OPENS, NEVER WRITTEN TWICE INTO THE PAGE: a thumbnail is a file written out in full in the document, and copying it
+       took the page from 37 to 71 MB before the build showed it. The clone costs the file nothing; it lives only as long as the drawer. */
+    var image = carte.querySelector('.picture');
+    if (image) {
+      var grande = document.createElement('div');
+      grande.className = 'version-image';
+      var clone = image.cloneNode(true);
+      /* THE MAGNIFICATION IS MEASURED, NOT DECREED: twice for a one-tile sprite, less as soon as it would no longer fit the drawer, never below one — an image
+         one has come to look at closely is not shrunk. The available width is taken from the drawer itself, which is already at its size since its style does
+         not depend on its content. */
+      var vignette = image.querySelector('img');
+      /* THE ROOM IS MEASURED ON THE BODY THAT WILL HOLD THE IMAGE, not on the drawer around it: the drawer's own width still counts its padding, and a sprite
+         sized against it comes out a few pixels too wide — which is a scrollbar, which is the very thing being fixed. */
+      var place = drawerBody.clientWidth - 8;
+      var facteur = 2;
+      if (vignette && vignette.width) { facteur = Math.max(1, Math.min(2, place / vignette.width)); }
+      clone.style.zoom = String(facteur);
+      grande.appendChild(clone);
+      drawerBody.appendChild(grande);
+      /* AND THIS IS THE IMAGE THE RUNE IS PLACED ON: the clone inherits no listener, and this is where one can aim accurately. */
+      if (clone.hasAttribute('data-anchor-for')) { wireAnchor(clone); }
+    }
+    drawerBody.appendChild(full);
+    full.hidden = false;
+    drawer.hidden = false;
+    drawer.scrollTop = 0;
+    document.body.classList.add('drawer-open');
+  }
+  /* WHAT WAS MOVED GOES BACK HOME ON CLOSING: left in the drawer, it would be missing from its card, and the next version would open onto nothing. */
+  function returnVersion() {
+    if (drawerNode && drawerHome) {
+      drawerNode.hidden = true;
+      drawerHome.appendChild(drawerNode);
+    }
+    drawerNode = null;
+    drawerHome = null;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.open-version'), function (button) {
+    button.addEventListener('click', function () { openVersion(button); });
+  });
+  /* THE IMAGE ITSELF OPENS ITS VERSION (operator, 2026-08-12: « sur la grille, si je clique sur l'image, ça doit aussi ouvrir cette version dans le drawer »).
+     That is the gesture one makes without thinking in front of a thumbnail, and until now it meant aiming at the button underneath. The button stays: it names
+     what the click does, which an image does not say about itself. */
+  Array.prototype.forEach.call(document.querySelectorAll('.variant-image .picture'), function (picture) {
+    picture.style.cursor = 'zoom-in';
+    picture.addEventListener('click', function () { openVersion(picture); });
   });
   Array.prototype.forEach.call(document.querySelectorAll('.drawer-close'), function (button) {
     button.addEventListener('click', closeDrawer);

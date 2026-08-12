@@ -5,8 +5,8 @@
     {
       "code": "CH-001",
       "name": "short-grass-01",
-      "type": "sol",
-      "layer": "sol",
+      "type": "ground",
+      "layer": "ground",
       "footprint": {
         "columns": 1.0,
         "rows": 1.0
@@ -52,8 +52,8 @@
     {
       "code": "HU-000",
       "name": "player-01",
-      "type": "humain",
-      "layer": "monde",
+      "type": "human",
+      "layer": "world",
       "footprint": {
         "columns": 1.0,
         "rows": 1.0
@@ -99,8 +99,8 @@
     {
       "code": "OB-010",
       "name": "log-fence-01",
-      "type": "cloture-et-mur",
-      "layer": "monde",
+      "type": "fence",
+      "layer": "world",
       "footprint": {
         "columns": 1.0,
         "rows": 1.0
@@ -146,8 +146,8 @@
     {
       "code": "SOL-001",
       "name": "meadow-01",
-      "type": "sol",
-      "layer": "sol",
+      "type": "ground",
+      "layer": "ground",
       "footprint": {
         "columns": 1.0,
         "rows": 1.0
@@ -194,7 +194,7 @@
       "code": "SP-001-1",
       "name": "amber-fox-cub-01",
       "type": "creature",
-      "layer": "monde",
+      "layer": "world",
       "footprint": {
         "columns": 1.0,
         "rows": 1.0
@@ -241,7 +241,7 @@
       "code": "TR-060",
       "name": "oak-01",
       "type": "vegetation",
-      "layer": "monde",
+      "layer": "world",
       "footprint": {
         "columns": 2.0,
         "rows": 2.0
@@ -288,7 +288,7 @@
       "code": "TR-062",
       "name": "tall-grass-01",
       "type": "vegetation",
-      "layer": "monde",
+      "layer": "world",
       "footprint": {
         "columns": 1.0,
         "rows": 1.0

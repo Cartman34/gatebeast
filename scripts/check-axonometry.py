@@ -105,7 +105,7 @@ def is_built(path):
         return False
     subject = (data.get("subjects") or {}).get(code)
 
-    return bool(subject) and subject.get("type") == "batiment"
+    return bool(subject) and subject.get("type") == "building"
 
 
 def inner_lean(path):

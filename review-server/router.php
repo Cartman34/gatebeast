@@ -60,6 +60,41 @@ if ($path === '/notes') {
     return true;
 }
 
+/**
+ * The rune anchor of one representation, posed from the review page.
+ *
+ * THE WRITE GOES THROUGH THE TOOL THAT ALREADY OWNS IT, `scripts/set-rune-anchor.py`, and not through a second writer of the referential written here. That tool
+ * refuses an unknown path, a subject that is not a creature, a representation without measures and a point outside the image — four refusals this route would
+ * otherwise have to repeat, and would repeat slightly differently. Its fault message comes back as it stands, so the page says what the tool said.
+ */
+if ($path === '/rune-anchor') {
+    require_once $here . '/bootstrap.php';
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    $asked = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+    foreach (['path', 'x', 'y'] as $key) {
+        if (!isset($asked[$key])) {
+            http_response_code(400);
+            echo json_encode(['fault' => "la demande n'a pas de « {$key} »"], JSON_UNESCAPED_UNICODE);
+
+            return true;
+        }
+    }
+    $command = sprintf('python3 %s --path %s --x %s --y %s 2>&1',
+        escapeshellarg(dirname($here) . '/scripts/set-rune-anchor.py'),
+        escapeshellarg((string) $asked['path']), escapeshellarg((string) round((float) $asked['x'], 1)), escapeshellarg((string) round((float) $asked['y'], 1)));
+    exec($command, $lines, $status);
+    if ($status !== 0) {
+        http_response_code(422);
+        echo json_encode(['fault' => implode("\n", $lines)], JSON_UNESCAPED_UNICODE);
+
+        return true;
+    }
+    echo json_encode(['ecrit' => true, 'dit' => implode("\n", $lines)], JSON_UNESCAPED_UNICODE);
+
+    return true;
+}
+
 if ($path === '/version') {
     header('Content-Type: text/plain; charset=utf-8');
     // The answer must never be served from the browser's cache: a signature kept in reserve would say forever that nothing has changed.

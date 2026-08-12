@@ -13,18 +13,16 @@ body {
 /* THE OVERLINE SAYS WHERE ONE IS BEFORE SAYING WHAT ONE IS LOOKING AT: small letter-spaced capitals, quiet, above the title. Four pages look alike from afar,
    and the one that is open must name itself without the title having to be read in full. */
 .overline { margin: 0 0 8px; font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-/* LA PAGE GRANDIT AVEC L'ÉCRAN au lieu de tenir une largeur fixe, mais jamais bord à bord : un plafond garde la lecture confortable et les marges délibérées. */
+/* THE PAGE GROWS WITH THE SCREEN instead of holding a fixed width, but never edge to edge: a ceiling keeps reading comfortable and the margins deliberate. */
 /* BORDER-BOX, OR THE WIDTH LIES: `width: 100%` plus twice forty-eight pixels of padding gave a 1484 px page inside a 1400 px window, so an 84 px horizontal
    overflow. It had been there from the start and could not be seen — nothing was right-aligned. The section count revealed it by running off the screen, cut
    down to « 1 » instead of « 1 sujet ». Measured with a probe, not deduced from the stylesheet. */
 .wrap { box-sizing: border-box; width: min(100%, 1760px); margin: 0 auto; padding: 40px clamp(12px, 3vw, 48px) 132px; }
 h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; max-width: 21ch; }
-/* LE TEXTE COURANT GARDE SA PROPRE MESURE, plus étroite que la page : rien ne se lit sur toute la largeur d'un grand écran. Et il passe en police à chasse
-   variable — c'est de la phrase, pas de la donnée. */
-/* LA PHRASE DE TÊTE TIENT SUR UNE LIGNE (opérateur, 2026-08-11 : « ça tient sur une ligne »). Elle était bornée à soixante-deux caractères, la mesure d'un texte
-   qu'on lit longtemps ; celle-ci se lit une fois et doit s'effacer. Elle prend donc la largeur de la page, et rapetisse d'un cran. */
+/* THE OPENING SENTENCE FITS ON ONE LINE (operator, 2026-08-11: « ça tient sur une ligne »). It was capped at sixty-two characters, the measure of a text one
+   reads for a long time; this one is read once and must then get out of the way. So it takes the width of the page, and drops one size. */
 .lede { margin: 10px 0 0; font-family: var(--sans); font-size: 14.5px; line-height: 1.5; color: var(--muted); }
-/* LES SECTIONS RESPIRENT : cinquante-quatre pixels au-dessus de chacune. Serrées à vingt-huit, la planche se lisait comme une seule liste continue. */
+/* SECTIONS BREATHE: fifty-four pixels above each one. Tightened to twenty-eight, the board read as one continuous list. */
 .type { margin-top: 54px; }
 /* THE SECTION HEADER: title on the left, count on the right, a rule underneath. It is the rule that makes the section — without it the families pile up with no
    separation and the page reads as a single list, which was exactly the reproach made to the rewrite. */
@@ -45,9 +43,9 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
 .filter-label { margin: 0 5px 0 0; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .filter-state { margin: 11px 0 0; font-family: var(--sans); font-size: 13px; color: var(--muted); min-height: 1.3em; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; }
-/* UNE VIGNETTE EST UNE CARTE, PAS UN CADRE : coins franchement arrondis, une élévation discrète qui la détache du fond, et un dessous creusé sous l'image pour
-   que la sprite pose sur quelque chose. Au survol elle monte d'un pixel et prend le bord de l'accent — le mouvement dit « celle-ci » mieux qu'un changement de
-   couleur, et il n'ajoute aucune couleur à une page où l'on juge des couleurs. */
+/* A TILE IS A CARD, NOT A FRAME: frankly rounded corners, a quiet elevation that lifts it off the ground, and room dug under the image so the sprite rests on
+   something. On hover it rises one pixel and takes the accent edge — the movement says « this one » better than a colour change, and it adds no colour to a page
+   where colours are being judged. */
 .tile { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; padding: 10px 8px 9px;
          background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--lift);
          color: inherit; font: inherit; text-align: center; cursor: pointer;
@@ -57,7 +55,7 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
 .tile-image { display: flex; align-items: flex-end; justify-content: center; min-height: 26px; margin-top: auto; }
 .tile-image img { max-width: 100%; height: auto; }
 .tile-name { font-weight: 700; font-size: 15px; letter-spacing: -.012em; }
-/* LE COMPTE EST UNE ÉTIQUETTE, PAS UNE PHRASE : petites capitales espacées, comme toutes les étiquettes de la page d'origine. */
+/* THE COUNT IS A LABEL, NOT A SENTENCE: small letter-spaced capitals, like every label of the original page. */
 .tile-count, .tile-empty { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 
 .fsp { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: var(--bg); overflow: auto; }
@@ -65,9 +63,9 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
 .fsp-bar { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px;
              background: var(--card); border-bottom: 1px solid var(--line); }
 .fsp-title { margin: 0; font-size: 1.1rem; font-weight: 600; }
-/* UNE CROIX SANS HABILLAGE, MAIS UNE CIBLE DE CLIC LARGE (opérateur, 2026-08-07) : le bouton faisait vingt pixels et il fallait viser pour fermer un panneau
-   plein écran. Le signe reste petit et discret, c'est la SURFACE qui grandit — quarante-quatre pixels de côté, la taille d'une cible qu'on atteint sans regarder.
-   Ni bordure, ni fond, ni survol, ni cerne de focus : rien à styler, tout à cliquer. */
+/* A CROSS WITH NO DRESSING, BUT A WIDE CLICK TARGET (operator, 2026-08-07): the button was twenty pixels and one had to aim to close a full-screen panel. The
+   sign stays small and quiet, it is the SURFACE that grows — forty-four pixels a side, the size of a target one hits without looking. No border, no background,
+   no hover, no focus ring: nothing to style, everything to click. */
 .fsp-close {
   width: 44px; height: 44px; padding: 0; margin: -8px -8px -8px 0;
   display: flex; align-items: center; justify-content: center;
@@ -87,30 +85,39 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
   color: inherit; font: inherit; font-size: .8rem; cursor: pointer;
 }
 .variant { padding: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
+/* THE VARIANT HEAD FITS ON ONE LINE: the comparison on the left, its state on the right (operator, 2026-08-12: « à droite je veux qu'on voie le statut actuel du
+   variant »). The two used to sit at different heights, and the state was not there at all — it was read off the subject tile, which sums fifteen variants up
+   in a single word. */
+.variant-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 4px; }
+/* IT CARRIES THE WORD OF ITS STATE AND THE COLOUR OF THAT STATE — the same as everywhere else, taken from the theme variable, never a code copied in. */
+.variant-state {
+  padding: 2px 8px; border: 1px solid var(--state-edge); border-radius: var(--radius-pill); color: var(--state-edge);
+  font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap;
+}
 .variant-name { margin: 6px 0 2px; font-size: 19px; font-weight: 700; letter-spacing: -.012em; }
-/* LE VARIANT PRINCIPAL PORTE SA MARQUE À CÔTÉ DE SON NOM, pas ailleurs : c'est en lisant le nom qu'on cherche à savoir lequel fait référence, et une pastille
-   posée plus bas se cherche. Discrète et non grasse — elle informe, elle ne réclame pas l'œil comme un verdict. */
+/* THE MAIN VARIANT CARRIES ITS MARK NEXT TO ITS NAME, nowhere else: it is while reading the name that one wonders which is the reference, and a badge placed
+   further down has to be looked for. Quiet and not bold — it informs, it does not claim the eye the way a verdict does. */
 .variant-main {
   margin-left: 6px; padding: 1px 6px; border: 1px solid var(--accent); border-radius: 10px;
   font-size: .62rem; font-weight: 400; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); vertical-align: middle;
 }
 .variant-ref { margin: 0 0 6px; font-family: var(--mono); font-size: .7rem; color: var(--faint, var(--muted)); word-break: break-all; }
-/* LE FICHIER AFFICHÉ ET SA DATE, sous le libellé : c'est ce qu'on cherche en premier après une séance de reprises, pour savoir si l'on regarde la dernière. */
+/* THE FILE SHOWN AND ITS DATE, under the label: it is what one looks for first after a session of retakes, to know whether one is looking at the latest. */
 .variant-version { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 6px; font-family: var(--mono); font-size: .7rem; }
 .variant-file { color: var(--ink); word-break: break-all; }
 .variant-date { color: var(--accent); }
-/* LE DAMIER DIT OÙ EST LA TRANSPARENCE, et c'est la première chose qu'on juge sur une sprite détourée : sans lui, un fond opaque sombre se confond avec le fond
-   de la page et un halo ne se voit pas du tout. */
+/* THE CHECKERBOARD SAYS WHERE THE TRANSPARENCY IS, and that is the first thing one judges on a cut-out sprite: without it an opaque dark background merges with
+   the page and a halo cannot be seen at all. */
 .variant-image {
   display: flex; align-items: flex-end; justify-content: center; min-height: 48px; padding: 6px; border-radius: 3px;
   background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 16px 16px;
 }
-/* L'ENVELOPPE ÉPOUSE L'IMAGE, et c'est elle qui sert de repère à la grille : posée sur la carte, la grille annonçait une sprite large de toute la carte. */
+/* THE WRAPPER HUGS THE IMAGE, and it is what the grid measures itself against: laid on the card, the grid announced a sprite as wide as the whole card. */
 .picture { position: relative; display: inline-block; line-height: 0; }
 .variant-image img { max-width: 100%; height: auto; display: block; }
-/* LA GRILLE D'EMPRISE NE S'APPELLE PAS « grille » : ce nom-là est celui de la grille des vignettes, plus haut, et le lui reprendre a rendu toute la page absolue —
-   sections vides, trois vignettes flottant hors de la page. Un nom déjà pris dans la même feuille est un nom pris, et une classe ne se choisit pas au plus évident.
-   LA GRILLE NE MASQUE JAMAIS L'IMAGE : des traits d'un pixel, semi-transparents, et rien de plein — on juge la sprite, la grille ne fait que la situer. */
+/* THE FOOTPRINT GRID IS NOT CALLED « grid »: that name belongs to the tile grid above, and taking it back made the whole page go absolute — empty sections,
+   three tiles floating off the page. A name already taken in the same sheet is a name taken, and a class is not chosen for being the most obvious.
+   THE GRID NEVER MASKS THE IMAGE: one-pixel lines, and nothing filled — the sprite is being judged, the grid only places it. */
 .footprint { position: absolute; inset: 0; pointer-events: none; }
 .footprint::before {
   content: ""; position: absolute; inset: 0;
@@ -119,13 +126,16 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
   background-size: var(--case) var(--case-y);
   background-position: bottom left;
 }
-/* L'EMPRISE AU SOL EST ANCRÉE EN BAS ET CENTRÉE : c'est là que le sujet touche le sol, et c'est sur ce rectangle que le plan le pose. */
+/* THE GROUND FOOTPRINT IS ANCHORED AT THE BOTTOM AND CENTRED: that is where the subject touches the ground, and that rectangle is what the plan places it by. */
 .footprint-ground {
   position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  border: 1px solid var(--accent); background: var(--accent-field);
+  border: 1px solid var(--footprint-edge); background: var(--footprint-field);
 }
-/* LE COUVERT EST CE QUE LE VOLUME SURPLOMBE — la vignette entière, puisque c'est sur lui qu'elle est posée. Il ne se dessine que s'il déborde de l'emprise. */
-.footprint-cover { position: absolute; inset: 0; border: 1px dashed var(--overlay); }
+/* THE COVER IS WHAT THE VOLUME OVERHANGS — the whole thumbnail, since that is what it is laid on. It is drawn only when it exceeds the footprint.
+   IT MUST NOT LOOK LIKE THE FOOTPRINT (operator, 2026-08-12: « je dois voir clairement les cases avec emprise et les cases de débordement, avec le nouveau
+   thème j'ai perdu une partie à ce niveau-là »). Two things to tell apart, so two colours and two line styles: the footprint is a solid accented rectangle, the
+   overhang a dashed one in its own colour. Both are theme tokens — never a value written here. */
+.footprint-cover { position: absolute; inset: 0; border: 1px dashed var(--overhang-edge); }
 .footprint-axis { position: absolute; background: var(--overlay); }
 .footprint-axis--x { left: 0; right: 0; bottom: 0; height: 1px; }
 .footprint-axis--y { top: 0; bottom: 0; left: 50%; width: 1px; }
@@ -142,16 +152,19 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
   font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 2px 8px; border-radius: var(--radius-pill);
   border: 1px solid var(--state-edge); color: var(--state-edge);
 }
-.tile[data-state="to-rework"] { --state-edge: var(--state-rework-edge); }
-.tile[data-state="dismissed"] { --state-edge: var(--state-dismissed-edge); }
-.tile[data-state="to-produce"] { --state-edge: var(--state-to-produce-edge); }
-/* À JUGER EST LE SEUL ÉTAT PLEIN, ET C'EST VOULU : c'est le seul qui réclame un geste de l'opérateur, et il doit se repérer sans être cherché (opérateur,
-   2026-08-08). Les autres disent où en est une image ; celui-ci dit qu'on attend quelqu'un. Un contour de plus au milieu de quatre contours se confond. */
-.tile[data-state="to-judge"] { --state-edge: var(--state-to-judge-edge); }
-.tile[data-state="to-judge"] .tile-state { background: var(--state-to-judge); color: var(--ink-on-state); border-color: var(--state-to-judge-edge); }
-.tile[data-state="validated"] { --state-edge: var(--state-validated-edge); }
-/* L'ÉCHELLE VIENT DU CONSTRUCTEUR PYTHON D'ORIGINE, ET ELLE NE SE RÉINVENTE PAS : chasse fixe, dix pixels, remplissage 3/6, rayon 2. La version PHP avait pris la
-   taille du texte courant — seize pixels — et des remplissages larges, ce qui grossissait toute la carte d'un tiers sans que personne l'ait décidé. */
+/* ONE TABLE SERVES BOTH THE SUBJECT TILE AND THE VARIANT HEAD: a state carries a colour, and it is not chosen twice. Adding the variant to these selectors costs
+   one word; writing it rules of its own would have created a second set of colours for the same five states. */
+.tile[data-state="to-rework"], .variant[data-state="to-rework"] { --state-edge: var(--state-rework-edge); }
+.tile[data-state="dismissed"], .variant[data-state="dismissed"] { --state-edge: var(--state-dismissed-edge); }
+.tile[data-state="to-produce"], .variant[data-state="to-produce"] { --state-edge: var(--state-to-produce-edge); }
+/* « TO JUDGE » IS THE ONLY FILLED STATE, AND THAT IS DELIBERATE: it is the only one asking something of the operator, and it must be found without being looked
+   for (operator, 2026-08-08). The others say where an image stands; this one says someone is being waited for. One more outline among four outlines blends in. */
+.tile[data-state="to-judge"], .variant[data-state="to-judge"] { --state-edge: var(--state-to-judge-edge); }
+.tile[data-state="to-judge"] .tile-state,
+.variant[data-state="to-judge"] .variant-state { background: var(--state-to-judge); color: var(--ink-on-state); border-color: var(--state-to-judge-edge); }
+.tile[data-state="validated"], .variant[data-state="validated"] { --state-edge: var(--state-validated-edge); }
+/* THE SCALE COMES FROM THE ORIGINAL PYTHON BUILDER AND IS NOT REINVENTED: fixed pitch, ten pixels, 3/6 padding, radius 2. The PHP version had taken the size of
+   the running text — sixteen pixels — and wide padding, which grew the whole card by a third without anyone deciding it. */
 .acts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
 .act { display: inline-flex; position: relative; }
 .act input { position: absolute; inset: 0; width: 1px; height: 1px; opacity: 0; margin: 0; clip-path: inset(50%); overflow: hidden; }
@@ -160,33 +173,91 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
   padding: 3px 6px; border: 1px solid var(--line); border-radius: 2px; background: var(--card);
   color: var(--muted); cursor: pointer; user-select: none;
 }
-/* LE BOUTON D'OUVERTURE PORTE UN SIGNE ASCII, JAMAIS UN GLYPHE DÉCORATIF : le « ＋ » pleine chasse d'origine sort en carré vide dès qu'une police ne le porte pas,
-   et c'est ce que la page a montré au premier contrôle. Un bouton dont le signe manque est un bouton qu'on ne clique pas. */
+/* THE OPENING BUTTON CARRIES AN ASCII SIGN, NEVER A DECORATIVE GLYPH: the original full-width « ＋ » comes out as an empty box as soon as a font does not carry
+   it, and that is what the page showed at the first check. A button whose sign is missing is a button nobody clicks. */
 .open-comment { min-width: 22px; text-align: center; }
 .act:hover span, .open-comment:hover { border-color: var(--accent); color: var(--accent); }
 .act input:focus-visible + span, .open-comment:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-/* DEUX ÉTATS, DEUX SIGNES : le bouton s'allume quand un commentaire est écrit dessous, et se marque simplement quand le champ est ouvert et vide. Les confondre
-   laissait un champ vidé continuer d'annoncer un texte qui n'existait plus. */
+/* TWO STATES, TWO SIGNS: the button lights up when a comment is written underneath, and is merely marked when the field is open and empty. Confusing them let an
+   emptied field go on announcing a text that no longer existed. */
 .open-comment[data-filled="true"] { border-color: var(--accent); color: var(--accent); }
 .open-comment[aria-expanded="true"][data-filled="false"] { border-color: var(--muted); color: var(--ink); }
+/* A FILED REMARK IS TOLD APART FROM A WAITING ONE WITHOUT OPENING IT: it is kept, one click away, but it no longer calls for work — marking it like a live
+   remark would have one reread ten times what has already been dealt with, which is the fatigue filing it removed. */
+.open-comment[data-handled="true"] { border-color: var(--muted); color: var(--muted); }
+/* THE BUTTON THAT OPENS THE DRAWER HAS THE SAME SHAPE AS THE SECTION BUTTONS (operator, 2026-08-12): three things one consults on a version, three buttons that
+   look alike. It is full width because it commands the whole card, not one of its parts. */
+.open-version {
+  display: block;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.open-version:hover { border-color: var(--accent); color: var(--accent); }
+/* THE DRAWER IMAGE IS LARGE — it is the first thing one comes to see there. It is the WRAPPER that is magnified, never the image alone (operator, 2026-08-12:
+   « l'affichage des cases sur le drawer est pété »): `width: 200%` on the image made it spill out of a wrapper left at its original size, and since the footprint
+   grid is laid on that wrapper and measured in percentages of it, the tiles stayed at thumbnail scale while the sprite doubled — the footprint frame fell on
+   empty space. A percentage whose reference does not move follows nothing.
+   AND THE FACTOR IS COMPUTED WHEN THE DRAWER OPENS, never beyond what it can show (operator, 2026-08-12: « si l'image est plus large que le drawer, ça pose
+   souci »). Doubling without looking sent a sixteen-tile sprite to fifteen hundred pixels inside a thousand-pixel drawer: it was read through a scrollbar. It is
+   openVersion() that sets the `zoom`, because it alone knows the width available at the moment it opens. */
+.version-image .picture img { image-rendering: pixelated; }
+.version-image { margin: 0 0 16px; overflow: auto; }
+.text-open {
+  margin: 6px 0 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+/* A CREATURE'S SPRITE IS CLICKED TO PLACE ITS RUNE: the cursor says so, since nothing else announces that something happens there and nowhere else.
+   IN THE DRAWER ONLY, SINCE THE GRID'S CLICK OPENS THE VERSION: two gestures do not share one click, and aiming at a pixel on a forty-eight-pixel thumbnail was
+   never the right place to do it. */
+.version-image .picture[data-anchor-for] { cursor: crosshair; }
+/* AND A REFUSAL FROM THE SERVER IS SHOWN ON THE CARD, in its own words: the mark did not move in the file, so the screen must not suggest otherwise. */
+.picture[data-anchor-fault]::after {
+  content: attr(data-anchor-fault);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 4px 6px;
+  background: var(--state-rework);
+  color: var(--ink-on-state);
+  font-size: 11px;
+  line-height: 1.3;
+}
 /* A TICKED VERDICT TAKES THE COLOUR OF ITS STATE, DECLARED IN THE THEME — never a code written here. The three shades were typed into this sheet, in dark values
    that only held on a dark ground: once the page was light again, they stayed. They are the same three states the tiles carry, so they are the same tokens, and
    the ink on them is the one meant for a filled state — never the card's, which is dark on a dark theme and unreadable over a deep fill. */
 .act--approved input:checked + span { background: var(--state-validated); border-color: var(--state-validated-edge); color: var(--ink-on-state); }
 .act--rework input:checked + span { background: var(--state-rework); border-color: var(--state-rework-edge); color: var(--ink-on-state); }
 .act--discarded input:checked + span { background: var(--state-dismissed); border-color: var(--state-dismissed-edge); color: var(--ink-on-state); }
-/* LE CHAMP TIENT DANS SA CARTE : sans box-sizing, ses bordures et son remplissage s'ajoutent aux cent pour cent de largeur et il déborde de quelques pixels — ce
-   qui se voit tout de suite sur une grille de cartes. */
-/* LA CROIX EST COLLÉE AU CHAMP, en haut à droite : c'est le geste courant pour vider une saisie, et un bouton posé à côté avec son mot écrit prenait la place
-   d'un tiers du champ pour dire ce qu'une croix dit sans un mot. */
+/* THE FIELD FITS INSIDE ITS CARD: without box-sizing, its borders and padding add to the hundred percent width and it overflows by a few pixels — which shows at
+   once on a grid of cards.
+   THE CROSS IS ATTACHED TO THE FIELD, top right: that is the usual gesture for clearing an entry, and a button placed beside it with its word spelled out took a
+   third of the field to say what a cross says without a word. */
 .comment-zone { position: relative; margin-top: 4px; }
 .comment-zone[hidden] { display: none; }
 /* A REMARK THAT HAS BEEN DEALT WITH LEAVES THE PAGE ALTOGETHER (operator, 2026-08-11) — it is kept in the store, not shown here, so there is no faded-and-struck
    state left to style. The rule used to be the opposite one, and showing it struck through was still showing it. */
+/* ITS HEIGHT IS SET IN JAVASCRIPT, NOT HERE (see fitComment): it depends on the text once wrapped to the field's own width, which only layout knows. */
 .comment { display: block; width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; color: var(--ink);
        font-family: var(--mono); font-size: 11px; line-height: 1.45; padding: 4px 22px 4px 6px; resize: vertical; }
-/* LA CROIX EST DANS LE COIN HAUT DROIT DU CHAMP, POSÉE DESSUS — demandée trois fois par l'opérateur, et perdue deux fois en réécrivant la carte. Le champ lui
-   réserve sa place à droite par son propre remplissage, pour qu'elle ne vienne jamais sur le texte. Sa règle est éprouvée par scripts/check-review-pages.php. */
+/* THE CROSS SITS IN THE TOP RIGHT CORNER OF THE FIELD, LAID OVER IT — asked for three times by the operator, and lost twice while rewriting the card. The field
+   reserves its place on the right through its own padding, so it never comes over the text. Its rule is checked by scripts/check-review-pages.php. */
 .clear-comment {
   position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; padding: 0; line-height: 1;
   display: flex; align-items: center; justify-content: center;
@@ -196,8 +267,8 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
 .clear-comment:hover { border-color: var(--accent); color: var(--accent); }
 .clear-comment[hidden] { display: none; }
 .variant { box-sizing: border-box; }
-/* LES MESURES SUIVENT L'ÉCHELLE D'ORIGINE : l'intitulé est une étiquette — onze pixels, petites capitales espacées —, la valeur est un chiffre qu'on compare d'une
-   ligne à l'autre, donc en chasse tabulaire pour que les colonnes s'alignent d'elles-mêmes. Toutes deux au même gris que le reste : ce sont des constats, pas des
+/* THE MEASUREMENTS FOLLOW THE ORIGINAL SCALE: the term is a label — eleven pixels, small letter-spaced capitals — while the value is a figure compared from one
+   line to the next, so it is set in tabular figures for the columns to line up by themselves. Both in the same grey as the rest: they are observations, not
    verdicts. */
 .measures { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 8px 0 0; padding: 6px 0 0; border-top: 1px solid var(--line); }
 .measures dt { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
@@ -212,36 +283,39 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
 .fsp-tools { display: flex; gap: 8px; }
 .fsp-tools button { padding: 4px 12px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; cursor: pointer; }
 #drawer-body { white-space: pre-wrap; font-size: .82rem; line-height: 1.5; }
-/* LE TEXTE SE LIT À CÔTÉ DE L'IMAGE, JAMAIS PAR-DESSUS (opérateur, 2026-08-08). En panneau plein écran, la consigne recouvrait la sprite qu'elle décrit — or on ne
-   juge une image qu'en confrontant ce qui était demandé à ce qui est sorti, et un aller-retour entre deux écrans ne remplace pas un regard. Le panneau est accolé
-   au bord droit, et la page ouverte se resserre d'autant : rien n'est recouvert, tout se lit d'un même regard. */
+/* THE TEXT IS READ BESIDE THE IMAGE, NEVER OVER IT (operator, 2026-08-08). As a full-screen panel, the prompt covered the very sprite it describes — yet an image
+   is only judged by holding what was asked against what came out, and a round trip between two screens does not replace one look. The drawer is attached to the
+   right edge and the open page narrows by as much: nothing is covered, everything is read in one glance.
+   ITS WIDTH IS WRITTEN ONCE (operator, 2026-08-12: « le drawer peut être plus large, 1000 px sur un écran 4K, c'est ok »). It was 560 px, and a sixteen-tile
+   sprite arrived in it cut off, to be scrolled. It lived in TWO places — here and in the padding the page takes when the drawer opens — which is exactly the
+   copied pivot value the method forbids: both now read the same variable. */
+body { --drawer-width: min(50vw, 1000px); }
 .drawer {
-  position: fixed; top: 0; right: 0; bottom: 0; z-index: 200; display: flex; flex-direction: column; width: min(38vw, 560px);
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 200; display: flex; flex-direction: column; width: var(--drawer-width);
   background: var(--card, var(--bg)); border-left: 1px solid var(--line); overflow: auto;
 }
 .drawer[hidden] { display: none; }
 .drawer-close {
   padding: 2px 8px; background: none; border: 1px solid var(--line); border-radius: 4px; color: inherit; font-size: 1rem; line-height: 1.2; cursor: pointer;
 }
-/* LA PAGE SE RESSERRE, ELLE NE SE DÉCALE PAS : un décalage ferait sortir la moitié droite de l'écran, alors qu'on veut voir la fiche entière et le texte. */
-body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: min(38vw, 560px); }
-/* SUR UN ÉCRAN ÉTROIT, LE TEXTE PASSE DESSOUS : à moins de mille pixels, deux colonnes ne laissent la place ni à l'une ni à l'autre. */
+/* THE PAGE NARROWS, IT DOES NOT SHIFT: shifting would push its right half off the screen, when what is wanted is the whole card AND the text. */
+body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: var(--drawer-width); }
+/* ON A NARROW SCREEN THE TEXT GOES UNDERNEATH: below a thousand pixels, two columns leave room for neither. */
 @media (max-width: 1000px) {
   .drawer { top: auto; left: 0; width: auto; height: 50vh; border-left: 0; border-top: 1px solid var(--line); }
   body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: 0; padding-bottom: 50vh; }
 }
 .fsp-body--image { display: flex; align-items: center; justify-content: center; }
 #fsp-image-corps { max-width: 100%; max-height: 80vh; background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 24px 24px; }
-/* UNE VERSION ANTÉRIEURE EST UNE CARTE COMME LA COURANTE, simplement plus discrète : même largeur, même grille, même mesures, un fond un cran plus sourd pour
-   qu'on ne la confonde pas avec celle qui fait foi. Elles s'alignent en colonne, la plus récente en haut, comme le référentiel les range. */
+/* AN EARLIER VERSION IS A CARD LIKE THE CURRENT ONE, only quieter: same width, same grid, same measurements, a background one shade duller so it is not mistaken
+   for the one that stands. They line up in a column, the most recent on top, the way the referential ranks them. */
 .previous { padding: 8px; border: 1px dashed var(--line); border-radius: 4px; opacity: .85; }
-/* AGRANDIE SUR PLACE : la vignette double de taille sans quitter la rangée, donc les autres versions restent visibles autour d'elle — c'est tout l'objet, on compare. */
 .fold { margin-top: 6px; font-size: .8rem; color: var(--muted); }
 .fold summary { cursor: pointer; }
 .fold pre { max-height: 40vh; overflow: auto; white-space: pre-wrap; font-size: .74rem; }
 .previous-list { display: flex; flex-direction: column; gap: 10px; }
-/* LES FILTRES SONT DES PASTILLES, ET CELLE QUI TIENT SE VOIT DE LOIN : fond d'accent voilé, bord d'accent, texte d'accent. Un simple changement de couleur de
-   texte se cherchait au milieu de six boutons identiques. Le compte reste en retrait dans la pastille — c'est une précision, pas le nom du filtre. */
+/* THE FILTERS ARE PILLS, AND THE ONE THAT HOLDS IS SEEN FROM ACROSS THE ROOM: veiled accent fill, accent edge, accent text. A mere change of text colour had to
+   be hunted for among six identical buttons. The count stays recessed inside the pill — it is a detail, not the filter's name. */
 .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-bottom: 0; }
 .filter { padding: 6px 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-pill); color: var(--muted); font: inherit;
           font-size: 14px; cursor: pointer; transition: border-color .12s ease, color .12s ease, background .12s ease; }
@@ -250,7 +324,8 @@ body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: min(38vw, 560px
 .filter[aria-pressed="true"] { background: var(--accent-field); border-color: var(--accent-edge); color: var(--accent); font-weight: 600; }
 .filter span { color: var(--faint); margin-left: 4px; }
 .filter[aria-pressed="true"] span { color: var(--accent); }
-/* UNE ORPHELINE SE REGARDE : c'est en la voyant qu'on décide si c'est un reste, une sonde, ou une sprite dont l'inscription s'est perdue. Le damier dit sa transparence, comme partout ailleurs. */
+/* AN ORPHAN IS LOOKED AT: it is by seeing it that one decides whether it is a leftover, a probe, or a sprite whose inscription got lost. The checkerboard says
+   its transparency, as everywhere else. */
 .orphans { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
 .orphan { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 3px; }
 .orphan img {

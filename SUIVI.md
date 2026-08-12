@@ -22,8 +22,11 @@ rien et la fin de tour n'est jamais refusée.
 > Travaille dans ~/projects/gatebeast. Lis AGENTS.md, puis doc/regles-du-depot.md en entier, puis la première section de SUIVI.md — elle contient tout le reste. Mode dépilement continu, annonce-le
 > et arrête-toi.
 
-**LA REVUE SE REGARDE EN LOCAL** : `php review-server/serve.php`, puis `http://localhost:8080/`. Quatre pages — l'Index, le suivi des sujets, le suivi des sprites, la Maquette Campagne. Une page se
-reconstruit par sa route : `php review-server/build.php /sprites`. **Ce serveur ne survit pas à la séance.** Les remarques de l'opérateur sont dans `review-server/notes/`, lues directement.
+**LA REVUE SE REGARDE EN LOCAL** : `php review-server/serve.php`, puis l'adresse qu'il imprime — **elle est configurée dans `review-server/config.json`, et `php review-server/url.php` la dit**, le
+port se changeant là et nulle part ailleurs. **Cinq pages** — l'Index, `/inventory` qui dit ce que chaque sujet **est**, `/backlog` qui porte les **points ouverts du projet** et reçoit les votes, le
+suivi des sprites, la Maquette Campagne. Une page se
+reconstruit par sa route : `php review-server/build.php /sprites`. **Ce serveur ne survit pas à la séance : il se ferme avant de la clore, par `php scripts/stop-review-server.php`** — laissé ouvert,
+il tient le port et le démarrage de la séance suivante échoue sur « Address already in use ». Les remarques de l'opérateur sont dans `review-server/notes/`, lues directement.
 
 **L'HABILLAGE D'UNE PAGE SE LIT DANS L'HISTORIQUE, JAMAIS DE MÉMOIRE** — deux fois le 2026-08-11, j'ai « restauré » ce qui était déjà là et affirmé à l'opérateur que c'était l'original.
 `bash local/scripts/list-page-themes.sh` sort la palette de la page des sprites à chaque commit qui l'a touchée, `list-page-fonts.sh` sa police. Ce qu'ils disent : `encre` à la migration du
@@ -32,7 +35,8 @@ la police du système. **Un thème neuf est demandé** : `S64 theme-moderne`.
 
 **LES TÂCHES NE SONT PAS DANS CE DOCUMENT** : elles vivent dans `review-server/tasks.json`, et **une seule commande les lit et les écrit** : `php scripts/backlog.php`. `next` donne la première à
 prendre, `list` les range — **les points `proposed` sortent à part, ils ne sont pas du travail en cours** —, `show <REF>` en ouvre un en entier, `add`, `set`, `describe`, `close` les modifient.
-Toute écriture reconstruit la page `/sujets`. **Chaque point porte son analyse complète : `show` avant d'agir.**
+Toute écriture reconstruit la page `/backlog`. **Chaque point porte son analyse complète : `show` avant d'agir.** `describe <REF>` prend son texte par `@fichier`,
+en argument ou sur l'entrée standard, et **refuse d'écrire quand il n'a rien reçu** — tapé sans texte pour relire un point, il en effaçait la description.
 
 ### Les outils
 
@@ -40,7 +44,7 @@ Toute écriture reconstruit la page `/sujets`. **Chaque point porte son analyse 
 
 - `php scripts/check-text-width.php <fichiers>` — le standard de 200 caractères. Dans un fichier de code, seuls les commentaires sont jugés.
 - `php scripts/check-subjects-against-inventory.php` — emprise, couvert et hauteur de chaque sujet contre sa ligne d'inventaire, et **il crie sur ce qu'il n'arrive pas à lire** au lieu de le sauter.
-- `php scripts/check-review-pages.php` — les quatorze comportements de la page des sprites, les sept de la page Campagne.
+- `php scripts/check-review-pages.php` — les treize comportements de la page des sprites, les sept de la page Campagne.
 - `php scripts/check-page-selectors.php` — chaque sélecteur qu'un script cherche existe-t-il dans son balisage ? Un sélecteur qui ne trouve rien ne lève rien : le bouton ne fait simplement plus rien.
 - `php scripts/check-asset-theme.php` — aucun nom de thème hors de son module, et la complétude rapportée.
 - `python3 scripts/check-subjects.py` — le référentiel contre les fichiers réellement livrés.
@@ -48,6 +52,12 @@ Toute écriture reconstruit la page `/sujets`. **Chaque point porte son analyse 
 - `bash scripts/diff-prompts.sh` — réassemble les consignes et dit ce qui a bougé depuis la référence figée. Ne dessine rien. `--freeze` refige.
 - `python3 scripts/check-runes.py` — chaque rune déclarée au référentiel des créatures a sa forme, son tracé et sa couleur dans `assets/runes.json`, et réciproquement.
   **Les vingt formes se regardent** : `python3 local/scripts/draw-runes-sheet.py` les dessine sur une planche, sous leur nom — une coordonnée ne se contrôle qu'à l'œil.
+- `python3 scripts/set-rune-anchor.py --list` — les représentations de créature qui n'ont pas encore leur ancre de rune ; sans `--list`, elle se pose, et le point se lit sur la grille que
+  `python3 local/scripts/draw-anchor-grid.py <image>` dessine par-dessus la sprite grossie. **La rune posée se regarde** : `php local/scripts/see-placed-rune.php [individu]` la trace sur la sprite à
+  trois grossissements — c'est là qu'on voit si la forme, la couleur, la taille et l'ancre s'accordent, et que la taille ne suit pas celle du porteur.
+
+**DEUX GÉNÉRATIONS DU MÊME VARIANT NE PARTENT PAS ENSEMBLE** : un verrou par variant sous `var/locks/`, pris avant tout le reste et rendu même sur échec, et
+l'inscription au référentiel sérialisée par un verrou global. Éprouvé par `bash local/scripts/trial-generation-lock.sh`, sans dépenser de génération.
 
 **LES ESSAIS DES HOOKS** : `bash local/scripts/essai-mot-ordre.sh` (la forme d'un ordre), `essai-hook-prompt.sh`, `essai-hook-stop.sh`, `essai-stop-transcrit.sh`, `test-stop-multiline.sh`. **Huit cas
 de ce dernier sont rouges** : ils écrivent le `STOP` en entrée `user` du transcrit, soit la lecture d'ordres retirée le 2026-08-09, et non le porteur réel `queue-operation`. Ce sont des essais
@@ -58,6 +68,9 @@ d'agent, dans le répertoire de l'agent : ils se réécrivent au fil du dépilem
 `probe-filter-state.php` (le compte sous les filtres), `probe-state-refresh.php` (l'état d'un sujet suit ses verdicts), `probe-theme-shot.php` (la page dans un thème forcé),
 `probe-orphans.php` (la section hors modèle), `montrer-queue-operation.php` (les messages glissés en cours de tour).
 
+**LE NAVIGATEUR DES SONDES NE S'ÉCRIT NULLE PART** : son chemin est la clé `browser` de `review-server/config.json`, et les trois gestes vivent dans le service `Browser` — `shot()` pour le tir
+d'écran, `dom()` pour la page après exécution de son script, `console()` pour ce qu'elle a imprimé. Un navigateur absent le dit et nomme le chemin cherché.
+
 **ET UNE SONDE N'ÉCRIT JAMAIS DANS LES DONNÉES DE L'OPÉRATEUR.** La page de revue enregistre chaque verdict sur le serveur au moment où on le coche : une sonde qui clique pour mesurer **écrit pour
 de vrai**. Dix entrées vides ont ainsi été déposées dans `review-server/notes/sprites.json` le 2026-08-11, puis retirées par `python3 local/scripts/clean-empty-verdicts.py --apply`. Toute sonde qui
 clique neutralise l'envoi avant son premier clic. **Une sonde s'ajoute en fin de fichier, jamais avant `</body>`** : la page
@@ -65,11 +78,24 @@ construite n'en porte pas, donc un `str_replace` dessus ne change rien et la son
 
 **ET UNE SONDE PASSE PAR LE SERVEUR, JAMAIS PAR LE FICHIER** (mesuré le 2026-08-11). La page appelle son style et son script par une adresse absolue, et lit ses verdicts par une requête : ouverte
 depuis le disque, elle n'a ni style, ni script, ni état — tous ses boutons sont morts et toutes ses remarques vides. **Une sonde qui ouvre le fichier mesure la sonde**, et elle rapporte un défaut
-qui n'existe pas. La copie sondée s'écrit sous `var/tmp/` et se charge par `http://localhost:8080/var/tmp/…`, donc de la même origine que le serveur. C'est le point `W21 sondes-servies`.
+qui n'existe pas. La copie sondée s'écrit sous `var/tmp/` et se charge par l'adresse du serveur, `…/var/tmp/…`, donc de la même origine que lui. C'est le point `W21 sondes-servies`.
 
 **LES MESURES** : `python3 local/scripts/list-off-band-sprites.py` (les boîtes hors fourchette), `measure-ink-off-band.py` (la hauteur de l'encre, pas de la boîte).
 
 ### Ce qui est vrai du modèle, et qu'aucun fichier ne dit à lui seul
+
+**AUCUNE RUNE N'EST TRACÉE SUR LA PAGE DE REVUE, ET AUCUNE ANCRE N'EST POSÉE** (opérateur, 2026-08-12) — un point posé sur la vue de face avait été recopié sur
+les vues tournées, où il ne tombait nulle part. Les trois ancres sont retirées, `set-rune-anchor.py --list` redit vrai, et `runeMark()` rend une chaîne vide en
+disant pourquoi. Le tracé revient en rappelant `Rune` depuis cette fonction ; ce qui attend est `S53 rune-creature`.
+
+**LA RUNE SE TRACE AU RENDU, ET LES TROIS DONNÉES SONT EN PLACE** : la forme, la couleur et la taille (`size_tx`, un quart de case, constante) dans `assets/runes.json` ; l'**ancre** sur la
+représentation, clé `rune_anchor_px` ; et **l'individu sur la case de la scène**, puisque la sprite est celle de l'espèce et qu'une rune désigne quelqu'un. La maquette la trace déjà.
+
+**LES CLÉS SONT EN ANGLAIS, ET DEUX VOCABULAIRES DE TYPE COEXISTENT SANS SE CONFONDRE** : celui du référentiel (`assets/subjects.json`, onze types — `tree`,
+`grass`, `bridge`…) et celui, plus grossier, du catalogue d'assets (`assets/catalogue.json`, lu par `asset_catalog.TYPE_LAYER` — `ground`, `path`, `fence`…).
+**Le mot « sol » était un homonyme** : il nommait un type et un calque, et seul le type est devenu `ground` côté valeur — le calque porte le même mot en anglais
+sans que ce soit la même notion. Ce qui reste en français, et attend `S80 dossiers-en-anglais` parce que ce sont des noms de répertoire : les clés
+d'`asset_common.TYPES`.
 
 **LA FOURCHETTE DE HAUTEUR SE DÉCLARE AU VARIANT**, en `TY`, clés `height_min_ty` et `height_max_ty`. Aucune formule ne la produit — aucun script ne sait qu'une herbe est courte et qu'un chêne est
 grand. **Une fourchette absente arrête la commande**, sans repli. Les 69 fourchettes en place sont des **amorces reprises de l'ancienne formule et restent à relire**, sauf les 31 pièces
@@ -82,17 +108,24 @@ d'assemblage, fixées à la main à `1 TY` sans jeu.
 **LES RÉSEAUX NE SE FONT PAS MAINTENANT** (opérateur, deux fois le 2026-08-10) — formes manquantes **comme** reprises de pièces livrées. Refaire une pièce de `CH-019`, `CH-020` ou `OB-010` est une
 génération de réseau, quel qu'en soit le motif. **Ne pas les reproposer.**
 
-**LE `STOP` GLISSÉ EN COURS DE TOUR EST LU** — entrées `queue-operation` du transcrit, par `hook-stop.php` à la fin du tour et par `php scripts/check-stop-order.php <transcript.jsonl>` à la demande.
-Seul un `GO` maintient l'armement ; tout le reste vaut arrêt.
+**UNE RÉFÉRENCE NE PRÊTE JAMAIS SA VUE**, et c'est ce qui faisait rater les vues tournées : la clause de référence disait « la référence fait foi pour la forme »
+alors qu'elle montre le sud, pendant que la clause d'orientation demandait autre chose. Le générateur cherche maintenant le chemin de sa référence dans le
+référentiel pour savoir quelle vue elle porte, et retire direction, pose et place des parties de ce qu'on lui emprunte quand elle diffère.
+
+**UN ORDRE GLISSÉ EN COURS DE TOUR EST LU** — entrées `queue-operation` du transcrit, par `hook-stop.php` à la fin du tour et par
+`php scripts/check-last-order.php <transcript.jsonl>` à la demande. Cette commande **arme sur un `GO` et désarme sur tout le reste** : c'est le dernier mot de
+l'opérateur qui décide, jamais l'agent. Elle rend 0 si le dépilement est armé, 1 sinon. Ses essais : `bash local/scripts/trial-last-order.sh`.
 
 **LE HOOK DE BASE DE L'OPÉRATEUR EST BRANCHÉ** : `~/projects/local/hook/hook-pre-bash.sh`, en `PreToolUse` sur `Bash` seul. Il refuse les `;`, les `&&`, les `$(...)`, les redirections vers un
 fichier, les chemins absolus dans le dépôt et le `sed -i`. **Sur `Write` ou `Edit` il enfermerait l'agent** — il lit leur charge comme une ligne de commande.
 
 ### Ce qui attend l'opérateur
 
-- **Sept sprites à juger**, sur la page de revue : `TR-063-v13` (pommier), `TR-060-v8` (chêne repris d'aplomb), `CH-021_shape-ns-v5` et `CH-021_shape-ew-v2` (les deux ponts, sans eau), et
-  `BT-001-v13` avec ses propositions `p2-v7` et `p3-v7` (la maison de ferme, cette fois avec la plongée à soixante degrés). `HU-000-v2`, l'humain de référence, est validé.
+- **Les sprites à juger**, sur la page de revue, toutes reprises le 2026-08-12 sur ses verdicts : `TR-063-v14` (le pommier revenu à la forme de sa v5),
+  `TR-060-v9` (le chêne, tronc droit et fin, plus de racines évasées), `CH-021_shape-ns-v6` (le pont dans le style de sa v2), `SP-001-v5` (la créature à l'est,
+  dans le bon sens), `HU-000-v6` (l'humain à l'est, redressé), `CH-021_shape-ew-v2`, et `BT-001-v13` avec ses propositions `p2-v7` et `p3-v7`.
 - **Les quatre pages de revue portent le thème `graphite`**, sombre et unique, demandé le 2026-08-11 — à regarder et à dire s'il convient.
 - **`BT-002 p2`** — la version abîmée du centre de soin, à écarter ; c'est un verdict, pas un dessin.
 - **Les 66 fourchettes amorcées**, à relire.
-- **Dix points `proposed`**, à valider ou à classer.
+- **LA PAGE `/backlog` NE MONTRE PLUS QUE CE QUI L'ATTEND** (2026-08-12 : « n'avoir que les topics qui ont besoin d'une réponse ») — un point `proposed`, une
+  question, ou un point dont l'attente est sur lui. Le critère est au service, `Backlog::awaitsOperator()`. Le reste est compté et listé en une ligne, replié.

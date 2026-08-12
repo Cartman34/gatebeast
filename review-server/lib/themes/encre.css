@@ -28,6 +28,12 @@
    * picture rather than on the interface. */
   --overlay: rgba(255, 255, 255, 0.30);
   --overlay-soft: rgba(255, 255, 255, 0.16);
+  /* THE GROUND FOOTPRINT AND THE OVERHANG NEVER LOOK ALIKE: two saturated hues, opposed to each other and to what a sprite of this world carries — warm coral
+   * for what touches the ground, cold cyan for what a volume overhangs. Same values as the other themes because they are read over the SPRITE, not over the
+   * page: what they must contrast with is the image, which does not change with the dressing. */
+  --footprint-edge: #ff8a5c;
+  --footprint-field: rgba(255, 138, 92, 0.16);
+  --overhang-edge: #45e0e8;
   /* The ink written on a filled state: every state fill is a deep colour, so what is written on it is always near-white. */
   --ink-on-state: #f2f3f5;
   /* Les couleurs d'état, nommées en anglais comme tout nom technique. La couleur pleine sert au fond, la bordée au trait et au texte. */

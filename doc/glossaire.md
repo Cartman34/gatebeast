@@ -110,6 +110,15 @@ donnée par l'opérateur le 2026-08-07 : il abrège quand il écrit vite, et les
 | CDS | Le centre de soin, sujet `BT-001`. |
 | HDC | L'herbe de clairière, sujet `TR-064`. |
 
+## Les valeurs de type, en anglais depuis le 2026-08-12
+
+**Une valeur de type est du code** — le programme la compare, la trie et l'indexe —, donc elle est en anglais ; **le libellé affiché reste français**, et il vit
+ailleurs. Traduction figée, pour que personne n'en réinvente une seconde : `ground`, `path`, `stream`, `bridge`, `fence`, `tree`, `grove`, `grass`, `building`,
+`human`, `creature`.
+
+**ATTENTION À DEUX HOMONYMES QUI N'ONT PAS BOUGÉ** : le **calque** `sol` garde son nom — c'est une autre notion que le type `ground` —, et les **répertoires** du
+disque (`assets/cutout/sol/`, `poc/batiment/`…) viennent du préfixe du code, pas du type : ils sont encore en français, et les renommer déplace des fichiers.
+
 ## Termes bannis
 
 Un mot est banni quand il désigne plusieurs choses à la fois, ou quand il porte un sens venu d'ailleurs qui ne vaut pas ici. Un terme banni ne s'emploie **nulle part** — ni dans les documents, ni dans
@@ -126,6 +135,7 @@ le code, ni dans les échanges.
 | adresse | ref | Évoquait un chemin de fichier, alors qu'une ref désigne une chose du modèle, où qu'elle soit rangée. |
 | contrôleur | validateur, ou script | N'existe pas dans ce projet, qui n'a que des scripts et des validateurs. |
 | fiche | la description d'un sujet, ou son entrée à l'inventaire | Désigne indifféremment la description, l'ensemble des informations d'un sujet, celles d'un variant ou celles d'une sprite : on ne sait jamais laquelle. |
+| sujet, pour ce qu'il reste à faire | **task**, ou **topic** quand c'est un sujet de discussion — **et ces deux mots ne se traduisent jamais** : on dit « une task », « un topic », en français comme ailleurs (opérateur, 2026-08-12 : « ça doit être indiqué qu'en FR, ça reste ces mots-là aussi, faut pas commencer à les traduire »). Jamais « une tâche », jamais « un point », jamais « un sujet ». | Le mot désignait à la fois les choses du monde — un chêne, un chemin — et ce qu'il reste à faire. L'opérateur a cherché des boutons de vote sur la page de la pile le 2026-08-12, et il a fallu trois allers-retours pour découvrir qu'on ne parlait pas de la même page. Les deux pages ont perdu le mot en même temps (règle du dépôt), et la donnée l'avait déjà : `review-server/tasks.json`. « Sujet » ne désigne plus qu'une chose du monde. |
 | tracé | sprite, ou pièce d'un assemblage | La notion n'a jamais existé : c'était un dessin SVG, qui ne passait pas par le générateur d'images. Tout ce qui se dessine est une sprite, et une sprite qui se pose bout à bout avec ses voisines est une pièce d'un assemblage. |
 | tirer une sprite | générer une sprite, ou la regénérer | **Mot interdit** (opérateur, 2026-08-11 : « tirer est un mot interdit, ce verbe ne veut rien dire en français, tu l'as inventé et tu le réinventes à chaque fois »). Une image se **génère** ; une image refaite se **regénère**. Le verbe n'a jamais désigné quoi que ce soit dans ce projet, et il revenait à chaque séance parce que rien ne l'avait écarté. |
 | toile | les dimensions de l'image | Ne nomme rien du modèle : selon la phrase, il désignait la surface de l'image, ses dimensions ou le fichier lui-même. |

@@ -1465,7 +1465,11 @@
     {
       "column": 10,
       "row": 18,
-      "subject": "SP-001"
+      "subject": "SP-001",
+      "individual": "SP-001-1",
+      "_individual_comment": "L'INDIVIDU EST UNE DONNÉE DE LA SCÈNE, PAS DE L'IMAGE (opérateur, 2026-08-12, réponse A) : la sprite est celle de l'espèce, et c'est la scène",
+      "_individual_comment_suite": "qui dit QUI se tient là. Sans ce nom, le rendu n'a aucune rune à tracer — une rune désigne un individu. Un seul est posé pour l'instant, le renardeau de",
+      "_individual_comment_fin": "référence, sur la case où la scène mettait déjà un renardeau : la marque se voit en situation sans que le peuplement du monde soit décidé pour autant."
     },
     {
       "column": 19,

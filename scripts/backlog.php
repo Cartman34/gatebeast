@@ -1,14 +1,14 @@
 <?php
 /**
  * USAGE
- *   php scripts/backlog.php <subcommand> [arguments] — the one way the open points of the project are read and edited. Every subcommand that writes rebuilds the /sujets page on its way out.
+ *   php scripts/backlog.php <subcommand> [arguments] — the one way the open points of the project are read and edited. Every subcommand that writes rebuilds the /backlog page on its way out.
  *
  *     next                                     the next point to take, and nothing else
  *     list [--all]                             the open points in priority order; --all adds the closed ones
  *     show <REF>                               one point in full, description included
  *     add <SERIES> <priority> <label> [ref]    a new point; its long description is read from standard input
  *     set <REF> <field> <value> [waits-on]     change one field: priority, status, label, waiting
- *     describe <REF>                           replace the long description, read from standard input
+ *     describe <REF> [@file|text]              replace the long description: from a file with @path, from the argument, or from standard input
  *     close <REF> [why]                        status "done", with an optional closing sentence
  *
  * INTENTION
@@ -33,7 +33,7 @@ function today(): string
 /** Rebuilds the served page. Every write goes through here: that is what keeps the page from ever lying about the state of the pile. */
 function republish(string $root): void
 {
-    exec(sprintf('php %s /sujets 2>&1', escapeshellarg($root . '/review-server/build.php')), $lines, $status);
+    exec(sprintf('php %s /backlog 2>&1', escapeshellarg($root . '/review-server/build.php')), $lines, $status);
     if ($status !== 0) {
         fwrite(STDERR, "La page n'a pas pu être reconstruite :\n" . implode("\n", $lines) . "\n");
     }
@@ -197,7 +197,28 @@ if ($command === 'describe') {
     if (!$point) {
         throw new RuntimeException("FAULT le point « " . ($argv[2] ?? '') . " » n'existe pas.");
     }
-    $point['description'] = trim(stream_get_contents(STDIN));
+    // TROIS ENTRÉES, ET AUCUNE NE PEUT EFFACER PAR MÉGARDE. L'argument était lu puis ignoré en silence, et l'entrée standard vide écrasait la description par
+    // du vide : « php scripts/backlog.php describe dossiers-en-anglais », tapé pour la RELIRE, a effacé les vingt lignes qu'elle portait. Une description ne
+    // se vide donc plus que sur demande explicite, `--clear` ; sans texte d'aucune sorte, la commande refuse au lieu de détruire.
+    $given = $argv[3] ?? null;
+    if ($given === '--clear') {
+        $text = '';
+    } elseif ($given !== null && str_starts_with($given, '@')) {
+        $file = substr($given, 1);
+        if (!is_file($file)) {
+            throw new RuntimeException("FAULT le fichier « {$file} » n'existe pas — describe le cherchait pour y lire la description.");
+        }
+        $text = trim(file_get_contents($file));
+    } elseif ($given !== null) {
+        $text = trim($given);
+    } else {
+        $text = trim(stream_get_contents(STDIN));
+    }
+    if ($text === '' && $given !== '--clear') {
+        throw new RuntimeException("FAULT aucune description reçue pour « {$point['ref']} » — donnez-la en argument, par @fichier ou sur l'entrée standard, "
+            . "ou passez « --clear » pour la vider vraiment. Rien n'a été écrit.");
+    }
+    $point['description'] = $text;
     $point['updated'] = today();
     $backlog->save($point);
     republish($root);

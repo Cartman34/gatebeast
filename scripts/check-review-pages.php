@@ -105,7 +105,15 @@ $rules = [
     ],
 ];
 
-// LA PAGE CAMPAGNE PORTE DEUX FOIS LE MÊME OUTIL DE REMARQUES — une copie pour le plan de composition, une pour la maquette montée, la seconde préfixée « mq- ».
+/**
+ * Le préfixe que la page fusionnée pose sur les classes de la maquette montée, pour que les deux outils cessent de se marcher dessus.
+ *
+ * ÉCRIT UNE FOIS ICI PARCE QUE TROIS RÈGLES LE COMPARENT, et qu'un préfixe recopié dans trois chaînes est un préfixe qu'on changera dans deux. Il valait « mq- »
+ * jusqu'au 2026-08-12 — une abréviation française dans du code, ce que l'opérateur a refusé : un symbole de code est anglais, y compris abrégé.
+ */
+const MOCKUP_PREFIX = 'mockup-';
+
+// LA PAGE CAMPAGNE PORTE DEUX FOIS LE MÊME OUTIL DE REMARQUES — une copie pour le plan de composition, une pour la maquette montée, la seconde préfixée.
 // Les faire converger est un remaniement à risque sur une page relue tous les jours, et le premier pas est de FIGER CE QUI DOIT SURVIVRE : sans ce filet, la
 // convergence se contrôle à l'œil, et deux comportements repartent — c'est déjà arrivé deux fois sur la page des sprites.
 //
@@ -120,7 +128,7 @@ $campaignHtml = file_get_contents($campaign);
 
 /** Un comportement attendu des DEUX outils : la même classe, une fois nue pour le plan, une fois préfixée pour la maquette. */
 $onBoth = fn (string $name): callable => fn (string $html): bool =>
-    str_contains($html, 'class="' . $name . '"') && str_contains($html, 'class="mq-' . $name . '"');
+    str_contains($html, 'class="' . $name . '"') && str_contains($html, 'class="' . MOCKUP_PREFIX . $name . '"');
 
 $campaignRules = [
     // LA CLASSE TESTÉE ICI ÉTAIT `code`, ET ELLE NE PORTAIT PAS CE COMPORTEMENT (corrigé le 2026-08-11). Le survol est annoncé par l'élément `.survol`, présent
@@ -130,12 +138,21 @@ $campaignRules = [
     ['Un clic ouvre la saisie', 'c\'est le seul geste qui attache une remarque à une case', $onBoth('poser')],
     ['La saisie s\'annule', 'un clic malheureux ne doit pas obliger à écrire pour s\'en sortir', $onBoth('annuler')],
     ['Les remarques posées se listent', 'une remarque qu\'on ne relit pas est une remarque perdue', $onBoth('remarques')],
-    ['Le récapitulatif se copie', 'c\'est ainsi que l\'opérateur me les transmet', $onBoth('copier')],
+    // LA COPIE DU RÉCAPITULATIF N'EST PLUS UN COMPORTEMENT, ELLE EST UN INTERDIT (opérateur, 2026-08-12 : « tous les mécanismes avec relevé doivent disparaitre,
+    // tout doit être mis sur le serveur »). La règle ne disparaît donc pas : elle se retourne. Sans elle, rien n'empêcherait le bouton de revenir au premier
+    // constructeur qui trouverait pratique de « rendre la liste copiable », et personne ne le verrait avant que l'opérateur ne le signale.
+    [
+        'Aucun relevé ne se copie, sur aucune des deux vues',
+        'un bouton de copie est un canal vers la conversation, et tout passe désormais par le serveur',
+        fn (string $html): bool => !str_contains($html, 'class="copier"') && !str_contains($html, 'class="' . MOCKUP_PREFIX . 'copier"'),
+    ],
     ['Les remarques s\'effacent', 'sans retrait, la liste ne se vide jamais et cesse d\'être lue', $onBoth('effacer')],
     [
-        'Le plan classe une remarque traitée et sait la rouvrir',
-        'une remarque dont je me suis occupé qui revient à chaque lecture a coûté cinq redites le 2026-08-06 ; la maquette doit en hériter, elle ne l\'a pas encore',
-        fn (string $html): bool => str_contains($html, 'class="rouvrir"') && str_contains($html, 'dataset.resolus'),
+        'Les DEUX vues classent une remarque traitée et savent la rouvrir',
+        'une remarque dont je me suis occupé qui revient à chaque lecture a coûté cinq redites le 2026-08-06 ; la maquette en a hérité en rejoignant l\'outil commun',
+        // LA RÈGLE A ÉTÉ DURCIE LE 2026-08-12, AVEC LA CONVERGENCE : elle n'exigeait la réouverture que du plan, parce que la maquette ne savait pas le faire. Elle
+        // le sait, donc la règle l'exige — une règle laissée au niveau de l'ancienne moitié laisserait la capacité se reperdre sans que rien ne le dise.
+        fn (string $html): bool => $onBoth('rouvrir')($html) && str_contains($html, 'dataset.resolus'),
     ],
 ];
 

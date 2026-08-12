@@ -8,9 +8,8 @@ the renderer consumes it, and the game core never sees a file name.
 WHAT A PROFILE CARRIES
   code        the inventory code XX-nnn, stable for life
   name        the profile name, us-english lowercase, shape "kind-nn"
-  type        sol | chemin | cloture-et-mur | vegetation | batiment | objet | humain | creature |
-              point-de-passage
-  layer       the layer family it is drawn in: sol | decor-au-sol | monde | dessus
+  type        ground | path | fence | vegetation | building | object | human | creature | waypoint
+  layer       the layer family it is drawn in: ground | ground-decor | world | above
   footprint   ground footprint in tiles {columns, rows}
   height      the declared height in tiles, quoted from the inventory sheet ("2 cases debout"). It is
               what gives a pixel measurement a scale; null when the sheet declares none.
@@ -124,19 +123,21 @@ def check_layout(placed):
     return faults
 
 # The five layer families, in drawing order (rendu-en-calques.md). "interface" carries no asset profile.
-LAYERS = ["sol", "decor-au-sol", "monde", "dessus", "interface"]
+LAYERS = ["ground", "ground-decor", "world", "above", "interface"]
 
 # The layer each type is drawn in.
+# ATTENTION AUX HOMONYMES : la VALEUR DE TYPE « sol » est devenue `ground` le 2026-08-12, mais le NOM DE CALQUE « sol » n'a pas bougé — ce sont deux notions qui
+# portaient le même mot. Traduire les deux d'un même geste aurait renommé un calque que personne n'a demandé de renommer.
 TYPE_LAYER = {
-    "sol": "sol",
-    "chemin": "decor-au-sol",
-    "cloture-et-mur": "monde",
-    "vegetation": "monde",
-    "batiment": "monde",
-    "objet": "monde",
-    "humain": "monde",
-    "creature": "monde",
-    "point-de-passage": "monde",
+    "ground": "ground",
+    "path": "ground-decor",
+    "fence": "world",
+    "vegetation": "world",
+    "building": "world",
+    "object": "world",
+    "human": "world",
+    "creature": "world",
+    "waypoint": "world",
 }
 
 # A flat track is drawn once per DRAWING, not once per edge set: the fifteen combinations come down to
@@ -169,23 +170,23 @@ def _lot_still(pairs):
 
 
 REQUIRED_LOTS = {
-    "sol": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
-    "chemin": {
+    "ground": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
+    "path": {
         "target": _lot_still([("south", shape) for shape in PATH_SHAPES]),
         "v0": _lot_still([("south", "ns"), ("south", "ne")]),
     },
     # The target lot is "the useful edge combinations, each drawn separately" — which combinations a
     # profile actually uses is a property of its layout, so only the park lot the design spells out is
     # expressible here.
-    "cloture-et-mur": {"target": _lot_still(FENCE_LOT), "v0": _lot_still(FENCE_LOT)},
+    "fence": {"target": _lot_still(FENCE_LOT), "v0": _lot_still(FENCE_LOT)},
     "vegetation": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
-    "batiment": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
-    "objet": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
-    "humain": {"target": _lot_moving(["idle", "walk"]), "v0": _lot_moving(["idle"])},
+    "building": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
+    "object": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
+    "human": {"target": _lot_moving(["idle", "walk"]), "v0": _lot_moving(["idle"])},
     "creature": {"target": _lot_moving(["idle", "walk"]), "v0": _lot_moving(["idle"])},
     # The target lot of a crossing point is "a series of images", whose count the design leaves open.
     # Only its v0 lot is expressible today.
-    "point-de-passage": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
+    "waypoint": {"target": _lot_still([MAIN_VIEW]), "v0": _lot_still([MAIN_VIEW])},
 }
 
 

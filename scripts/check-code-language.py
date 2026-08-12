@@ -23,6 +23,7 @@ Intention:
 """
 
 import ast
+import collections
 import pathlib
 import re
 import sys
@@ -197,12 +198,18 @@ def check_text(path, source):
 
 
 def main(argv):
+    # LE VERDICT D'ABORD, LE DÉTAIL SUR DEMANDE (methode/execution.md, « Une sortie qui inonde le contexte »). Six cent neuf lignes partaient dans le contexte de
+    # l'appelant à chaque passage, tronquées avant la fin : l'outil ne disait même plus tout ce qu'il avait trouvé. Il rend maintenant son compte par répertoire,
+    # ce qui suffit à savoir où est la dette, et `--detail` rouvre la liste entière.
+    detail = "--detail" in argv
+    argv = [a for a in argv if a != "--detail"]
     if argv:
         targets = [pathlib.Path(a).resolve() for a in argv]
     else:
         targets = [p for directory in SCANNED for p in (ROOT / directory).rglob("*") if p.suffix in SUFFIXES]
 
     faults = []
+    by_directory = collections.Counter()
     for path in sorted(targets):
         if not path.is_file() or path.suffix not in SUFFIXES:
             continue
@@ -210,19 +217,30 @@ def main(argv):
         if relative in EXEMPT:
             continue
         # THE NAME IS CHECKED BEFORE THE CONTENT, because a file whose own name breaks the rule teaches it to everything that cites it.
+        # LE RÉPERTOIRE DE TÊTE PORTE LE COMPTE, parce que c'est lui qui dit à qui la dette appartient : `local/scripts/` est le jetable de l'agent, `scripts/`
+        # est l'outillage du projet, et confondre les deux fait paraître énorme une dette qui, pour l'essentiel, se supprime avec ses fichiers.
+        parts = relative.split("/")
+        family = "/".join(parts[:2]) if parts[0] == "local" else parts[0]
         for word in re.findall(r"[a-zà-ÿ]+", path.stem.lower()):
             if word in FORBIDDEN_IN_NAMES:
                 faults.append(f"  {relative} — le NOM porte « {word} », à écrire « {FORBIDDEN_IN_NAMES[word]} »")
+                by_directory[family] += 1
 
         source = path.read_text(encoding="utf-8", errors="replace")
         found = check_python(path, source) if path.suffix == ".py" else check_text(path, source)
         for number, token, word in found:
             faults.append(f"  {relative}:{number} — « {token} » porte « {word} », à écrire « {FORBIDDEN[word]} »")
+            by_directory[family] += 1
 
     if faults:
-        print(f"{len(faults)} valeur(s) technique(s) en français dans le code :", file=sys.stderr)
-        print("\n".join(faults), file=sys.stderr)
-        print("\nLes commentaires et les textes destinés à l'opérateur restent en français ; les noms et les valeurs comparées, jamais.", file=sys.stderr)
+        print(f"{len(faults)} valeur(s) technique(s) en français dans le code, sur {len(targets)} fichier(s) lus :", file=sys.stderr)
+        for family, count in by_directory.most_common():
+            print(f"  {family}/ — {count}", file=sys.stderr)
+        if detail:
+            print("\n".join(faults), file=sys.stderr)
+        else:
+            print(f"\n{len(faults)} ligne(s) de détail tues — « --detail » les rouvre.", file=sys.stderr)
+        print("Les commentaires et les textes destinés à l'opérateur restent en français ; les noms et les valeurs comparées, jamais.", file=sys.stderr)
         return 1
 
     print(f"{len(targets)} fichier(s) : aucun vocabulaire technique en français.")

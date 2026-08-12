@@ -71,7 +71,7 @@ SEAM_RATIO = 1.5     # a seam worse than this many times the natural grain is a 
 CONTACT_BAND = 0.03  # share of the height taken as the ground-contact band
 SHAPE_TOLERANCE = 0.35  # relative gap allowed between the measured and declared shape ratio
 
-GROUND_TYPES = ("sol", "chemin")
+GROUND_TYPES = ("ground", "path")
 
 
 def luminance(rgb):
@@ -235,6 +235,8 @@ def report(path, profile, data):
     rgb = numpy.asarray(raw.convert("RGB"))
     height, width = rgb.shape[:2]
     is_ground = profile is not None and profile.type in GROUND_TYPES
+    # CE SONT DES NOMS DE RÉPERTOIRE, PAS DES VALEURS DE TYPE, et c'est pourquoi ils restent français quand `GROUND_TYPES` est passé à l'anglais le 2026-08-12 :
+    # les dossiers du disque viennent du préfixe du code (`CH` → `sol`), pas du type déclaré. Les traduire, c'est déplacer des fichiers — une autre task.
     if profile is None and path.parent.name in ("sol", "chemin"):
         is_ground = True
 

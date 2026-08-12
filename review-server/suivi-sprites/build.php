@@ -16,18 +16,21 @@ $root = dirname(__DIR__, 2);
 require_once $root . '/review-server/bootstrap.php';
 require_once $root . '/review-server/lib/Inventory.php';
 require_once $root . '/review-server/lib/Thumbnail.php';
+// The rune service is still required although the page draws no rune for now (see runeMark): the drawing comes back by calling it again, and dropping the
+// require with the call would turn a one-line return into a hunt through the history.
+require_once $root . '/review-server/lib/Rune.php';
 bootBuild();
 
-const SCREEN_PIXELS_PER_TILE = 24;   // ce qu'une case mesure à l'écran — la valeur du projet, tenue par scripts/tile_scale.py
-const COMPARE_PIXELS_PER_TILE = 48;  // ce qu'une case mesure dans la FSP, où l'on juge et compare (opérateur, 2026-08-06)
+const SCREEN_PIXELS_PER_TILE = 24;   // what a tile measures on screen — the project's own value, held by scripts/tile_scale.py
+const COMPARE_PIXELS_PER_TILE = 48;  // what a tile measures inside the full-screen panel, where images are judged and compared (operator, 2026-08-06)
 // ORPHAN_WIDTH is a width in pixels, not a count of tiles: an unclaimed image has no variant, so nothing declares how many tiles it covers. Wide enough to recognize the subject at a glance.
 const ORPHAN_WIDTH = 160;
 // THE TWO FAMILIES OF IMAGES UNDER assets/: the master as it comes out of the generator, and the cutout delivered to the game. Both words are those of the paths
 // the referential records — `master` and `path` — and they were typed out wherever the page swept the disk.
 const MASTER_DIRECTORY = 'poc';
 const DELIVERABLE_DIRECTORY = 'cutout';
-// Le raccourci d'une longueur au sol qui s'enfonce, sous la caméra à 60 degrés — le sinus de l'angle. Écrit ici en attendant que la page le demande au service qui
-// détient l'échelle, qui est en Python : c'est la seule valeur du modèle que cette page recopie, et elle est à supprimer dès que les deux côtés se parlent.
+// How much a ground length running away from the eye is foreshortened under the 60-degree camera — the sine of the angle. Written here until the page can ask
+// the service that holds the scale, which is in Python: this is the ONE model value this page copies, and it goes as soon as the two sides can talk.
 const GROUND_DEPTH_FACTOR = 0.8660;
 
 $outputPath = $argv[1] ?? __DIR__ . '/page.html';
@@ -37,12 +40,13 @@ $theme = Theme::get();
 $favicon = Favicon::get();
 $reload = Reload::get();
 
-// Les images manquantes plus bas ne sont PAS des fautes : elles se rapportent et se montrent comme des trous. Un trou qui se voit est ce qui dit à l'opérateur ce qui reste dû.
+// The missing images below are NOT faults: they are reported and shown as holes. A hole one can see is what tells the operator what is still owed.
 
 const TYPE_LABELS = [
-    'sol' => 'Sol', 'chemin' => 'Chemin', 'cours-d-eau' => "Cours d'eau", 'cloture' => 'Clôture et mur',
-    'arbre' => 'Arbre', 'bosquet-arbres' => "Bosquet d'arbres", 'herbe' => 'Herbe',
-    'batiment' => 'Bâtiment', 'humain' => 'Humain', 'creature' => 'Créature', 'pont' => 'Pont',
+    // THE KEY IS THE REFERENTIAL'S OWN VALUE, English since 2026-08-12; the label stays French, which is what the rule reserves for what is displayed.
+    'ground' => 'Sol', 'path' => 'Chemin', 'stream' => "Cours d'eau", 'fence' => 'Clôture et mur',
+    'tree' => 'Arbre', 'grove' => "Bosquet d'arbres", 'grass' => 'Herbe',
+    'building' => 'Bâtiment', 'human' => 'Humain', 'creature' => 'Créature', 'bridge' => 'Pont',
 ];
 
 // THE STATES A SUBJECT CAN BE IN, prefixed and spelled in English like every value the code compares. What a human reads is the label, and only the label.
@@ -63,11 +67,13 @@ const STATE_LABELS = [
     STATE_VALIDATED => 'Validé',
 ];
 
-// THE VERDICTS THE REFERENTIEL STORES, in French, and the state each one means. This table is the only bridge between the stored wording and the page's vocabulary.
+// THE VERDICTS THE REFERENTIAL STORES, English since 2026-08-12, and the state each one means. They are now the same three words the page writes into the
+// remarks: two vocabularies for one verdict meant a translation to keep in step on both sides — and it was already half done, the file carrying both `validee`
+// and `discarded`.
 const VERDICT_STATES = [
-    'validee' => STATE_VALIDATED,
+    'approved' => STATE_VALIDATED,
     'rework' => STATE_TO_REWORK,
-    'ecartee' => STATE_DISMISSED,
+    'discarded' => STATE_DISMISSED,
 ];
 
 function escape(string $text): string
@@ -75,13 +81,13 @@ function escape(string $text): string
     return htmlspecialchars($text, ENT_QUOTES);
 }
 
-/** La première lettre en majuscule, et elle seule — la règle d'affichage du projet. */
+/** The first letter capitalised, and only that one — the project's display rule. */
 function capitalize(string $text): string
 {
     return mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1);
 }
 
-/** L'image d'une représentation, réduite à la taille demandée, ou null si le fichier manque — un trou se montre, il ne se cache pas. */
+/** A representation's image, shrunk to the width asked for, or null when the file is missing — a hole is shown, never hidden. */
 function image(Thumbnail $thumbnails, array $representation, int $width): ?array
 {
     try {
@@ -150,7 +156,6 @@ foreach ($inventory->types() as $typeName => $type) {
     );
 }
 
-/** L'état d'un variant, en un mot : ce sur quoi les filtres de la grille agissent. */
 /**
  * THE STATE OF A SUBJECT, READ OFF ALL ITS VARIANTS AT ONCE — one word for the whole subject, which is what the grid shows and what the filters act on.
  *
@@ -187,8 +192,9 @@ function subjectState(Inventory $inventory, array $subject): string
 /**
  * The state of one variant, in the page's own vocabulary.
  *
- * THE REFERENTIEL STILL SPELLS ITS VERDICTS IN FRENCH — "validee", "rework", "ecartee" — and this is the one place that translates them. Renaming the stored
- * values is a data migration of its own, with its own point in the pile; until then, the French stays where it is written and never leaks into the code around it.
+ * THE REFERENTIAL SPELLS ITS VERDICTS IN ENGLISH SINCE 2026-08-12, and this is the one place that maps them onto the page's states. It used to hold French
+ * values and translate them here; the migration is done, so what is left is a mapping between two English vocabularies — a verdict on an image, a state on a
+ * variant — and they stay distinct because they are not the same thing.
  */
 function variantState(Inventory $inventory, array $variant): string
 {
@@ -200,18 +206,19 @@ function variantState(Inventory $inventory, array $variant): string
     return VERDICT_STATES[$current['verdict'] ?? ''] ?? STATE_TO_JUDGE;
 }
 
-/** Les mesures d'une image, dites en clair : ce que l'export a constaté sur le fichier livré. Rien n'est recalculé ici — la page montre ce qui est écrit. */
 /**
- * TOUTES les mensurations d'une image, et pas une sélection : ce que le sujet déclare — emprise, couvert, hauteur — et ce que l'export a mesuré sur le fichier.
- * Choisir trois chiffres à montrer, c'est décider à la place de l'opérateur lequel compte, et c'est justement ce qu'il regarde quand une image lui paraît fausse.
+ * An image's measurements, spelled out: what the export observed on the delivered file. Nothing is recomputed here — the page shows what is written.
+ *
+ * ALL OF THEM, NOT A SELECTION: what the subject declares — footprint, cover, height — and what the export measured on the file. Picking three figures to show
+ * decides for the operator which one matters, and those are exactly what he reaches for when an image looks wrong to him.
  */
 function measurements(array $representation, array $subject): string
 {
     $lignes = [];
     $footprint = $subject['footprint'];
     $cover = $subject['cover'] ?? null;
-    // CHAQUE MESURE SUR SA LIGNE, et l'emprise, le couvert et la hauteur d'abord : ce sont les trois seuils contre lesquels une image se juge. Groupées sur une
-    // ligne, elles se lisaient comme une phrase et il fallait les chercher au milieu.
+    // ONE MEASUREMENT PER LINE, and the footprint, the cover and the height first: they are the three thresholds an image is judged against. Grouped on one
+    // line they read as a sentence and had to be hunted for in the middle of it.
     $lignes[] = ['Emprise au sol', sprintf('%d × %d case%s', $footprint['columns'], $footprint['rows'], $footprint['columns'] > 1 ? 's' : '')];
     $lignes[] = ['Couvert', $cover ? sprintf('%d × %d cases', $cover['columns'], $cover['rows']) : 'égal à l\'emprise'];
     $lignes[] = ['Hauteur déclarée', sprintf('%s case%s', $subject['height'] ?? '—', ($subject['height'] ?? 0) > 1 ? 's' : '')];
@@ -250,13 +257,6 @@ function measurements(array $representation, array $subject): string
 }
 
 /**
- * La consigne figée à côté du maître, et le rapport de production s'il existe.
- *
- * Les trois vont ensemble et nulle part ailleurs : l'image dit ce qui est sorti, la consigne ce qui était demandé, le rapport comment on l'a obtenu. Juger sur
- * l'une des trois seule est ce qui a fait chercher la mauvaise cause plus d'une fois. Absentes, elles se taisent : les premières images du projet sont
- * antérieures à la règle qui fige une consigne.
- */
-/**
  * The button that opens a text, and the text itself, folded into the page.
  *
  * THE PATH BELONGS TO THE DRAWER, NEITHER TO THE BUTTON NOR TO THE DRAWER TITLE (operator, 2026-08-11). It is still shown, relative to the project root — one has
@@ -276,6 +276,13 @@ function textButton(string $label, string $path, string $root): string
     );
 }
 
+/**
+ * The frozen prompt kept beside the master, and the production report when there is one.
+ *
+ * THE THREE GO TOGETHER AND NOWHERE ELSE: the image says what came out, the prompt what was asked, the report how it was obtained. Judging on one of the three
+ * alone is what sent the search after the wrong cause more than once. When they are absent they say nothing: the project's first images predate the rule that
+ * freezes a prompt beside its master.
+ */
 function frozenPrompt(string $root, array $representation): string
 {
     $master = $representation['master'] ?? null;
@@ -286,8 +293,8 @@ function frozenPrompt(string $root, array $representation): string
     $name = pathinfo($master, PATHINFO_FILENAME);
     $report = $root . '/var/generations/sprites/' . $name . '-rapport.md';
     $blocks = '';
-    // UN TEXTE SE LIT EN GRAND ET SE COPIE : replié dans une carte de deux cent soixante pixels, il ne sert à rien. Le résumé ouvre la FSP du texte, où il tient
-    // toute la page et se sélectionne d'un bouton.
+    // A TEXT IS READ LARGE AND COPIED: folded into a card two hundred and sixty pixels wide it is of no use. The button opens it where it takes the whole width
+    // and can be selected in one click.
     // A DISPLAYED TEXT SAYS WHERE IT COMES FROM (operator, 2026-08-08). Without its path, one has to guess which file is being read in order to correct it, open
     // it in an editor or quote it — and two prompts from two versions of the same variant look alike enough to be confused. The path is given RELATIVE TO THE
     // PROJECT ROOT: that is what copies straight into a command, where an absolute path only means something on this machine.
@@ -301,15 +308,6 @@ function frozenPrompt(string $root, array $representation): string
     return $blocks;
 }
 
-/**
- * La grille posée sur une sprite : son emprise au sol, son couvert s'il déborde, et les deux axes.
- *
- * TOUT EST DIT EN CASES ET RENDU EN POURCENTAGE de la vignette, jamais en pixels : la vignette change de taille selon l'emprise du sujet et selon le zoom, alors
- * qu'une case reste une case. Écrire des pixels ici les ferait diverger de l'image dès qu'une taille change.
- *
- * L'IMAGE EST POSÉE SUR LA LARGEUR DU COUVERT, pas de l'emprise — c'est ce que fait la fabrique de vignettes juste au-dessus. L'emprise au sol se dessine donc
- * comme une part de cette largeur, centrée, et non comme la vignette entière : c'est exactement ce qu'on veut voir d'un chêne dont la couronne déborde de son pied.
- */
 /**
  * The delivered file on show and when it was written, under the variant's label.
  *
@@ -334,15 +332,24 @@ function version(string $root, ?array $current): string
         escape(basename($current['path'])), escape($when));
 }
 
+/**
+ * The grid laid over a sprite: its ground footprint, its cover when it overhangs, and the two axes.
+ *
+ * EVERYTHING IS SAID IN TILES AND RENDERED IN PERCENTAGES of the thumbnail, never in pixels: the thumbnail changes size with the subject's footprint and with the
+ * magnification, while a tile stays a tile. Writing pixels here would make them drift from the image the moment a size changes.
+ *
+ * THE IMAGE IS LAID OUT ON THE COVER'S WIDTH, not the footprint's — that is what the thumbnail factory does. The ground footprint is therefore drawn as a PART of
+ * that width, centred, and not as the whole thumbnail: which is exactly what one wants to see of an oak whose crown overhangs its foot.
+ */
 function grid(array $subject, array $spread, int $width, int $height): string
 {
     $footprint = $subject['footprint'];
     $covers = ($spread['columns'] !== $footprint['columns']) || ($spread['rows'] !== $footprint['rows']);
-    // La case, en pourcentage de la vignette : la largeur porte les colonnes du couvert, et la hauteur suit la même échelle puisque l'image n'est jamais déformée.
+    // The tile, as a percentage of the thumbnail: the width carries the cover's columns, and the height follows the same scale since the image is never distorted.
     $tile = 100 / $spread['columns'];
-    // UNE CASE DE PROFONDEUR NE SE PROJETTE PAS COMME UNE CASE DE LARGEUR, et l'oublier faisait descendre le cadre d'emprise bien plus bas que le sol du sujet —
-    // deux cases de vide devant le bâtiment, relevées par l'opérateur. Sous la caméra du monde, une longueur au sol qui s'enfonce est vue raccourcie ; le service
-    // qui détient l'échelle porte ce facteur, et c'est à lui qu'on le demande plutôt que de le retaper ici.
+    // A TILE OF DEPTH IS NOT PROJECTED LIKE A TILE OF WIDTH, and forgetting it dropped the footprint frame far below the subject's ground — two tiles of emptiness
+    // in front of the building, which the operator spotted. Under the world's camera a ground length running away is seen foreshortened; the service that holds
+    // the scale carries that factor, and it is asked for rather than retyped here.
     $tileY = $tile * $width / max($height, 1) * GROUND_DEPTH_FACTOR;
     $footWidth = 100 * $footprint['columns'] / $spread['columns'];
     $footHeight = $tileY * $footprint['rows'];
@@ -367,35 +374,97 @@ function grid(array $subject, array $spread, int $width, int $height): string
  * which is enough to know one exists and not enough to judge it — and judging one against the current is the only reason to open them. Two renderings of the same thing also drift: the footprint
  * grid, the date and the measurements were all added to the current one alone, and the gap widened at every addition. One function, called twice, cannot drift.
  */
-function representation(Thumbnail $thumbnails, string $root, array $subject, array $spread, array $representation): string
+/**
+ * The rune laid over a creature's representation — NOTHING FOR NOW, and this function is what says so.
+ *
+ * NO RUNE IS DRAWN ON THIS PAGE (operator, 2026-08-12: « pour l'instant, ne mets pas les runes sur les générations », then « SP-001 vue principale a une rune
+ * mal posée, faut la faire enlever », then « mais les autres variants aussi ont une rune mal posée en fait »). What was wrong was the ANCHOR, never the drawing:
+ * one point was placed on the front view and the same value written onto the turned views, where it lands nowhere. A mark shown at a spot nobody chose is worse
+ * than no mark — it reads as a decision. The anchors went with it, so `python3 scripts/set-rune-anchor.py --list` now tells the truth: these representations
+ * await a point.
+ *
+ * NOTHING ELSE IS REMOVED, and the drawing comes back by calling Rune again here: the shapes, the colours, the constant size and the placing tool are untouched,
+ * and `php local/scripts/see-placed-rune.php` still draws a placed rune outside this page. What this waits on is S53 rune-creature. The mechanism itself is in
+ * the history — `git show HEAD:review-server/suivi-sprites/build.php` — and is taken back from there rather than rewritten from memory.
+ */
+function runeMark(string $code, array $subject, array $representation, int $shownWidth): string
+{
+    return '';
+}
+
+/**
+ * The notes of ONE version: its three acts and its comment, filed under the path of its own image.
+ *
+ * FACING THE VERSION THEY JUDGE, NO LONGER ON THE VARIANT (operator, 2026-08-12: « les notes de chaque version doivent être en face de la version »). A remark
+ * has always been filed under the image's path — that is what stops one image's verdict from judging the next — but only the current version showed any: an
+ * earlier one kept its own in the repository with nothing on screen to display it.
+ *
+ * THE ENTRY ZONE STAYS FOLDED AND THE « + » BUTTON OPENS IT (operator, 2026-08-06 then 2026-08-07): unfolded by default it takes as much height as the three
+ * acts together, for a field filled one time in ten.
+ */
+function notes(string $key, string $comment): string
+{
+    return sprintf(
+        '<div class="acts" data-id="%s">%s'
+        . '<button type="button" class="open-comment" data-open="%s" aria-expanded="false" aria-label="Commentaire" title="Commentaire">+</button></div>'
+        . '<div class="comment-zone" data-more="%s" hidden>'
+        . '<textarea class="comment" data-id="%s" rows="2" placeholder="Ce qui devrait changer.">%s</textarea>'
+        . '<button type="button" class="clear-comment" data-id="%s" title="Effacer le commentaire" aria-label="Effacer le commentaire" hidden>×</button></div>',
+        escape($key), actions($key), escape($key), escape($key), escape($key), escape($comment), escape($key)
+    );
+}
+
+function representation(Thumbnail $thumbnails, string $root, string $code, array $subject, array $spread, array $representation): string
 {
     // THE SCALE IS FIXED AND THE SAME FOR EVERY SUBJECT: forty-eight pixels per tile in the panel, a tile staying a tile from one subject to the next. A large oak
     // therefore takes four times the width of a fence, which is the truth of the world; thumbnails all of one width let you neither compare two subjects nor see
     // that a sprite overflows — which is precisely what the footprint and the cover are there to show.
     $shot = image($thumbnails, $representation, COMPARE_PIXELS_PER_TILE * $spread['columns']);
-    // LA GRILLE SE POSE SUR L'IMAGE, À L'ÉCHELLE OÙ ELLE EST MONTRÉE (opérateur, 2026-08-07) : sans elle, une sprite se juge dans le vide — on ne voit ni ce
-    // qu'elle occupe au sol, ni ce qu'elle surplombe, ni où sont ses axes. Les trois se lisent à des couleurs différentes, et les valeurs sont celles du
-    // référentiel, jamais recalculées ici.
-    // L'IMAGE ET SA GRILLE SONT ENFERMÉES ENSEMBLE : sans cette enveloppe qui épouse l'image, la grille se cale sur la carte entière et son cadre d'emprise
-    // s'étire sur toute la largeur, en annonçant une sprite bien plus large qu'elle n'est.
+    // THE GRID IS LAID ON THE IMAGE, AT THE SCALE IT IS SHOWN AT (operator, 2026-08-07): without it a sprite is judged in a vacuum — one sees neither what it
+    // occupies on the ground, nor what it overhangs, nor where its axes are. The three read in different colours, and the values are the referential's own,
+    // never recomputed here.
+    // THE IMAGE AND ITS GRID ARE WRAPPED TOGETHER: without that wrapper hugging the image, the grid measures itself against the whole card and its footprint
+    // frame stretches across the full width, announcing a sprite far wider than it is.
+    // A CREATURE IS CLICKED TO PLACE ITS RUNE, AND ONLY A CREATURE: it is the one type that carries one. The image states its path and its scale, because the
+    // anchor is declared in the pixels of the DELIVERED image while the page shows it at another width — without the ratio, the click would land elsewhere.
+    $anchorable = '';
+    if (($subject['type'] ?? '') === 'creature' && $shot) {
+        $delivered = $representation['measures']['delivered_px'] ?? null;
+        if ($delivered) {
+            $anchorable = sprintf(' data-anchor-for="%s" data-delivered="%d" title="Cliquez pour poser la rune"', escape($representation['path']), $delivered['width']);
+        }
+    }
     $picture = $shot
-        ? sprintf('<span class="picture"><img src="%s" width="%d" height="%d" alt="">%s</span>', $shot[0], $shot[1], $shot[2], grid($subject, $spread, $shot[1], $shot[2]))
+        ? sprintf('<span class="picture"%s><img src="%s" width="%d" height="%d" alt="">%s%s</span>',
+            $anchorable, $shot[0], $shot[1], $shot[2], grid($subject, $spread, $shot[1], $shot[2]), runeMark($code, $subject, $representation, $shot[1]))
         : '<p class="to-produce">Image illisible</p>';
     $state = VERDICT_STATES[$representation['verdict'] ?? ''] ?? null;
 
-    return sprintf('%s<div class="variant-image">%s</div>%s%s%s',
+    // A VERSION'S CARD KEEPS ONLY WHAT IS NEEDED TO CHOOSE IT, ALL THE REST IS IN THE DRAWER (operator, 2026-08-12: « dans la liste des versions, on voit donc
+    // bien moins de détails dans le variant, tout est dans le panel à droite »). Its name, its date, its image, its verdict — and the button that opens the
+    // drawer. The measurements, the prompt and the report no longer clutter the list: they are asked for on the version one wants to look at.
+    $key = $representation['path'] ?? '';
+
+    return sprintf('%s<div class="variant-image">%s</div>%s%s'
+        . '<button type="button" class="open-version" data-for="%s">Voir cette version</button>'
+        . '<div class="version-full" data-version="%s" hidden>%s%s</div>',
         version($root, $representation),
         $picture,
         // THE VERDICT IS SHOWN THROUGH THE SAME VOCABULARY AS EVERYTHING ELSE: the stored French value is translated once, and the page speaks one language to itself.
         $state ? sprintf('<p class="verdict verdict--%s">%s</p>', escape($state), escape(STATE_LABELS[$state])) : '',
+        // THE JUDGEMENT STAYS ON THE GRID, IT IS NOT IN THE DRAWER (operator, 2026-08-12: « ça devait rester sur la grille de variant, faut que je puisse le
+        // donner rapidement »). Moved into the drawer, a verdict asked for two more gestures — open, then close — for an image one knows what to think of on
+        // sight. It stays filed under the path of ITS image, so every version keeps its own, earlier ones included.
+        notes($key, $representation['operator_comment'] ?? ''),
+        escape($key), escape($key),
+        // THE IMAGE IS NOT COPIED HERE, AND THAT IS A FAULT CAUGHT AT BUILD TIME: written a second time, it took the page from 37 to 71 MB — a thumbnail is a
+        // file written out IN FULL inside the page. The drawer picks it up from the card at the moment it opens, so none is ever duplicated.
         measurements($representation, $subject),
-        // LES VERSIONS ANTÉRIEURES PASSENT SOUS LA CONSIGNE ET LE RAPPORT DE LA VERSION COURANTE (opérateur, 2026-08-07) : intercalées entre les mesures et
-        // eux, elles séparaient une version de ses propres pièces justificatives et l'on ne savait plus à laquelle se rapportait quoi.
         frozenPrompt($root, $representation)
     );
 }
 
-/** La FSP d'un sujet : ses variants, la version courante de chacun en grand, les antérieures, les mesures, la consigne, le verdict et les actions. */
+/** A subject's full-screen panel: its variants, each one's current version, the earlier ones, the measurements, the prompt, the verdict and the actions. */
 function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string $code, array $subject): string
 {
     $spread = $inventory->spread($subject);
@@ -406,50 +475,48 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
         // TWO NAMES BECAUSE THEY ARE TWO THINGS: $current is the current representation, a piece of data; $rendered is its markup. They shared one name for a
         // moment, during a vocabulary migration, and the page stopped building — the markup arrived where the data was expected.
         $rendered = $current
-            ? representation($thumbnails, $root, $subject, $spread, $current)
+            ? representation($thumbnails, $root, $code, $subject, $spread, $current)
             : '<div class="variant-image"><p class="to-produce">À produire</p></div>';
         $comment = $current['operator_comment'] ?? '';
         $previous = $inventory->previousRepresentations($variant);
         $identifier = $code . ' ' . $ref;
         $anciennes = '';
         foreach ($previous as $old) {
-            // MÊME PRÉSENTATION QUE LA COURANTE, AUCUNE SPÉCIFICITÉ (opérateur, 2026-08-07) : son image à la même échelle avec sa grille d'emprise, son nom de
-            // fichier, sa date, son verdict, ses mesures et sa consigne. C'est en la mettant en regard de la courante qu'on décide si la reprise a servi.
-            $anciennes .= sprintf('<article class="previous">%s</article>', representation($thumbnails, $root, $subject, $spread, $old));
+            // THE SAME PRESENTATION AS THE CURRENT ONE, NO SPECIAL CASE (operator, 2026-08-07): its image at the same scale with its footprint grid, its file
+            // name, its date, its verdict, its measurements and its prompt. It is by holding it against the current one that one decides whether the retake served.
+            // AN EARLIER VERSION CARRIES ITS PATH IN THE MARKUP, and that is what makes its comments findable: a remark is filed under the path of the image it
+            // judges, so without that path the page has no way of knowing a text exists on an older one.
+            $anciennes .= sprintf('<article class="previous" data-version="%s">%s</article>',
+                escape($old['path'] ?? ''), representation($thumbnails, $root, $code, $subject, $spread, $old));
         }
-        $key = reviewKey($identifier, $current);
-        // LE BLOC DE JUGEMENT SE CONSTRUIT AVANT, ET C'EST UNE LEÇON PAYÉE : je l'avais rendu conditionnel À L'INTÉRIEUR du gabarit, en laissant des marques de
-        // substitution dans la branche vide. Elles consommaient quand même leurs arguments et les recrachaient en clair — le balisage des actions se retrouvait
-        // déversé au milieu de la page, qui s'est disloquée. Un gabarit ne porte pas de condition ; ce qui varie se calcule avant et n'y entre qu'une fois décidé.
+        // THE JUDGEMENT BLOCK LEFT THE VARIANT FOR THE VERSION (operator, 2026-08-12): every version now carries its own notes under its own image, earlier ones
+        // included, which showed none. The variant keeps none, and the line announcing « an older version carries a comment » has lost its reason — the older one
+        // shows it itself, right there. Checked before removal, as the task asked.
         $review = '';
-        if ($current) {
-            $review = sprintf(
-                '<div class="acts" data-id="%s">%s'
-                . '<button type="button" class="open-comment" data-open="%s" aria-expanded="false" aria-label="Commentaire" title="Commentaire">+</button></div>'
-                . '<div class="comment-zone" data-more="%s" hidden>'
-                . '<textarea class="comment" data-id="%s" rows="2" placeholder="Ce qui devrait changer.">%s</textarea>'
-                . '<button type="button" class="clear-comment" data-id="%s" title="Effacer le commentaire" aria-label="Effacer le commentaire" hidden>×</button></div>',
-                escape($key), actions($key), escape($key), escape($key), escape($key), escape($comment), escape($key)
-            );
-        }
-        // LA ZONE DE SAISIE EST REPLIÉE, ET C'EST LE BOUTON « ＋ » QUI L'OUVRE (opérateur, 2026-08-06 puis 2026-08-07). Dépliée d'office, elle prend autant de hauteur que
-        // les trois actes réunis sur chaque carte, pour un champ qu'on ne remplit qu'une fois sur dix. Cocher « À reprendre » ou « Écarter » l'ouvre toute seule : un refus
-        // demande son motif, un accord n'a rien à justifier.
         $blocks .= sprintf(
             '          <article class="variant" data-state="%s">%s'
-            // LE LIBELLÉ FRANÇAIS D'ABORD, LA RÉFÉRENCE TECHNIQUE ENSUITE ET EN PETIT : la carte disait « orientation-south_action-idle_shape-e_frame-01 » et rien d'autre, ce qui n'apprend
-            // rien à qui regarde une image (opérateur, 2026-08-07). Le libellé vient du référentiel, jamais composé ici — une page qui compose du vocabulaire en invente.
+            // THE FRENCH LABEL FIRST, THE TECHNICAL REF AFTER AND SMALL: the card used to read « orientation-south_action-idle_shape-e_frame-01 » and nothing
+            // else, which teaches nothing to whoever is looking at an image (operator, 2026-08-07). The label comes from the referential, never composed here —
+            // a page that composes vocabulary invents it.
             . '<p class="variant-name">%s%s</p>%s%s'
-            // RIEN NE SE JUGE SUR UNE IMAGE QUI N'EXISTE PAS (opérateur, 2026-08-07) : un variant à produire n'offre ni verdict, ni commentaire, ni comparaison — valider une image absente ne
-            // veut rien dire, et la case « Comparer » proposait de la mettre en regard d'une autre. La carte dit ce qui reste dû, et c'est tout ce qu'elle a à dire.
+            // NOTHING IS JUDGED ON AN IMAGE THAT DOES NOT EXIST (operator, 2026-08-07): a variant still to produce offers no verdict, no comment and no
+            // comparison — validating an absent image means nothing. The card says what is still owed, and that is all it has to say.
             . '%s</article>' . "\n",
             escape(variantState($inventory, $variant)),
-            // COMPARER N'APPARAÎT QUE S'IL Y A DE QUOI COMPARER : un sujet à variant unique n'offre pas une case qui ne peut rien faire, et un variant qui n'a pas d'image non plus.
-            count($subject['variants']) > 1 && $current
-                ? sprintf('<label class="variant-pick"><input type="checkbox" class="compare" data-ref="%s"> Comparer</label>', escape($ref))
-                : '',
-            // LE VARIANT PRINCIPAL SE VOIT (opérateur, 2026-08-07) : le constructeur d'origine distinguait la vue principale, la reprise l'avait perdue, et une planche de quinze formes où rien
-            // ne dit laquelle fait référence oblige à ouvrir le référentiel pour le savoir. L'information y est déjà, chaque sujet portant un variant marqué principal.
+            // THE VARIANT'S HEAD LINE: « Comparer » on the left, ITS STATE ON THE RIGHT (operator, 2026-08-12: « à droite je veux qu'on voie le statut actuel du
+            // variant : à juger, à reprendre, validé… »). A variant's state could only be read on the subject tile, which sums up the whole subject: faced with a
+            // board of fifteen variants, nothing said which one was judged. The word is the model's own, taken from the same table as everywhere else, and the
+            // page rewrites it at every verdict — see refreshStates().
+            // COMPARE ONLY APPEARS WHEN THERE IS SOMETHING TO COMPARE: a subject with a single variant is not offered a box that can do nothing, and neither is
+            // a variant with no image.
+            sprintf('<p class="variant-head">%s<span class="variant-state">%s</span></p>',
+                count($subject['variants']) > 1 && $current
+                    ? sprintf('<label class="variant-pick"><input type="checkbox" class="compare" data-ref="%s"> Comparer</label>', escape($ref))
+                    : '<span class="variant-pick"></span>',
+                escape(STATE_LABELS[variantState($inventory, $variant)] ?? variantState($inventory, $variant))),
+            // THE MAIN VARIANT IS VISIBLE (operator, 2026-08-07): the original builder set the main view apart, the rewrite had lost it, and a board of fifteen
+            // shapes where nothing says which is the reference forces one to open the referential to find out. The information is already there, every subject
+            // carrying one variant marked as the main one.
             escape($variant['label'] ?? 'Vue principale'),
             ($variant['main'] ?? false) ? '<span class="variant-main" title="Le variant de référence du sujet">principal</span>' : '',
             $rendered,
@@ -470,9 +537,9 @@ function popin(Inventory $inventory, Thumbnail $thumbnails, string $root, string
 
 /** Les trois actions, TOUJOURS offertes quel que soit l'état courant : l'opérateur change d'avis quand il veut, et un bouton qui disparaît selon l'état oblige à deviner qu'il existe. */
 /**
- * UNE REVUE PORTE SUR UNE IMAGE, PAS SUR UN VARIANT : la clé de rangement est le chemin de la version affichée. Une image regénérée est une image neuve, et le
- * verdict de la précédente ne la juge pas — il restait pourtant collé au variant, si bien qu'un bosquet refait revenait « à reprendre » avec le commentaire de son
- * ancêtre (opérateur, 2026-08-06). Le libellé, lui, reste celui du variant : c'est ce qui se lit dans le relevé.
+ * A REVIEW BEARS ON AN IMAGE, NOT ON A VARIANT: the filing key is the path of the version displayed. A regenerated image is a new image, and the previous one's
+ * verdict does not judge it — yet it stayed stuck to the variant, so a regrown grove came back « to rework » carrying its ancestor's comment (operator,
+ * 2026-08-06). The label, on the other hand, stays the variant's: that is what is read in a report.
  */
 function reviewKey(string $identifier, ?array $current): string
 {
@@ -481,9 +548,8 @@ function reviewKey(string $identifier, ?array $current): string
 
 function actions(string $identifier): string
 {
-    // DES BOUTONS, PAS DES CASES À COCHER GRISES. Une action se clique et s'allume ; une case à cocher nue au milieu d'une carte se lit comme un formulaire
-    // administratif, et l'opérateur l'a dit dès qu'elle est apparue. La case reste dessous — c'est elle qui porte l'état — mais elle est masquée et c'est le
-    // libellé qui devient le bouton.
+    // BUTTONS, NOT GREY CHECKBOXES. An action is clicked and lights up; a bare checkbox in the middle of a card reads like an administrative form, and the
+    // operator said so the moment one appeared. The box stays underneath — it is what carries the state — but it is hidden, and the label becomes the button.
     $markup = '';
     // THE THREE ACTS CARRY THE REFERENTIAL'S OWN WORDS, AND THAT IS THE WHOLE POINT: approved, rework and discarded are the values `verdict` takes in the data, so
     // what the page records reads straight against it, with no lookup table to keep in step. The displayed labels stay French.
@@ -495,8 +561,8 @@ function actions(string $identifier): string
     return $markup;
 }
 
-// Le gabarit ne s'interpole PAS tout seul : ses marques sont remplacées juste après, d'un seul geste. Sinon PHP substituerait des variables qui n'existent pas encore
-// et laisserait des trous silencieux à leur place — ce qui est arrivé, et la page est sortie sans un seul style.
+// The template does NOT interpolate by itself: its marks are replaced just below, in one gesture. Otherwise PHP would substitute variables that do not exist yet
+// and leave silent holes in their place — which happened, and the page came out without a single style.
 $page = <<<'HTML'
 <title>Suivi des sprites</title>
 {$favicon}
@@ -562,8 +628,8 @@ window.GATEBEAST_STATE_TO_JUDGE = '{$stateToJudge}';
 {$reloadScript}
 HTML;
 
-// LES ORPHELINS : toute image présente sur le disque que l'inventaire ne réclame pas. Une image qui existe sans être inscrite n'existe pour personne — elle
-// n'apparaît nulle part, personne ne peut la juger, et elle se refait. La page les montre plutôt que de laisser croire que tout est rangé.
+// THE ORPHANS: every image on disk that the inventory does not claim. An image that exists without being inscribed exists for nobody — it appears nowhere, no
+// one can judge it, and it gets drawn again. The page shows them rather than let one believe everything is filed.
 // BOTH DIRECTORIES, AS THE ORIGINAL BUILDER DID: « présents sur le disque, sous assets/poc/ ou assets/cutout/ ». The rewrite swept the deliverables only, so a
 // MASTER that nothing claims — an abandoned shape, a trial plate — appeared nowhere, while that is exactly the kind of image one opens this section to find. A
 // representation claims both of the files it names, its cutout and its master.

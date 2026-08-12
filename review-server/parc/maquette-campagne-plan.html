@@ -61,6 +61,19 @@
   /* The lines drawn ON an image — the footprint grid and its axes over a sprite. Light, because they lie on the picture, not on the interface. */
   --overlay: rgba(255, 255, 255, 0.32);
   --overlay-soft: rgba(255, 255, 255, 0.17);
+
+  /* THE SHAPE OF THINGS, NOT ONLY THEIR COLOUR. A theme that only swaps hexadecimals leaves the page exactly as square and as flat as it was — which is what the
+   * operator answered to the first attempt: « Tu as juste changé un peu les couleurs ? je veux un peu plus de changements ». Radii, elevation and the ring of a
+   * focused control belong to the dressing too, and they live here so the four pages round their corners the same way.
+   * THREE RADII AND NO MORE: a card, a control, a pill. A fourth is never told apart, and each extra value is one more thing to keep in step. */
+  --radius-card: 10px;
+  --radius-control: 7px;
+  --radius-pill: 999px;
+  /* Elevation is a shadow AND a lighter top edge — a card lit from above rather than a box drawn on the page. Kept low: a review page is read, not admired. */
+  --lift: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 2px 10px rgba(0, 0, 0, 0.35);
+  --lift-strong: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 8px 24px rgba(0, 0, 0, 0.45);
+  /* One ring for everything that takes focus, so the keyboard is never lost on a page. */
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-edge);
 }
 
   /* THE PLAN'S OWN NAMES, SAID IN THE SHARED ONES: `--paper` is the ground it is drawn on, `--surface` a card upon it, and `--marque` the colour of a remark
@@ -226,7 +239,6 @@
       <button type="button" class="zoom" data-zoom="48" aria-pressed="false">48 px</button>
     </span>
     <button type="button" class="taille">Ajuster à la fenêtre</button>
-        <button type="button" class="copier">Copier le récapitulatif</button>
   </div>
 
   <div class="zone">
@@ -1033,8 +1045,7 @@
   <div class="remarques">
     <div class="remarques-head">
       <h3>Les remarques</h3>
-      <button type="button" class="copier">Copier le récapitulatif</button>
-      <button type="button" class="effacer">Tout effacer</button>
+            <button type="button" class="effacer">Tout effacer</button>
     </div>
     <p class="remarques-vides">Aucune remarque pour l'instant.</p>
     <ul></ul>
@@ -1063,7 +1074,20 @@ document.querySelectorAll('.plan').forEach(function (section) {
   /* L'ADAPTATEUR DU PLAN : les trois seules choses qui dépendent du support. Tout le reste — l'état des remarques, la saisie, la liste, le classement des traitées,
      la copie, l'effacement, les raccourcis, le dialogue avec le stockage — vit une seule fois dans review-server/lib/Remarks.php. */
   window.gatebeastRemarks.attach(section, {
-    prefix: '.',
+    /* CHAQUE ÉLÉMENT EST NOMMÉ EN ENTIER, en clair, et c'est ce qui rend cet outil servable deux fois sur la même page : la passe de renommage de la page
+       fusionnée réécrit ces sélecteurs-là, alors qu'elle ne peut rien voir d'un nom assemblé à l'exécution. */
+    selectors: {
+      'saisie': '.saisie',
+      'saisie-ou': '.saisie-ou',
+      'poser': '.poser',
+      'annuler': '.annuler',
+      'supprimer': '.supprimer',
+      'rouvrir': '.rouvrir',
+      'remarques-liste': '.remarques ul',
+      'remarques-vides': '.remarques-vides',
+      'effacer': '.effacer',
+      'survol': '.survol'
+    },
     section: 'plan',
     surface: dessin,
     zone: section.querySelector('.zone'),

@@ -3,7 +3,7 @@
 
 USAGE
   python3 scripts/generate-sprite.py <REF DU SUJET> <REF DE LA VARIANTE> \\
-      [--ref <image> | --plate <image>] [--model <nom>] [--rework "<motif du rejet>"] [--generate]
+      [--ref <image> | --plate <image>] [--model <nom>] [--rework "<motif>" | --rework @<fichier>] [--generate]
 
   --rework est la REPRISE UNIQUE que la chaîne de production autorise : le motif exact du rejet, cité
   en toutes lettres, ajouté en fin de consigne. Il ne se donne qu'une fois par version — une seconde
@@ -38,9 +38,12 @@ INTENTION
   lives in its own description, never in this code: a clause naming posts and rails unconditionally is
   exactly what once made this command unusable for a path.
 """
+import contextlib
+import datetime
 import importlib.util
 import json
 import math
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -75,6 +78,50 @@ POSTS_TEXT = {
     2: "DEUX poteaux verticaux, plantés au tiers et aux deux tiers de la case, de sorte que le "
        "vide à gauche, le vide du milieu et le vide à droite soient égaux.",
 }
+
+# CE QU'ON VOIT DU PERSONNAGE SELON L'ORIENTATION QU'IL DÉCLARE, et rien d'autre : sa silhouette, ses vêtements et ses couleurs restent à sa description, qui ne
+# change pas d'une vue à l'autre. La phrase de posture vivait dans cette description, en toutes lettres et au sud — envoyée telle quelle pour la vue de dos, elle
+# demandait exactement le contraire de ce que la variante déclarait, et une consigne qui se contredit produit une image au hasard.
+ORIENTATION_TEXT = {
+    "south": "IL EST TOURNÉ VERS NOUS, DE FACE : on voit son visage en entier et tout l'avant de son corps.",
+    "north": "IL EST TOURNÉ VERS LE FOND, DE DOS : on ne voit PAS son visage — on voit l'arrière de sa tête et tout l'arrière de son corps.",
+    # THE EAST VIEW IS SPELLED OUT HARDER THAN THE OTHERS, AND IT IS NOT A WHIM: it came back wrong twice on 2026-08-12 — a creature drawn facing left, which is
+    # the WEST view, and a human that came out deformed. A profile facing left is the common one, and a clause naming a side is answered by the habit rather than
+    # by the ask. So the direction is said three times and in three ways — where the face points, which edge of the image it points AT, and what one must NOT see.
+    "east": ("IL EST TOURNÉ VERS LA DROITE DE L'IMAGE, DE PROFIL. SON VISAGE, SON MUSEAU ET SON REGARD POINTENT VERS LE BORD DROIT de l'image, et son dos est du "
+             "côté du BORD GAUCHE. On voit un seul côté de sa tête, un seul œil, et c'est son flanc GAUCHE qui est tourné vers nous. Ce n'est PAS la vue de "
+             "l'ouest : un sujet qui regarde vers la gauche de l'image est un refus."),
+    "west": ("IL EST TOURNÉ VERS LA GAUCHE DE L'IMAGE, DE PROFIL. SON VISAGE, SON MUSEAU ET SON REGARD POINTENT VERS LE BORD GAUCHE de l'image, et son dos est du "
+             "côté du BORD DROIT. On voit un seul côté de sa tête, un seul œil, et c'est son flanc DROIT qui est tourné vers nous."),
+}
+
+
+@contextlib.contextmanager
+def held(name: str, what: str):
+    """Tient un verrou nommé le temps d'un bloc, ou refuse d'entrer.
+
+    DEUX LANCEMENTS DU MÊME VARIANT NE PARTENT PAS ENSEMBLE (opérateur, 2026-08-12 : « tu dois avoir un lock entre des lancements concurrents de génération d'un
+    même variant de sujet de sprite »). Le verrou de version, posé plus bas, empêche deux images d'écraser le même fichier ; il n'empêche pas de payer deux
+    générations pour une seule demande. Celui-ci refuse la seconde et le dit.
+
+    LE FICHIER SE CRÉE EN EXCLUSIF, comme la réservation de version : c'est la seule façon pour deux processus de ne pas croire tous les deux l'avoir pris. Il
+    porte le numéro du processus et l'heure, parce qu'un verrou resté d'une commande morte doit pouvoir se comprendre et se retirer sans deviner.
+    """
+    folder = REPO / "var" / "locks"
+    folder.mkdir(parents=True, exist_ok=True)
+    lock = folder / f"{name}.lock"
+    try:
+        with open(lock, "x", encoding="utf-8") as held_by:
+            held_by.write(f"{os.getpid()} {datetime.datetime.now().isoformat(timespec='seconds')}\n")
+    except FileExistsError:
+        raise SystemExit(f"FAULT {what} est déjà en cours : {lock.relative_to(REPO)} est tenu par « {lock.read_text(encoding='utf-8').strip()} ». "
+                         f"Attendez la fin, ou retirez ce fichier si la commande qui le tenait est morte.")
+    try:
+        yield
+    finally:
+        # RENDU MÊME QUAND LA GÉNÉRATION CASSE : un verrou qu'un échec laisse en place bloque le variant pour toujours, et le prochain lancement croira qu'une
+        # commande tourne encore.
+        lock.unlink(missing_ok=True)
 
 
 def current_sprite(code: str, variant_ref: str = None):
@@ -244,6 +291,19 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
     # sa matière, sa lumière et sa projection d'une pièce à la suivante. La planche ne sert qu'au tout premier dessin, quand rien n'existe encore de lui.
     #
     # Laissé au choix de celui qui tape la commande, ce point a produit trois pièces de clôture qui n'étaient pas le même objet, et un bâtiment qui converge.
+    # LE VERROU SE PREND AVANT TOUT LE RESTE QUAND ON GÉNÈRE, et il tient jusqu'à la fin de la commande : c'est la seule place où il empêche vraiment la dépense.
+    # Pris plus tard, la seconde commande aurait déjà assemblé sa consigne et réservé un numéro — donc laissé une consigne figée sans image à côté.
+    with contextlib.ExitStack() as bench:
+        if generate:
+            bench.enter_context(held(f"{code}_{variant_ref}", f"une génération de {code} / {variant_ref}"))
+
+        return draw(code, variant_ref, reference, generate, plate, model, rework)
+
+
+def draw(code: str, variant_ref: str, reference: Path, generate: bool, plate: Path = None,
+         model: str = None, rework: str = None) -> int:
+    """Le corps de la commande, tenu sous le verrou par `build()` — jamais appelé directement."""
+    posts, gate = None, None
     if generate and not (reference or plate):
         current = current_sprite(code, variant_ref)
         if current is not None:
@@ -366,6 +426,20 @@ def build(code: str, variant_ref: str, reference: Path, generate: bool, plate: P
     else:
         join_clause = ("LE SUJET EST SEUL DANS SA CASE : il ne rejoint aucun bord, rien ne se prolonge hors de lui, et il ne s'assemble avec rien.")
 
+    # LA CLAUSE D'ORIENTATION NE VAUT QUE POUR CE QUI TOURNE, et le modèle le dit tout seul : un type dont le lot déclare plusieurs orientations a des sujets qui
+    # se présentent autrement selon la vue — un personnage, une créature —, tandis qu'un chemin, un arbre ou une clôture n'en déclarent qu'une et ne tournent pas.
+    # Le critère se lit donc au type, il ne s'écrit pas en liste ici : une liste de types serait fausse au premier type qui tourne et qu'on aurait oublié d'y mettre.
+    orientation_clause = ""
+    turning = {view.get("orientation") for view in type_.get("batch_v0", []) if view.get("orientation")}
+    if len(turning) > 1:
+        # PRISE AU VARIANT DÉCLARÉ, PAS DANS `asked` : celui-ci ne garde que les champs dont le type déclare une collection de valeurs — composition, portillon,
+        # densité —, et l'orientation n'en est pas une : c'est un axe que tout variant porte, au même titre que son action.
+        facing = declared.get("orientation")
+        if facing not in ORIENTATION_TEXT:
+            raise SystemExit(f"FAULT {code} tourne, et l'orientation demandée est {facing!r} — aucune clause n'existe pour elle, et une vue sans clause "
+                             f"reprendrait celle du sud sans le dire. Orientations connues : {', '.join(sorted(ORIENTATION_TEXT))}.")
+        orientation_clause = f"CE QU'ON VOIT DE LUI : {ORIENTATION_TEXT[facing]}"
+
     composition_clause = ""
     if applies_composition:
         # The rails run in one piece only when nothing interrupts them. A portillon replaces the central bay, so claiming an unbroken run there contradicts
@@ -384,6 +458,31 @@ prolongent sans décrochement.
 """
 
     active_reference = reference or plate
+    # THE REFERENCE OFTEN SHOWS ANOTHER VIEW OF THE SUBJECT, AND THE CONSIGNE MUST SAY SO — this is the fault the operator named on 2026-08-12: « ce n'est pas
+    # normal qu'un seul variant ait un souci, ça veut probablement dire que l'arbo de consigne est mal montée ». The reference clause below claims the reference
+    # is authoritative for « la FORME PROPRE du sujet — son plan, ses proportions, ses ÉLÉMENTS ET LEUR PLACE », while the orientation clause further down asks
+    # for another view of it. For every variant that keeps the reference's own view the two agree and nothing shows; for the east and north views they order
+    # opposite things, and the generator settles it by copying the reference — a mirrored creature and a squashed human, both on 2026-08-12.
+    # WHAT THE REFERENCE SHOWS IS READ FROM THE REFERENTIAL, NEVER GUESSED: its path is that of a representation, and the representation belongs to a variant
+    # that declares its orientation. Unknown path means unknown view, and the clause then says only that the direction is never taken from it.
+    reference_view = None
+    if reference:
+        wanted = reference.resolve().as_posix()
+        for variant in subject.get("variants", []):
+            for shown in variant.get("representations", []):
+                if wanted.endswith(str(shown.get("path", "")).lstrip("/")):
+                    reference_view = variant.get("orientation")
+    view_clause = ""
+    if reference and len(turning) > 1 and reference_view != declared.get("orientation"):
+        seen = ORIENTATION_TEXT.get(reference_view)
+        view_clause = (
+            "\nATTENTION — CETTE RÉFÉRENCE NE MONTRE PAS LA VUE QU'ON TE DEMANDE"
+            + (f", ELLE MONTRE UNE AUTRE ORIENTATION DU MÊME SUJET : {seen}" if seen else ", et l'orientation qu'elle montre n'est pas celle demandée.")
+            + "\nTU N'EN REPRENDS DONC NI LA DIRECTION, NI LA POSE, NI LA PLACE DE SES PARTIES DANS L'IMAGE : la vue demandée est celle, et seulement celle, que "
+              "dit la clause « CE QU'ON VOIT DE LUI » plus bas. De la référence tu reprends ce qui ne dépend pas du point de vue — la matière, les couleurs, la "
+              "lumière, le niveau de détail, la silhouette générale et les PROPORTIONS, qui elles ne changent pas d'une vue à l'autre.\n"
+            "ET TU NE COMPRIMES RIEN : une vue de profil n'est pas une vue de face rétrécie en largeur. C'est le même sujet, à la même hauteur et aux mêmes "
+            "proportions, vu de son côté.\n")
     clause = ""
     if reference:
         clause = f"""
@@ -400,7 +499,7 @@ qui s'évase : ce sont des défauts qu'on corrige, pas des traits à reprendre. 
 vois en AXONOMÉTRIE ORTHOGRAPHIQUE, comme décrit plus haut — arêtes verticales parallèles entre elles,
 fuyantes parallèles entre elles, aucun rétrécissement ni vers le bas ni vers le haut.
 LA RÉFÉRENCE FAIT FOI POUR LA MATIÈRE ET POUR LA FORME, JAMAIS POUR LA PROJECTION.
-"""
+{view_clause}"""
     elif plate:
         clause = f"""
 RÉFÉRENCE — ouvre et regarde le fichier {asset_common.reference_address(plate)}. C'est une scène du
@@ -463,6 +562,7 @@ LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge trans
 
 LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 {code} : {description}
+{orientation_clause}
 
 {asset_common.extra_clause(extras)}
 
@@ -503,11 +603,30 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
     target.mkdir(parents=True, exist_ok=True)
     # One generation per version, and nothing is thrown away: an existing piece keeps its place and
     # the new one takes the next version number, with its own frozen prompt beside it.
+    #
+    # LE NUMÉRO SE RÉSERVE DANS LE MÊME GESTE QU'IL SE TROUVE, ET C'EST UNE FAUTE PAYÉE LE 2026-08-12. Le code cherchait le premier numéro libre, PUIS écrivait
+    # dessus : entre les deux, rien ne tenait le nom. Six générations lancées ensemble sur deux sujets ont toutes trouvé le même numéro libre — trois ont écrit
+    # dans HU-000-v3, trois dans SP-001-v2 —, quatre images ont été écrasées avec leur consigne figée, et le référentiel s'est retrouvé avec trois variantes
+    # déclarant le même dessin. Rien n'avait levé.
+    #
+    # `x` CRÉE LE FICHIER OU ÉCHOUE, sans intervalle possible : c'est la seule façon pour deux processus de ne pas croire tous les deux avoir le numéro. Le
+    # fichier réservé est la CONSIGNE, écrite ici de toute façon — réserver l'image aurait laissé un PNG vide que le générateur aurait ensuite écrasé, et un
+    # fichier vide sur le disque est exactement ce qu'un contrôle prendrait pour une image produite.
     version, image = 1, target / f"{name}.png"
-    while image.exists():
-        version += 1
-        image = target / f"{name}-v{version}.png"
-    image.with_suffix(".txt").write_text(prompt, encoding="utf-8")
+    while True:
+        # L'IMAGE EXISTANTE GARDE SA PLACE, MÊME SANS SA CONSIGNE À CÔTÉ : les toutes premières pièces ont été produites avant que la consigne ne se fige, et
+        # se fier à la seule réservation les écraserait. Les deux conditions se cumulent, elles ne se remplacent pas.
+        if image.exists():
+            version += 1
+            image = target / f"{name}-v{version}.png"
+            continue
+        try:
+            with open(image.with_suffix('.txt'), 'x', encoding='utf-8') as frozen:
+                frozen.write(prompt)
+            break
+        except FileExistsError:
+            version += 1
+            image = target / f"{name}-v{version}.png"
 
     print(f"consigne figée : {image.with_suffix('.txt').relative_to(REPO)}")
     # Rebuilding the review page still belongs to the queue (scripts/sprite-queue.py), which owns the
@@ -543,7 +662,10 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
                 "```\n" + (exported.stdout or exported.stderr or "aucune sortie").strip() + "\n```")
             if exported.returncode:
                 raise SystemExit(f"FAULT le redimensionnement de {name} a échoué.")
-        with run.step("inscription"):
+        with run.step("inscription"), held("subjects", "une inscription au référentiel"):
+            # LE RÉFÉRENTIEL EST UN FICHIER UNIQUE, DONC L'INSCRIPTION SE FAIT À UN SEUL À LA FOIS. Le verrou du variant ne protège que les lancements du MÊME
+            # variant ; deux sujets différents produits ensemble se retrouvaient à réécrire le même fichier, et le 2026-08-12 il en a perdu des inscriptions.
+            # Le verrou est pris ici, au plus tard et pour le temps le plus court : une génération dure deux minutes, son inscription un centième de seconde.
             # Chained here, never left to whoever remembers: the rule is that every sprite produced is recorded under its variant, without exception. A
             # sprite was produced and forgotten the day this was a separate command someone had to think of running.
             recorded = subprocess.run(
@@ -572,4 +694,12 @@ if __name__ == "__main__":
     plate_value = Path(argv[argv.index("--plate") + 1]).resolve() if "--plate" in argv else None
     chosen = argv[argv.index("--model") + 1] if "--model" in argv else None
     rework = argv[argv.index("--rework") + 1] if "--rework" in argv else None
+    # LE MOTIF PEUT VENIR D'UN FICHIER, ET C'EST LA FORME À PRÉFÉRER. Un motif de rejet cite l'opérateur, donc il porte ses guillemets, ses tirets et ses
+    # parenthèses — et une garde de shell refuse la commande sur ces caractères-là, au milieu du travail. Le fichier fait passer le texte sans que la ligne de
+    # commande ait à le porter. Refusé plutôt que deviné : un « @ » qui ne désigne aucun fichier est une faute de frappe, pas un motif.
+    if rework and rework.startswith("@"):
+        motive = Path(rework[1:])
+        if not motive.is_file():
+            raise SystemExit(f"FAULT le motif de reprise devait se lire dans « {motive} », qui n'existe pas.")
+        rework = motive.read_text(encoding="utf-8").strip()
     raise SystemExit(build(argv[0], argv[1], reference, "--generate" in argv, plate_value, chosen, rework))

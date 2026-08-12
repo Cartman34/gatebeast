@@ -60,13 +60,27 @@
   /* The lines drawn ON an image — the footprint grid and its axes over a sprite. Light, because they lie on the picture, not on the interface. */
   --overlay: rgba(255, 255, 255, 0.32);
   --overlay-soft: rgba(255, 255, 255, 0.17);
+
+  /* THE SHAPE OF THINGS, NOT ONLY THEIR COLOUR. A theme that only swaps hexadecimals leaves the page exactly as square and as flat as it was — which is what the
+   * operator answered to the first attempt: « Tu as juste changé un peu les couleurs ? je veux un peu plus de changements ». Radii, elevation and the ring of a
+   * focused control belong to the dressing too, and they live here so the four pages round their corners the same way.
+   * THREE RADII AND NO MORE: a card, a control, a pill. A fourth is never told apart, and each extra value is one more thing to keep in step. */
+  --radius-card: 10px;
+  --radius-control: 7px;
+  --radius-pill: 999px;
+  /* Elevation is a shadow AND a lighter top edge — a card lit from above rather than a box drawn on the page. Kept low: a review page is read, not admired. */
+  --lift: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 2px 10px rgba(0, 0, 0, 0.35);
+  --lift-strong: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 8px 24px rgba(0, 0, 0, 0.45);
+  /* One ring for everything that takes focus, so the keyboard is never lost on a page. */
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-edge);
 }
   /* The mounted scene's own names, said in the shared ones — same reason as the plan: the Campagne page is assembled from both documents, and two palettes
      side by side could not be redressed together. */
   :root { --paper: var(--bg); --surface: var(--card); }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
-  .wrap { width: min(100%, 1760px); margin: 0 auto; padding: 2rem 1rem 4rem; display: flex; flex-direction: column; gap: 1.4rem; }
+  /* La largeur et les marges viennent du format commun (Layout) ; ne reste ici que ce qui est propre à cette page : sa colonne et l'espace entre ses blocs. */
+  .wrap { display: flex; flex-direction: column; gap: 1.4rem; }
   .eyebrow { margin: 0; font-family: var(--mono); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
   h1 { margin: .3rem 0 0; font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 650; letter-spacing: -.02em; }
   .lede { margin: .5rem 0 0; max-width: 64ch; color: var(--muted); }
@@ -181,7 +195,6 @@
       <button type="button" class="zoom" data-zoom="32" aria-pressed="false">32 px</button>
       <button type="button" class="zoom" data-zoom="48" aria-pressed="false">48 px</button>
     </span>
-    <button type="button" class="copier">Copier le récapitulatif</button>
   </div>
 
   <div class="zone">
@@ -731,7 +744,7 @@
     <div class="pose s-tr-064-v6" title="TR-064"
      style="left: 696px; top: 352px; width: 24px; height: 26px; z-index: 18"></div>
     <div class="pose s-sp-001" title="SP-001"
-     style="left: 216px; top: 346px; width: 24px; height: 32px; z-index: 18"></div>
+     style="left: 216px; top: 346px; width: 24px; height: 32px; z-index: 18"><svg class="rune" viewBox="0 0 100 100" width="6.00" height="6.00" style="position:absolute;left:9.00px;top:10.50px;transform:rotate(0.00deg)" aria-hidden="true"><path d="M 18 74 A 34 34 0 0 1 82 74" fill="none" stroke="#3fd3c6" stroke-width="8.00" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="pose s-ob-010-shape-ns-posts-1-v2" title="OB-010"
      style="left: 24px; top: 375px; width: 24px; height: 24px; z-index: 19"></div>
     <div class="pose s-tr-064-v6" title="TR-064"
@@ -886,6 +899,7 @@
       <div class="saisie-boutons">
         <button type="button" class="poser">Attacher la remarque</button>
         <button type="button" class="supprimer" hidden>Supprimer</button>
+                <button type="button" class="rouvrir" hidden>Rouvrir</button>
         <button type="button" class="annuler">Annuler</button>
       </div>
     </div>
@@ -894,8 +908,7 @@
   <div class="remarques">
     <div class="remarques-head">
       <h3>Les remarques</h3>
-      <button type="button" class="copier">Copier le récapitulatif</button>
-      <button type="button" class="effacer">Tout effacer</button>
+            <button type="button" class="effacer">Tout effacer</button>
     </div>
     <p class="remarques-vides">Aucune remarque pour l'instant.</p>
     <ul></ul>
@@ -913,14 +926,7 @@
 (function () {
   var scene = document.getElementById('scene');
   var zone = scene.closest('.zone');
-  var survol = zone.querySelector('.survol');
-  var saisie = zone.querySelector('.saisie');
-  var saisieOu = zone.querySelector('.saisie-ou');
-  var saisieTexte = zone.querySelector('textarea');
-  var supprimer = zone.querySelector('.supprimer');
-  var liste = document.querySelector('.remarques ul');
-  var vide = document.querySelector('.remarques-vides');
-  var effacer = document.querySelector('.effacer');
+  // Les éléments de l'outil de remarques ne se cherchent plus ici : l'outil commun les prend lui-même, par les sélecteurs que l'adaptateur lui donne en entier.
 
   var cote = Number(scene.dataset.cote);
   // LA PROFONDEUR EST UN SECOND PAS, ET ELLE VAUT POUR L'AXE VERTICAL. Une case projetee fait 24 sur 21 : se servir de la largeur pour les deux axes decale la
@@ -987,203 +993,80 @@
     bouton.addEventListener('click', function () { zoomer(Number(bouton.dataset.zoom)); });
   });
 
-  var remarques = [];
-  var vise = null;
+  /* L'OUTIL DE REMARQUES EST CELUI DU PLAN, IL N'EN EXISTE PLUS DEUX (opérateur, 2026-08-12 : « tu dois unifier les fonctionnements autant que possible et en
+     évitant absolument les régressions »). Quatre cent cinquante lignes vivaient ici, à l'identique de celles du plan : l'état des remarques, la saisie, la
+     liste, le retrait, l'effacement, l'échappement, le dialogue avec le serveur. Elles ont divergé — le plan savait classer une remarque traitée et la rouvrir,
+     la maquette ne l'a jamais su, alors que le besoin y était le même. Ce que la maquette hérite au passage, c'est exactement ce classement.
+     NE RESTE ICI QUE CE QUI DÉPEND DU SUPPORT : où est la case sous le curseur, comment on marque une case, sous quel nom la section range ses remarques, et si
+     un clic est bien un clic — cette scène se déplace à la souris, le plan non. */
+  /* LA SECTION EST L'ENVELOPPE ENTIÈRE, PAS LA ZONE DU DESSIN, et c'est une distinction qui casse tout si on la manque : la liste des remarques, le compte des
+     vides et le bouton d'effacement vivent À CÔTÉ de la zone, pas dedans. Cherchés depuis la zone, ils ne se trouvent pas — et l'outil s'attacherait à une
+     section dont il ne trouve aucun élément. La zone, elle, reste le repère où se posent la saisie et le survol : c'est ce que `zone` dit à l'outil. */
+  window.gatebeastRemarks.attach(scene.closest('.wrap'), {
+    selectors: {
+      'saisie': '.saisie',
+      'saisie-ou': '.saisie-ou',
+      'poser': '.poser',
+      'annuler': '.annuler',
+      'supprimer': '.supprimer',
+      'rouvrir': '.rouvrir',
+      'remarques-liste': '.remarques ul',
+      'remarques-vides': '.remarques-vides',
+      'effacer': '.effacer',
+      'survol': '.survol'
+    },
+    section: 'maquette',
+    surface: scene,
+    zone: zone,
+    titre: 'Maquette du parc',
 
-  /* LES REMARQUES VIVENT DANS LE DÉPÔT, PAS DANS LE NAVIGATEUR (opérateur, 2026-08-07). Elles s'y perdaient dès que l'adresse changeait, elles n'étaient lisibles que par celui qui les
-     avait écrites, et il fallait les recopier à la main dans la conversation. Le serveur les tient : la page les demande en s'ouvrant, et lui rend la liste entière à chaque changement. */
-  function retenir() {
-    if (window.gatebeastNotes) { window.gatebeastNotes.save('maquette', remarques); }
-  }
-
-  /* La case sous un point de l'écran. La scène est posée en pixels, pas dans un repère à échelle : la case se lit directement, au décalage du cadre près et à ce que le
-     cadre a défilé de côté. */
-  function caseSous(x, y) {
-    var cadre = scene.getBoundingClientRect();
-    // The cell reads at the current scale: the measured frame is already that of the scaled scene, so the size of a cell on screen is too.
-    var pas = cote * echelle;
-    var pasProfond = profondeur * echelle;
-    var colonne = Math.floor((x - cadre.left) / pas) + 1;
-    var ligne = Math.floor((y - cadre.top) / pasProfond) + 1;
-    if (colonne < 1 || ligne < 1 || colonne > colonnes || ligne > lignes) {
-      return null;
-    }
-
-    return {colonne: colonne, ligne: ligne};
-  }
-
-  function nature(ou) {
-    var code = cases[ou.colonne + ',' + ou.ligne];
-
-    return code ? (noms[code] || code) + ' · ' + code : defaut;
-  }
-
-  function marquer() {
-    Array.prototype.forEach.call(scene.querySelectorAll('.marque'), function (ancien) { ancien.remove(); });
-    remarques.forEach(function (remarque) {
-      var carre = document.createElement('div');
-      carre.className = 'marque';
-      carre.style.left = ((remarque.colonne - 1) * cote) + 'px';
-      carre.style.top = ((remarque.ligne - 1) * profondeur) + 'px';
-      carre.style.width = cote + 'px';
-      carre.style.height = profondeur + 'px';
-      scene.appendChild(carre);
-    });
-  }
-
-  function afficher() {
-    liste.innerHTML = '';
-    vide.hidden = remarques.length > 0;
-    remarques.forEach(function (remarque) {
-      var ligne = document.createElement('li');
-      var ou = document.createElement('span');
-      ou.className = 'ou';
-      ou.textContent = '(' + remarque.colonne + ',' + remarque.ligne + ')';
-      var quoi = document.createElement('span');
-      quoi.className = 'quoi';
-      quoi.textContent = remarque.texte;
-      var retirer = document.createElement('button');
-      retirer.type = 'button';
-      retirer.textContent = 'Retirer';
-      retirer.addEventListener('click', function () {
-        remarques.splice(remarques.indexOf(remarque), 1);
-        retenir();
-        marquer();
-        afficher();
-      });
-      ligne.appendChild(ou);
-      ligne.appendChild(quoi);
-      ligne.appendChild(retirer);
-      liste.appendChild(ligne);
-    });
-  }
-
-  scene.addEventListener('mousemove', function (evenement) {
-    var ou = caseSous(evenement.clientX, evenement.clientY);
-    if (!ou) {
-      survol.hidden = true;
-      return;
-    }
-    var cadre = zone.getBoundingClientRect();
-    survol.textContent = '(' + ou.colonne + ',' + ou.ligne + ') ' + nature(ou);
-    survol.hidden = false;
-    survol.style.left = Math.max(4, Math.min(evenement.clientX - cadre.left + 14, cadre.width - survol.offsetWidth - 4)) + 'px';
-    survol.style.top = Math.max(4, evenement.clientY - cadre.top - survol.offsetHeight - 10) + 'px';
-  });
-
-  scene.addEventListener('mouseleave', function () { survol.hidden = true; });
-
-  scene.addEventListener('click', function (evenement) {
-    // Dragging the map attaches no remark: without this, every move with the mouse would open the input on whatever cell the finger came up on.
-    if (glisse) {
-      glisse = false;
-      return;
-    }
-    var ou = caseSous(evenement.clientX, evenement.clientY);
-    if (!ou) {
-      return;
-    }
-    vise = ou;
-    saisieOu.textContent = 'Case (' + ou.colonne + ',' + ou.ligne + ') — ' + nature(ou);
-    var deja = remarques.filter(function (remarque) {
-      return remarque.colonne === ou.colonne && remarque.ligne === ou.ligne;
-    })[0];
-    saisieTexte.value = deja ? deja.texte : '';
-    supprimer.hidden = !deja;
-    saisie.hidden = false;
-
-    var cadre = zone.getBoundingClientRect();
-    var gauche = evenement.clientX - cadre.left + 14;
-    var dessus = evenement.clientY - cadre.top + 14;
-    saisie.style.left = Math.max(8, Math.min(gauche, cadre.width - saisie.offsetWidth - 8)) + 'px';
-    saisie.style.top = Math.max(8, Math.min(dessus, cadre.height - saisie.offsetHeight - 8)) + 'px';
-    saisieTexte.focus({preventScroll: true});
-  });
-
-  zone.querySelector('.poser').addEventListener('click', function () {
-    var texte = saisieTexte.value.trim();
-    if (!vise || !texte) {
-      return;
-    }
-    remarques = remarques.filter(function (remarque) {
-      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
-    });
-    remarques.push({colonne: vise.colonne, ligne: vise.ligne, texte: texte});
-    retenir();
-    saisie.hidden = true;
-    vise = null;
-    marquer();
-    afficher();
-  });
-
-  supprimer.addEventListener('click', function () {
-    if (!vise) {
-      return;
-    }
-    remarques = remarques.filter(function (remarque) {
-      return !(remarque.colonne === vise.colonne && remarque.ligne === vise.ligne);
-    });
-    retenir();
-    saisie.hidden = true;
-    vise = null;
-    marquer();
-    afficher();
-  });
-
-  zone.querySelector('.annuler').addEventListener('click', function () {
-    saisie.hidden = true;
-    vise = null;
-  });
-
-  Array.prototype.forEach.call(document.querySelectorAll('.copier'), function (copier) {
-    copier.addEventListener('click', function () {
-      var texte = 'Maquette du parc\n' + (remarques.length ? remarques.map(function (remarque) {
-        return '(' + remarque.colonne + ',' + remarque.ligne + ') : ' + remarque.texte;
-      }).join('\n') : 'Aucune remarque.');
-      // The copy goes through a hidden field: the direct call to the clipboard is refused in the frame this page used to live in.
-      var holder = document.createElement('textarea');
-      holder.value = texte;
-      holder.setAttribute('readonly', 'readonly');
-      holder.style.position = 'fixed';
-      holder.style.opacity = '0';
-      document.body.appendChild(holder);
-      holder.select();
-      var done = false;
-      try {
-        done = document.execCommand('copy');
-      } catch (erreur) {
-        done = false;
+    /* La case sous un point de l'écran. La scène est posée en pixels, pas dans un repère à échelle : la case se lit directement, au décalage du cadre près.
+       La profondeur est un SECOND PAS, pour l'axe vertical — une case projetée fait 24 sur 21, et se servir de la largeur pour les deux axes décale la lecture
+       d'une case tous les sept rangs. */
+    caseSous: function (x, y) {
+      var cadre = scene.getBoundingClientRect();
+      var colonne = Math.floor((x - cadre.left) / (cote * echelle)) + 1;
+      var ligne = Math.floor((y - cadre.top) / (profondeur * echelle)) + 1;
+      if (colonne < 1 || ligne < 1 || colonne > colonnes || ligne > lignes) {
+        return null;
       }
-      document.body.removeChild(holder);
-      copier.textContent = done ? 'Copié' : 'Copie refusée';
-      setTimeout(function () { copier.textContent = 'Copier le récapitulatif'; }, 1600);
-    });
-  });
 
-  effacer.addEventListener('click', function () {
-    remarques = [];
-    retenir();
-    marquer();
-    afficher();
-  });
+      return {colonne: colonne, ligne: ligne};
+    },
 
-  document.addEventListener('keydown', function (evenement) {
-    if (evenement.key === 'Escape' && !saisie.hidden) {
-      saisie.hidden = true;
-      vise = null;
+    nature: function (ou) {
+      var code = cases[ou.colonne + ',' + ou.ligne];
+
+      return code ? (noms[code] || code) + ' · ' + code : defaut;
+    },
+
+    /* Le déplacement de la carte se termine par un clic sur la case où le doigt s'est relevé : sans ce refus, chaque déplacement ouvrait la saisie. */
+    clicIgnore: function () {
+      if (!glisse) {
+        return false;
+      }
+      glisse = false;
+
+      return true;
+    },
+
+    /* Les marques se posent PAR-DESSUS la scène, en pixels de son repère à elle : la scène est une pile d'éléments, pas un dessin vectoriel. */
+    marquer: function (marques) {
+      Array.prototype.forEach.call(scene.querySelectorAll('.marque'), function (ancien) { ancien.remove(); });
+      marques.forEach(function (marque) {
+        var carre = document.createElement('div');
+        /* LA CLASSE S'ÉCRIT EN CLAIR, JAMAIS DANS UN TERNAIRE, et le contrôle des sélecteurs l'a prouvé sur-le-champ : la passe de renommage de la page fusionnée
+           reconnaît `className = 'marque'`, pas `className = a ? 'marque …' : 'marque'`. L'élément gardait alors l'ancien nom pendant que la règle et le nettoyage
+           prenaient le nouveau — la marque devenait invisible et rien ne l'aurait dit. Le classement se voit par l'opacité, posée ici, sans classe à inventer. */
+        carre.className = 'marque';
+        carre.style.opacity = marque.reglee ? '0.35' : '1';
+        carre.style.left = ((marque.colonne - 1) * cote) + 'px';
+        carre.style.top = ((marque.ligne - 1) * profondeur) + 'px';
+        carre.style.width = cote + 'px';
+        carre.style.height = profondeur + 'px';
+        scene.appendChild(carre);
+      });
     }
   });
-
-  /* Les remarques arrivent du serveur, donc APRÈS l'ouverture de la page : on dessine une première fois sans elles, puis de nouveau quand elles sont là. Attendre pour tout afficher rendrait la
-     page inerte le temps d'un aller-retour, pour un contenu qui n'est presque jamais long. */
-  marquer();
-  afficher();
-  if (window.gatebeastNotes) {
-    window.gatebeastNotes.load('maquette', function (chargees) {
-      remarques = chargees;
-      marquer();
-      afficher();
-    });
-  }
 })();
 </script>

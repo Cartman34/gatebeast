@@ -63,7 +63,11 @@ class HookTranscript
             if ($type === 'attachment') {
                 $attachment = $entry['attachment'] ?? [];
                 if (is_array($attachment) && ($attachment['type'] ?? '') === 'queued_command') {
-                    $queued = trim((string) ($attachment['prompt'] ?? ''));
+                    // LA CONSIGNE D'UNE PIÈCE JOINTE N'EST PAS TOUJOURS DU TEXTE : elle arrive parfois en morceaux, comme le contenu d'un message. Convertie de
+                    // force, elle rendait « Array » — donc un ordre glissé dans une pièce jointe structurée n'était pas lu, et PHP le disait par un simple
+                    // avertissement que rien ne regardait. Elle passe par le même lecteur que le reste.
+                    $prompt = $attachment['prompt'] ?? '';
+                    $queued = trim(is_array($prompt) ? $this->flatten($prompt) : (string) $prompt);
                     if ($queued !== '') {
                         $said[] = $queued;
                     }
@@ -188,9 +192,18 @@ class HookTranscript
         if (is_string($content)) {
             return $content;
         }
-        if (!is_array($content)) {
-            return '';
-        }
+
+        return is_array($content) ? $this->flatten($content) : '';
+    }
+
+    /**
+     * Les morceaux de texte d'un contenu structuré, mis bout à bout.
+     *
+     * SORTI DE `text()` POUR SERVIR AUSSI AUX PIÈCES JOINTES : la consigne d'une pièce jointe arrive parfois sous cette même forme, et elle était convertie de
+     * force en chaîne — ce qui rendait « Array », donc un ordre invisible, avec pour seule trace un avertissement PHP que rien ne regardait.
+     */
+    private function flatten(array $content): string
+    {
         $blocks = [];
         foreach ($content as $chunk) {
             if (is_array($chunk) && ($chunk['type'] ?? '') === 'text') {

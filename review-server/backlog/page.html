@@ -1,0 +1,289 @@
+<title>La pile</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAALGElEQVRYhXWXa4xd11mGn3XZl7PPmTPnnLl57LHHdh3bGWKS2E4lU1AclRAhQlsKcaWWNg1SQRUIFIHUH4BcS0T9xa9KQS0pqFyEoBSVpInSgqjsljSNEzuu4/huz33GM2fO/bYvay1+HNtKkfpJa21paUnvu7/v/d5vb7H0/FOU9tW+IVTz80FxrCXyO18Ue468IK+83RuofJg2qq/UF879qscAP5D4vkR7CiEcUgqcc5jUYDJBmhiSxNLrG9oD6FhNK849e2hm1z/MnPhiZFbO/BlbV/6kt7VWajd56WL15h+I+RcePGpMcrbBCAW7ya7pPHhj18Kphz7bWV3/7Prtc3+k6ZMLBEEg8XyFUhKpQEiBMxabGbIUstSSJJZBbOl0LZ0U2kb1dj380ef2THVO2sbtuevzbRquzKTfZ7MpjmgZdz6Ve+Q4SdewcHsZs7LA3l3N/a3rZ37YHoQ6HXTxQgEIhHMIHEKAkHJ4JgHpAIO1DmMdzjqEBAlMT01G24Nb/+paXd670WXV38fM7DbK02Xcm689o61fOB5NbEfme3Q7XeaXYyqNLUYj64dxD1uqkPXrOOswmUMpgRACACHAOYuzDucAwFowDqxzVGZ2MlECjzbLqzG33QwT5QJT28aIyhW2wrFflt7o2H4tIYoCds5OUxircHlDgfYIQoGmj5crYBAYd2+BdRJjFcZqrJUYJ0gNZAaMhWh8mko+waNDljku3AkZKReZ2TFJcbSIVpKoXN4vCbyi9n2UVpQqZbZtq9DNTbC22kJ5mlwksUmMlXl0ZQ9BeR86GAcRYIwkSyHJFJn1MCLAKh8RFikEDm06SODGzRZUppkaLzCxbRLP91BaIaQa1wKQWiOUBCSV8XEKK5ssrflURmKUkgS+Y5A5Qu3I2ssIl+CcQwiLulsKKUF5Ak8rUhEgTRupod9NWBqMUJ6OKFdKBLnc/TI6Z9A2SRpCqhJCgTWEkY8f+FRlicbWAqPFEM+TBEGK662hpRlqQCpwAiEc1jisAWsM0hiEyVCexFjB6vqAXm4XU1FAVMgPBaw0AGm/35Jxo3XDOQdCg1AoAVJAmPPYrBuS1KC1IPBBSYvyFFLLu+qXoBRCKZSn0L5Ga4GnLdZaej3DYkPgBz5S3n0qCVhwhkG9Nq97tfqbSWPzqF+aBCkwxuEpyYdYYZBTSAGeAiUdUmsQYLXHwuzjXNr7NMIkPHLlW0yvnkNYA1Li4hSbOuLYEGpD1LqFdRM458AB1jGordNq1N+S6w1e7dy4gDUpLh0gBOREgjOGqfGAXCiRUiDUXZ14Pjcf/hzfP/YVip01wrTPtz/6dZZnP4KQEiEkQmoEltCXzE76YB0YgzEGY1KsyWhde5etrv4vfXNh5L+ndlQXR+biXUoP06P7WwQa1F23u7cQgs7oDn4690WePvPH7Fg/h3MwVb/K/z72JX5r5Rxe1kEIh1IKZSwax6ga0G1UMekMJkkxOFYW7lSv3xl/TZoDl7Pbt6ovrJw9w6DXp9/t4TotfI+h60nJ0GMETkhWZ47jV88zvXERqQRSwf6brzLQeWqVfTg7vHtvV9KR84BOjX5vwKAfs/CTH7Kw2vnqjuhiT712Fp554OCFWu3Wcduuzg7qdcL2Er4n0J5CSRDyrutJzfm532Vy/S1mti7etT4QWcrSxCG8LGF89QLOWIyxYN19Y8p6XZp9R3v5Jjffu36rJUvPfuZf6okE+O3/eCeL09HPXL44v9Gcv4pw9r7nu2H5yIzFWMdaNEWlcR1nDFjAWFxmGGkuUQ0nMc6RphZrBRZxLxkoHO1bV7h0/kbSdJVno/7hzvD8bnzlmWOdsFDYimTr476yaCWQUsLoNGrfMUxuClNbpT0yye7lH5OL27jM4IzFGUPiJKpbp9jrEB78CBQmiLc2MGlGmg0zITxF0xb/tlmMvvbcN0+7+wTcyZOMHNh8zsuap+JOrehJUFogKjPIPUdYrvYxQRGtPHZdfZVc0gE7fHNnwWSWwp3bBOuLREeeYmGjgwzzqMoU8doiJnNk1oEQTBbVwUNllT01N372n9/eMgrgWHAaY+r/pl1zN9YO/SXwkPuP8Vd//xanXnqTxf4kWdxmVlbR0g772TmcGzphHGc0ol389WtVTn3tNK+cucGjByYpFUNMe4vMQOhB3jN+uz94/PJW8NVXLtb7EqD18S9zp517faue4GlQSqLLk6w0LR0zihISz9P8zctXSWSIySw2szgH1liy1BAPDP/5Th1/fC9e4DNZHuXMpTbR9CxKiKGopWCzmXFl0b1ciG/W7pfg+T2rD+0o9f4u8J0IAk2uOEJu536iqR2Upg9y4Y0f89alm3R6MZ86XGBEpwghQbj7Io0Tx79fMnz39HkwGU89doDf+LUj7JgMYdBGpv3hAJOC6bKYk3riJ7NPN28ogMrEoQ0vXj0mMfuCKGLkw08TTe8hNzLKnj3j+FbTv7PEw/u38eQDhnzg0IGHyuVQSiGFIDOWlhyjUevxxINjPPv7n2ZuTw4vl0eOz5LkygzW5ukNLAs11n+6GX3pL77eiMW9LvjGx2Yqgdf93vT+2aP7P3yYcqVEWCggwgi0R9zrEZAQn/02OmsjtEIogUstWWIZ9A3eQ0+SFSfxR0oEfoCL+yT9Hu1mi0atwfK751m5tdwauNyvl9SdN058636XDuM7n/vFo6v1hbP7f+koO3dNMTY2QlQYQXsa6fkI5YFNWDz7A350FdqxolNf4XeORsw89Bg2X8EYg5QK5xzxIKHZ6FBrdNjYqLH89juklhd7vfof/un3h5j6Hrg7Cd+b39qnbMLFN96l3XmQ7dsrjI/1CEOPIBcS5AvkiiU2S0d56dV/JNCKTpzwK09+gu2FCdrNJr1uH2cMWWbo9RO2WgNqtTZ3rt0g6Q7wQ3/yHvjPGNHx42AbuUdmxsQntxoDVubX6SaGfuYY9BPiOGZ5aZMoVMxuL3Nw7wSLS+s8/3tP8OiD26lX61y+skyj2aPV6rNZ67JR67K2sMr6+1fRcZdAC5Tnv334RP87p0//PwLfPA2fnhsNK0X7hemSptZOabf7pELRGVi6/QzfV6yubFKr1vCFYSySjBdD1taq3Lp9h8xYeoOUVjem1e5Tr9ZpLy4wogx5bzhTnAr/qbXUffP0teGM03wgNvvBueIgWR8viW2Hd4ecW0ixcQwFaLb7dHoxUejT68V4EqYnR9jcqNIfGJTvkSWWODHEicFZi7QZkTSMBMNvQJNhB0n08qnvYu9hyg8S6CS3s2rHXWt1DYEH+yYkWXUDXwmiQKGEo9cb0Oom1Dspi6stGl1DP4VWJ6Hby3DWEXqCQFqSWpW8dijhsM6RCdWovvL5ax/E/BkCG4+Bc66x1jA0OhbnHHmVsnr9JhJLFHhEgST0BFoOfz6stQgsvoacL8kFEk9JVq/PI3ptpBiO4ySzSMwGj39Z/lwCv8lhOTU7vg0cta6h1bdIoF+vMX9l7UVr7S2tJJ4WhB5EPuQDQT6QhL5CSQfOVtur3b90vZbVAlLjSDIDDvxcEAajv8DPJZB/4EPjOw49eni64uFJyKxgkDk8JXDWXGpXzaE0k1+wqftRlrlEOKwSWJyxLsve10L9uU3UgbjZ+Z985AMOT0LgSXKBYHT7zO7dD++c+yDmfREuvf48eWU+EeRCXRn/JOPvnmX+9jpZM0NMlGxKFN26ogcnTsy99PqNGy9V2lkkwnivFcb3ZLA8IYONoBjzfn0Lm4/2jo7ukl5thXJgiEKPcGYPaXkHuZSP/eDk4+89cWrYh/8HULqwLB0sUaIAAAAASUVORK5CYII=">
+
+<style>
+/* The « graphite » theme — the single dark dressing of the review pages, written for them rather than inherited from anything.
+ *
+ * Intention: a review page exists to judge images, so the interface must step back and the images must be the only thing with colour. Three habits of the older
+ * themes are dropped here, each for a reason paid for on 2026-08-11: the ground carried a green cast that tinted every sprite laid on it; the accent was amber,
+ * a colour the sprites themselves are full of — wood, thatch, apples, autumn grass — so the interface and the subject competed; and each page carried its own
+ * palette under its own names, so no two pages could be changed together. Asked for by the operator: « tu vas créer un tout nouveau thème moderne », dark, and
+ * applied to all four pages.
+ *
+ * THE GROUND IS NEUTRAL AND DEEP, NOT BLACK. Pure black makes a thumbnail's transparent edge glow and flattens every dark sprite against it; a deep neutral grey
+ * with the faintest blue keeps the images detached without ever reading as a colour of its own. Three levels only — ground, card, sunk — because a fourth is
+ * never told apart at a glance.
+ *
+ * THE ACCENT IS COOL AND IT IS THE ONLY ONE. A periwinkle blue-violet: no sprite of this world carries it, so it can mean « the interface speaks here » and
+ * nothing else. It marks what answers to a hand — the active filter, a focus ring, a field waiting for something.
+ *
+ * THE STATES KEEP THEIR MEANINGS AND GAIN THEIR CONTRAST. Green settles, amber sends back, red dismisses, blue calls for the operator — the one state that must
+ * catch the eye (operator, 2026-08-08). Each has a deep fill for a badge and a bright edge for a line or a word, and near-white ink is written on the fills.
+ */
+
+:root {
+  color-scheme: dark;
+  /* THE TWO FAMILIES, DECLARED ONCE: running text in the system's own face, and monospace kept for what is read character by character — file names, refs,
+   * measurements, codes. A page written entirely in monospace reads like a log; one without any cannot show a path. */
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --ink: #e9ebf0;
+  --muted: #9ba3b0;
+  --faint: #6b7280;
+  --bg: #0e1013;
+  --card: #16191f;
+  --card-sunk: #12151a;
+  --line: #262b34;
+  /* No grid behind the page: the operator asked for it gone, twice, and a ground that draws nothing competes with nothing. The token stays for the pages that
+   * still name it, set to the ground itself so it can only be invisible. */
+  --grid: #0e1013;
+
+  --accent: #8ea2ff;
+  --accent-field: rgba(142, 162, 255, 0.12);
+  --accent-edge: rgba(142, 162, 255, 0.55);
+
+  --state-validated: #1c4a34;
+  --state-validated-edge: #61d69f;
+  --state-rework: #533718;
+  --state-rework-edge: #e0a75e;
+  --state-dismissed: #4e2222;
+  --state-dismissed-edge: #ec8074;
+  --state-to-produce-edge: #6b7280;
+  --state-to-judge: #17406b;
+  --state-to-judge-edge: #74b6f2;
+  --ink-on-state: #f2f4f8;
+  --warn: #e0b267;
+  --warn-field: rgba(224, 178, 103, 0.12);
+
+  /* The checkerboard behind a transparent image: two greys close together, distinct enough to read as « nothing here » and quiet enough not to be looked at. */
+  --damier-a: #1d2027;
+  --damier-b: #171a20;
+  /* The lines drawn ON an image — the footprint grid and its axes over a sprite. Light, because they lie on the picture, not on the interface. */
+  --overlay: rgba(255, 255, 255, 0.32);
+  --overlay-soft: rgba(255, 255, 255, 0.17);
+  /* THE GROUND FOOTPRINT AND THE OVERHANG ARE TWO DIFFERENT THINGS AND MUST NEVER LOOK ALIKE (operator, 2026-08-12: « sur tous les affichages, je dois voir
+   * clairement les cases avec emprise et les cases de débordement — avec le nouveau thème, j'ai perdu une partie à ce niveau-là »). They took the interface
+   * accent and a white overlay, both chosen for text on a dark ground and both washed out over a bright sprite. Two saturated hues instead, opposed to each
+   * other and to everything a sprite of this world carries: warm coral for what touches the ground, cold cyan for what a volume overhangs. The fill under the
+   * footprint stays faint — it situates the rectangle, it must not tint the image being judged. */
+  --footprint-edge: #ff8a5c;
+  --footprint-field: rgba(255, 138, 92, 0.16);
+  --overhang-edge: #45e0e8;
+
+  /* THE SHAPE OF THINGS, NOT ONLY THEIR COLOUR. A theme that only swaps hexadecimals leaves the page exactly as square and as flat as it was — which is what the
+   * operator answered to the first attempt: « Tu as juste changé un peu les couleurs ? je veux un peu plus de changements ». Radii, elevation and the ring of a
+   * focused control belong to the dressing too, and they live here so the four pages round their corners the same way.
+   * THREE RADII AND NO MORE: a card, a control, a pill. A fourth is never told apart, and each extra value is one more thing to keep in step. */
+  --radius-card: 10px;
+  --radius-control: 7px;
+  --radius-pill: 999px;
+  /* Elevation is a shadow AND a lighter top edge — a card lit from above rather than a box drawn on the page. Kept low: a review page is read, not admired. */
+  --lift: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 2px 10px rgba(0, 0, 0, 0.35);
+  --lift-strong: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 8px 24px rgba(0, 0, 0, 0.45);
+  /* One ring for everything that takes focus, so the keyboard is never lost on a page. */
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-edge);
+}
+
+  /* LE FORMAT D'ÉCRAN, TENU UNE FOIS POUR TOUTES LES PAGES (review-server/lib/Layout.php). Une page ne déclare plus ni largeur, ni marge de bord. */
+  :root {
+    /* La marge de bord suit l'écran : serrée sur un portable, large sur un moniteur, et jamais au-delà de ce qui reste confortable. */
+    --gutter: clamp(14px, 2.2vw, 48px);
+    /* Le plafond du conteneur. Réglé pour un 4K : 3840 pixels physiques donnent environ 2560 pixels CSS au grossissement habituel, et la page les occupe. */
+    --wrap-max: 2560px;
+    /* La mesure d'un texte suivi : au-delà, l'œil se perd en revenant à la ligne, quelle que soit la place disponible. */
+    --measure: 78ch;
+    /* La largeur minimale d'une carte dans une grille. En dessous, la grille en pose une de moins plutôt que de les écraser. */
+    --card-min: 320px;
+  }
+  .wrap { width: min(100% - 2 * var(--gutter), var(--wrap-max)); margin-inline: auto; padding: 24px 0 96px; }
+  .measure { max-width: var(--measure); }
+  /* `min()` protège le cas étroit : sans lui, une carte de 320 pixels déborde d'un écran de 300 et la page défile de côté. */
+  .grid { display: grid; gap: var(--gutter); grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min)), 1fr)); }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 ui-sans-serif, system-ui, sans-serif; }
+  /* LA LARGEUR VIENT DU FORMAT COMMUN, ET LES POINTS SE POSENT EN GRILLE (opérateur, 2026-08-12 : « y'a toujours une colonne collée à gauche et l'espace n'est
+     pas occupé »). Une seule colonne à sa mesure de lecture laissait les trois quarts d'un grand écran vides — la mesure protège la ligne, elle ne dit pas
+     combien de colonnes tiennent à côté. La colonne d'un point est plus large que celle d'une carte de sujet : un point porte de la prose, pas quatre faits. */
+  .grid { --card-min: 520px; align-items: start; }
+  .lede, .tally { max-width: var(--measure); }
+  h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  .lede { margin: 0 0 8px; color: var(--muted); max-width: 90ch; }
+  .compte { margin: 0 0 24px; font-family: ui-monospace, monospace; font-size: .8rem; color: var(--muted); }
+  .point { margin: 0 0 10px; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 4px; }
+  .point h2 { margin: 6px 0 8px; font-size: 1.05rem; font-weight: 600; }
+  .point-tete { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0;
+                font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .03em; color: var(--muted); }
+  .point-ref { padding: 2px 7px; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; color: var(--ink); font-weight: 700; }
+  .point-rang { margin-left: auto; padding: 2px 7px; border: 1px solid var(--accent); border-radius: 2px; color: var(--accent); }
+  .point-corps { font-size: .92rem; }
+  .point-corps summary { cursor: pointer; color: var(--accent); font-size: .82rem; }
+  .point-corps > *:not(summary) { margin-top: 8px; }
+  .point-corps p { margin: 0 0 8px; }
+  .point-corps ul { margin: 0 0 8px; padding-left: 20px; }
+  .point-corps code { font-family: ui-monospace, monospace; font-size: .85em; color: var(--accent); }
+  .point-pied { margin: 8px 0 0; font-size: .72rem; color: var(--muted); }
+  /* LE STATUT SE VOIT AVANT D'ÊTRE LU : une pile où tout se ressemble oblige à lire chaque carte pour savoir laquelle bouge. */
+  .point[data-statut="in-progress"] { border-left: 3px solid var(--accent); }
+  .point[data-statut="pending-decision"] { border-left: 3px solid var(--state-rework-edge); }
+  .point[data-statut="pending-dependency"] { border-left: 3px solid var(--muted); }
+  .point[data-statut="waiting-external"] { border-left: 3px solid var(--state-dismissed-edge); }
+  .point[data-statut="done"], .point[data-statut="dismissed"] { opacity: .55; }
+  .clos { margin-top: 40px; }
+  .clos summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+  .mien { margin: 12px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
+  .mien li { margin: 4px 0; }
+  .mien .point-ref { margin-right: 8px; }
+  /* LE VOTE EST EN BAS DE CHAQUE CARTE, TOUJOURS VISIBLE : c'est le seul geste que l'opérateur vient faire ici, il ne se cherche pas. */
+  .acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+  .act input { position: absolute; opacity: 0; pointer-events: none; }
+  .act span { display: inline-block; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px;
+              font-size: 13px; color: var(--muted); cursor: pointer; }
+  .act span:hover { border-color: var(--accent); color: var(--accent); }
+  .act input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .act--wanted input:checked + span { background: var(--state-validated); border-color: var(--state-validated-edge); color: var(--ink-on-state); }
+  .act--dismissed input:checked + span { background: var(--state-dismissed); border-color: var(--state-dismissed-edge); color: var(--ink-on-state); }
+  /* LE CHAMP TIENT DANS SA CARTE : sans box-sizing, ses bordures s'ajoutent aux cent pour cent de largeur et il déborde de quelques pixels — ce qui se voit
+     tout de suite sur une grille. */
+  .comment { box-sizing: border-box; width: 100%; margin: 8px 0 0; padding: 8px 10px; background: var(--bg); color: var(--ink);
+             border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: .88rem; resize: vertical; }
+  .comment:focus { border-color: var(--accent); outline: none; }
+  /* LA BARRE DU RELEVÉ RESTE SOUS LE POUCE, et elle n'existe que dans l'artefact : publiée, la page ne peut appeler aucun serveur, et c'est le seul moyen de
+     faire sortir les votes de l'appareil. La page servie, elle, enregistre toute seule. */
+  .releve { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 10px var(--gutter);
+            background: var(--card); border-top: 1px solid var(--line); }
+  .releve-compte { margin: 0; font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); }
+  .releve-copier { padding: 8px 14px; background: var(--bg); color: var(--ink); border: 1px solid var(--accent); border-radius: 4px; font: inherit; font-size: 14px; }
+  .releve-texte { flex: 1 1 auto; min-height: 60px; font: inherit; font-size: 12px; }
+  .reload { position: fixed; right: 18px; bottom: 18px; z-index: 200; display: none; align-items: center; gap: 14px; padding: 12px 14px 12px 18px;
+            background: #191b1f; border: 1px solid #3a3546; border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45); color: #e6e4e0;
+            font-family: system-ui, sans-serif; font-size: .88rem; }
+  .reload[data-open="yes"] { display: flex; }
+  .reload-word { margin: 0; max-width: 15rem; line-height: 1.35; }
+  .reload-ring { position: relative; width: 46px; height: 46px; flex: none; }
+  .reload-ring svg { width: 46px; height: 46px; transform: rotate(-90deg); }
+  .reload-ring circle { fill: none; stroke-width: 3; }
+  .reload-track { stroke: #3a3546; }
+  /* The ring empties over five seconds: it is what tells how much time is left, with no figure to read. */
+  .reload-gauge { stroke: #d9a441; stroke-linecap: round; stroke-dasharray: 125.66370614359; stroke-dashoffset: 0; transition: stroke-dashoffset linear; }
+  .reload-button { position: absolute; inset: 8px; border: none; border-radius: 50%; background: #d9a441; color: #191b1f; font: inherit; font-size: .95rem;
+                   line-height: 1; cursor: pointer; }
+  .reload-button:hover { background: #eab853; }
+  .reload-button:focus-visible { outline: 2px solid #e6e4e0; outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <h1>La pile</h1>
+  <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
+  décision qui t'appartient.</p>
+  <p class="compte">0 en attente de toi · 16 à moi · php scripts/backlog.php next</p>
+  <div class="grid">
+  <p class="lede measure">Rien ne t'attend dans la pile : tu as déjà tranché tout ce qui s'y trouve, et le reste est du travail dû, listé plus bas. <strong>Ce qui t'attend est ailleurs</strong> : les sprites à juger, sur <a href="/sprites">le suivi des sprites</a>.</p>
+  </div>
+  <details class="clos">
+    <summary>Les 16 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
+    <ul class="mien">
+    <li><span class="point-ref">noms-scripts-fr</span> Renommer en anglais les 89 scripts au nom francais que le controle signale</li>
+    <li><span class="point-ref">verdicts-notifies</span> L&#039;agent doit être averti des verdicts neufs — le relevé à copier est retiré</li>
+    <li><span class="point-ref">index-refresh</span> L&#039;index ouvert ne s&#039;est pas rafraîchi quand une page a été ajoutée</li>
+    <li><span class="point-ref">dossiers-en-anglais</span> Les six répertoires d&#039;images portent des noms français</li>
+    <li><span class="point-ref">pas-de-rune-generee</span> Aucune rune ne se demande au générateur pour l&#039;instant</li>
+    <li><span class="point-ref">comments-en-anglais</span> Les commentaires français du serveur de revue, à repasser en anglais</li>
+    <li><span class="point-ref">audit-journal</span> Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</li>
+    <li><span class="point-ref">tri-profondeur</span> Vérifier le tri par profondeur : un personnage derrière un tronc doit être caché</li>
+    <li><span class="point-ref">comparaison-variants</span> La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</li>
+    <li><span class="point-ref">bash-simple</span> Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</li>
+    <li><span class="point-ref">locales-francaises</span> Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</li>
+    <li><span class="point-ref">backlog-help</span> backlog.php n&#039;a pas de sous-commande help, et une sous-commande inconnue tombe en erreur sèche</li>
+    <li><span class="point-ref">sondes-servies</span> Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script</li>
+    <li><span class="point-ref">hauteur-monde</span> La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</li>
+    <li><span class="point-ref">outils-morts</span> Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</li>
+    <li><span class="point-ref">service-sonde</span> Un service de sonde pour la page servie et la copie greffée</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+window.gatebeastNotes = (function () {
+  var route = "\/backlog";
+  var all = {};
+
+  function load(section, next) {
+    var call = new XMLHttpRequest();
+    call.open('GET', '/notes?page=' + encodeURIComponent(route), true);
+    // A server that cannot be reached leaves the page usable with no remarks rather than dead: what matters is that nothing is invented, never that everything works.
+    call.onload = function () {
+      all = call.status === 200 ? (JSON.parse(call.responseText) || {}) : {};
+      /* AN ARRAY IS NOT A TABLE OF SECTIONS, AND THE DIFFERENCE COST EVERY PAGE ITS FIRST REMARK. A missing or emptied file makes the server answer `[]` — PHP
+         encodes an empty array that way, it has no "empty object" type. The module then set its section on an ARRAY: `all['plan'] = …` lands there as a named
+         property, and JSON.stringify of an array serialises its indices only. So the remark went back to the server inside a `[]` and vanished, with no error and
+         no trace. Invisible until now because the two existing files were never empty; found on 2026-08-08 while wiring up the sprites page, whose file did not
+         exist yet. */
+      if (Array.isArray(all)) { all = {}; }
+      next(all[section] || []);
+    };
+    call.onerror = function () { next([]); };
+    call.send();
+  }
+
+  function save(section, notes) {
+    /* The same guard as on load: `save` may be called before the load has answered, and it would set its section on the initial array. */
+    if (Array.isArray(all) || all === null || typeof all !== 'object') { all = {}; }
+    all[section] = notes;
+    var call = new XMLHttpRequest();
+    call.open('POST', '/notes?page=' + encodeURIComponent(route), true);
+    call.setRequestHeader('Content-Type', 'application/json');
+    call.send(JSON.stringify(all));
+  }
+
+  return {load: load, save: save};
+})();
+</script>
+
+
+<aside class="reload" id="reload" role="status" aria-live="polite">
+  <p class="reload-word">Une nouvelle version de cette page est prête.</p>
+  <span class="reload-ring">
+    <svg viewBox="0 0 46 46" aria-hidden="true"><circle class="reload-track" cx="23" cy="23" r="20"></circle>
+      <circle class="reload-gauge" id="reload-gauge" cx="23" cy="23" r="20"></circle></svg>
+    <button type="button" class="reload-button" id="reload-button" title="Recharger maintenant" aria-label="Recharger maintenant">↻</button>
+  </span>
+</aside>
+<script>
+(function () {
+  var route = "\/backlog";
+  var openingSignature = null;
+  var announced = false;
+  var box = document.getElementById('reload');
+  var gauge = document.getElementById('reload-gauge');
+
+  function ask(next) {
+    var call = new XMLHttpRequest();
+    call.open('GET', '/version?page=' + encodeURIComponent(route), true);
+    // A server failure must break NOTHING: the page stays usable as it is, and the pulse resumes on the next beat.
+    call.onload = function () { if (call.status === 200) { next(call.responseText); } };
+    call.send();
+  }
+
+  function announce() {
+    announced = true;
+    box.setAttribute('data-open', 'yes');
+    gauge.style.transitionDuration = '0s';
+    gauge.style.strokeDashoffset = '0';
+    // The browser must have taken the starting point before the transition starts, otherwise it jumps straight to the end and the ring never animates.
+    gauge.getBoundingClientRect();
+    gauge.style.transitionDuration = '5s';
+    gauge.style.strokeDashoffset = '125.66370614359';
+    window.setTimeout(function () { window.location.reload(); }, 5 * 1000);
+  }
+
+  document.getElementById('reload-button').addEventListener('click', function () { window.location.reload(); });
+
+  ask(function (signature) {
+    openingSignature = signature;
+    window.setInterval(function () {
+      if (announced) { return; }
+      ask(function (now) { if (now !== openingSignature) { announce(); } });
+    }, 2000);
+  });
+})();
+</script>

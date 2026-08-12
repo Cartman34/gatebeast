@@ -84,26 +84,10 @@ SPECIES = {
                "visible through clear water; never breaks the surface.", "behind the head"),
 }
 
-INDIVIDUALS = {
-    "SP-001-1": ("SP-001", "an ARCH, turquoise"),
-    "SP-002-1": ("SP-002", "a CRESCENT, pale yellow"),
-    "SP-002-2": ("SP-002", "a SPIRAL, pale yellow"),
-    "SP-004-1": ("SP-004", "a WAVE, sea-green"),
-    "SP-005-1": ("SP-005", "a CHEVRON, orange"),
-    "SP-006-1": ("SP-006", "a CLOSED RING, deep blue"),
-    "SP-007-1": ("SP-007", "a TEARDROP, pink"),
-    "SP-007-2": ("SP-007", "a CROSSED LOOP, pale pink — this individual is smaller and paler than "
-                            "SP-007-1"),
-    "SP-008-1": ("SP-008", "an ELONGATED S, blue-green"),
-    "SP-009-1": ("SP-009", "an OPEN LOOP, copper"),
-    "SP-010-1": ("SP-010", "an OPEN CROWN of three points drawn in one stroke, pale gold"),
-    "SP-012-1": ("SP-012", "a BENT REED, glacier blue"),
-    "SP-014-1": ("SP-014", "a HORIZONTAL ZIGZAG, moss green"),
-    "SP-015-1": ("SP-015", "a DOUBLE WAVE, turquoise"),
-    "SP-016-1": ("SP-016", "a VOLUTE, straw yellow"),
-    "SP-016-2": ("SP-016", "a DOUBLE LINKED RING, straw yellow"),
-    "SP-017-1": ("SP-017", "a MEANDER, luminous jade green"),
-}
+# INDIVIDUALS IS GONE, AND WITH IT THE LAST COPY OF THE RUNES (2026-08-12). It mapped each individual to its species and to the wording of its rune — the second
+# half being a copy of assets/runes.json, and the first half the only machine-side trace of a link the content referential already declared. The rune wording is
+# no longer wanted anywhere: a creature sprite is now produced WITHOUT its rune, which is traced at render on the anchor the image declares. The species link
+# moved into assets/runes.json, beside the individual it belongs to, and asset_common.py reads it there.
 
 # Witness sheets — humans. Verbatim from referentiels/visuel/inventaire/personnages.md.
 HUMANS = {
@@ -245,13 +229,6 @@ def preambule_fr(habillage: str = "UNE CASE SUR CINQ") -> str:
     if original not in PREAMBULE_FR:
         raise ValueError("dressing sentence not found in PREAMBULE_FR")
     return PREAMBULE_FR.replace(original, replacement)
-
-
-def creature(individual: str) -> str:
-    """The full sheet text for one individual: species description plus its exact rune."""
-    species, rune = INDIVIDUALS[individual]
-    description, position = SPECIES[species]
-    return (f"{individual}: {description} Its rune, one single glimmering stroke, {position}: {rune}.")
 
 
 def human(code: str) -> str:

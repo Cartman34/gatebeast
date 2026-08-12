@@ -15,9 +15,13 @@ require_once __DIR__ . '/lib/Faults.php';
 require_once __DIR__ . '/lib/Notes.php';
 require_once __DIR__ . '/lib/Favicon.php';
 require_once __DIR__ . '/lib/Reload.php';
-require_once __DIR__ . '/lib/Releve.php';
 require_once __DIR__ . '/lib/Theme.php';
+require_once __DIR__ . '/lib/Layout.php';
 require_once __DIR__ . '/lib/Remarks.php';
+require_once __DIR__ . '/lib/Survey.php';
+require_once __DIR__ . '/lib/Config.php';
+require_once __DIR__ . '/lib/ReviewServer.php';
+require_once __DIR__ . '/lib/Browser.php';
 
 /**
  * For a command that produces a page: PHP errors become exceptions, and an uncaught exception stops the command with its message on the error output.

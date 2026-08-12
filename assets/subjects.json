@@ -3,8 +3,8 @@
   "version": 1,
   "_intention": "Le référentiel des sujets — types, sujets, variants et représentations — remplace assets/catalogue.json (gelé, non lu, non modifié par ce fichier). Décrit à doc/conception/referentiels/technique/rendu-en-calques.md et doc/conception/referentiels/visuel/assets/sujets-et-variantes.md.",
   "types": {
-    "sol": {
-      "layer": "sol",
+    "ground": {
+      "layer": "ground",
       "passage_default": "open",
       "batch_v0": [
         {
@@ -15,8 +15,8 @@
         }
       ]
     },
-    "chemin": {
-      "layer": "decor-au-sol",
+    "path": {
+      "layer": "ground-decor",
       "passage_default": "open",
       "extra_prompt": "CE SUJET N'A AUCUN VOLUME : il est DANS le sol, pas posé dessus. Aucune épaisseur, aucun bombé, aucun arrondi, aucun bord relevé, aucune ombre portée — sa surface est exactement celle du terrain autour de lui. La clause de style qui demande des volumes sculptés et arrondis comme de petites figurines NE S'APPLIQUE PAS à lui : elle vaut pour ce qui se dresse, et rien ne se dresse ici. Sa couleur reste DOUCE et TERREUSE : la clause qui demande des couleurs franches et saturées ne doit pas le pousser vers un jaune vif ou un doré — une terre foulée est claire et un peu grisée, jamais éclatante.",
       "_prompt_comment": "Trois générations perdues sur le chemin, la dernière le 2026-08-06 : un ruban jaune d'or, bombé, exactement la « brioche » que l'opérateur avait nommée. La cause n'est pas sa description mais le SOCLE, écrit pour des sujets qui ont du volume et des couleurs saturées — deux clauses qui, appliquées à une matière de sol, la soulèvent et l'éclairent. Le type est le niveau juste pour les désamorcer : elles restent vraies pour tout ce qui se dresse.",
@@ -135,8 +135,8 @@
       ],
       "_shapes_covered_by_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier. Depuis le 2026-08-07 elles se dessinent TOUTES séparément — aucune n'est couverte par la rotation d'une autre —, et chacune est donc déclarée au lot ci-dessus. Le nom de cette clé est devenu trompeur et reste à changer."
     },
-    "cours-d-eau": {
-      "layer": "decor-au-sol",
+    "stream": {
+      "layer": "ground-decor",
       "passage_default": "closed",
       "_passage_comment": "Un cours d'eau ferme le passage par défaut : on ne le franchit que par un ouvrage dédié — pont, gué, passerelle (format-de-composition.md, « Ouvrages d'eau : ponts, gués, passerelles »). scene-de-reference.md confirme la règle en pratique : un chemin qui rencontre une rivière la franchit par un pont, jamais en la traversant directement.",
       "assembles": true,
@@ -254,8 +254,8 @@
       ],
       "_shapes_covered_by_rotation_comment": "Les quinze combinaisons de bords qu'une case de ce type doit savoir relier. Depuis le 2026-08-07 elles se dessinent TOUTES séparément — aucune n'est couverte par la rotation d'une autre —, et chacune est donc déclarée au lot ci-dessus. Le nom de cette clé est devenu trompeur et reste à changer."
     },
-    "cloture": {
-      "layer": "monde",
+    "fence": {
+      "layer": "world",
       "passage_default": "closed",
       "_passage_comment": "Le type clôture ferme les quatre côtés par défaut (sujets-et-variantes.md, decision 15).",
       "extra_prompt": "Au pied de chaque poteau, quelques brins d'herbe courts et fins poussent serrés contre le bois, du même vert franc que la prairie — assez pour que le poteau paraisse planté dans le sol, jamais une touffe haute ni une bordure continue le long des lisses. Aucun autre sol n'est dessiné sous la pièce.",
@@ -425,8 +425,8 @@
       ],
       "_batch_comment": "Six formes en composition posts-1, chacune dessinée séparément puisque le type ne pivote pas — la seule composition que l'opérateur ait validée pour ces pièces, écrite explicitement pour ne pas retomber sur le défaut du type (posts-2), ce qui avait fabriqué cinq variants attendus jamais demandés (corrigé le 2026-08-05). Plus les quatre variants de portillon (deux sens de ligne × deux états), écrites sans composition parce qu'aucune ne leur a été demandée — un silence non écrit ne se résout jamais vers compositions.default. Plus les deux portillons à DEUX POTEAUX demandés par l'opérateur le 2026-08-05, en est-ouest seulement : la décision écrite à l'inventaire veut qu'une pièce nord-sud ne montre qu'un seul poteau, ses deux poteaux se superposant exactement dans l'alignement du regard. Douze images en tout."
     },
-    "arbre": {
-      "layer": "monde",
+    "tree": {
+      "layer": "world",
       "passage_default": "closed",
       "extra_prompt": "L'arbre est seul dans l'image : rien ne pousse à son pied, ni touffe d'herbe, ni fleur, ni buisson, et aucun sol n'est dessiné sous lui. Le sol du monde est posé par la carte, jamais par la sprite.",
       "_prompt_comment": "Constaté sur le pommier, qui arrivait avec de l'herbe au sol alors que le sol seul l'apporte (registre, 2026-08-04). La clause vivait auparavant dans le socle commun, où elle interdisait l'herbe à TOUTES les générations — y compris aux sujets qui SONT de l'herbe, dont elle contredisait la description. Le type est le niveau juste : deux familles peuvent vouloir l'inverse l'une de l'autre, et la clôture veut justement de l'herbe au pied de ses poteaux (opérateur, 2026-08-06).",
@@ -440,8 +440,8 @@
         }
       ]
     },
-    "bosquet-arbres": {
-      "layer": "monde",
+    "grove": {
+      "layer": "world",
       "passage_default": "closed",
       "extra_prompt": "Le bosquet est seul dans l'image : aucun sol n'est dessiné sous lui, et rien ne pousse autour de lui qui ne fasse partie du sous-bois décrit. Le sol du monde est posé par la carte, jamais par la sprite.",
       "_passage_comment": "Même raison que le type arbre : obstacle par nature, fermé au niveau du type. La mention « infranchissable » de l'inventaire (TR-061) est une confirmation.",
@@ -454,8 +454,8 @@
         }
       ]
     },
-    "herbe": {
-      "layer": "monde",
+    "grass": {
+      "layer": "world",
       "passage_default": "open",
       "extra_prompt": "AUCUN SOL N'EST DESSINÉ, ni sous les touffes, ni entre elles, ni autour : pas de terre, pas de motte, pas de galette brune, pas de disque de sol. Les touffes flottent sur un fond entièrement transparent, et c'est la carte du jeu qui pose le sol sous elles.",
       "_prompt_comment": "Constaté le 2026-08-06 : la description disait « posées sur le sol nu », et le générateur a dessiné une galette de terre ronde remplissant la case — exactement la case ronde que l'opérateur avait déjà refusée. Le sol appartient à la carte, jamais à la sprite d'herbe.",
@@ -492,8 +492,8 @@
         "_comment": "Trois densités d'une même herbe, demandées par l'opérateur le 2026-08-05 : l'image actuelle est la clairsemée, la deuxième en porte deux fois plus, la troisième quatre fois plus. C'est la même herbe, dessinée plus ou moins fournie — jamais trois sujets différents."
       }
     },
-    "batiment": {
-      "layer": "monde",
+    "building": {
+      "layer": "world",
       "passage_default": "closed",
       "_passage_comment": "Un bâtiment ferme tous les côtés de toutes ses cases par défaut ; il ne s'ouvre que là où sa propre fiche déclare une entrée — décision de l'opérateur, 2026-08-04, déduite de la fiche sans rien inventer.",
       "batch_v0": [
@@ -529,8 +529,8 @@
         "_comment": "Trois propositions d'un même bâtiment, demandées par l'opérateur le 2026-08-05 pour pouvoir choisir : p1 est la version courante, p2 revient aux couleurs de la scène de référence de direction artistique, p3 est une troisième piste. Elles disparaîtront quand il aura tranché — ce sont des propositions, pas une richesse du monde."
       }
     },
-    "humain": {
-      "layer": "monde",
+    "human": {
+      "layer": "world",
       "passage_default": "open",
       "parts": [
         "gaze"
@@ -565,7 +565,7 @@
       "_batch_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
     },
     "creature": {
-      "layer": "monde",
+      "layer": "world",
       "passage_default": "open",
       "parts": [
         "gaze"
@@ -598,8 +598,8 @@
       ],
       "_batch_comment": "Quatre orientations en idle pour la v0 (décision de l'opérateur, 2026-08-04) ; aucun sujet inventorié ne le porte encore."
     },
-    "pont": {
-      "layer": "monde",
+    "bridge": {
+      "layer": "world",
       "rotates": false,
       "_rotates_comment": "Un pont ne pivote pas : ses deux sens sont deux DESSINS distincts, ns et ew, parce que la lumière et les parapets ne se retournent pas avec la case. Le contrôle du plan le demandait sans le trouver, et il refusait de compter plutôt que de deviner (2026-08-08).",
       "passage_default": "open",
@@ -616,7 +616,7 @@
   "subjects": {
     "CH-001": {
       "profile": "short-grass-01",
-      "type": "sol",
+      "type": "ground",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -636,7 +636,7 @@
               "image_number": 1,
               "measures": null,
               "status": "current",
-              "verdict": "validee"
+              "verdict": "approved"
             }
           ],
           "main": true,
@@ -650,7 +650,7 @@
     },
     "CH-019": {
       "profile": "dirt-path-01",
-      "type": "chemin",
+      "type": "path",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -1455,7 +1455,7 @@
     },
     "CH-020": {
       "profile": "stream-01",
-      "type": "cours-d-eau",
+      "type": "stream",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -2106,7 +2106,7 @@
     },
     "OB-010": {
       "profile": "log-fence-01",
-      "type": "cloture",
+      "type": "fence",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -2166,7 +2166,7 @@
               "image_number": 1,
               "measures": null,
               "status": "previous",
-              "verdict": "validee",
+              "verdict": "approved",
               "operator_comment": "Ancien design"
             },
             {
@@ -2176,7 +2176,7 @@
               "image_number": 1,
               "measures": null,
               "status": "previous",
-              "verdict": "ecartee",
+              "verdict": "discarded",
               "operator_comment": "Ancien design"
             }
           ],
@@ -2199,7 +2199,7 @@
               "image_number": 1,
               "measures": null,
               "status": "current",
-              "verdict": "validee"
+              "verdict": "approved"
             }
           ],
           "ref": "orientation-south_action-idle_shape-ne_posts-1_frame-01",
@@ -2221,7 +2221,7 @@
               "image_number": 1,
               "measures": null,
               "status": "current",
-              "verdict": "validee"
+              "verdict": "approved"
             },
             {
               "type": "sprite",
@@ -2251,7 +2251,7 @@
               "image_number": 1,
               "measures": null,
               "status": "current",
-              "verdict": "validee"
+              "verdict": "approved"
             },
             {
               "type": "sprite",
@@ -2260,7 +2260,7 @@
               "image_number": 1,
               "measures": null,
               "status": "previous",
-              "verdict": "validee"
+              "verdict": "approved"
             }
           ],
           "main": true,
@@ -2283,7 +2283,7 @@
               "image_number": 1,
               "measures": null,
               "status": "current",
-              "verdict": "validee"
+              "verdict": "approved"
             }
           ],
           "ref": "orientation-south_action-idle_shape-es_posts-1_frame-01",
@@ -2305,7 +2305,7 @@
               "image_number": 1,
               "measures": null,
               "status": "current",
-              "verdict": "validee"
+              "verdict": "approved"
             }
           ],
           "ref": "orientation-south_action-idle_shape-sw_posts-1_frame-01",
@@ -2565,7 +2565,7 @@
               "image_number": 1,
               "measures": null,
               "status": "previous",
-              "verdict": "ecartee",
+              "verdict": "discarded",
               "operator_comment": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
             },
             {
@@ -2772,7 +2772,7 @@
               "image_number": 1,
               "measures": null,
               "status": "previous",
-              "verdict": "ecartee",
+              "verdict": "discarded",
               "operator_comment": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
             }
           ],
@@ -2844,7 +2844,7 @@
               "image_number": 1,
               "measures": null,
               "status": "previous",
-              "verdict": "ecartee",
+              "verdict": "discarded",
               "operator_comment": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
             }
           ],
@@ -2924,7 +2924,7 @@
               "image_number": 1,
               "measures": null,
               "status": "previous",
-              "verdict": "ecartee",
+              "verdict": "discarded",
               "operator_comment": "Produite sur une consigne fautive, précisant une composition (un poteau) que le sujet n'avait pas à recevoir."
             }
           ],
@@ -3272,7 +3272,7 @@
     },
     "TR-060": {
       "profile": "oak-01",
-      "type": "arbre",
+      "type": "tree",
       "footprint": {
         "columns": 2,
         "rows": 2
@@ -3291,6 +3291,45 @@
           "action": "idle",
           "shape": "plain",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v9.png",
+              "master": "poc/vegetation/TR-060-v9.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 576,
+                  "height": 792
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 42,
+                  "right": 574,
+                  "bottom": 744,
+                  "width": 573,
+                  "height": 703
+                },
+                "contact_px": {
+                  "left": 251,
+                  "right": 329,
+                  "width": 79
+                },
+                "anchor_px": {
+                  "x": 290.0,
+                  "y": 745.0
+                },
+                "master_size_px": {
+                  "width": 576,
+                  "height": 792
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 6,
+                  "rows": 6
+                }
+              },
+              "status": "current"
+            },
             {
               "type": "sprite",
               "path": "cutout/vegetation/TR-060-v8.png",
@@ -3328,7 +3367,7 @@
                   "rows": 6
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -3552,7 +3591,7 @@
     },
     "TR-061": {
       "profile": "fir-thicket-01",
-      "type": "bosquet-arbres",
+      "type": "grove",
       "footprint": {
         "columns": 2,
         "rows": 2
@@ -3922,7 +3961,7 @@
     },
     "TR-063": {
       "profile": "apple-tree-01",
-      "type": "arbre",
+      "type": "tree",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -3942,6 +3981,45 @@
           "shape": "plain",
           "_comment": "TR-063-v3 est la dernière version produite, donc le variant courant, sans verdict (l'opérateur ne l'a pas encore vue). TR-063-v2 et TR-063 (sans suffixe) deviennent ses versions antérieures, dans l'ordre, chacune gardant le verdict qu'elle a reçu en son temps ; plafond de trois antérieures non atteint (2 sur 3).",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v14.png",
+              "master": "poc/vegetation/TR-063-v14.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 420
+                },
+                "silhouette_px": {
+                  "left": 5,
+                  "top": 5,
+                  "right": 282,
+                  "bottom": 414,
+                  "width": 278,
+                  "height": 410
+                },
+                "contact_px": {
+                  "left": 121,
+                  "right": 171,
+                  "width": 51
+                },
+                "anchor_px": {
+                  "x": 146.0,
+                  "y": 415.0
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 420
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 3
+                }
+              },
+              "status": "current"
+            },
             {
               "type": "sprite",
               "path": "cutout/vegetation/TR-063-v13.png",
@@ -3979,7 +4057,7 @@
                   "rows": 3
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -4375,7 +4453,7 @@
     },
     "TR-062": {
       "profile": "tall-grass-01",
-      "type": "herbe",
+      "type": "grass",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -4395,7 +4473,7 @@
               "image_number": 1,
               "measures": null,
               "status": "current",
-              "verdict": "validee",
+              "verdict": "approved",
               "operator_comment": "Il faudrait ajouter un autre sujet herbe un peu moins touffu."
             }
           ],
@@ -4409,7 +4487,7 @@
     },
     "TR-064": {
       "profile": "sparse-grass-01",
-      "type": "herbe",
+      "type": "grass",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -5137,7 +5215,7 @@
     },
     "TR-065": {
       "profile": "fir-01",
-      "type": "arbre",
+      "type": "tree",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -5572,7 +5650,7 @@
     },
     "BT-001": {
       "profile": "healing-center-01",
-      "type": "batiment",
+      "type": "building",
       "footprint": {
         "columns": 16,
         "rows": 10
@@ -6628,7 +6706,7 @@
     },
     "BT-002": {
       "profile": "farmhouse-01",
-      "type": "batiment",
+      "type": "building",
       "footprint": {
         "columns": 5,
         "rows": 4
@@ -6959,7 +7037,7 @@
     },
     "CH-021": {
       "profile": "stone-bridge-01",
-      "type": "pont",
+      "type": "bridge",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -6972,6 +7050,45 @@
           "action": "idle",
           "shape": "ns",
           "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/sol/CH-021_shape-ns-v6.png",
+              "master": "poc/sol/CH-021_shape-ns-v6.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 105
+                },
+                "silhouette_px": {
+                  "left": 17,
+                  "top": 0,
+                  "right": 78,
+                  "bottom": 104,
+                  "width": 62,
+                  "height": 105
+                },
+                "contact_px": {
+                  "left": 17,
+                  "right": 78,
+                  "width": 62
+                },
+                "anchor_px": {
+                  "x": 47.5,
+                  "y": 105.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 105
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
             {
               "type": "sprite",
               "path": "cutout/sol/CH-021_shape-ns-v5.png",
@@ -7009,7 +7126,7 @@
                   "rows": 1
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -7267,7 +7384,7 @@
     },
     "HU-000": {
       "profile": "reference-human-01",
-      "type": "humain",
+      "type": "human",
       "footprint": {
         "columns": 1,
         "rows": 1
@@ -7367,7 +7484,47 @@
         {
           "orientation": "north",
           "action": "idle",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v4.png",
+              "master": "poc/personnage/HU-000-v4.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 192
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 1,
+                  "right": 93,
+                  "bottom": 190,
+                  "width": 93,
+                  "height": 190
+                },
+                "contact_px": {
+                  "left": 16,
+                  "right": 78,
+                  "width": 63
+                },
+                "anchor_px": {
+                  "x": 47.0,
+                  "y": 191.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 192
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
           "label": "Tourné vers le nord — de dos",
           "ref": "orientation-north_action-idle_frame-01",
           "height_min_ty": 1.76,
@@ -7376,7 +7533,86 @@
         {
           "orientation": "east",
           "action": "idle",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v6.png",
+              "master": "poc/personnage/HU-000-v6.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 180
+                },
+                "silhouette_px": {
+                  "left": 24,
+                  "top": 2,
+                  "right": 70,
+                  "bottom": 177,
+                  "width": 47,
+                  "height": 176
+                },
+                "contact_px": {
+                  "left": 31,
+                  "right": 67,
+                  "width": 37
+                },
+                "anchor_px": {
+                  "x": 49.0,
+                  "y": 178.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 180
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v5.png",
+              "master": "poc/personnage/HU-000-v5.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 188
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 2,
+                  "right": 93,
+                  "bottom": 185,
+                  "width": 92,
+                  "height": 184
+                },
+                "contact_px": {
+                  "left": 11,
+                  "right": 90,
+                  "width": 80
+                },
+                "anchor_px": {
+                  "x": 50.5,
+                  "y": 186.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 188
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "previous"
+            }
+          ],
           "label": "Tourné vers l'est — de profil",
           "ref": "orientation-east_action-idle_frame-01",
           "height_min_ty": 1.76,
@@ -7385,7 +7621,47 @@
         {
           "orientation": "west",
           "action": "idle",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/personnage/HU-000-v3.png",
+              "master": "poc/personnage/HU-000-v3.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 168
+                },
+                "silhouette_px": {
+                  "left": 21,
+                  "top": 2,
+                  "right": 74,
+                  "bottom": 165,
+                  "width": 54,
+                  "height": 164
+                },
+                "contact_px": {
+                  "left": 26,
+                  "right": 60,
+                  "width": 35
+                },
+                "anchor_px": {
+                  "x": 43.0,
+                  "y": 166.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 168
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
           "label": "Tourné vers l'ouest — de profil",
           "ref": "orientation-west_action-idle_frame-01",
           "height_min_ty": 1.76,
@@ -7456,7 +7732,47 @@
         {
           "orientation": "north",
           "action": "idle",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/creature/SP-001-v3.png",
+              "master": "poc/creature/SP-001-v3.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 140
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 2,
+                  "right": 94,
+                  "bottom": 137,
+                  "width": 94,
+                  "height": 136
+                },
+                "contact_px": {
+                  "left": 19,
+                  "right": 75,
+                  "width": 57
+                },
+                "anchor_px": {
+                  "x": 47.0,
+                  "y": 138.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 140
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
           "label": "Tourné vers le nord — de dos",
           "ref": "orientation-north_action-idle_frame-01",
           "height_min_ty": 1.36,
@@ -7465,7 +7781,86 @@
         {
           "orientation": "east",
           "action": "idle",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/creature/SP-001-v5.png",
+              "master": "poc/creature/SP-001-v5.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 2,
+                  "right": 94,
+                  "bottom": 111,
+                  "width": 94,
+                  "height": 110
+                },
+                "contact_px": {
+                  "left": 28,
+                  "right": 79,
+                  "width": 52
+                },
+                "anchor_px": {
+                  "x": 53.5,
+                  "y": 112.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/creature/SP-001-v4.png",
+              "master": "poc/creature/SP-001-v4.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "silhouette_px": {
+                  "left": 1,
+                  "top": 2,
+                  "right": 94,
+                  "bottom": 111,
+                  "width": 94,
+                  "height": 110
+                },
+                "contact_px": {
+                  "left": 16,
+                  "right": 67,
+                  "width": 52
+                },
+                "anchor_px": {
+                  "x": 41.5,
+                  "y": 112.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 114
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "previous"
+            }
+          ],
           "label": "Tourné vers l'est — de profil",
           "ref": "orientation-east_action-idle_frame-01",
           "height_min_ty": 1.36,
@@ -7474,7 +7869,47 @@
         {
           "orientation": "west",
           "action": "idle",
-          "representations": [],
+          "representations": [
+            {
+              "type": "sprite",
+              "path": "cutout/creature/SP-001-v2.png",
+              "master": "poc/creature/SP-001-v2.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "silhouette_px": {
+                  "left": 2,
+                  "top": 19,
+                  "right": 93,
+                  "bottom": 108,
+                  "width": 92,
+                  "height": 90
+                },
+                "contact_px": {
+                  "left": 28,
+                  "right": 77,
+                  "width": 50
+                },
+                "anchor_px": {
+                  "x": 52.5,
+                  "y": 109.0
+                },
+                "master_size_px": {
+                  "width": 96,
+                  "height": 128
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 1,
+                  "rows": 1
+                }
+              },
+              "status": "current"
+            }
+          ],
           "label": "Tourné vers l'ouest — de profil",
           "ref": "orientation-west_action-idle_frame-01",
           "height_min_ty": 1.36,

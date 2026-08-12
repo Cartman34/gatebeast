@@ -24,7 +24,8 @@ Ce nœud couvre l'organisation de l'affichage et ce que chaque asset doit porter
   une créature d'une case, donc le rendu la connaît sans que l'image la redise. **Aucun placement n'est calculé** — le moteur ne cherche jamais un front ni ne suit une posture, il applique ce qui est
   déclaré. Motivé au [visuel](../visuel/index.md) : identité exacte de la marque, taille constante tenue par construction, et un catalogue qui additionne les formes au lieu de multiplier les images.
   Écarté : la rune dessinée dans la sprite (jamais deux fois la même, et une image par espèce × rune × posture). Repli connu si un moteur ne savait pas tracer : une petite image par forme, posée sur
-  la même ancre, sans rien changer au reste du modèle.
+  la même ancre, sans rien changer au reste du modèle. **La clé est `rune_anchor_px` sur la représentation**, à côté de ses mesures, en pixels de l'image livrée et une inclinaison en degrés ; elle
+  se pose par `python3 scripts/set-rune-anchor.py`, qui refuse un point hors de l'image, et `--list` dit quelles représentations de créature n'en ont pas encore.
 - **Le premier catalogue est gelé, un fichier neuf le remplace** — `assets/catalogue.json` était construit autour de l'image et ne sait porter ni les types, ni les contraintes, ni les connexions. Il n'est plus alimenté ni lu, et n'est pas supprimé. Écarté : l'étendre — on aurait gardé sa structure orientée image en lui ajoutant des rustines.
 
 ## La case projetée — dimensions et source de vérité

@@ -33,7 +33,7 @@ CREATURES = REPOSITORY / "doc" / "conception" / "referentiels" / "contenu" / "cr
 # written to end.
 EDGES = shape_vocab.EDGES
 # The five layer families in their drawing order (rendu-en-calques.md, decision 11).
-LAYERS = {"sol", "decor-au-sol", "monde", "dessus", "interface"}
+LAYERS = {"ground", "ground-decor", "world", "above", "interface"}
 ORIENTATIONS = {"north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"}
 CODE_PATTERN = re.compile(r"^[A-Z]{2,3}-\d{3}$")
 # A representation's statut: the one shown to the player ("current"), or one kept for record
@@ -58,6 +58,16 @@ def load():
         return json.loads(SUBJECTS.read_text(encoding="utf-8"))
     except json.JSONDecodeError as error:
         raise Fault(f"not valid JSON: {error}")
+
+
+def save(data):
+    """Write the referential back, in the ONE spelling every writer must share.
+
+    THE FORM OF THE FILE IS A DECISION, AND IT BELONGS NEXT TO `load()`: two writers dumping it their own way rewrite the whole file
+    against each other, and every real change is then buried in a diff of ten thousand reindented lines. Two writers already agreed
+    on `indent=2` by having each been told so; a third would have made it a convention nobody holds.
+    """
+    SUBJECTS.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 # The validation of a shape NAME — bare edges, the fifteen combinations — is shape_vocab's alone (see

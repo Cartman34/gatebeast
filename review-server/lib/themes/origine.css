@@ -69,6 +69,12 @@
    * strengths, the same as the ones they replace. */
   --overlay: rgba(23, 27, 21, 0.34);
   --overlay-soft: rgba(23, 27, 21, 0.18);
+  /* THE GROUND FOOTPRINT AND THE OVERHANG NEVER LOOK ALIKE: warm coral for what touches the ground, cold cyan for what a volume overhangs. They are declared
+   * ONCE, in this base block and in no override, because what they contrast with is the SPRITE and not the page — and the sprite does not change with the
+   * dressing. Redeclaring them light and dark would be the same value copied twice, for a difference nobody would see. */
+  --footprint-edge: #e4562a;
+  --footprint-field: rgba(228, 86, 42, 0.14);
+  --overhang-edge: #0d8f97;
 }
 
 /* The original's dark, applied when the system asks for it — and only there, save the explicit overrides below. */
