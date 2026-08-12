@@ -14,20 +14,42 @@ document empilait une section par séance, ce que sa propre première ligne inte
 
 ### OÙ ON EN EST À LA FIN DU 2026-08-12
 
-**LE DÉPÔT EST SALE, ET DEUX POINTS L'ATTENDENT.** `W23 outils-morts` (retirer `scripts/sprite-queue.py` et `scripts/run-fence-campaign.py`, morts : ils
-appellent deux scripts fusionnés depuis dans `generate-sprite.py`) et `S80 dossiers-en-anglais` (renommer les six répertoires d'images, 180 fichiers et tous les
-chemins enregistrés, remarques de l'opérateur comprises) sont tous deux en `pending-dependency` sur **un enregistrement de l'état courant** : on ne supprime pas
-un fichier sale, et on ne déplace pas 180 fichiers par-dessus des modifications non enregistrées. **Un `git commit` les débloque.**
+**LES VERDICTS DE L'OPÉRATEUR SONT UN PLAN DE TRAVAIL, ET ILS SE LISENT AVANT DE PRODUIRE QUOI QUE CE SOIT.** `php scripts/remarks.php list` les donne tous ;
+`new` ne dit que ce qui a bougé, et s'arrêter à son « aucun verdict neuf » revient à ne jamais les lire. C'est la faute de la séance : treize remarques
+attendaient, dont le diagnostic que j'ai passé la journée à chercher, et j'ai régénéré par-dessus une version validée. **Ce qui attend, à cette heure :**
 
-**QUATRE SOUS-AGENTS ONT TRAVAILLÉ CE JOUR-LÀ**, et leur périmètre se recouvre — vérifier `git status` avant d'écrire dans ces zones : `page-de-revue`
-(`review-server/suivi-sprites/`), `outillage` (aides `-h`/`--help` des cent commandes, chemins cités, dette de langue), `migration-php` (analyse de la migration
-de la chaîne vers PHP, puis les commentaires français de `review-server/` hors page des sprites), `methode` (règles).
+- **La vue parallèle, et elle passe devant tout** : « TOUS les bâtiments doivent respecter la vue parallèle, c'est impératif, et ce n'est pas à préciser pour
+  chaque bâtiment ou chaque sprite, **c'est le socle** ». Le socle le dit déjà — « axonométrie orthographique, projection parallèle et jamais une perspective » —
+  et l'image ne l'applique pas : sur `BT-001-v17`, les deux toitures se resserrent vers le haut. Le mot y est, l'effet non : **quelque chose d'autre dans la
+  consigne induit la perspective**, et c'est cela qu'il faut trouver. Ajouter une clause de plus est exactement ce qu'il ne faut pas faire.
+- **L'est**, trois fois sur deux sujets : `SP-001` (v4, v5, v6) regarde à gauche alors que l'est est la droite, et `HU-000-v5` revient déformé.
+- `CH-021` : le style de `v2`, et **aucun cours d'eau sur l'image**, en `ns` comme en `ew`.
+- `BT-002-v2` : moins de casse, un peu plus de saleté.
+- `TR-060` : revenir à la `v5` avec un tronc plus fin.
 
-**LE TRI DU JETABLE EST FAIT** : `local/scripts/` est vide, 145 scripts supprimés, 54 promus sous `scripts/dev/` avec leurs citations réécrites.
+**CE QUI GOUVERNE LA HAUTEUR D'UNE IMAGE, ET IL A FALLU TROIS DEMANDES POUR LE VOIR** : ni l'emprise, ni le couvert, ni la hauteur du sujet. C'est une
+**fourchette déclarée à la main sur le variant**, `height_min_ty` et `height_max_ty`, que `tile_scale.variant_band` refuse délibérément de calculer — « aucun
+script ne peut savoir qu'une herbe est courte et qu'un arbre grand ». Le couvert du pommier avait maigri sans qu'elle suive, si bien que l'image sortait à la
+même hauteur **en étant déclarée conforme** : le contrôle compare l'image à la fourchette, jamais la fourchette au sujet.
 
-**CE QUI ATTEND L'OPÉRATEUR SUR `/sprites`** : les quatre marches de l'humain (`HU-000-v7` à `v10`), le renardeau à l'est vu d'en haut (`SP-001-v7`), le pommier
-à quatre pommes (`TR-063-v16`), le chêne (`TR-060-v12`), le centre de soin (`BT-001-v15`, sa façade reste frontale — géométriquement, sans rotation, aucune face
-latérale ne peut apparaître), la ferme usée (`BT-002-v2`), le pont `ns` (`CH-021_shape-ns-v6`).
+**LA CHAÎNE NE REPUBLIE PLUS LA PAGE DES SPRITES**, alors que la règle du dépôt l'exige sans exception. Le mécanisme vivait dans `scripts/sprite-queue.py`
+ligne 231, la file de production, morte depuis la fusion des générateurs : il est tombé avec elle, sans bruit. Sa place est dans la commande qui produit une
+sprite, et **il doit couvrir aussi le changement de verdict** — `set-asset-verdict.py` écrit le référentiel et laisse la page mentir derrière lui. En attendant,
+`php review-server/build.php /sprites` à la main après toute génération et tout verdict.
+
+**UNE RÉFÉRENCE EST FIXE, ELLE NE SUIT PLUS LA DERNIÈRE VERSION** (opérateur : « si tu changes et le prompt et l'image, tu perds tout »). Elle se **déclare** au
+référentiel sous la clé `reference`, sur le variant d'abord et sur le sujet à défaut, et se fige le jour où une version est jugée bonne ; tant qu'aucune ne l'est,
+le sujet n'en a pas et sa consigne dessine seule. **Aucune n'est encore déclarée** : `TR-060-v12`, validée, est la première à l'être.
+
+**TROIS SOUS-AGENTS ONT ÉTÉ ARRÊTÉS EN COURS DE TRAVAIL** à la fin de la séance, leur ouvrage est dans l'arbre sans compte rendu : `grille` (la grille de la page
+des sprites affiche des demi-cases — régression déjà corrigée une fois, à reprendre **dans l'historique**, jamais de mémoire), `consignes` (l'interdit du pixel
+et du rapport visuel dans les fiches, plus `check-height-bands.php`), `outillage` (`check-no-new-python.php`, et la republication à remettre dans la chaîne).
+
+**DEUX RÈGLES DE L'OPÉRATEUR, POSÉES CE JOUR-LÀ** : aucune mention de pixel hors du socle, dans aucune fiche ni consigne ; et **aucun fichier Python neuf**,
+l'existant restant en place. Les contrôles qui les tiennent sont `check-consigne-units.php` et `check-no-new-python.php`.
+
+**LE TRI DU JETABLE EST FAIT** : `local/scripts/` est vide, 145 scripts supprimés, 54 promus sous `scripts/dev/` avec leurs citations réécrites. `W23
+outils-morts` et `S80 dossiers-en-anglais` ne sont plus bloqués : l'état est enregistré au commit `a146e19`.
 
 ### Comment on démarre
 

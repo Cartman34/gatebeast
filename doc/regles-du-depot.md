@@ -248,11 +248,16 @@ piloter son projet.
 
 ## L'outillage
 
-- **Le bloc « Usage » et « Intention » en tête de tout script est monté à la méthode commune** (`~/projects/conceptions/methode/execution.md`), le 2026-08-11 : il ne doit rien à GateBeast. Ce qui
-  reste propre à ce dépôt et se lit ici : le langage de second choix dont l'intention doit se justifier est **Python**, PHP étant le défaut ci-dessous.
-- **Le langage par défaut de l'outillage pérenne est ici PHP**, et la transition y va progressivement. La règle générale — un langage par défaut, un autre admis quand il apporte ce qui n'existe que
-  là, et aucun remplacement brut de ce qui marche — est montée à la méthode commune (`execution.md`), le 2026-08-11. Ne reste ici que le choix : **PHP par défaut, Python pour la mesure d'image et le
-  traitement de matrice**, justifié en tête de fichier.
+- **Le bloc « Usage » et « Intention » en tête de tout script est monté à la méthode commune** (`~/projects/conceptions/methode/execution.md`), le 2026-08-11 : il ne doit rien à GateBeast.
+- **LE LANGAGE DE L'OUTILLAGE EST PHP, ET AUCUN FICHIER PYTHON NEUF NE S'AJOUTE** (opérateur, 2026-08-12). La règle générale — un langage par défaut, un autre admis là où il apporte ce qui n'existe
+  que là — est montée à la méthode commune (`execution.md`) ; ce dépôt ferme ici la seconde moitié : **il n'y a plus de langage de second choix, et une intention qui justifie le Python ne l'autorise
+  plus**. Une justification documente un choix déjà admis, elle n'en ouvre pas un neuf — c'est le jour même où l'interdit a été donné qu'un contrôle est né en Python, dûment justifié en tête, et
+  c'était une faute.
+- **CE QUI EST INTERDIT, C'EST D'AJOUTER, JAMAIS DE GARDER.** Le Python déjà là reste et **ne se réécrit pas** : « aucun remplacement brut n'est jamais prévu » (méthode) — réécrire ce qui marche perd
+  les correctifs que ses allers-retours ont payés et n'achète rien. Le Python **décroît, il ne croît pas** : un fichier supprimé ne se signale même pas.
+- **ET C'EST UNE MACHINE QUI LE TIENT, PAS LA BONNE VOLONTÉ DES AGENTS** : `php scripts/check-no-new-python.php` refuse tout `.py` versionné absent du relevé `scripts/python-inventory.json`, lui-même
+  produit du dépôt et jamais tenu à la main. **Le refiger — `--freeze` — est un geste que l'opérateur autorise**, jamais une commodité qu'on s'accorde pour faire passer son propre ajout : refigé sans
+  décision derrière, le relevé ne garde plus rien. Ses essais : `php scripts/dev/trial-no-new-python.php`.
 - **La liste des outils validés de ce dépôt** — Python pour l'outillage, PHP pour l'enveloppe du générateur, Codex comme générateur d'images, `rsvg-convert` pour regarder un SVG produit — est tenue
   à [doc/outils-exterieurs.md](outils-exterieurs.md), à lire là plutôt qu'à recopier ici. Elle vivait dans `SUIVI.md`, et l'élagage du 2026-08-11 a rendu ce renvoi mort avant qu'on le corrige.
   **La règle qui dit qu'un outil non validé se demande au lieu de s'essayer** est montée à la méthode commune, avec l'interdit d'aller chercher hors du dépôt.

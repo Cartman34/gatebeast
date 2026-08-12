@@ -39,6 +39,29 @@ générateur lit la clause la plus proche du sujet, et une redite proche bat un 
 **CE QU'ON ÉCRIT À LA PLACE** : ce qui appartient au sujet, et rien d'autre — sa forme, ses proportions, sa matière. Un défaut d'angle sur une image ne se
 corrige JAMAIS dans sa fiche : il se corrige au socle, où il vaut pour tous les sujets à la fois, ou il ne se corrige pas.
 
+## LES MESURES SE DISENT EN CASES — NI PIXEL, NI RAPPORT D'IMAGE, NE SORT D'AILLEURS QUE DU SOCLE
+
+**Règle de l'opérateur, 2026-08-12 : « les calculs de mesure en PX sont interdits dans les descriptions », puis « strictement interdit ».** Le seul endroit d'où un pixel peut partir vers le générateur
+est le socle, `scripts/asset_common.py`. Une fiche de sujet, une clause de variante, une description de `assets/descriptions/` parlent en **cases**, et ne convertissent jamais elles-mêmes.
+
+**POURQUOI, ET C'EST LE FOND** : le pixel est le produit d'une projection que le socle détient déjà. Trois mesures y vivent, **interpolées depuis `scripts/tile_scale.py`**, jamais retapées — une case
+de large vaut `FILE_TILE_WIDTH` pixels, un mètre de hauteur debout le même chiffre écrasé par `STANDING_HEIGHT_FACTOR`, un mètre de sol qui s'enfonce vaut `FILE_TILE_DEPTH`. Une fiche qui convertit
+refait ce calcul à la main : elle en fige une copie qui dérivera au premier changement d'échelle, et elle peut se tromper de facteur — « 96 pixels de haut » a été écrit le 2026-08-12 pour une porte de
+deux cases, en appliquant l'échelle du sol à une hauteur. C'est la duplication de valeur pivot que la méthode interdit, appliquée à la consigne.
+
+**ET UN RAPPORT VISUEL EST LE MÊME DÉFAUT, EN PIRE — UNE PROPORTION DU MONDE N'EST PAS UNE PROPORTION DE L'IMAGE.** Sous la plongée, une hauteur debout est écrasée de moitié quand une largeur ne l'est
+pas : une porte de **deux cases de haut pour une case de large** apparaît donc **carrée** dans l'image, et un sapin trois fois plus haut que large y paraît une fois et demie plus haut que large. Une
+fiche qui énonce le rapport de l'image se trompe une fois sur deux **tout en ayant l'air précise**, et le générateur suit le rapport plutôt que la mesure. Payé le 2026-08-12 : `BT-002` disait « deux
+fois plus haute que large, nettement, et non une ouverture presque carrée » — la phrase **interdisait le résultat juste** et commandait une élévation ; comme la fiche dimensionnait tout le bâtiment
+d'après cette porte, elle faisait basculer l'image entière. `BT-001` et `TR-065` portaient la même faute, et trois générations sont parties dessus.
+
+**CE QU'ON ÉCRIT À LA PLACE** : la mesure dans l'unité du jeu, et rien qu'elle — « deux cases de haut, une case de large », « une case et demie de large ». **Jamais un rapport** : ni « deux fois plus
+haute que large », ni « plus haut que large », ni « presque carré ». Le générateur reçoit la correspondance et la projection une fois, par le socle, et déduit lui-même ce que ça donne à l'écran. Une
+mesure qui manque au socle s'y ajoute ; elle ne se calcule pas dans la fiche qui en a besoin.
+
+**ET UN CONTRÔLE LES TIENT** : `php scripts/check-consigne-units.php` balaie les fiches et les clauses de variante, et signale l'unité de pixel comme la formule de rapport. Ses essais :
+`php scripts/dev/trial-consigne-units.php`.
+
 ## Ce qu'une clause doit porter — quatre choses, et elles sont toutes obligatoires
 
 Ce sont les quatre que l'opérateur nomme, et l'ordre importe peu :

@@ -3317,6 +3317,47 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/vegetation/TR-060-v14.png",
+              "master": "poc/vegetation/TR-060-v14.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 576,
+                  "height": 900
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 575,
+                  "bottom": 899,
+                  "width": 576,
+                  "height": 900
+                },
+                "contact_px": {
+                  "left": 207,
+                  "right": 368,
+                  "width": 162
+                },
+                "anchor_px": {
+                  "x": 287.5,
+                  "y": 900.0
+                },
+                "master_size_px": {
+                  "width": 576,
+                  "height": 900
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 6,
+                  "rows": 6
+                }
+              },
+              "status": "previous",
+              "verdict": "discarded",
+              "operator_comment": "Generee sans l'accord de l'operateur, sur une relance que je n'aurais pas du lancer : la v12 etait deja validee."
+            },
+            {
+              "type": "sprite",
               "path": "cutout/vegetation/TR-060-v12.png",
               "master": "poc/vegetation/TR-060-v12.png",
               "image_number": 1,
@@ -4124,6 +4165,84 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v19.png",
+              "master": "poc/vegetation/TR-063-v19.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 286
+                },
+                "silhouette_px": {
+                  "left": 11,
+                  "top": 11,
+                  "right": 286,
+                  "bottom": 285,
+                  "width": 276,
+                  "height": 275
+                },
+                "contact_px": {
+                  "left": 112,
+                  "right": 176,
+                  "width": 65
+                },
+                "anchor_px": {
+                  "x": 144.0,
+                  "y": 286.0
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 286
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 2
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
+              "path": "cutout/vegetation/TR-063-v18.png",
+              "master": "poc/vegetation/TR-063-v18.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 288,
+                  "height": 356
+                },
+                "silhouette_px": {
+                  "left": 10,
+                  "top": 9,
+                  "right": 283,
+                  "bottom": 355,
+                  "width": 274,
+                  "height": 347
+                },
+                "contact_px": {
+                  "left": 105,
+                  "right": 182,
+                  "width": 78
+                },
+                "anchor_px": {
+                  "x": 143.5,
+                  "y": 356.0
+                },
+                "master_size_px": {
+                  "width": 288,
+                  "height": 356
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 3,
+                  "rows": 2
+                }
+              },
+              "status": "previous"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/vegetation/TR-063-v16.png",
               "master": "poc/vegetation/TR-063-v16.png",
               "image_number": 1,
@@ -4159,7 +4278,7 @@
                   "rows": 2
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",
@@ -4665,8 +4784,9 @@
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
           "label": "Vue principale",
-          "height_min_ty": 4.24,
-          "height_max_ty": 5.19
+          "_height_band_comment": "Abaissee le 2026-08-12 : l'operateur a demande trois fois de reduire la hauteur du pommier. La case de couvert retiree le meme jour n'avait pas ete repercutee ici — 4,24 a 5,19 etait la fourchette calculee pour un couvert de TROIS rangees, et l'image continuait donc de sortir a 420 px, dans la fourchette, sans que rien ne signale l'incoherence. Avec deux rangees de couvert et trois cases de hauteur, le modele donne 2 x 84 + 3 x 48 = 312 px, soit 3,71 TY, encadre ici comme celle du chene l'est autour de la sienne.",
+          "height_min_ty": 3.3,
+          "height_max_ty": 4.12
         }
       ]
     },
@@ -5893,6 +6013,45 @@
           "representations": [
             {
               "type": "sprite",
+              "path": "cutout/batiment/BT-001-v17.png",
+              "master": "poc/batiment/BT-001-v17.png",
+              "image_number": 1,
+              "measures": {
+                "delivered_px": {
+                  "width": 1536,
+                  "height": 1213
+                },
+                "silhouette_px": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 1535,
+                  "bottom": 1212,
+                  "width": 1536,
+                  "height": 1213
+                },
+                "contact_px": {
+                  "left": 28,
+                  "right": 1504,
+                  "width": 1477
+                },
+                "anchor_px": {
+                  "x": 766.0,
+                  "y": 1213.0
+                },
+                "master_size_px": {
+                  "width": 1536,
+                  "height": 1213
+                },
+                "kind": "sprite",
+                "footprint": {
+                  "columns": 16,
+                  "rows": 10
+                }
+              },
+              "status": "current"
+            },
+            {
+              "type": "sprite",
               "path": "cutout/batiment/BT-001-v15.png",
               "master": "poc/batiment/BT-001-v15.png",
               "image_number": 1,
@@ -5928,7 +6087,7 @@
                   "rows": 10
                 }
               },
-              "status": "current"
+              "status": "previous"
             },
             {
               "type": "sprite",

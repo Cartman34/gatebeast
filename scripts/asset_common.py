@@ -263,11 +263,18 @@ Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa
 dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
 
 DEUX UNITÉS, ET TOUTE MESURE QU'ON TE DONNE PORTE LA SIENNE. Une case du monde est un carré d'un mètre,
-mais on la regarde de haut : dans l'image elle est plus large que haute, et il faut donc deux unités
-plutôt qu'une. TX est une case en LARGEUR, et vaut {tile_scale.FILE_TILE_WIDTH} pixels. TY est une case en HAUTEUR, et vaut
-{tile_scale.FILE_TILE_DEPTH} pixels — c'est TX écrasé par la plongée. Une largeur se donne en TX, une hauteur et une
-profondeur au sol se donnent en TY. C'est la seule correspondance dont tu as besoin : ne dessine pas de
-grille, n'écris aucune mesure dans l'image.
+mais on la regarde de haut : dans l'image elle est plus large que profonde, et il faut donc deux unités
+plutôt qu'une. TX est une case mesurée EN LARGEUR, de gauche à droite, et vaut {tile_scale.FILE_TILE_WIDTH} pixels. TY est une
+case mesurée VERTICALEMENT DANS L'IMAGE, et vaut {tile_scale.FILE_TILE_DEPTH} pixels : c'est ce qu'occupe à l'écran une case de
+SOL qui s'enfonce vers le fond. Une largeur se donne en TX, une profondeur au sol et une hauteur d'image
+se donnent en TY.
+
+CE QUI S'ÉLÈVE NE SE MESURE NI EN TX NI EN TY. Une hauteur DEBOUT — un mur, un étage, un tronc, une
+porte — est la seule des trois que la plongée écrase de moitié, et son chiffre est celui donné plus haut
+avec l'angle de vue. Prendre TY pour une hauteur debout fait dessiner le sujet presque deux fois trop
+haut, et rend une élévation là où on attend une vue plongeante.
+
+Ne dessine pas de grille, n'écris aucune mesure dans l'image.
 
 Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
 signature, pas de grille, pas de bordure."""

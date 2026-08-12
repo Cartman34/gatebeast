@@ -254,7 +254,21 @@ def check_text(path, source):
     # corrigée » ended at the apostrophe, and « consigne » was reported as a symbol.
     literal = re.compile(r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"")
     inside_block = False
+    # A SHELL HEREDOC IS A PAYLOAD, NOT CODE. What a shell script sends to another command — a sample file, a JSON body, a fixture — is data written between two
+    # markers, and reading it as code made a trial that feeds the checker French on purpose report its own fixture, five times. PHP heredocs are NOT skipped and
+    # must not be: there the heredoc is markup a builder produces, and it interpolates real names the rule applies to.
+    heredoc = None
+    heredoc_opening = re.compile(r"<<-?\s*[\"']?([A-Za-z_][A-Za-z0-9_]*)[\"']?\s*$")
     for number, line in enumerate(source.splitlines(), 1):
+        if heredoc is not None:
+            if line.strip() == heredoc:
+                heredoc = None
+            continue
+        if path.suffix == ".sh":
+            opening = heredoc_opening.search(line)
+            if opening:
+                heredoc = opening.group(1)
+                continue
         # A BLOCK COMMENT IS FOLLOWED FROM LINE TO LINE, NEVER RECOGNISED ONE LINE AT A TIME. Its continuation lines carry no marker of their own — a docblock
         # writes ` * `, but an ordinary `/* … */` paragraph just indents — so they were read as code, and any punctuation the French prose happened to contain
         # was enough to make them look like it. « Ce qui dépasse se parcourt en largeur ; … » held a semicolon, and « largeur » was reported as a symbol.

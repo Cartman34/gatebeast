@@ -138,31 +138,41 @@ def held(name: str, what: str):
         lock.unlink(missing_ok=True)
 
 
-def current_sprite(code: str, variant_ref: str = None):
-    """The subject's own current deliverable, or None when it has never been drawn — the reference a generation takes by default.
+def frozen_reference(code: str, variant_ref: str = None):
+    """The subject's FROZEN reference — the one image a generation may look at — or None when none has been frozen yet.
 
-    Reads the referentiel rather than the disk: an image on the disk that no variant claims is precisely what the referentiel exists to rule out, and taking one
-    as a reference would propagate whatever it is. The MAIN view is preferred when it has one, since that is the view the others are meant to agree with.
+    A REFERENCE IS FIXED, AND IT NEVER FOLLOWS THE LATEST VERSION (opérateur, 2026-08-12 : « faut arrêter de prendre les images précédentes en référence […] tu
+    peux avoir une image de référence mais elle ne change jamais. Sinon si tu changes et le prompt et l'image, tu perds tout »). This used to return the CURRENT
+    deliverable, so every rework handed the generator both a new consigne and a new model at once: no change could be attributed to either, and a defect carried
+    by the image survived every correction written into the text — what the generator SEES weighs more than what it reads. The oak came back as an elevation
+    three times for exactly that reason, each time modelled on the elevation before it.
+
+    So the reference is DECLARED, under the key `reference`, on the variant first and on the subject otherwise, and it is frozen the day a version is judged
+    good. Until one is judged, a subject has NO reference and its consigne stands alone — which is the only way the consigne can be measured at all.
     """
     data = json.loads((REPO / "assets" / "subjects.json").read_text(encoding="utf-8"))
     subject = data.get("subjects", {}).get(code)
     if not subject:
         return None
-    # LE VARIANT LUI-MÊME D'ABORD, ET C'EST UNE FAUTE PAYÉE : la référence dit de reprendre la matière et la couleur À L'IDENTIQUE, donc donner la vue principale à
-    # un variant qui a sa propre palette efface exactement ce qui le distingue. Constaté sur la proposition 2 du centre de soin, dont les couleurs de la scène de
-    # référence ont été remplacées par celles de la vue principale (opérateur, 2026-08-07). Sa version précédente est la bonne référence : c'est elle qui porte ce
-    # qu'il est. La vue principale ne sert qu'à un variant qui n'a encore jamais été dessiné.
-    variants = sorted(subject.get("variants", []),
-                      key=lambda v: (v.get("ref") != variant_ref, not v.get("main", False)))
-    for variant in variants:
-        for representation in variant.get("representations", []):
-            if representation.get("status") != "current":
-                continue
-            path = REPO / "assets" / representation["path"]
-            if path.is_file():
-                return path
+    # LE VARIANT LUI-MÊME D'ABORD, ET C'EST UNE FAUTE PAYÉE : la référence dit de reprendre la matière et la couleur À L'IDENTIQUE, donc donner à un variant qui a
+    # sa propre palette la référence d'un autre efface exactement ce qui le distingue. Constaté sur la proposition 2 du centre de soin, dont les couleurs de la
+    # scène de référence ont été remplacées par celles de la vue principale (opérateur, 2026-08-07). Le variant déclare donc la sienne quand il en a une, et ne
+    # retombe sur celle du sujet que lorsqu'il n'en déclare aucune.
+    for variant in subject.get("variants", []):
+        if variant.get("ref") == variant_ref and variant.get("reference"):
+            declared = variant["reference"]
+            break
+    else:
+        declared = subject.get("reference")
+    if not declared:
+        return None
+    # UNE RÉFÉRENCE DÉCLARÉE QUI N'EST PAS LÀ EST UNE FAUTE, PAS UNE ABSENCE. Rendre None ferait repartir la génération sans modèle en silence, alors que quelqu'un
+    # a précisément décidé qu'elle en avait un : c'est l'erreur transparente que ce dépôt paie le plus cher.
+    path = REPO / "assets" / declared
+    if not path.is_file():
+        raise SystemExit(f"FAULT la référence figée de {code} est déclarée à « {declared} », et ce fichier n'existe pas.")
 
-    return None
+    return path
 
 
 # A VARIANT FIELD AND THE TYPE KEY THAT DECLARES IT ARE THE SAME WORD, ONE SINGULAR AND ONE PLURAL — and the plural was built by adding an "s", which held only
@@ -319,13 +329,12 @@ def draw(code: str, variant_ref: str, reference: Path, generate: bool, plate: Pa
     """Le corps de la commande, tenu sous le verrou par `build()` — jamais appelé directement."""
     posts, gate = None, None
     if generate and not (reference or plate):
-        current = current_sprite(code, variant_ref)
-        if current is not None:
-            reference = current
-            print(f"référence choisie : {current.relative_to(REPO)} — la sprite courante du sujet, jamais une planche du monde")
+        frozen = frozen_reference(code, variant_ref)
+        if frozen is not None:
+            reference = frozen
+            print(f"référence figée : {frozen.relative_to(REPO)} — déclarée au référentiel, elle ne suit jamais la dernière version")
         else:
-            raise SystemExit("FAULT aucune référence fournie et ce sujet n'a encore aucune sprite — c'est un premier dessin, donnez-lui une planche du monde avec "
-                             "--plate, et regardez sa projection avant de l'inscrire.")
+            print(f"aucune référence figée pour {code} : la consigne dessine seule, et c'est ce qui rend son effet mesurable")
     type_, subject = sujet_type(code)
     extras = asset_common.extra_instructions(code, subject, type_)
     # An image is commanded BY THE REF of its variant: the referentiel holds that variant, and everything the consigne needs about it — its shape, its
@@ -494,7 +503,6 @@ def draw(code: str, variant_ref: str, reference: Path, generate: bool, plate: Pa
 prolongent sans décrochement.
 """
 
-    active_reference = reference or plate
     # THE REFERENCE OFTEN SHOWS ANOTHER VIEW OF THE SUBJECT, AND THE CONSIGNE MUST SAY SO — this is the fault the operator named on 2026-08-12: « ce n'est pas
     # normal qu'un seul variant ait un souci, ça veut probablement dire que l'arbo de consigne est mal montée ». The reference clause below claims the reference
     # is authoritative for « la FORME PROPRE du sujet — son plan, ses proportions, ses ÉLÉMENTS ET LEUR PLACE », while the orientation clause further down asks

@@ -1,0 +1,124 @@
+CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
+quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
+occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
+anticiper de cela.
+
+IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
+aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
+s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette.
+
+Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
+deux CLAIRES : une teinte pleinement éclairée et une teinte d'ombre à peine plus soutenue, transition
+franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
+Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
+ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
+
+Caméra : AXONOMÉTRIE ORTHOGRAPHIQUE, une PROJECTION PARALLÈLE et jamais une perspective. LA RÈGLE SE VÉRIFIE FACE
+PAR FACE, ET C'EST AINSI QU'IL FAUT LA LIRE : chaque face rectangulaire du sujet — un mur, un pan de toit, une
+porte, une dalle — se dessine comme un PARALLÉLOGRAMME, dont les deux côtés opposés sont STRICTEMENT PARALLÈLES et
+de MÊME LONGUEUR. Un pan de toit qui se rétrécit vers le faîtage, un mur plus étroit en haut qu'en bas, deux
+murs opposés qui penchent l'un vers l'autre : ce sont trois perspectives, et chacune suffit à faire refuser
+l'image. Les arêtes verticales restent verticales et parallèles entre elles d'un bout à l'autre de l'image ; celles
+qui s'enfoncent vers le fond restent parallèles entre elles. AUCUN POINT DE FUITE, NULLE PART.
+AUCUNE ROTATION AUTOUR DE LA VERTICALE : on regarde droit dans l'axe de la grille du monde, jamais de trois
+quarts. Un sujet qui a une face avant la présente DE FRONT, entière.
+Forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de rôle. On regarde le sujet d'en
+haut ET un peu de face, et cet angle se vérifie par TROIS MESURES, pas à l'impression. UNE CASE DE LARGE — un
+mètre gauche-droite, la seule longueur que la caméra n'écrase pas — occupe 96 PIXELS dans l'image, et c'est
+l'unité de référence à laquelle les deux autres se comparent. UN MÈTRE DE HAUTEUR — une face verticale, un mur,
+un flanc — en occupe 48, soit la moitié. UN MÈTRE AU SOL QUI S'ENFONCE VERS LE FOND — une face horizontale, un
+toit, un dos, une dalle — en occupe 84, soit presque la totalité. Les faces horizontales dominent donc
+largement, et les verticales sont écrasées de moitié : c'est ce qui sépare cette vue d'une élévation. On voit le
+DESSUS de ce qui est posé au sol.
+Lumière : soleil de fin de matinée venant du HAUT À GAUCHE, franc et clair, et de là SEULEMENT — jamais de la
+caméra. Ce qui est exposé au ciel reçoit la lumière ; ce qu'une masse surplombe est dans son ombre, et le reste
+franchement plus sombre : le dessous d'une couronne, les branches sous le feuillage, l'intérieur d'un porche, le
+pied d'un mur. Un sujet éclairé uniformément sur toute sa surface est un sujet sans volume. L'ombrage se fait en
+deux bandes claires, et les faces tournées vers le bas restent lisibles. Pas d'horizon, pas de ciel.
+
+ASSET DE JEU — pommier, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT 3 TX de large, et sa hauteur tient ENTRE 3,3 ET 4,12 TY,
+soit 277 à 346 pixels — et c'est le chiffre en pixels qui fait foi, jamais la fraction de case.
+Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle a été
+décidée pour CE sujet dans CETTE posture, et pour aucun autre : une image hors de ces deux nombres est refusée.
+
+CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 1 TX de large sur
+1 TY de profondeur. CE RECTANGLE EST VU DE HAUT, ET SES DEUX UNITÉS LE DISENT DÉJÀ : TY étant plus court que TX, il se dessine plus bas que large sans qu'on ait à le raccourcir. Aucune autre réduction ne s'y applique.
+LE BORD DU FOND FAIT EXACTEMENT LA MÊME LARGEUR QUE LE BORD DE DEVANT, et les deux côtés du rectangle sont PARALLÈLES : un rectangle qui se rétrécit vers le fond est une perspective, et elle est
+interdite. Il occupe le BAS de l'image, et sa dernière rangée tolère un léger débord pour que la matière se raccorde à ce qui l'entoure.
+TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
+entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
+LE POINT DE POSE EST UNE MESURE, PAS UNE IMPRESSION : le MILIEU DE LA BASE du sujet — le pied du tronc, le seuil du bâtiment, le centre de la touffe — tombe à
+EXACTEMENT 144 PIXELS du bord gauche de l'image, et repose sur le bord BAS de l'image. Décalé, le sujet empêche de poser quoi que ce soit devant lui sur la
+carte.
+
+LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+
+UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
+ce que la description demande appartient au sujet et se dessine, quelle que soit la matière dont il est fait.
+
+LE FOND EST ENTIÈREMENT TRANSPARENT. L'image est un PNG à canal alpha : tout ce qui n'est pas le sujet a
+une opacité NULLE. Cela vaut aussi pour les VIDES ENCERCLÉS que le sujet peut avoir — tout trou entouré
+de matière : on doit voir au travers. Aucun fond de couleur, aucun damier, aucune ombre portée, aucun
+sol sous le sujet ; l'ombrage reste sur le corps du sujet lui-même.
+
+AUCUN HALO : pas de liseré clair, pas de contour lumineux, pas de lueur, pas de fondu diffus autour du
+sujet. Le bord du sujet est net et la transparence commence immédiatement — sauf si le sujet lui-même
+demande une lueur, auquel cas sa fiche le dit.
+
+CADRAGE : le sujet est CENTRÉ et occupe toute la largeur du cadre, à une fine marge transparente près.
+Sa place en hauteur est celle que lui donne l'angle de vue décrit plus haut, appliqué à sa taille réelle :
+c'est la caméra qui en décide, et elle seule. Rien du sujet n'est coupé par un bord, et une marge
+transparente subsiste tout autour.
+
+
+
+CE SUJET NE S'ASSEMBLE AVEC AUCUN VOISIN : sa matière ne se prolonge dans aucune case voisine, ne se raccorde à rien et ne fusionne avec rien. Il se dessine ENTIER, ses quatre côtés compris, et occupe toute l'emprise annoncée jusqu'à ses limites.
+
+
+
+Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
+
+DEUX UNITÉS, ET TOUTE MESURE QU'ON TE DONNE PORTE LA SIENNE. Une case du monde est un carré d'un mètre,
+mais on la regarde de haut : dans l'image elle est plus large que profonde, et il faut donc deux unités
+plutôt qu'une. TX est une case mesurée EN LARGEUR, de gauche à droite, et vaut 96 pixels. TY est une
+case mesurée VERTICALEMENT DANS L'IMAGE, et vaut 84 pixels : c'est ce qu'occupe à l'écran une case de
+SOL qui s'enfonce vers le fond. Une largeur se donne en TX, une profondeur au sol et une hauteur d'image
+se donnent en TY.
+
+CE QUI S'ÉLÈVE NE SE MESURE NI EN TX NI EN TY. Une hauteur DEBOUT — un mur, un étage, un tronc, une
+porte — est la seule des trois que la plongée écrase de moitié, et son chiffre est celui donné plus haut
+avec l'angle de vue. Prendre TY pour une hauteur debout fait dessiner le sujet presque deux fois trop
+haut, et rend une élévation là où on attend une vue plongeante.
+
+Ne dessine pas de grille, n'écris aucune mesure dans l'image.
+
+Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
+signature, pas de grille, pas de bordure.
+
+LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+TR-063 : UN VIEUX POMMIER, planté depuis longtemps et encore vigoureux : son tronc est épais et noueux, son écorce épaisse et profondément crevassée. AUCUN BOIS MORT : pas de branche grise ou cassée, rien
+de tombé au pied. DENSITÉ DU FEUILLAGE : 95 % — sur toute la surface de la couronne, le feuillage est OPAQUE, et le ciel ne se voit
+au travers que sur MOINS D'UN VINGTIÈME de cette surface, en quelques trouées minuscules. La charpente des branches disparaît sous les feuilles : on n'en devine
+au plus que deux ou trois amorces près du tronc. ELLE EST BEAUCOUP PLUS LARGE QUE LE TRONC : elle s'étale largement de part et d'autre, jusqu'à trois fois la
+largeur du pied. Son tronc court et robuste s'élève seul, sans aucune herbe ni aucun sol autour de son pied — c'est le sol de la carte qui les apporte —, avant de se diviser bas
+en une poignée de branches tendues vers le haut ; l'écorce brun-gris finement craquelée. SES COULEURS SONT FRANCHES ET LUMINEUSES, JAMAIS TERNES NI GRISÉES : le feuillage est d'un VERT VIF ET
+SATURÉ, éclairé de vert clair sur ses faces hautes et soutenu dans ses creux, et les pommes d'un ROUGE FRANC ET ÉCLATANT qui se détache au premier coup d'œil. Un arbre délavé, olive,
+poussiéreux ou passé est refusé — c'est la faute la plus fréquente sur ce sujet. La couronne est faite de feuilles ovales, avec EXACTEMENT QUATRE POMMES sur l'arbre entier — quatre, ni trois
+ni cinq, comptables d'un coup d'œil, jamais un arbre chargé de fruits : des pommes rouges mûres posées çà et là DANS TOUTE LA COURONNE — certaines au bord, d'autres à demi cachées dans le
+feuillage, à des hauteurs différentes. DES POMMES TOUTES ALIGNÉES SUR LE POURTOUR DE LA COURONNE SONT REFUSÉES : accrochées ainsi, elles paraissent posées après coup au lieu d'avoir poussé
+là, et c'est le reproche fait à la version précédente. Aucune herbe, aucune terre, aucun sol autour du pied :
+l'arbre est seul, et le sol de la carte est ce qui viendra sous lui.
+
+
+
+CONSIGNE SUPPLÉMENTAIRE POUR CE SUJET — elle s'ajoute à tout ce qui précède et ne l'annule pas :
+L'arbre est seul dans l'image : rien ne pousse à son pied, ni touffe d'herbe, ni fleur, ni buisson, et aucun sol n'est dessiné sous lui. Le sol du monde est posé par la carte, jamais par la sprite.
+
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE — L'ANGLE DE PRISE DE VUE EST EXACTEMENT CELUI DÉCRIT PLUS HAUT, avec
+ses trois mesures ; aucune ligne de cette consigne ne l'assouplit. C'est la CARTE qui est vue de dessus ; le
+sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face.
