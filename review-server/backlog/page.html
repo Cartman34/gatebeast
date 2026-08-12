@@ -174,10 +174,27 @@
 <div class="wrap">
   <h1>La pile</h1>
   <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
-  décision qui t'appartient.</p>
-  <p class="compte">0 en attente de toi · 16 à moi · php scripts/backlog.php next</p>
+  décision qui t'appartient. <strong>Chaque carte porte ton vote</strong> : ce que tu veux voir traité, et ce que tu rejettes — une task rejetée sort de la pile. Le vote se retire en recliquant.</p>
+  <p class="compte">1 en attente de toi · 16 à moi · php scripts/backlog.php next</p>
   <div class="grid">
-  <p class="lede measure">Rien ne t'attend dans la pile : tu as déjà tranché tout ce qui s'y trouve, et le reste est du travail dû, listé plus bas. <strong>Ce qui t'attend est ailleurs</strong> : les sprites à juger, sur <a href="/sprites">le suivi des sprites</a>.</p>
+  <article class="point" data-statut="proposed">
+    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-statut">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>Le hook de fin de tour ne connaît pas la fin de séance et refuse de laisser l&#039;agent s&#039;arrêter</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong><code>hook-stop.php</code> REFUSE LA FIN DE TOUR TANT QU&#039;IL RESTE DES TÂCHES, ET IL NE CONNAÎT PAS LA FIN DE SÉANCE.</strong> Le 2026-08-12, l&#039;opérateur écrit « Termine,<br />
+enregistre tout, fin de session » ; tout est terminé, enregistré, le serveur fermé — et le hook renvoie « TU NE T&#039;ARRÊTES PAS : 16 tâches sont encore à faire ».</p>
+<p><strong>CE QU&#039;IL PROPOSE À LA PLACE EST PIRE QUE LE DÉFAUT</strong> : « une tâche qui ne peut pas avancer sans l&#039;opérateur se passe en blocked ». Aucune des seize n&#039;est<br />
+bloquée — elles sont simplement en attente d&#039;une séance. Les passer en <code>blocked</code> pour faire taire le hook écrirait un état faux dans la pile, ce qui est<br />
+exactement ce que la règle sur la garde du dépilement interdit : un défaut se constate, il ne se compense pas.</p>
+<p><strong>LA PILE N&#039;EST JAMAIS VIDE, ET C&#039;EST NORMAL.</strong> Un hook qui exige zéro tâche pour autoriser un arrêt exige une condition qui ne se produira pas. Ce qui doit<br />
+l&#039;autoriser, c&#039;est <strong>l&#039;ordre de l&#039;opérateur</strong>, comme pour le reste : <code>GO</code> arme le dépilement, <code>STOP</code> le désarme, et une fin de séance annoncée met fin au tour.<br />
+La parole de l&#039;opérateur est déjà lisible — <code>scripts/check-last-order.php</code> lit le dernier mot du transcrit, entrées <code>queue-operation</code> comprises.</p>
+<p><strong>CE QUI EST PROPOSÉ</strong> : que <code>hook-stop.php</code> lise le dernier ordre par le même chemin, et laisse l&#039;agent s&#039;arrêter dès que le dépilement n&#039;est pas armé. Il<br />
+garderait tout son sens dans le seul cas où il a été écrit — un agent qui rend la main au milieu d&#039;un dépilement armé, sans rien dire.</p>
+</details>
+    <div class="acts" data-id="hook-fin-de-seance"><label class="act act--wanted"><input type="checkbox" data-id="hook-fin-de-seance" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="hook-fin-de-seance" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="hook-fin-de-seance" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-12 · repris le 2026-08-12</p>
+  </article>
   </div>
   <details class="clos">
     <summary>Les 16 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
@@ -238,7 +255,78 @@ window.gatebeastNotes = (function () {
   return {load: load, save: save};
 })();
 </script>
+<script>
+(function () {
+  var SECTION = 'pile';
+  var state = {};
+  var ready = false;
 
+  function render() {
+    Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
+      var id = box.getAttribute('data-id');
+      box.checked = Boolean(state[id] && state[id][box.getAttribute('data-act')]);
+    });
+    /* LE FORMULAIRE SE RETROUVE TEL QU'IL A ÉTÉ LAISSÉ (opérateur, 2026-08-12 : « le formulaire doit être préservé d'un chargement à l'autre ») : un commentaire
+       qu'on retape après chaque rechargement ne s'écrit pas deux fois — on renonce à l'écrire. */
+    Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (champ) {
+      var id = champ.getAttribute('data-id');
+      champ.value = (state[id] && state[id].comment) || '';
+    });
+    if (window.gatebeastReleve) { window.gatebeastReleve(); }
+  }
+
+  /* IL S'ENREGISTRE PENDANT LA FRAPPE, PAS À LA SORTIE DU CHAMP : un rechargement au milieu d'une phrase la perdrait, et c'est exactement le cas que la demande
+     nomme. Une courte attente évite d'écrire à chaque touche — assez courte pour qu'aucune phrase ne se perde. */
+  var minuteur = null;
+  Array.prototype.forEach.call(document.querySelectorAll('.comment'), function (champ) {
+    champ.addEventListener('input', function () {
+      var id = champ.getAttribute('data-id');
+      state[id] = state[id] || {};
+      state[id].comment = champ.value;
+      if (minuteur) { clearTimeout(minuteur); }
+      minuteur = setTimeout(function () {
+        retenir(id);
+        if (window.gatebeastReleve) { window.gatebeastReleve(); }
+      }, 400);
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.acts input'), function (box) {
+    box.addEventListener('change', function () {
+      var id = box.getAttribute('data-id');
+      var act = box.getAttribute('data-act');
+      state[id] = state[id] || {};
+      /* UN VOTE EST L'UN DES DEUX, JAMAIS LES DEUX : « à travailler » et « rejeter » se contredisent, et une carte qui porterait les deux n'apprendrait rien. */
+      if (box.checked) {
+        Array.prototype.forEach.call(document.querySelectorAll('.acts input[data-id="' + id + '"]'), function (other) {
+          if (other !== box) {
+            other.checked = false;
+            state[id][other.getAttribute('data-act')] = false;
+          }
+        });
+      }
+      state[id][act] = box.checked;
+      retenir(id);
+      if (window.gatebeastReleve) { window.gatebeastReleve(); }
+    });
+  });
+
+  function retenir(id) {
+    /* RIEN NE S'ÉCRIT AVANT D'AVOIR LU : sans cette garde, le premier rendu repartirait vers le serveur et écraserait ce qui n'est pas encore arrivé. */
+    if (!ready || !window.gatebeastNotes) { return; }
+    var change = {};
+    change[id] = state[id];
+    window.gatebeastNotes.save(SECTION, change);
+  }
+  if (window.gatebeastNotes) {
+    window.gatebeastNotes.load(SECTION, function (stored) {
+      state = stored || {};
+      ready = true;
+      render();
+    });
+  }
+})();
+</script>
 
 <aside class="reload" id="reload" role="status" aria-live="polite">
   <p class="reload-word">Une nouvelle version de cette page est prête.</p>

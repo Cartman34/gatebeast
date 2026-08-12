@@ -1430,6 +1430,17 @@
             "waiting": "agent",
             "created": "2026-08-12",
             "updated": "2026-08-12"
+        },
+        {
+            "ref": "hook-fin-de-seance",
+            "code": "P6",
+            "label": "Le hook de fin de tour ne connaît pas la fin de séance et refuse de laisser l'agent s'arrêter",
+            "description": "**`hook-stop.php` REFUSE LA FIN DE TOUR TANT QU'IL RESTE DES TÂCHES, ET IL NE CONNAÎT PAS LA FIN DE SÉANCE.** Le 2026-08-12, l'opérateur écrit « Termine,\nenregistre tout, fin de session » ; tout est terminé, enregistré, le serveur fermé — et le hook renvoie « TU NE T'ARRÊTES PAS : 16 tâches sont encore à faire ».\n\n**CE QU'IL PROPOSE À LA PLACE EST PIRE QUE LE DÉFAUT** : « une tâche qui ne peut pas avancer sans l'opérateur se passe en blocked ». Aucune des seize n'est\nbloquée — elles sont simplement en attente d'une séance. Les passer en `blocked` pour faire taire le hook écrirait un état faux dans la pile, ce qui est\nexactement ce que la règle sur la garde du dépilement interdit : un défaut se constate, il ne se compense pas.\n\n**LA PILE N'EST JAMAIS VIDE, ET C'EST NORMAL.** Un hook qui exige zéro tâche pour autoriser un arrêt exige une condition qui ne se produira pas. Ce qui doit\nl'autoriser, c'est **l'ordre de l'opérateur**, comme pour le reste : `GO` arme le dépilement, `STOP` le désarme, et une fin de séance annoncée met fin au tour.\nLa parole de l'opérateur est déjà lisible — `scripts/check-last-order.php` lit le dernier mot du transcrit, entrées `queue-operation` comprises.\n\n**CE QUI EST PROPOSÉ** : que `hook-stop.php` lise le dernier ordre par le même chemin, et laisse l'agent s'arrêter dès que le dépilement n'est pas armé. Il\ngarderait tout son sens dans le seul cas où il a été écrit — un agent qui rend la main au milieu d'un dépilement armé, sans rien dire.",
+            "status": "proposed",
+            "priority": 11,
+            "waiting": "agent",
+            "created": "2026-08-12",
+            "updated": "2026-08-12"
         }
     ]
 }
