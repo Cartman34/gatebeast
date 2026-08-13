@@ -6,6 +6,9 @@
  * output path, and yields the produced file.
  *
  * Usage: php gatebeast/scripts/generate-image.php <output.png> "<description>" [<output2.png> "<description2>" ...]
+ *        php gatebeast/scripts/generate-image.php <output.png> @<fichier> — la description se lit dans ce fichier, ce qui est la forme à préférer : une
+ *        consigne assemblée fait plusieurs kilo-octets et porte des guillemets et des tirets longs qu'une garde de shell refuse. Vaut pour chaque paire
+ *        indépendamment, et un « @ » désignant un fichier absent est refusé plutôt que dessiné.
  *        php scripts/generate-image.php -h|--help — this text, and nothing is generated
  *
  * The IMAGE_JOBS environment variable overrides how many generations run at once, and IMAGE_MODEL names the model the agent should run on — left unset, the
@@ -46,9 +49,40 @@ if( count($arguments) < 2 || count($arguments) % 2 !== 0 ) {
 	exit(1);
 }
 
+/**
+ * La description d'une génération : le texte donné tel quel, ou celui que « @fichier » désigne.
+ *
+ * UNE CONSIGNE NE TIENT PAS SUR UNE LIGNE DE COMMANDE. Elle fait sept kilo-octets et cite l'opérateur, donc elle porte ses guillemets, ses tirets longs et ses
+ * parenthèses — et une garde de shell refuse la commande sur ces caractères-là, au milieu du travail. Le fichier fait passer le texte sans que la ligne de
+ * commande ait à le porter. C'est la même syntaxe et le même refus que « --rework @fichier » de scripts/generate-sprite.py et que « describe @fichier » de
+ * scripts/backlog.php : un seul motif dans le dépôt, appris une fois.
+ *
+ * UN « @ » QUI NE DÉSIGNE AUCUN FICHIER EST UNE FAUTE, PAS UNE DESCRIPTION LITTÉRALE. Le prendre au pied de la lettre enverrait « @consigne.txt » au générateur
+ * comme s'il fallait le dessiner — une faute de frappe payée au prix d'une génération.
+ *
+ * ET LE TEXTE N'EST PAS ROGNÉ, LÀ OÙ LES DEUX AUTRES LE ROGNENT — c'est la seule différence, et elle est délibérée. Ce fichier-ci est une consigne figée, la
+ * trace EXACTE de ce qui est envoyé au générateur, et son découpage est lié à elle par une empreinte du texte entier. Un saut de ligne final retiré au passage
+ * ferait diverger d'un octet ce qui part de ce qui est archivé, et l'empreinte cesserait de correspondre : on ne pourrait plus dire de quelle section vient
+ * une phrase. Aligner cette lecture sur celles de backlog.php ou de --rework casserait donc précisément ce qu'elle sert à établir.
+ */
+function descriptionOf(string $given): string {
+	if( !str_starts_with($given, '@') ) {
+		return $given;
+	}
+	$file = substr($given, 1);
+	if( !is_file($file) ) {
+		throw new RuntimeException("FAULT la description devait se lire dans « {$file} », qui n'existe pas — rien n'a été généré.\n"
+			. "  Solution — vérifiez le chemin, ou passez la description directement en argument si elle tient sur une ligne de commande. Une consigne "
+			. "assemblée s'écrit sous var/tmp/consignes/ et se donne par « @var/tmp/consignes/<nom>.txt ».");
+	}
+
+	return (string) file_get_contents($file);
+}
+
 $queue = [];
 for( $index = 0; $index < count($arguments); $index += 2 ) {
-	$queue[] = ['output' => $arguments[$index], 'description' => $arguments[$index + 1]];
+	// CHAQUE PAIRE EST LUE POUR ELLE-MÊME : plusieurs images se commandent d'un seul appel, et « @fichier » vaut pour l'une sans engager les autres.
+	$queue[] = ['output' => $arguments[$index], 'description' => descriptionOf($arguments[$index + 1])];
 }
 
 /**

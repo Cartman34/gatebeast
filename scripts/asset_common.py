@@ -141,11 +141,7 @@ CONTEXTE_FR = """\
 CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c'est-à-dire une pièce détourée que le moteur d'un jeu posera sur UNE CASE d'une carte
 quadrillée, vue en plongée. Ce n'est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d'autres, et PLUSIEURS SPRITES PEUVENT
 occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c'est le moteur qui les empile dans le bon ordre, ce n'est pas ton affaire et tu n'as rien à
-anticiper de cela.
-
-IL EN DÉCOULE TROIS CHOSES, ET ELLES COMMANDENT TOUT LE RESTE. Le SOL n'est jamais de ton ressort : la carte le porte déjà sous ta sprite, donc tu n'en dessines aucun, sous
-aucune forme. Le FOND est transparent partout où ton sujet n'est pas, sans exception. Et les DIMENSIONS sont contractuelles : la case a une taille fixe dans le jeu, ta sprite
-s'y pose telle quelle, et une image trop large ou trop courte ne se rattrape pas — elle se rejette."""
+anticiper de cela."""
 
 # THE PLUNGE, WRITTEN ONCE AND ONLY ONCE. It is the value the whole world is drawn under, and it appeared
 # in two texts in two wordings — the camera clause and the closing reminder. A technical parameter said
@@ -168,15 +164,34 @@ PLUNGE_WIDTH_PX = tile_scale.FILE_TILE_WIDTH
 PLUNGE_HEIGHT_PX = round(tile_scale.FILE_TILE_WIDTH * tile_scale.STANDING_HEIGHT_FACTOR)
 PLUNGE_DEPTH_PX = tile_scale.FILE_TILE_DEPTH
 PLUNGE_FR = f"""\
-Forte plongée à SOIXANTE DEGRÉS sous l'horizontale — l'angle des cartes de jeu de rôle. On regarde le sujet d'en
-haut ET un peu de face, et cet angle se vérifie par TROIS MESURES, pas à l'impression. UNE CASE DE LARGE — un
-mètre gauche-droite, la seule longueur que la caméra n'écrase pas — occupe {PLUNGE_WIDTH_PX} PIXELS dans l'image, et c'est
-l'unité de référence à laquelle les deux autres se comparent. UN MÈTRE DE HAUTEUR — une face verticale, un mur,
-un flanc — en occupe {PLUNGE_HEIGHT_PX}, soit la moitié. UN MÈTRE AU SOL QUI S'ENFONCE VERS LE FOND — une face horizontale, un
-toit, un dos, une dalle — en occupe {PLUNGE_DEPTH_PX}, soit presque la totalité. Les faces horizontales dominent donc
-largement, et les verticales sont écrasées de moitié : c'est ce qui sépare cette vue d'une élévation. On voit le
-DESSUS de ce qui est posé au sol."""
+CETTE PROJECTION SE VÉRIFIE PAR TROIS MESURES, PAS À L'IMPRESSION. Une case du monde est un carré d'un mètre, et
+voici ce que son côté devient dans l'image selon l'axe qu'il suit — ce sont aussi les trois unités dans lesquelles
+toute mesure de cette consigne est donnée :
+— le long de X, gauche-droite, un mètre occupe {PLUNGE_WIDTH_PX} PIXELS ; cette unité se note TX ;
+— le long de Y, en s'enfonçant vers le fond au sol, un mètre occupe {PLUNGE_DEPTH_PX} PIXELS ; cette unité se note TY, et
+  c'est aussi en TY que se mesure une hauteur DANS L'IMAGE ;
+— le long de Z, debout, un mètre occupe {PLUNGE_HEIGHT_PX} PIXELS.
+On voit donc largement le DESSUS de ce qui est posé au sol, et les faces verticales tiennent dans la moitié de
+leur mesure : c'est le rapport que cette caméra donne."""
 
+# THE GEOMETRY IS SAID AS TWO EQUALITIES, AND THAT IS WHAT ENDED THREE DAYS ON THE PARALLEL VIEW. A description is interpreted; an equality is checked. The
+# clause used to describe the projection face by face, in prose — and everything it said is ALSO true of an isometric view, which is a parallel projection with
+# no vanishing point whose depth simply runs diagonally. Nothing in our text closed that reading, and it is very probably the one the generator took: it
+# satisfied every word we wrote. The one thing that separates our projection from an isometry — Δx = 0 on both the standing edge and the ground depth — was
+# written nowhere (opérateur, 2026-08-13, after obtaining the right rendering by talking to the generator directly, session 019ff7b5-874b-7f13-b999-eb15476ab0da).
+#
+# AND TWO OF THE FOUR PROSE BULLETS WERE FALSE, WHICH IS WORSE THAN REDUNDANT. At azimuth zero, Y and Z both project onto the image's vertical axis, so a face
+# whose edges follow Y and Z — a gable, a flank — is seen edge-on and projects to a SEGMENT, not to a « parallélogramme » as the clause claimed; the same goes
+# for a roof pitch. Those two bullets described an isometric view, in the middle of the clause meant to forbid one, and were the likeliest invitation to draw it.
+#
+# NO INTERDICTION REPLACED THEM, ON PURPOSE. The generator's own answer offered ten of them — no vanishing point, no convergence, no leaning wall — and this
+# document proscribes exactly that: an interdiction leaves everything else open, so it constrains nothing, and four such wordings had already failed. « Δx = 0 »
+# authorises one drawing where « pas de diagonale » still authorises a thousand. It is also why the missing sentence is written positively, « monte tout droit
+# vers le haut de l'image », rather than as the « jamais en diagonale » it was first phrased in.
+#
+# THE FIGURES ARE NOT RESTATED HERE EITHER: PLUNGE_FR gives the three measures just above, so the tests name the axes and the units it defines. What is new is
+# the equality, not the number — and a pivot value said twice in one consigne is the repetition the operator named on 2026-08-12.
+#
 # FOUR CONSTRAINTS, EACH SAID ONCE — projection, orientation, plunge, light. This clause had grown by
 # accumulation: every failed image added its paragraph on top of the previous ones, so the same thing was
 # prescribed three times in three wordings and the fourth reader could no longer tell which one ruled
@@ -184,16 +199,22 @@ DESSUS de ce qui est posé au sol."""
 # Nothing was dropped in the rewrite: what each paragraph forbade is still forbidden, said in the one place
 # where it belongs. What DID go is the history — why a rule exists belongs in a comment, never in a prompt.
 CAMERA_FR = f"""\
-Caméra : AXONOMÉTRIE ORTHOGRAPHIQUE, une PROJECTION PARALLÈLE et jamais une perspective. LA RÈGLE SE VÉRIFIE FACE
-PAR FACE, ET C'EST AINSI QU'IL FAUT LA LIRE : chaque face rectangulaire du sujet — un mur, un pan de toit, une
-porte, une dalle — se dessine comme un PARALLÉLOGRAMME, dont les deux côtés opposés sont STRICTEMENT PARALLÈLES et
-de MÊME LONGUEUR. Un pan de toit qui se rétrécit vers le faîtage, un mur plus étroit en haut qu'en bas, deux
-murs opposés qui penchent l'un vers l'autre : ce sont trois perspectives, et chacune suffit à faire refuser
-l'image. Les arêtes verticales restent verticales et parallèles entre elles d'un bout à l'autre de l'image ; celles
-qui s'enfoncent vers le fond restent parallèles entre elles. AUCUN POINT DE FUITE, NULLE PART.
-AUCUNE ROTATION AUTOUR DE LA VERTICALE : on regarde droit dans l'axe de la grille du monde, jamais de trois
-quarts. Un sujet qui a une face avant la présente DE FRONT, entière.
+Caméra : PROJECTION ORTHOGRAPHIQUE, direction de vue unique pour toute l'image, azimut ZÉRO et site SOIXANTE DEGRÉS
+au-dessus du plan du sol. Les axes du monde sont ceux de la grille : X vers la droite, Y vers le fond, Z vers le
+haut.
 {PLUNGE_FR}
+CES MESURES SE VÉRIFIENT PAR DEUX ÉGALITÉS, ET CES DEUX ÉGALITÉS DÉCRIVENT LA GÉOMÉTRIE TOUT ENTIÈRE :
+— UNE ARÊTE DEBOUT, qui suit Z, MONTE TOUT DROIT DANS L'IMAGE : son sommet se dessine à la MÊME ABSCISSE que son
+  pied, soit Δx = 0, et seule sa mesure le long de Z les sépare, verticalement. Un mur a donc exactement la même
+  largeur en haut qu'en bas, et les deux murs opposés d'un bâtiment sont deux droites verticales parallèles ;
+— UNE PROFONDEUR AU SOL, qui suit Y, MONTE TOUT DROIT ELLE AUSSI, VERS LE HAUT DE L'IMAGE : en s'enfonçant vers le
+  fond, un point se dessine à la MÊME ABSCISSE que le point correspondant du bord avant, soit Δx = 0, et seule sa
+  mesure en TY les sépare, verticalement. Le bord arrière d'une emprise a donc exactement la longueur du bord
+  avant, et se dessine à son aplomb.
+La largeur est la seule mesure qui reste horizontale dans l'image : elle suit X, en TX, et vaut autant au premier
+plan qu'au fond.
+Il suit de ces deux égalités que deux arêtes parallèles dans le monde le restent dans l'image, et que deux segments
+de même longueur sur un même axe y ont la même longueur, au premier plan comme au fond.
 Lumière : soleil de fin de matinée venant du HAUT À GAUCHE, franc et clair, et de là SEULEMENT — jamais de la
 caméra. Ce qui est exposé au ciel reçoit la lumière ; ce qu'une masse surplombe est dans son ombre, et le reste
 franchement plus sombre : le dessous d'une couronne, les branches sous le feuillage, l'intérieur d'un porche, le
@@ -220,9 +241,9 @@ deux bandes claires, et les faces tournées vers le bas restent lisibles. Pas d'
 # renforcement comme une brute ». What is kept here is only what this position adds and the clause above does
 # not say: that the plunge applies to the SUBJECT, not just to the map it stands on.
 RAPPEL_CAMERA_FR = """\
-RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE — L'ANGLE DE PRISE DE VUE EST EXACTEMENT CELUI DÉCRIT PLUS HAUT, avec
-ses trois mesures ; aucune ligne de cette consigne ne l'assouplit. C'est la CARTE qui est vue de dessus ; le
-sujet, lui, est vu sous cet angle-là, jamais à la verticale et jamais de face."""
+RAPPEL, ET C'EST LA DERNIÈRE CONSIGNE — LA DIRECTION DE VUE EST CELLE DÉCRITE PLUS HAUT, la même pour le sujet
+et pour le sol sur lequel il pose : azimut zéro, site soixante degrés, projection orthographique, avec ses trois
+mesures. Le sujet est vu sous cette direction-là, entier, du premier plan au fond."""
 
 CADRAGE_CUTOUT = f"""\
 UN SEUL SUJET, ET RIEN D'AUTRE. L'image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s'ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
@@ -262,22 +283,7 @@ REGLES_FR = f"""\
 Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
 dessine EXACTEMENT comme décrit. Aucun animal réel n'existe dans ce monde.
 
-DEUX UNITÉS, ET TOUTE MESURE QU'ON TE DONNE PORTE LA SIENNE. Une case du monde est un carré d'un mètre,
-mais on la regarde de haut : dans l'image elle est plus large que profonde, et il faut donc deux unités
-plutôt qu'une. TX est une case mesurée EN LARGEUR, de gauche à droite, et vaut {tile_scale.FILE_TILE_WIDTH} pixels. TY est une
-case mesurée VERTICALEMENT DANS L'IMAGE, et vaut {tile_scale.FILE_TILE_DEPTH} pixels : c'est ce qu'occupe à l'écran une case de
-SOL qui s'enfonce vers le fond. Une largeur se donne en TX, une profondeur au sol et une hauteur d'image
-se donnent en TY.
-
-CE QUI S'ÉLÈVE NE SE MESURE NI EN TX NI EN TY. Une hauteur DEBOUT — un mur, un étage, un tronc, une
-porte — est la seule des trois que la plongée écrase de moitié, et son chiffre est celui donné plus haut
-avec l'angle de vue. Prendre TY pour une hauteur debout fait dessiner le sujet presque deux fois trop
-haut, et rend une élévation là où on attend une vue plongeante.
-
-Ne dessine pas de grille, n'écris aucune mesure dans l'image.
-
-Rien d'autre dans l'image : pas de texte, pas de chiffre, pas d'interface, pas de logo, pas de
-signature, pas de grille, pas de bordure."""
+L'image ne porte aucune inscription : pas de texte, pas de chiffre, pas de cote, pas de grille."""
 
 # LES DESCRIPTIONS D'ÉLÉMENTS NE VIVENT PLUS DANS LE CODE. Cinq d'entre elles étaient recopiées ici à la main, en anglais, chacune annoncée « citée mot
 # pour mot » de l'inventaire — une promesse qu'aucun contrôle ne tenait. Elles vivent dans assets/descriptions/, un fichier par description, lu en entier.
@@ -408,6 +414,18 @@ def taille_clause(footprint: tuple, height: float) -> str:
 # description itself (see sheet_description) — never by the words that follow it.
 EXTRA_MARKER = "Consigne supplémentaire de génération :"
 
+# THE THREE SOURCES OF AN EXTRA INSTRUCTION, NAMED ONCE. They used to be spelled out where the dict is filled, so a caller wanting to tell them apart had to
+# recopy the three strings — and a caller that recopies a key finds nothing the day one of them is reworded, in silence. They are levels of the model, not
+# labels: the type's own clause, the inventory entry's, and the subject's. The consigne's split names each block by the level that wrote it, and that is
+# exactly what these three distinguish.
+EXTRA_FROM_TYPE = "Consigne supplémentaire — le type"
+EXTRA_FROM_INVENTORY = "Consigne supplémentaire — fiche d'inventaire"
+EXTRA_FROM_SUBJECT = "Consigne supplémentaire — le sujet"
+
+# The one sentence that opens the extra instructions, whatever their number and wherever they come from. It belongs to the socle: it is true of every image
+# that carries any extra instruction at all, and it is quoted, never rebuilt, by whoever needs to split that block source by source.
+EXTRA_HEADER = "CONSIGNE SUPPLÉMENTAIRE POUR CE SUJET — elle s'ajoute à tout ce qui précède et ne l'annule pas :"
+
 
 def extra_instructions(code: str, subject: dict = None, type_: dict = None) -> dict:
     """The extra generation instructions that apply here, from the three places they may live.
@@ -428,7 +446,7 @@ def extra_instructions(code: str, subject: dict = None, type_: dict = None) -> d
     """
     found = {}
     if type_ and type_.get("extra_prompt"):
-        found["Consigne supplémentaire — le type"] = type_["extra_prompt"]
+        found[EXTRA_FROM_TYPE] = type_["extra_prompt"]
     for folder in (Path(__file__).resolve().parents[1] / "doc" / "conception" / "referentiels"
                    / "visuel" / "inventaire",):
         for path in sorted(folder.glob("*.md")):
@@ -438,9 +456,9 @@ def extra_instructions(code: str, subject: dict = None, type_: dict = None) -> d
                 after = line.split(EXTRA_MARKER, 1)[1]
                 match = DESCRIPTION_PATTERN.search(after)
                 if match:
-                    found["Consigne supplémentaire — fiche d'inventaire"] = match.group(1).strip()
+                    found[EXTRA_FROM_INVENTORY] = match.group(1).strip()
     if subject and subject.get("extra_prompt"):
-        found["Consigne supplémentaire — le sujet"] = subject["extra_prompt"]
+        found[EXTRA_FROM_SUBJECT] = subject["extra_prompt"]
 
     return found
 
@@ -450,8 +468,7 @@ def extra_clause(extras: dict) -> str:
     if not extras:
         return ""
 
-    return ("CONSIGNE SUPPLÉMENTAIRE POUR CE SUJET — elle s'ajoute à tout ce qui précède et ne "
-            "l'annule pas :\n" + "\n".join(text for text in extras.values()))
+    return EXTRA_HEADER + "\n" + "\n".join(text for text in extras.values())
 
 
 def reference_clause(reference_name: str) -> str:

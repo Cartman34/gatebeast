@@ -21,9 +21,18 @@ class Notes
 
     private string $directory;
 
-    public function __construct()
+    /**
+     * `$directory` is where this instance files, and it is the only thing that changes between one use and another.
+     *
+     * IT EXISTS BECAUSE THE CRITIQUES OF A TRIAL MUST **NOT** LAND HERE (operator, 2026-08-13: « tes critiques n'ont pas à survivre, tu ne dois garder que les
+     * conclusions dans la doc et le code »). They live inside their trial's own folder, under `var/`, and disappear with it — deliberately. What they must NOT
+     * have is a durable home: it would be one more history nobody rereads, and it would make the conclusion look as though it lived there rather than at its own
+     * foyer. So the destination moves, and the mechanism does not: merging key by key under a lock, with one step back, is what kept a morning of verdicts on
+     * 2026-08-11, and a second copy of it written for the workshop page would have to learn that lesson again.
+     */
+    public function __construct(?string $directory = null)
     {
-        $this->directory = dirname(__DIR__) . '/notes';
+        $this->directory = $directory ?? dirname(__DIR__) . '/notes';
     }
 
     /** The service instance. This is the ONLY static method here, and it does nothing else: all the work is on the instance. */

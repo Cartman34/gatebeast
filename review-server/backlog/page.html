@@ -180,10 +180,10 @@
   <h1>La pile</h1>
   <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
   décision qui t'appartient. <strong>Chaque carte porte ton vote</strong> : ce que tu veux voir traité, et ce que tu rejettes — une task rejetée sort de la pile. Le vote se retire en recliquant.</p>
-  <p class="compte">1 en attente de toi · 12 à moi · php scripts/backlog.php next</p>
+  <p class="compte">1 en attente de toi · 16 à moi · php scripts/backlog.php next</p>
   <div class="grid">
   <article class="point" data-status="proposed">
-    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 11</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 43</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
     <h2>Le hook de fin de tour ne connaît pas la fin de séance et refuse de laisser l&#039;agent s&#039;arrêter</h2>
     <details class="point-corps"><summary>Ce que ça engage</summary><p><strong><code>hook-stop.php</code> REFUSE LA FIN DE TOUR TANT QU&#039;IL RESTE DES TÂCHES, ET IL NE CONNAÎT PAS LA FIN DE SÉANCE.</strong> Le 2026-08-12, l&#039;opérateur écrit « Termine,<br />
 enregistre tout, fin de session » ; tout est terminé, enregistré, le serveur fermé — et le hook renvoie « TU NE T&#039;ARRÊTES PAS : 16 tâches sont encore à faire ».</p>
@@ -198,24 +198,28 @@ garderait tout son sens dans le seul cas où il a été écrit — un agent qui 
 </details>
     <div class="acts" data-id="hook-fin-de-seance"><label class="act act--wanted"><input type="checkbox" data-id="hook-fin-de-seance" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="hook-fin-de-seance" data-act="dismissed"><span>Rejeter</span></label></div>
     <textarea class="comment" data-id="hook-fin-de-seance" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
-    <p class="point-pied">Créé le 2026-08-12 · repris le 2026-08-12</p>
+    <p class="point-pied">Créé le 2026-08-12 · repris le 2026-08-13</p>
   </article>
   </div>
   <details class="clos">
-    <summary>Les 12 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
+    <summary>Les 16 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
     <ul class="mien">
+    <li><span class="point-ref">atelier-generation</span> Une page d&#039;atelier : la consigne, ses niveaux, l&#039;image, et le diff avec la consigne transmise</li>
+    <li><span class="point-ref">pages-hors-index</span> Une page servie peut n&#039;apparaître dans aucun index : deux listes tenues à la main, rien ne les accorde</li>
+    <li><span class="point-ref">emprise-non-rect</span> Une emprise ne sait être qu&#039;un rectangle : un bâtiment en L rendrait le référentiel et la consigne faux</li>
     <li><span class="point-ref">outils-morts</span> Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</li>
-    <li><span class="point-ref">dossiers-en-anglais</span> Les six répertoires d&#039;images portent des noms français</li>
+    <li><span class="point-ref">refus-avec-solution</span> Chaque refus doit nommer le geste qui débloque, à commencer par les contrôles de séance</li>
     <li><span class="point-ref">comments-en-anglais</span> Les commentaires français du serveur de revue, à repasser en anglais</li>
-    <li><span class="point-ref">audit-journal</span> Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</li>
+    <li><span class="point-ref">dossiers-en-anglais</span> Les six répertoires d&#039;images portent des noms français</li>
     <li><span class="point-ref">fautes-unifiees</span> Les commandes n&#039;ont pas toutes le rendu unique des fautes</li>
-    <li><span class="point-ref">comparaison-variants</span> La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</li>
-    <li><span class="point-ref">bash-simple</span> Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</li>
-    <li><span class="point-ref">locales-francaises</span> Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</li>
-    <li><span class="point-ref">valeurs-fr-restantes</span> Les valeurs francaises restantes dans le code : 23, dont trois familles bloquees</li>
+    <li><span class="point-ref">audit-journal</span> Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</li>
     <li><span class="point-ref">sondes-servies</span> Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script</li>
-    <li><span class="point-ref">hauteur-monde</span> La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</li>
     <li><span class="point-ref">service-sonde</span> Un service de sonde pour la page servie et la copie greffée</li>
+    <li><span class="point-ref">comparaison-variants</span> La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</li>
+    <li><span class="point-ref">valeurs-fr-restantes</span> Les valeurs francaises restantes dans le code : 23, dont trois familles bloquees</li>
+    <li><span class="point-ref">locales-francaises</span> Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</li>
+    <li><span class="point-ref">bash-simple</span> Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</li>
+    <li><span class="point-ref">hauteur-monde</span> La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</li>
     </ul>
   </details>
 </div>

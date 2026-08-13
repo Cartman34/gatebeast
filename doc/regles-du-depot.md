@@ -125,8 +125,14 @@ piloter son projet.
   met à jour, décrit et ferme librement, et il ajoute sans demander **ce que l'opérateur lui dit d'ajouter**. Ouvrir un sujet que personne n'a demandé, non : « tu risques de t'enfoncer dans une
   mauvaise pratique sans vérification ». Un point ouvert oriente le travail de toutes les séances suivantes, et un agent qui remplit lui-même sa propre pile finit par travailler sur ce qu'il a décidé
   seul, en croyant suivre le projet.
-- **LES PRIORITÉS 1 À 10 SONT RÉSERVÉES À L'OPÉRATEUR** (2026-08-08). Elles disent ce qui est urgent, important ou de grande priorité **selon lui**, et lui seul les attribue. Ce que l'agent propose
-  ou ouvre commence à **11** : sans cette réserve, ce qu'il juge pressant se mélange à ce que l'opérateur juge pressant, et la tête de pile cesse de dire la volonté de quelqu'un.
+- **LA PRIORITÉ DIT LA NATURE DU POINT, PAS SON URGENCE RESSENTIE — QUATRE TRANCHES, ET ELLES SONT FERMÉES** (opérateur, 2026-08-13 : « ce qui est hotfix doit être de prio 0X, ce qui est sprite doit
+  être 2X, le reste est 3X 4X 5X… 1X n'est pas utilisé pour le moment »).
+  - **0 à 9 — un hotfix** : ce qui empêche de produire ou de juger. C'est la seule tranche qui passe devant les sprites, et c'est exactement l'exception que « ce qui passe devant » définit plus haut.
+  - **10 à 19 — inutilisée**, gardée libre par l'opérateur. On n'y range rien tant qu'il ne dit pas ce qu'elle porte.
+  - **20 à 29 — une sprite** : la produire, la faire juger, déboguer sa consigne.
+  - **30 et au-delà — tout le reste**, dette technique comprise, les dizaines servant à ordonner entre eux.
+  **Cette tranche remplace la réserve des priorités 1 à 10**, qui datait du 2026-08-08 : le rang ne dit plus qui l'a décidé, il dit de quoi il s'agit. L'agent classe donc lui-même un point dans sa
+  tranche, et il n'a plus à commencer à 11 — ce qu'il **ouvre** de sa propre initiative reste, lui, une proposition à valider, ce qui est une autre règle.
 - **CE QUI SE FAIT À LA PLACE : on le fait, ou on le propose.** Un défaut trouvé en chemin se corrige dans la foulée — c'est déjà la règle, « ce qui manque se fait ». Ce qui est trop gros pour être
   fait dans la foulée se **propose** à l'opérateur, avec ce qu'il coûte, et n'entre à la pile qu'une fois validé. Un défaut qu'on ne peut ni faire ni proposer tout de suite se dit dans le compte
   rendu, il ne s'inscrit pas de force.

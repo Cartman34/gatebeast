@@ -119,11 +119,17 @@ h1 { margin: 0; font-size: clamp(29px, 5vw, 42px); line-height: 1.07; font-weigh
    three tiles floating off the page. A name already taken in the same sheet is a name taken, and a class is not chosen for being the most obvious.
    THE GRID NEVER MASKS THE IMAGE: one-pixel lines, and nothing filled — the sprite is being judged, the grid only places it. */
 .footprint { position: absolute; inset: 0; pointer-events: none; }
+/* UNE CASE EST TOUJOURS ENTIÈRE, MÊME LÀ OÙ L'IMAGE NE LA REMPLIT PAS (opérateur, 2026-08-12 : « il ne doit jamais y avoir de demi case, une case doit être
+   affichée entière même si incomplète »). The paving is anchored on the ground and the thumbnail is never a whole number of tiles tall, so the top row was a
+   fraction with no line to close it. The tiling therefore RISES above the image by `--tile-rise` — a percentage of the image's height, so it follows the drawer's
+   magnification like everything else here — and `--tile-y` is a percentage of that risen box, which is exactly a whole number of rows tall.
+   NOTHING ELSE RISES WITH IT: the ground footprint, the overhang cover and the two axes stay measured on the image, which is what they describe. The room the
+   rise needs is reserved by a margin on `.picture`, given by the builder. */
 .footprint::before {
-  content: ""; position: absolute; inset: 0;
+  content: ""; position: absolute; top: calc(-1 * var(--tile-rise)); right: 0; bottom: 0; left: 0;
   background-image: linear-gradient(to right, var(--overlay-soft) 1px, transparent 1px),
                     linear-gradient(to bottom, var(--overlay-soft) 1px, transparent 1px);
-  background-size: var(--case) var(--case-y);
+  background-size: var(--tile) var(--tile-y);
   background-position: bottom left;
 }
 /* THE GROUND FOOTPRINT IS ANCHORED AT THE BOTTOM AND CENTRED: that is where the subject touches the ground, and that rectangle is what the plan places it by. */
@@ -315,6 +321,38 @@ body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: var(--drawer-wi
   .drawer { top: auto; left: 0; width: auto; height: 50vh; border-left: 0; border-top: 1px solid var(--line); }
   body.drawer-open .fsp, body.drawer-open > .wrap { padding-right: 0; padding-bottom: 50vh; }
 }
+/* LA PAGINATION DES VERSIONS, EN HAUT DU DRAWER, et le rang entre ses deux commandes — c'est lui qu'on vient lire, elles ne font que l'emmener ailleurs.
+   LES BORNES S'ÉTEIGNENT, ELLES NE DISPARAISSENT PAS : un bouton qui s'en va fait glisser l'autre sous le curseur, et le clic suivant tombe sur ce qu'on ne
+   visait pas. Sur la version la plus récente, « précédente » est donc là, grise et inerte. */
+.version-paging { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 14px; border-bottom: 1px solid var(--line); }
+.version-paging[hidden] { display: none; }
+.version-step {
+  flex: 0 0 auto; padding: 3px 10px; background: none; border: 1px solid var(--line); border-radius: 4px;
+  color: inherit; font: inherit; font-size: .74rem; cursor: pointer;
+}
+.version-step:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.version-step:disabled { opacity: .35; cursor: default; }
+.version-rank { margin: 0; font-size: .74rem; letter-spacing: .04em; color: var(--muted); }
+/* LA BANDE DES VERSIONS EST COLLÉE EN BAS DU DRAWER, et c'est ce qui la rend « toujours présente » : le drawer défile en entier — sa barre comprise —, donc une
+   bande posée en flux ordinaire partirait vers le haut dès qu'on lit une consigne un peu longue, c'est-à-dire exactement quand on veut changer de version.
+   ELLE EST PETITE PARCE QUE LE CRITÈRE EST UNE QUANTITÉ, PAS UNE DIMENSION (opérateur, 2026-08-13 : « on doit voir une quantité de version ») : à cette taille,
+   dix-huit versions tiennent dans la largeur du drawer, et ce qui déborde se fait défiler sans emporter la page. */
+.version-strip {
+  position: sticky; bottom: 0; z-index: 1; margin-top: auto; display: flex; gap: 6px; overflow-x: auto;
+  padding: 6px 10px; background: var(--card, var(--bg)); border-top: 1px solid var(--line);
+}
+.version-strip[hidden] { display: none; }
+/* Une vignette de la bande garde le fond en damier des images de la page : sans lui, une sprite claire détourée sur le fond du drawer ne se voit pas. */
+.version-thumb {
+  position: relative; flex: 0 0 auto; display: flex; align-items: flex-end; justify-content: center; width: 52px; height: 52px; padding: 2px;
+  background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 10px 10px;
+  border: 1px solid var(--line); border-radius: 3px; cursor: pointer;
+}
+.version-thumb:hover { border-color: var(--accent); }
+.version-thumb img { max-width: 100%; max-height: 100%; width: auto; height: auto; image-rendering: pixelated; }
+/* CELLE QU'ON REGARDE SE VOIT, sinon la bande dit ce qui existe sans dire où l'on est — et c'est justement la demande de départ. */
+.version-thumb--current { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.version-thumb-rank { position: absolute; top: 0; left: 3px; font-size: .6rem; line-height: 1.4; color: var(--muted); }
 .fsp-body--image { display: flex; align-items: center; justify-content: center; }
 #fsp-image-corps { max-width: 100%; max-height: 80vh; background: repeating-conic-gradient(var(--damier-a) 0 25%, var(--damier-b) 0 50%) top left / 24px 24px; }
 /* AN EARLIER VERSION IS A CARD LIKE THE CURRENT ONE, only quieter: same width, same grid, same measurements, a background one shade duller so it is not mistaken

@@ -27,8 +27,23 @@ Usage:
                An unknown ref is refused: a variant is declared before it is produced.
   --frame      the image's own number within its variant (glossaire: frame-01, frame-02...) — not a
                version number, defaults to 1
+  --session    the generator session this image came out of, as generate-image.php reports it. Left
+               out, the version records `null`: an image nobody can attribute to a session is a fact,
+               not a fault, and it is written down as such rather than guessed at.
   --dry-run    show what would be written, touch nothing
   -h|--help    this text
+
+THE SESSION BELONGS TO THE VERSION, NOT TO A REPORT (operator, 2026-08-13). It was captured at
+generation and written only into var/generations/, which is not versioned: the id then existed on one
+machine, until the next cleanup, and for nobody else — two versions had already lost theirs by
+2026-08-13, which the sprites page prints at every build. Recorded here it lives in a versioned file,
+beside the path and the measures of the very version it produced.
+
+WHERE THE SESSION WAS LAUNCHED IS NOT RECORDED, AND THAT IS A DECISION. A session can only be reopened
+from its own launch directory, so the directory matters — but generate-image.php pins it to the
+project root for every generation there has ever been (its PROJECT_ROOT, so that all the project's
+sessions are listed in one place). It is therefore a constant, not a property of a version, and
+writing it onto each of them would copy one value two hundred times over.
 """
 import importlib.util
 import json
@@ -187,9 +202,13 @@ def main(arguments):
     kept = {key: measures[key] for key in
             ("delivered_px", "silhouette_px", "contact_px", "anchor_px", "master_size_px",
              "kind", "footprint") if key in measures}
+    # `null` RATHER THAN AN EMPTY STRING, and the key is written either way: not having a session at all is what is being said here, and an empty string would
+    # say instead that the session is known and blank (execution.md, "L'absence de valeur se dit null"). Always writing the key also keeps a version produced
+    # since this change and left without a session distinguishable from one produced before it, which simply has no key.
     representation = {
         "type": "sprite", "path": relative_target, "master": relative_source,
         "image_number": frame, "measures": kept, "status": "current",
+        "generator_session": options.get("session") or None,
     }
     add_representation(variant, representation)
 
@@ -205,6 +224,12 @@ def main(arguments):
     delivered = kept.get("delivered_px") or {}
     print(f"{code} / {ref} · frame {frame} · {delivered.get('width')} × {delivered.get('height')} px "
           f"→ {relative_target}")
+    # NAMED, NOT PASSED OVER. An unattributable version is a state this tool knows how to name, so it reaches the launcher's own output rather than only the
+    # report's (execution.md, "Une erreur remonte toujours" and its nuance). It stops nothing: the image is exported and recorded either way.
+    if representation["generator_session"] is None:
+        print(f"  SANS SESSION — le générateur n'en a remonté aucune, cette version n'en portera donc pas.\n"
+              f"  Solution — l'identifiant reste écrit dans le journal d'événements du générateur, "
+              f"« var/generations/<sprites|subjects>/{source.stem}-generateur.jsonl » : relis-le, et passe-le à --session.")
     if options.get("dry_run"):
         print("  (dry run — nothing written)")
         return 0

@@ -20,6 +20,7 @@ require_once $root . '/review-server/lib/Thumbnail.php';
 // The rune service is still required although the page draws no rune for now (see runeMark): the drawing comes back by calling it again, and dropping the
 // require with the call would turn a one-line return into a hunt through the history.
 require_once $root . '/review-server/lib/Rune.php';
+require_once $root . '/review-server/lib/FootprintGrid.php';
 require_once $root . '/scripts/Tools.php';
 bootBuild();
 
@@ -33,9 +34,9 @@ const ORPHAN_WIDTH = 160;
 // the referential records — `master` and `path` — and they were typed out wherever the page swept the disk.
 const MASTER_DIRECTORY = 'poc';
 const DELIVERABLE_DIRECTORY = 'cutout';
-// How much a ground length running away from the eye is foreshortened under the 60-degree camera — the sine of the angle. Written here until the page can ask
-// the service that holds the scale, which is in Python: this is the ONE model value this page copies, and it goes as soon as the two sides can talk.
-const GROUND_DEPTH_FACTOR = 0.8660;
+// THE FOOTPRINT GRID LEFT THIS PAGE FOR A SERVICE, le 2026-08-13, and with it the projected tile's ratio: the workshop page shows the same sprites and must show
+// the same grid, so `review-server/lib/FootprintGrid.php` holds the paving, the markup and the reserve for both. Two copies would have answered differently the
+// first time the tile or a class name moved, and nothing on screen would have said which was right.
 
 $outputPath = $argv[1] ?? __DIR__ . '/page.html';
 $inventory = new Inventory($root);
@@ -370,41 +371,6 @@ function version(string $root, ?array $current): string
 }
 
 /**
- * The grid laid over a sprite: its ground footprint, its cover when it overhangs, and the two axes.
- *
- * EVERYTHING IS SAID IN TILES AND RENDERED IN PERCENTAGES of the thumbnail, never in pixels: the thumbnail changes size with the subject's footprint and with the
- * magnification, while a tile stays a tile. Writing pixels here would make them drift from the image the moment a size changes.
- *
- * THE IMAGE IS LAID OUT ON THE COVER'S WIDTH, not the footprint's — that is what the thumbnail factory does. The ground footprint is therefore drawn as a PART of
- * that width, centred, and not as the whole thumbnail: which is exactly what one wants to see of an oak whose crown overhangs its foot.
- */
-function grid(array $subject, array $spread, int $width, int $height): string
-{
-    $footprint = $subject['footprint'];
-    $covers = ($spread['columns'] !== $footprint['columns']) || ($spread['rows'] !== $footprint['rows']);
-    // The tile, as a percentage of the thumbnail: the width carries the cover's columns, and the height follows the same scale since the image is never distorted.
-    $tile = 100 / $spread['columns'];
-    // A TILE OF DEPTH IS NOT PROJECTED LIKE A TILE OF WIDTH, and forgetting it dropped the footprint frame far below the subject's ground — two tiles of emptiness
-    // in front of the building, which the operator spotted. Under the world's camera a ground length running away is seen foreshortened; the service that holds
-    // the scale carries that factor, and it is asked for rather than retyped here.
-    $tileY = $tile * $width / max($height, 1) * GROUND_DEPTH_FACTOR;
-    $footWidth = 100 * $footprint['columns'] / $spread['columns'];
-    $footHeight = $tileY * $footprint['rows'];
-
-    return sprintf(
-        '<span class="footprint" style="--case: %.4f%%; --case-y: %.4f%%">'
-        . '<span class="footprint-ground" style="width: %.4f%%; height: %.4f%%" title="Emprise au sol : %d × %d cases"></span>'
-        . '%s'
-        . '<span class="footprint-axis footprint-axis--x"></span><span class="footprint-axis footprint-axis--y"></span>'
-        . '</span>',
-        $tile, $tileY, $footWidth, $footHeight,
-        (int) $footprint['columns'], (int) $footprint['rows'],
-        $covers ? sprintf('<span class="footprint-cover" title="Couvert : %d × %d cases"></span>',
-            (int) $spread['columns'], (int) $spread['rows']) : ''
-    );
-}
-
-/**
  * ONE VERSION OF A VARIANT, RENDERED THE ONE WAY THERE IS: its file name and date, its picture with the footprint grid, its verdict, its measurements, and the prompt it was drawn from.
  *
  * THE CURRENT VERSION AND THE EARLIER ONES GO THROUGH HERE ALIKE (operator, 2026-08-07: "same presentation, no specificity"). Earlier versions used to show a half-size thumbnail and a file name,
@@ -490,9 +456,15 @@ function representation(Thumbnail $thumbnails, string $root, string $code, array
             $anchorable = sprintf(' data-anchor-for="%s" data-delivered="%d" title="Cliquez pour poser la rune"', escape($representation['path']), $delivered['width']);
         }
     }
+    // THE WRAPPER RESERVES THE ROOM THE GRID TAKES ABOVE THE IMAGE, and the service says how much — see FootprintGrid::pictureStyle(), which holds why it is a
+    // margin and not a padding. Here, what matters to this page is that the drawer, which shows the same picture larger, scales that reserve by the same factor
+    // as the image (see openVersion in page.js).
+    $grid = FootprintGrid::get();
+    $tiling = $shot ? $grid->tiling($code, $spread, $shot[1], $shot[2]) : null;
     $picture = $shot
-        ? sprintf('<span class="picture"%s><img src="%s" width="%d" height="%d" alt="">%s%s</span>',
-            $anchorable, $shot[0], $shot[1], $shot[2], grid($subject, $spread, $shot[1], $shot[2]), runeMark($code, $subject, $representation, $shot[1]))
+        ? sprintf('<span class="picture" style="%s"%s><img src="%s" width="%d" height="%d" alt="">%s%s</span>',
+            $grid->pictureStyle($tiling), $anchorable, $shot[0], $shot[1], $shot[2], $grid->markup($subject, $spread, $tiling),
+            runeMark($code, $subject, $representation, $shot[1]))
         : '<p class="to-produce">Image illisible</p>';
     $state = VERDICT_STATES[$representation['verdict'] ?? ''] ?? null;
 
@@ -654,8 +626,21 @@ $page = <<<'HTML'
     <div class="fsp-bar"><p class="fsp-title" id="drawer-title"></p>
       <span class="fsp-tools"><button type="button" id="drawer-copy">Copier</button>
       <button type="button" class="drawer-close" aria-label="Fermer">✕</button></span></div>
+    <!-- LA PAGINATION VA EN HAUT, ET SON SENS EST L'INVERSE DE L'USAGE COURANT (opérateur, 2026-08-13 : « une pagination en haut doit permettre de passer à
+         gauche (suivante) et à droite (précédente) »). Les versions sont classées de la plus récente à la plus ancienne : aller vers la SUIVANTE, c'est donc
+         descendre la liste, et c'est la commande de GAUCHE. Ce sens surprend, et c'est pour cela qu'il est écrit ici : il ne se « corrige » pas.
+         ET LE RANG EST ENTRE LES DEUX, parce que c'est LUI la demande — « le drawer doit être plus clair sur la version regardée ». Le titre dit le sujet et le
+         variant, le chemin dit le fichier ; aucun des deux ne dit à quelle version des dix-huit on se trouve. -->
+    <div class="version-paging" id="version-paging" hidden>
+      <button type="button" class="version-step" id="version-next">← Suivante</button>
+      <p class="version-rank" id="version-rank" role="status" aria-live="polite"></p>
+      <button type="button" class="version-step" id="version-previous">Précédente →</button>
+    </div>
     <p class="drawer-path" id="drawer-path"></p>
     <div class="fsp-body"><pre id="drawer-body"></pre></div>
+    <!-- LA LISTE DES VERSIONS RESTE, TOUJOURS, EN BAS DU DRAWER : la pagination s'ajoute à elle et ne la remplace pas. Elle est ici, hors du corps qui défile,
+         pour qu'elle soit là quelle que soit la longueur de la consigne qu'on est en train de lire. -->
+    <div class="version-strip" id="version-strip" hidden aria-label="Les versions de ce variant"></div>
   </aside>
 
   <p class="lede">Une vignette par sujet. Un clic ouvre le sujet en plein écran, avec ses variants, leurs versions, leurs mesures, la consigne qui les a produits et les actions — toutes

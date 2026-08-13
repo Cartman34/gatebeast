@@ -3297,6 +3297,8 @@
     "TR-060": {
       "profile": "oak-01",
       "type": "tree",
+      "reference": "cutout/vegetation/TR-060-v12.png",
+      "_reference_comment": "Figee le 2026-08-13, le jour ou l'operateur a valide cette version. Une reference ne suit JAMAIS la derniere version produite : changer la consigne et le modele en meme temps rend tout changement inattribuable, et un defaut porte par l'image survit a toutes les corrections ecrites, puisque ce que le generateur voit pese plus lourd que ce qu'il lit. Elle ne bouge donc qu'a une nouvelle validation.",
       "footprint": {
         "columns": 2,
         "rows": 2
@@ -4144,6 +4146,8 @@
     "TR-063": {
       "profile": "apple-tree-01",
       "type": "tree",
+      "reference": "cutout/vegetation/TR-063-v19.png",
+      "_reference_comment": "Figee le 2026-08-13, sur la validation de l'operateur — meme regle que celle ecrite au chene : une reference ne suit pas la derniere version produite, elle se fige a une validation et n'en bouge qu'a la suivante.",
       "footprint": {
         "columns": 1,
         "rows": 1

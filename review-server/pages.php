@@ -37,6 +37,15 @@ return [
     //   ['route' => '/parc', 'title' => 'Le plan de composition du parc', 'file' => 'parc/page.html', 'build' => 'php review-server/parc/build.php'],
     //   ['route' => '/parc/maquette', 'title' => 'La maquette du parc', 'file' => 'parc/maquette.html', 'build' => 'php review-server/parc/monter.php'],
     [
+        // L'ATELIER MONTRE CE QUI SE MESURE, LA PAGE DES SPRITES CE QUI SE JUGE : un essai de consigne n'est pas un livrable, il n'entre à aucun référentiel et
+        // ne brûle aucune version. Demandée par l'opérateur le 2026-08-13, le jour où la chaîne a commencé à capturer la consigne que l'agent transmet à son
+        // propre modèle d'images — sans page pour les mettre en regard, cette capture ne servait à personne.
+        'route' => '/workshop',
+        'title' => "L'atelier de génération",
+        'file' => 'workshop/page.html',
+        'build' => 'php review-server/workshop/build.php',
+    ],
+    [
         'route' => '/maquette-campagne',
         'title' => 'Maquette Campagne',
         'file' => 'maquette-campagne/page.html',

@@ -239,9 +239,18 @@
             "approved": false,
             "discarded": false,
             "rework": true,
-            "comment": "Diminuer la hauteur de cover de 1 case"
+            "comment": "Diminuer la hauteur de cover de 1 case",
+            "handled": {
+                "date": "2026-08-13",
+                "reason": "Reprise livree : la case de couvert retiree, la fourchette de hauteur d'image abaissee en consequence, et TR-063-v19 valide."
+            }
         },
         "cutout/vegetation/TR-060-v12.png": {
+            "rework": false,
+            "discarded": false,
+            "approved": true
+        },
+        "cutout/vegetation/TR-063-v19.png": {
             "rework": false,
             "discarded": false,
             "approved": true

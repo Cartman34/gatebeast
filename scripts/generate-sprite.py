@@ -27,6 +27,16 @@ USAGE
   Without --generate it stops after assembling the prompt, writing a draft under local/ so it can be
   read before anything is produced.
 
+  LA CONSIGNE EST DÉCOUPÉE EN SECTIONS TITRÉES, et un fichier « .parts.json » écrit à côté d'elle dit
+  quel niveau a écrit chacune — `common`, `type`, `variant`, `description`, `parameters`, `call`, les
+  six étant des identifiants, donc anglais. Il se lit par « php scripts/show-prompt-parts.php », et
+  « --grep "<phrase>" » répond à la seule question utile devant une image fausse : d'où vient cette
+  phrase, donc où se porte le correctif.
+
+  With --generate the command runs the chain to its end: it produces the image, resizes it to the
+  delivery definition, records it under its variant, AND THEN REPUBLISHES THE SPRITES REVIEW PAGE —
+  an image that exists without appearing on that page exists for nobody, and gets produced again.
+
 INTENTION
   ONE COMMAND ORDERS A SPRITE, END TO END, and there is no second one. There were two for a while —
   one for subjects laid end to end, one for the rest — and the split was never a fact of the model but
@@ -41,10 +51,13 @@ INTENTION
 """
 import contextlib
 import datetime
+import fcntl
+import hashlib
 import importlib.util
 import json
 import math
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -136,6 +149,346 @@ def held(name: str, what: str):
         # RENDU MÊME QUAND LA GÉNÉRATION CASSE : un verrou qu'un échec laisse en place bloque le variant pour toujours, et le prochain lancement croira qu'une
         # commande tourne encore.
         lock.unlink(missing_ok=True)
+
+
+# THE SIX LEVELS A CONSIGNE IS WRITTEN FROM. Four are documented at doc/conception/referentiels/visuel/assets/ecriture-des-consignes.md; `parameters` is what
+# a subject declares and the command reads back from the referential — its dimensions, its footprint, its pose point; `call` is what the launcher brings on
+# the command line — a reference image, a rework motive. The distinction is not cosmetic: it says WHERE a wrong sentence gets fixed, and fixing at the wrong
+# level costs one generation every time.
+#
+# A LEVEL SAYS WHERE THE CONSTRAINT COMES FROM, NEVER WHICH PIECE OF CODE BUILT THE STRING. The two part company more often than one would think: a sentence
+# this command writes itself, but which holds for every subject alike, is `common` — it is not a parameter of anything. `parameters` was called `composed`
+# until 2026-08-13, and that name stated the assembly mechanism instead of the nature of what is said; the project already had the word, and a document under
+# it (doc/conception/referentiels/visuel/parametres-des-sujets.md).
+#
+# THEY ARE IDENTIFIERS, SO THEY ARE ENGLISH, AND EACH IS TAKEN FROM OUR OWN VOCABULARY RATHER THAN INVENTED. `common` is named after asset_common.py, which
+# holds most of what is true of every image; `description` after assets/descriptions/, where what is true of one subject only is written. Both replace French
+# words the glossary forbids by name: « variante » in the feminine, when the project says « un variant », and « fiche », which names indifferently a
+# description, a subject's whole record, a variant's or a sprite's — one never knows which. The French prose that explains them stays French: one says « le
+# `common`, ce socle partagé », never the reverse.
+LEVEL_COMMON = "common"
+LEVEL_TYPE = "type"
+LEVEL_VARIANT = "variant"
+LEVEL_DESCRIPTION = "description"
+LEVEL_PARAMETERS = "parameters"
+LEVEL_CALL = "call"
+# WHICH TITLE EACH SOURCE OF EXTRA INSTRUCTION GETS, AND THE LEVEL THAT WROTE IT. The three used to arrive as one string already joined, under a single block
+# that could only confess it mixed levels — and it is the block one reads FIRST when an image comes back wrong, so it was the worst possible place not to know
+# where to correct. asset_common now names its three sources, and each becomes its own section.
+EXTRA_SECTION_OF = {
+    asset_common.EXTRA_FROM_TYPE: "Consigne du type",
+    asset_common.EXTRA_FROM_INVENTORY: "Consigne de l'entrée d'inventaire",
+    asset_common.EXTRA_FROM_SUBJECT: "Consigne du sujet",
+}
+
+# THE SECTIONS OF A CONSIGNE, IN THE ORDER THEY ARE WRITTEN, WITH THE LEVEL THAT WROTE EACH ONE — declared here, once. The template writes its titles from this
+# table and the split reads them back from it, so a title and its level can never disagree: there is one vocabulary, not two.
+#
+# A GROUP TITLE NAMES A THEME, NEVER AN ORIGIN. The origin is the level, and the level lives on the leaves — a group may perfectly well hold sections of
+# different levels, and two of them do. « Ce que dit sa description » was refused for the group below holding the orientation and the action: those are
+# `variant`, and the title would have sent a hurried reader to correct them in assets/descriptions/, where they are not. That is exactly the cost this whole
+# split exists to remove, reintroduced by a title.
+#
+# GROUPS DO NOT REORDER ANYTHING. Sections of one level are not contiguous — `common` opens the consigne, comes back for the cut-out and the rendering rules,
+# and closes it with the camera reminder — so grouping by level would mean moving blocks, and the order carries meaning: what is read last weighs the most with
+# this generator. A group is therefore a contiguous run of the consigne, and nothing ever moves.
+SECTIONS = (
+    # THE TWO SECTIONS ADDRESSED TO THE AGENT ARE `common`, ALTHOUGH THIS COMMAND WRITES THEM. How to read the consigne, and what to hand back afterwards,
+    # hold for every image of the world alike and depend on no subject: they are not a parameter of anything. Their level says where the constraint comes from,
+    # not which piece of code produced the string — and getting that backwards is what would send someone looking for them in a subject's own file.
+    ("Comment travailler", (
+        ("Comment lire cette consigne", LEVEL_COMMON),
+        ("Ce que tu nous rapportes", LEVEL_COMMON),
+    )),
+    ("La sprite et son rendu", (
+        ("Ce que tu produis", LEVEL_COMMON),
+        ("Style", LEVEL_COMMON),
+        ("Caméra", LEVEL_COMMON),
+    )),
+    ("Le sujet et ses mesures", (
+        ("Le sujet à dessiner", LEVEL_PARAMETERS),
+        ("Dimensions de l'image", LEVEL_PARAMETERS),
+        ("Assise au sol et élévation", LEVEL_PARAMETERS),
+    )),
+    ("Le cadrage et l'assemblage", (
+        ("Détourage", LEVEL_COMMON),
+        ("Raccord entre cases", LEVEL_COMMON),
+        ("Bords rejoints", LEVEL_VARIANT),
+        ("Angle de la pièce", LEVEL_VARIANT),
+        ("Composition de la pièce", LEVEL_VARIANT),
+    )),
+    # ALONE, BECAUSE WRAPPING ONE SECTION IN A GROUP OF ITS OWN ONLY ADDS A TITLE TO READ. A group earns its line when it gathers.
+    (None, (("Image de référence", LEVEL_CALL),)),
+    (None, (("Règles de rendu", LEVEL_COMMON),)),
+    ("Ce qu'il est et ce qu'il fait", (
+        ("Description du sujet", LEVEL_DESCRIPTION),
+        ("Orientation", LEVEL_VARIANT),
+        ("Action", LEVEL_VARIANT),
+    )),
+    ("Consignes supplémentaires", (
+        # The shared opening sentence is the socle's — true of every image that carries any extra instruction — and each source that follows brings its own
+        # level. Its own title says what it does rather than repeating its group's, which would have read as a near-duplicate.
+        ("Comment elles s'ajoutent", LEVEL_COMMON),
+        ("Consigne du type", LEVEL_TYPE),
+        ("Consigne de l'entrée d'inventaire", LEVEL_DESCRIPTION),
+        ("Consigne du sujet", LEVEL_DESCRIPTION),
+    )),
+    # THE LAST TWO ARE NOT GROUPED TOGETHER ALTHOUGH THEY ARE NEIGHBOURS AND AKIN. The only honest title would have been « ce qui prime en dernier » — and
+    # telling the agent that the end weighs the most tells it that the rest weighs less.
+    (None, (("Rappel de la caméra", LEVEL_COMMON),)),
+    (None, (("Point prioritaire", LEVEL_CALL),)),
+)
+LEVEL_OF = {title: level for _, leaves in SECTIONS for title, level in leaves}
+GROUP_OF = {title: group for group, leaves in SECTIONS for title, _ in leaves}
+if len(LEVEL_OF) != sum(len(leaves) for _, leaves in SECTIONS):
+    # A TITLE IS THE KEY THE SPLIT LOOKS UP, so two sections sharing one would make the second unattributable while looking perfectly fine in the consigne.
+    raise SystemExit("FAULT deux sections de consigne portent le même titre — un titre est ce par quoi le découpage retrouve un bloc, il ne peut pas servir "
+                     "deux fois. Solution : renomme l'une des deux dans SECTIONS, en tête de scripts/generate-sprite.py.")
+
+# THE TWO MARKDOWN DEPTHS, WRITTEN ONCE: the assembler puts them in and the splitter takes them out, so a change of depth has to move both at the same time.
+# A group heading carries no level and no parentheses — that is precisely what tells it apart from a section standing alone at the same depth.
+GROUP_MARK = "## "
+GROUPED_MARK = "### "
+SECTION_PATTERN = re.compile(r"^(#{2,3}) (.+) \(([^()]+)\)$")
+PARTS_FORMAT = "gatebeast-prompt-parts"
+
+# THE SECTION THAT SAYS WHO THE STRUCTURE IS FOR, AND IT IS NOT THE IMAGE MODEL. The consigne is read by an AGENT, which rewrites it for its own image model,
+# and instructions may be addressed to that agent alone — they never reach the model, so they cannot be drawn (ecriture-des-consignes.md, « À qui la consigne
+# s'adresse »). That is what makes the levels writable in the titles at all: without this section, a title and a bracketed word are just more text that the
+# rewriting may carry into the picture, which is how a consigne ends up producing an image with a caption on it. The addressing has to be EXPLICIT.
+READING_FR = """\
+CETTE SECTION S'ADRESSE À TOI, L'AGENT QUI LIT CETTE CONSIGNE, ET À TOI SEUL : elle ne fait pas partie de ce qu'il faut dessiner, et tu ne la transmets pas à
+ton modèle d'images.
+La consigne est découpée en sections, chacune ouverte par un titre. Une section porte son titre sous la forme « Titre (mot) », et le mot entre parenthèses
+nomme l'endroit de NOTRE système d'où vient la section : il nous sert à savoir où porter une correction, et il ne décrit rien de l'image. Un titre SANS
+parenthèses regroupe les sections qui suivent et dit seulement de quoi elles parlent ensemble.
+Les titres et ces mots entre parenthèses sont donc de la structure, pas de la matière : ce qu'il faut dessiner est le CONTENU des sections, et lui seul.\
+"""
+
+# WHAT WE ASK THE AGENT TO HAND BACK, AND WHY IT IS WORTH ASKING. Between our consigne and the picture there is a rewriting nobody here sees: the agent
+# reformulates our text for its own image model. When an image comes back wrong, three very different causes are indistinguishable today — our consigne
+# prescribed badly, the rewriting dropped the clause, or the image model did not hold it — and each calls for the opposite fix. Three days went on the parallel
+# projection, prescribed four times and absent from the image, without being able to tell which (opérateur, 2026-08-13).
+#
+# IT ASKS FOR THE TEXT, NOT AN ACCOUNT OF IT. An agent asked to show its work will readily answer « voici en substance ce que j'ai demandé », and an
+# approximate trace is worse than none: it looks like evidence and analyses get built on it. Hence the markers, and hence saying in as many words that what is
+# expected between them is the text itself.
+#
+# AND IT ASKS FOR A MESSAGE, NOT A FILE, BECAUSE THE WRAPPER FORBIDS FILES. scripts/generate-image.php tells the agent « Aucun autre fichier » — it must drop
+# its PNG and nothing else, which is what keeps a generation from scattering things through the repository. So the text comes back through its own answer, and
+# this command lifts it out of the generator's event log afterwards.
+TRANSMITTED_START = "<<<CONSIGNE-TRANSMISE-DEBUT>>>"
+TRANSMITTED_END = "<<<CONSIGNE-TRANSMISE-FIN>>>"
+REPORTING_FR = f"""\
+CETTE SECTION S'ADRESSE À TOI, L'AGENT QUI LIT CETTE CONSIGNE, ET NON À TON MODÈLE D'IMAGES : elle ne décrit rien de l'image et tu ne la lui transmets pas.
+Quand tu as fini, ton dernier message se termine par la consigne EXACTE que tu as transmise à ton modèle d'images, encadrée par ces deux lignes, chacune seule
+sur sa ligne :
+{TRANSMITTED_START}
+{TRANSMITTED_END}
+Entre ces deux lignes, nous attendons le TEXTE LUI-MÊME, intégral et mot pour mot, tel que tu l'as envoyé — la chose, et non un compte rendu de la chose.
+Si tu as envoyé plusieurs consignes successives, donne celle qui a produit l'image que tu enregistres.\
+"""
+
+
+class Outline:
+    """Writes the titles of one consigne as it is assembled, opening each group above its first section that has something to say.
+
+    IT HAS TO REMEMBER, WHICH IS WHY IT IS AN OBJECT AND NOT A FUNCTION. A group's title is written once, above the first of its sections that survives — and
+    which one that is only becomes known while assembling: a variant with no gate writes no composition, a subject joining no edge writes no corner. Held in a
+    module-level set instead, two consignes assembled in the same process would see the second lose all its group titles.
+
+    A GROUP WHOSE SECTIONS ARE ALL EMPTY WRITES NOTHING AT ALL — no title standing over nothing, which the generator would read for no reason.
+    """
+
+    def __init__(self):
+        self.opened = set()
+
+    def heading(self, title: str) -> str:
+        """The title lines that open one section: its group's, when it is the first to need it, then its own.
+
+        A TITLE NAMES A NOTION AND NOTHING ELSE — no figure, no unit, no colon, no appended explanation.
+
+        THE LEVEL IS WRITTEN HERE, IN THE OPEN, AND THAT ONLY BECAME SAFE ON 2026-08-13. The reader is an agent, not the image model, and a consigne may
+        address that agent without a word of it reaching the model — so the structure it needs to read the document costs nothing in drawing risk, provided
+        the addressing is stated, which READING_FR does. It is still recorded in the split file beside the consigne: two statements of the same fact that a
+        command can compare catch a divergence neither would show alone.
+        """
+        if title not in LEVEL_OF:
+            raise SystemExit(f"FAULT la section « {title} » n'est déclarée nulle part, donc le découpage ne saurait pas de quel niveau elle vient.\n"
+                             f"  Solution — ajoute-la à SECTIONS, en tête de scripts/generate-sprite.py, à sa place dans l'ordre de la consigne, avec son "
+                             f"niveau et dans son groupe.")
+        group = GROUP_OF[title]
+        if group is None:
+            return f"{GROUP_MARK}{title} ({LEVEL_OF[title]})\n"
+        opening = ""
+        if group not in self.opened:
+            self.opened.add(group)
+            opening = f"{GROUP_MARK}{group}\n"
+
+        return f"{opening}{GROUPED_MARK}{title} ({LEVEL_OF[title]})\n"
+
+    def section(self, title: str, content: str) -> str:
+        """One whole section — its title, then its content — or nothing at all when there is nothing to say.
+
+        An empty section writes no title: a title standing over nothing is text the generator reads for no reason, and the split would carry a block with no
+        content.
+        """
+        return f"{self.heading(title)}{content}" if content.strip() else ""
+
+    def sections(self, pieces: list) -> str:
+        """A run of sections built outside the template, joined exactly as their source joined them — one newline, and nothing else."""
+        return "\n".join(self.section(title, content) for title, content in pieces)
+
+
+def prompt_parts(prompt: str) -> list:
+    """The assembled consigne cut back into its sections, each with the level that wrote it.
+
+    IT CUTS ON THE TITLES THE CONSIGNE ALREADY CARRIES, and computes nothing else: a block runs from its own title to the next one's. The tiling is therefore
+    exact by construction — no gap, no overlap, no arithmetic to get wrong — and the caller checks that total against the consigne's own length anyway.
+
+    THE TILING IS FLAT, ON THE LEAVES, AND THE HIERARCHY IS A FIELD RATHER THAN A NESTING. A group's title line belongs to the section that follows it, so
+    there is still ONE contiguous run of blocks and ONE sum to check. Tiling at two depths would need two sums and a rule saying who owns the group's title
+    line: two more things to get wrong, for nothing gained — the guarantee is exactly as strong this way.
+
+    OFFSETS AND LENGTHS ARE IN BYTES, not in characters, and that is deliberate: the consigne is written as UTF-8 and read back by a PHP command, where a
+    string index is a byte. Character offsets would land mid-accent on the first « é » and point at the wrong place with no error at all.
+    """
+    starts, group, pending = [], None, None
+    offset = 0
+    for line in prompt.splitlines(keepends=True):
+        found = SECTION_PATTERN.match(line.rstrip("\n"))
+        if found:
+            depth, title, said = found.group(1), found.group(2), found.group(3)
+            # THE LEVEL IS STATED TWICE — in the title the generator reads, and in the split beside it — so the two can be compared. Reading it back here
+            # rather than trusting the table is what turns the second statement into a control instead of a copy.
+            if LEVEL_OF.get(title) != said:
+                raise SystemExit(f"FAULT le titre « {title} » annonce le niveau « {said} » dans la consigne, et la table SECTIONS lui en donne un autre.\n"
+                                 f"  Solution — un titre ne s'écrit jamais à la main dans le gabarit : passe-le par Outline.section(), qui prend son niveau "
+                                 f"à SECTIONS.")
+            grouped = depth == GROUPED_MARK.strip()
+            if grouped and group is None:
+                raise SystemExit(f"FAULT la sous-section « {title} » ne suit aucun titre de groupe, donc rien ne dit à quoi elle se rattache.\n"
+                                 f"  Solution — déclare-la dans un groupe à SECTIONS, ou sors-la en section seule, qui s'écrit d'un cran moins profond.")
+            if not grouped:
+                if pending is not None:
+                    raise SystemExit(f"FAULT le groupe « {group} » n'a aucune sous-section : « {title} » se présente à sa suite au même niveau que lui.\n"
+                                     f"  Solution — un groupe rassemble, sinon il n'est qu'un titre de plus à lire ; déclare « {title} » en section seule.")
+                group = None
+            starts.append((pending if pending is not None else offset, title, said, group))
+            pending = None
+        elif line.startswith(GROUP_MARK):
+            group, pending = line.rstrip("\n")[len(GROUP_MARK):], offset
+        offset += len(line.encode("utf-8"))
+    if not starts or starts[0][0] != 0:
+        raise SystemExit("FAULT la consigne assemblée ne commence pas par un titre, donc son début n'appartiendrait à aucun bloc.\n"
+                         "  Solution — la première section du gabarit de scripts/generate-sprite.py doit écrire son titre : vérifie que sa clause n'est pas "
+                         "vide.")
+    parts = []
+    for index, (start, title, said, held) in enumerate(starts):
+        stop = starts[index + 1][0] if index + 1 < len(starts) else offset
+        parts.append({"level": said, "group": held, "title": title, "offset": start, "length": stop - start})
+
+    return parts
+
+
+def transmitted_prompt(log: Path) -> str:
+    """The consigne the agent says it handed to its own image model, lifted out of its event log — or None when it reported none.
+
+    IT LOOKS ONLY AT WHAT THE AGENT SAID, never at the whole log. The log also carries our own consigne, which contains the markers themselves inside the
+    clause that asks for them: scanning the file as one text would find those and hand back our own words as if they were the agent's answer — a trace that
+    looks like evidence and is a mirror. So only `agent_message` items are read, and the LAST one carrying both markers wins, an agent being free to speak
+    several times before it is done.
+
+    ABSENCE IS A RESULT, NOT A FAULT. An agent that did not answer as asked has produced an image all the same, and losing that image over a missing trace
+    would be absurd. It returns None, and the caller says so out loud rather than writing an empty file that would read as an empty rewriting.
+    """
+    if not log.is_file():
+        return None
+    said = None
+    for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            # A truncated last line is what a killed generation leaves behind; it says nothing about the lines before it, which are whole.
+            continue
+        message = event.get("msg") or event
+        item = message.get("item") or {}
+        if message.get("type") != "item.completed" or item.get("item_type") != "agent_message":
+            continue
+        text = item.get("text") or ""
+        if TRANSMITTED_START in text and TRANSMITTED_END in text:
+            said = text.split(TRANSMITTED_START, 1)[1].rsplit(TRANSMITTED_END, 1)[0].strip("\n")
+
+    return said
+
+
+def write_prompt_parts(written: Path, prompt: str) -> Path:
+    """Write the split beside the consigne it describes, and return where it went.
+
+    IT NEVER TOUCHES THE CONSIGNE ITSELF. The frozen consigne is the exact trace of what was sent to the generator; a marker inserted into it would make it
+    diverge from what was really received, and that trace is the only thing it guarantees. The split therefore lives in the neighbouring file — and beside it,
+    never under var/, because the two are useless apart and a trace that only exists on one machine is a trace already half lost.
+
+    THE FINGERPRINT IS WHAT KEEPS IT FROM LYING. Offsets alone go stale in silence the day the consigne is reassembled; tied to the fingerprint of this exact
+    text, a stale split is REFUSED by its reader instead of attributing sentences to the wrong level.
+    """
+    parts = prompt_parts(prompt)
+    body = prompt.encode("utf-8")
+    covered = sum(part["length"] for part in parts)
+    if covered != len(body):
+        raise SystemExit(f"FAULT le découpage ne recouvre pas toute la consigne : {covered} octets pavés pour {len(body)}.\n"
+                         f"  Solution — un morceau de texte du gabarit se trouve hors de toute section ; place-le sous un titre déclaré à SECTIONS.")
+    beside = written.with_name(written.stem + ".parts.json")
+    beside.write_text(json.dumps({
+        "format": PARTS_FORMAT, "version": 1, "prompt": written.name, "length": len(body),
+        "fingerprint": "sha256:" + hashlib.sha256(body).hexdigest(), "parts": parts,
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    return beside
+
+
+# THE SPRITES REVIEW PAGE'S ROUTE, WRITTEN ONCE. It has already changed once — `review-server/suivi-sprites/build.php` was the older form — and an address
+# copied into two commands would only ever have been caught up in one of them.
+REVIEW_PAGE_ROUTE = "/sprites"
+REPUBLISH_COMMAND = ("php", "review-server/build.php", REVIEW_PAGE_ROUTE)
+
+
+def republish_review_page() -> bool:
+    """Rebuild the sprites review page; return False, naming the command that repairs it, when the rebuild fails.
+
+    EVERY WRITE THAT CHANGES WHAT THE PAGE SHOWS REPUBLISHES IT, or nobody can judge on what is displayed. The repository rule names the two together, in one
+    sentence: every sprite produced is recorded under its subject AND the review artefact is republished, without exception. The mechanism used to live in
+    `scripts/sprite-queue.py`, a production queue that died when its two generators merged into this command; the republication fell with it, silently, and
+    three sprites produced on 2026-08-12 appeared nowhere. Hung on a queue that can be removed, it disappears with that queue — its place is in the command
+    that produces, the very one that already records into the referential.
+
+    THE LOCK IS TAKEN BLOCKING, WHICH IS THE OPPOSITE OF `held()`. That one refuses the second taker, as a generation needs, where a second launch is a doubled
+    cost. Here two images produced together must BOTH end up on the page: each waits its turn and rebuilds. The production queue already serialized this one
+    step with a thread lock; this one holds between processes, since every command is now its own.
+
+    A FAILURE DOES NOT RAISE: the image is produced and recorded, that much is acquired, and losing it because a page could not be rebuilt would cost a
+    generation. The failure is reported to the launcher in its own output, with the command that repairs it.
+    """
+    folder = REPO / "var" / "locks"
+    folder.mkdir(parents=True, exist_ok=True)
+    with open(folder / "review-page.lock", "w", encoding="utf-8") as turn:
+        fcntl.flock(turn, fcntl.LOCK_EX)
+        try:
+            built = subprocess.run(list(REPUBLISH_COMMAND), cwd=REPO, capture_output=True, text=True)
+        finally:
+            fcntl.flock(turn, fcntl.LOCK_UN)
+    if built.returncode:
+        # The LAST non-blank line of the output: that is the one naming what broke, and dumping the whole build would drown the remedy in the middle of it.
+        said = [line.strip() for line in ((built.stderr or "") + "\n" + (built.stdout or "")).splitlines() if line.strip()]
+        print(f"FAULT la republication de la page de revue a échoué (code {built.returncode}) : {said[-1] if said else 'aucune sortie'}\n"
+              f"  Solution — l'image est produite et inscrite, rien n'est perdu ; refais la page à la main : {' '.join(REPUBLISH_COMMAND)}", flush=True)
+        return False
+    print(f"page de revue republiée : {REVIEW_PAGE_ROUTE}")
+
+    return True
 
 
 def frozen_reference(code: str, variant_ref: str = None):
@@ -431,10 +784,13 @@ def draw(code: str, variant_ref: str, reference: Path, generate: bool, plate: Pa
     # SINCE THE TILE IS WORTH 1 IN BOTH DIRECTIONS, THE FORESHORTENING IS NO LONGER SAID IN TILES — it lives in what a tile is worth in pixels, stated once above.
     # This clause used to announce a depth of « 1,75 case » for two rows, which contradicted the height band in the very same consigne: the band counted tiles of
     # width, the clause counted tiles of depth, and the generator was handed two units under one name. In tiles, a rectangle two rows deep is two tiles deep.
-    ground_clause = (
-        "CE RECTANGLE EST VU DE HAUT, ET SES DEUX UNITÉS LE DISENT DÉJÀ : TY étant plus court que TX, il se dessine plus bas que large sans qu'on ait à le "
-        "raccourcir. Aucune autre réduction ne s'y applique."
-    )
+    # « VU DE HAUT » ÉTAIT AMBIGU, ET L'AMBIGUÏTÉ SE PAYAIT EN PERSPECTIVE (opérateur, 2026-08-13 : « sors de vrais termes techniques, il comprend », et « on doit
+    # éviter de lui dire ce qu'il ne faut pas faire, il faut être plus précis dans ce qu'on lui dit qu'il faut faire »). Un sol « vu de haut » sous une façade
+    # demandée de front ne se concilie que par un point de fuite : le générateur recevait deux ordres inconciliables et tranchait en dessinant une perspective.
+    # ET LA CLAUSE A FINI PAR DISPARAÎTRE ENTIÈREMENT, LE 2026-08-13. Réécrite comme une projection, elle disait mot pour mot ce que la clause de caméra dit déjà
+    # d'une face horizontale — largeur conservée, profondeur mise à l'échelle. Le même paramètre à deux niveaux, et le plus proche du sujet l'emporte sur le
+    # socle : c'est la configuration que le référentiel d'écriture désigne comme la plus dangereuse, et celle qui a coûté trois jours sur la caméra. Ce qui
+    # reste ici est la seule chose que le socle ne peut pas savoir : COMBIEN de cases ce sujet-ci occupe au sol.
     # Every sprite is laid on the grid beside others — there is no category that does not assemble. What differs is the SHAPE: it says which edges the piece
     # joins, and `plain` joins none. The clauses about reaching an edge follow the shape, and nothing else.
     joins_edges = bool(edges)
@@ -575,51 +931,68 @@ et tu redresses tout ce que la scène montre de convergent.
             f"{rework}\n"
         )
 
-    prompt = f"""{asset_common.CONTEXTE_FR}
-
-{plate_common.STYLE_FR}
-
-{asset_common.CAMERA_FR}
-
-ASSET DE JEU — {label}, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
-dessus.
-
+    # SORTI DU GABARIT POUR TENIR LA LARGEUR DU DÉPÔT, ET SEULEMENT POUR ÇA : le texte de la clause ne se replie jamais — il part tel quel au générateur, et un
+    # retour à la ligne ajouté ici serait un retour à la ligne de plus dans la consigne. Son TITRE, lui, reste écrit dans le gabarit : l'ordre dans lequel les
+    # titres sont demandés est celui qui décide au-dessus de quelle section s'ouvre un groupe, et le sortir d'ici ouvrirait le sien un cran trop tôt.
+    dimensions_text = f"""\
 DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l'image fait EXACTEMENT {spread['columns']} TX de large, et sa hauteur tient ENTRE {low} ET {high} TY,
 soit {band_px} — et c'est le chiffre en pixels qui fait foi, jamais la fraction de case.
 Cette fourchette n'est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l'entoure. Elle a été
-décidée pour CE sujet dans CETTE posture, et pour aucun autre : une image hors de ces deux nombres est refusée.
+décidée pour CE sujet dans CETTE posture, et pour aucun autre : une image hors de ces deux nombres est refusée."""
 
+    ground_text = f"""\
 CE QUI TOUCHE LE SOL ET CE QUI S'ÉLÈVE, ET C'EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de {subject['footprint']['columns']} TX de large sur
-{subject['footprint']['rows']} TY de profondeur. {ground_clause}
-LE BORD DU FOND FAIT EXACTEMENT LA MÊME LARGEUR QUE LE BORD DE DEVANT, et les deux côtés du rectangle sont PARALLÈLES : un rectangle qui se rétrécit vers le fond est une perspective, et elle est
-interdite. Il occupe le BAS de l'image, et sa dernière rangée tolère un léger débord pour que la matière se raccorde à ce qui l'entoure.
+{subject['footprint']['rows']} TY de profondeur.
+Il occupe le BAS de l'image, et sa dernière rangée tolère un léger débord pour que la matière se raccorde à ce qui l'entoure.
 TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l'image. Un sujet
 entièrement contenu dans son rectangle au sol, sans rien qui s'élève par-dessus, est refusé : c'est un sujet écrasé, pas un sujet vu sous cette caméra.
 LE POINT DE POSE EST UNE MESURE, PAS UNE IMPRESSION : le MILIEU DE LA BASE du sujet — le pied du tronc, le seuil du bâtiment, le centre de la touffe — tombe à
 EXACTEMENT {pose_x} PIXELS du bord gauche de l'image, et repose sur le bord BAS de l'image. Décalé, le sujet empêche de poser quoi que ce soit devant lui sur la
-carte.
+carte."""
 
-LE SUJET REMPLIT LE CADRE : il touche le haut et le bas, à une fine marge transparente près.
+    # THE EXTRA INSTRUCTIONS, SOURCE BY SOURCE, AND THE TEXT COMES OUT IDENTICAL. asset_common joins its header and its values with a single newline; the same
+    # newline joins the sections here, so inserting the titles is the only difference. Their PIECES are prepared here and their titles written from the
+    # template, for the same reason as above: a group opens above the first section that asks for it, so the asking must happen in the consigne's own order.
+    extra_pieces = [("Comment elles s'ajoutent", asset_common.EXTRA_HEADER)] if extras else []
+    extra_pieces += [(EXTRA_SECTION_OF[source], text) for source, text in extras.items()]
 
-{asset_common.CADRAGE_TRACE if joins_edges else asset_common.CADRAGE_CUTOUT}
+    outline = Outline()
+    prompt = f"""{outline.section("Comment lire cette consigne", READING_FR)}
 
-{asset_common.TRACE_FR if joins_edges else ""}
+{outline.section("Ce que tu nous rapportes", REPORTING_FR)}
 
-{join_clause}
-{turn_clause}
-{composition_clause}
-{clause}
-{asset_common.REGLES_FR}
+{outline.section("Ce que tu produis", asset_common.CONTEXTE_FR)}
 
-LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+{outline.section("Style", plate_common.STYLE_FR)}
+
+{outline.section("Caméra", asset_common.CAMERA_FR)}
+
+{outline.heading("Le sujet à dessiner")}ASSET DE JEU — {label}, SEUL SUJET DE L'IMAGE, destiné à être posé comme sprite sur une carte vue de
+dessus.
+
+{outline.section("Dimensions de l'image", dimensions_text)}
+
+{outline.section("Assise au sol et élévation", ground_text)}
+
+{outline.section("Détourage", asset_common.CADRAGE_TRACE if joins_edges else asset_common.CADRAGE_CUTOUT)}
+
+{outline.section("Raccord entre cases", asset_common.TRACE_FR if joins_edges else "")}
+
+{outline.section("Bords rejoints", join_clause)}
+{outline.section("Angle de la pièce", turn_clause)}
+{outline.section("Composition de la pièce", composition_clause)}
+{outline.section("Image de référence", clause)}
+{outline.section("Règles de rendu", asset_common.REGLES_FR)}
+
+{outline.heading("Description du sujet")}LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 {code} : {description}
-{orientation_clause}
-{action_clause}
+{outline.section("Orientation", orientation_clause)}
+{outline.section("Action", action_clause)}
 
-{asset_common.extra_clause(extras)}
+{outline.sections(extra_pieces)}
 
-{asset_common.RAPPEL_CAMERA_FR}
-{rework_clause}"""
+{outline.section("Rappel de la caméra", asset_common.RAPPEL_CAMERA_FR)}
+{outline.section("Point prioritaire", rework_clause)}"""
 
     # The default shape is never written, here as in a ref: a subject that joins no edge has nothing to say about its shape.
     name = code if shape == shape_vocab.DEFAULT_SHAPE else f"{code}_shape-{shape}"
@@ -637,6 +1010,9 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
     draft = REPO / "var" / "tmp" / "consignes" / f"{name}.txt"
     draft.parent.mkdir(parents=True, exist_ok=True)
     draft.write_text(prompt, encoding="utf-8")
+    # THE SPLIT FOLLOWS THE DRAFT TOO, and that is where it earns most of its keep: reading a consigne before spending a generation is exactly when one asks
+    # « quel niveau a écrit cette phrase », and the answer decides where the fix goes.
+    write_prompt_parts(draft, prompt)
     print(f"{code} — {label} · forme {shape}"
           + (f" · {posts} poteau(x)" if applies_composition else "")
           + (f" · portillon {gate}" if gate else "") + f" · {master['width']} px")
@@ -681,10 +1057,12 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
             image = target / f"{name}-v{version}.png"
 
     print(f"consigne figée : {image.with_suffix('.txt').relative_to(REPO)}")
-    # Rebuilding the review page still belongs to the queue (scripts/sprite-queue.py), which owns the
-    # ordering: two generations finishing at once would rebuild that one shared page simultaneously.
-    # The export and the report, themselves, belong HERE — they concern this image and nothing else,
-    # they cost no shared resource, and an image without its report is an image nobody can judge.
+    # THE SPLIT IS FROZEN WITH THE CONSIGNE, AND AS SOON AS IT IS: the two are only useful together, and the reserved name is what tells them apart from the
+    # next version's pair. Written after the reservation, so it can never claim a consigne another process took.
+    print(f"découpage figé : {write_prompt_parts(image.with_suffix('.txt'), prompt).relative_to(REPO)}")
+    # REBUILDING THE REVIEW PAGE BELONGS TO THIS COMMAND NOW, NOT TO A QUEUE. It lived in `scripts/sprite-queue.py`, which held the ordering between two
+    # concurrent generations; that queue died when the two generators merged, and the republication fell with it. The ordering is now held by the lock inside
+    # `republish_review_page()`. The export and the report have always belonged here — they concern this image and nothing else.
     print(f"génération vers {image.relative_to(REPO)}")
 
     run = production_report.Run(name)
@@ -700,6 +1078,20 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
             failed = done.returncode
             if failed:
                 raise SystemExit(f"FAULT la génération de {name} a échoué (code {failed}).")
+        # THE THIRD FILE OF THE TRIO, AND IT TRAVELS WITH THE OTHER TWO: the consigne we sent, its split, and the consigne the agent says it passed on. Apart,
+        # none of them answers the only question that matters when an image is wrong — where, between our text and the picture, the clause was lost.
+        # OUTSIDE THE STEP, BECAUSE IT MUST NOT FAIL THE RUN. A missing trace loses a comparison; raising here would lose the image itself.
+        transmitted = transmitted_prompt(run.traces / f"{image.stem}-generateur.jsonl")
+        if transmitted:
+            beside = image.with_name(f"{image.stem}.transmitted.txt")
+            beside.write_text(transmitted + "\n", encoding="utf-8")
+            print(f"consigne transmise recueillie : {beside.relative_to(REPO)}")
+        else:
+            # NO EMPTY FILE, EVER. One would read as an empty rewriting — a fact — where the truth is that we do not know what was passed on.
+            print("SANS CONSIGNE TRANSMISE — l'agent n'a pas rapporté ce qu'il a passé à son modèle d'images, donc rien n'est écrit à côté de l'image.\n"
+                  f"  Solution — la réponse complète de l'agent reste dans « {(run.traces / f'{image.stem}-generateur.jsonl').relative_to(REPO)} » : "
+                  f"cherches-y « {TRANSMITTED_START} ». Si elle n'y est pas non plus, il n'a pas suivi la demande et c'est la clause « Ce que tu nous "
+                  f"rapportes » qu'il faut revoir.", flush=True)
         with run.step("redimensionnement"):
             # The delivery resize belongs to the run, and so does its own account of itself: the
             # sizes, the measured silhouette and the pose point it computes are exactly what the
@@ -720,9 +1112,14 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
             # Le verrou est pris ici, au plus tard et pour le temps le plus court : une génération dure deux minutes, son inscription un centième de seconde.
             # Chained here, never left to whoever remembers: the rule is that every sprite produced is recorded under its variant, without exception. A
             # sprite was produced and forgotten the day this was a separate command someone had to think of running.
+            # THE SESSION TRAVELS TO THE REFERENTIAL, AND NOT ONLY TO THE REPORT (operator, 2026-08-13: « il faut que l'id de la session soit dans la version du
+            # variant »). It was captured just above, from the generator's own output, and written into var/generations/ alone — a folder that is not
+            # versioned, so the id lived on this machine only and vanished with the next cleanup. Passed here, it is recorded on the version itself. Omitted
+            # when the generator reported none: record-asset.py then writes `null`, which says exactly that, and the report keeps saying it too.
+            session_option = ["--session", run.session] if run.session else []
             recorded = subprocess.run(
                 ["python3", str(REPO / "scripts" / "record-asset.py"), str(image),
-                 "--code", code, "--type", subject["type"], "--variant", variant_ref],
+                 "--code", code, "--type", subject["type"], "--variant", variant_ref, *session_option],
                 cwd=REPO.parent, capture_output=True, text=True)
             print(recorded.stdout, end="", flush=True)
             if recorded.returncode:
@@ -733,6 +1130,11 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
         # someone will want to read.
         with run.step("rapport"):
             run.write(image, prompt, extras)
+
+    # AFTER THE RECORDING, AND OUTSIDE THE REPORT'S STEPS. Outside the `try`, because a generation that broke has nothing new to show: the page is only rebuilt
+    # once an image really made it into the referential. Outside `run.step`, because a step reads "faite" as long as it does not raise, and this one never
+    # raises — the report would then claim a successful republication over a failed one, which is exactly the transparent fault this repository pays for most.
+    republish_review_page()
 
     return 0
 

@@ -12,44 +12,62 @@ la cible à `doc/conception/`, les mots au [glossaire](doc/glossaire.md), et tou
 document empilait une section par séance, ce que sa propre première ligne interdit. **Ce qui en a été retiré n'est pas dans un diff, il est dans
 [doc/journal-des-seances.md](doc/journal-des-seances.md)** — versionné, citable, et qui ne dit que le pourquoi des décisions passées, jamais l'état courant.
 
-### OÙ ON EN EST À LA FIN DU 2026-08-12
+### OÙ ON EN EST À LA FIN DU 2026-08-13
 
 **LES VERDICTS DE L'OPÉRATEUR SONT UN PLAN DE TRAVAIL, ET ILS SE LISENT AVANT DE PRODUIRE QUOI QUE CE SOIT.** `php scripts/remarks.php list` les donne tous ;
-`new` ne dit que ce qui a bougé, et s'arrêter à son « aucun verdict neuf » revient à ne jamais les lire. C'est la faute de la séance : treize remarques
-attendaient, dont le diagnostic que j'ai passé la journée à chercher, et j'ai régénéré par-dessus une version validée. **Ce qui attend, à cette heure :**
+`new` ne dit que ce qui a bougé, et s'arrêter à son « aucun verdict neuf » revient à ne jamais les lire. **Ce qui attend encore :** l'est, trois fois sur deux
+sujets — `SP-001` (v4, v5, v6) regarde à gauche alors que l'est est la droite, et `HU-000-v5` revient déformé ; `CH-021`, le style de `v2` et aucun cours d'eau
+sur l'image, en `ns` comme en `ew` ; `BT-002-v2`, moins de casse et un peu plus de saleté — sa description est déjà réécrite en comptes exacts, il reste à
+produire ; `TR-060`, revenir à la `v5` avec un tronc plus fin.
 
-- **La vue parallèle, et elle passe devant tout** : « TOUS les bâtiments doivent respecter la vue parallèle, c'est impératif, et ce n'est pas à préciser pour
-  chaque bâtiment ou chaque sprite, **c'est le socle** ». Le socle le dit déjà — « axonométrie orthographique, projection parallèle et jamais une perspective » —
-  et l'image ne l'applique pas : sur `BT-001-v17`, les deux toitures se resserrent vers le haut. Le mot y est, l'effet non : **quelque chose d'autre dans la
-  consigne induit la perspective**, et c'est cela qu'il faut trouver. Ajouter une clause de plus est exactement ce qu'il ne faut pas faire.
-- **L'est**, trois fois sur deux sujets : `SP-001` (v4, v5, v6) regarde à gauche alors que l'est est la droite, et `HU-000-v5` revient déformé.
-- `CH-021` : le style de `v2`, et **aucun cours d'eau sur l'image**, en `ns` comme en `ew`.
-- `BT-002-v2` : moins de casse, un peu plus de saleté.
-- `TR-060` : revenir à la `v5` avec un tronc plus fin.
+**LA CAUSE DE LA VUE PARALLÈLE EST TROUVÉE, ET C'ÉTAIT UN MANQUE, PAS UNE CONTRADICTION.** Le socle disait « projection orthographique », « azimut zéro »,
+« aucun point de fuite » — **or une isométrie satisfait tout cela**, sa profondeur partant simplement en diagonale. Rien ne fermait cette lecture. L'opérateur
+l'a obtenu en discutant directement avec l'agent générateur (session `019ff7b5-874b-7f13-b999-eb15476ab0da`), qui a nommé le manque : « la profondeur du monde
+se projette verticalement vers le HAUT de l'image, jamais en diagonale ». **Et deux des quatre puces que j'avais écrites le matin étaient FAUSSES** : elles
+annonçaient un pignon en parallélogramme, alors qu'à azimut zéro il est vu par la tranche et se projette en segment — un parallélogramme est la signature d'une
+isométrie, écrite au milieu de la clause censée la fermer.
 
-**CE QUI GOUVERNE LA HAUTEUR D'UNE IMAGE, ET IL A FALLU TROIS DEMANDES POUR LE VOIR** : ni l'emprise, ni le couvert, ni la hauteur du sujet. C'est une
-**fourchette déclarée à la main sur le variant**, `height_min_ty` et `height_max_ty`, que `tile_scale.variant_band` refuse délibérément de calculer — « aucun
-script ne peut savoir qu'une herbe est courte et qu'un arbre grand ». Le couvert du pommier avait maigri sans qu'elle suive, si bien que l'image sortait à la
-même hauteur **en étant déclarée conforme** : le contrôle compare l'image à la fourchette, jamais la fourchette au sujet.
+**CE QUI REMPLACE LA PROSE : DEUX ÉGALITÉS.** Une arête debout monte tout droit, `Δx = 0` ; une profondeur au sol monte tout droit elle aussi, vers le haut,
+`Δx = 0`. Une description s'interprète, une égalité se vérifie — et ces deux-là ne peuvent pas se confondre avec une isométrie, où `Δx ≠ 0` dans les deux cas.
 
-**LA CHAÎNE NE REPUBLIE PLUS LA PAGE DES SPRITES**, alors que la règle du dépôt l'exige sans exception. Le mécanisme vivait dans `scripts/sprite-queue.py`
-ligne 231, la file de production, morte depuis la fusion des générateurs : il est tombé avec elle, sans bruit. Sa place est dans la commande qui produit une
-sprite, et **il doit couvrir aussi le changement de verdict** — `set-asset-verdict.py` écrit le référentiel et laisse la page mentir derrière lui. En attendant,
-`php review-server/build.php /sprites` à la main après toute génération et tout verdict.
+**LE PREMIER ESSAI A ÉTÉ LANCÉ ET IL A RÉVÉLÉ LA MÉTHODE DU GÉNÉRATEUR.** `var/generations/trials/2026-08-13-BT-001/`. Le bâtiment revient enfin en vue
+plongeante, sa cour visible. Mais en lisant ce que l'agent a **réellement exécuté** — `php local/scripts/show-generator-calls.php <journal>` — on découvre :
 
-**UNE RÉFÉRENCE EST FIXE, ELLE NE SUIT PLUS LA DERNIÈRE VERSION** (opérateur : « si tu changes et le prompt et l'image, tu perds tout »). Elle se **déclare** au
-référentiel sous la clé `reference`, sur le variant d'abord et sur le sujet à défaut, et se fige le jour où une version est jugée bonne ; tant qu'aucune ne l'est,
-le sujet n'en a pas et sa consigne dessine seule. **Aucune n'est encore déclarée** : `TR-060-v12`, validée, est la première à l'être.
+- **il travaille en plusieurs passes**, et la consigne qu'il nous rend est celle de la **dernière** seulement, celle du fond magenta ; celle qui a dessiné le
+  bâtiment n'a jamais été rapportée. Notre demande, formulée au singulier, a récolté la dernière ;
+- **il génère sur fond magenta puis détoure** avec `remove_chroma_key.py` — ce que l'opérateur avait annoncé ;
+- **IL COMPLÈTE L'IMAGE POUR ATTEINDRE NOS DIMENSIONS** — `alpha_composite(im, (0,128))` — au lieu de dessiner à cette taille. Notre contrat de dimensions est
+  donc satisfait par du remplissage, et la chaîne enregistrerait « hauteur tenue » sur une image complétée. **C'est l'erreur transparente la plus coûteuse
+  trouvée cette semaine, et elle n'est pas de notre côté.** Deux décisions attendent l'opérateur : lui demander toutes ses passes dans l'ordre, et interdire le
+  remplissage ou l'accepter en le mesurant.
 
-**TROIS SOUS-AGENTS ONT ÉTÉ ARRÊTÉS EN COURS DE TRAVAIL** à la fin de la séance, leur ouvrage est dans l'arbre sans compte rendu : `grille` (la grille de la page
-des sprites affiche des demi-cases — régression déjà corrigée une fois, à reprendre **dans l'historique**, jamais de mémoire), `consignes` (l'interdit du pixel
-et du rapport visuel dans les fiches, plus `check-height-bands.php`), `outillage` (`check-no-new-python.php`, et la republication à remettre dans la chaîne).
+**LA CONSIGNE EST DEVENUE LISIBLE ET TRAÇABLE.** Elle porte des titres Markdown à deux profondeurs, dix groupes thématiques et 24 sections, chacune annonçant
+son **niveau** — `common`, `type`, `variant`, `description`, `parameters`, `call`, six identifiants anglais. Un découpage `<consigne>.parts.json` est écrit à
+côté d'elle au moment où elle est figée, lié à son texte par une empreinte : `php scripts/show-prompt-parts.php <consigne.txt>` en donne le sommaire, et
+`--grep "<phrase>"` répond **d'où vient cette phrase**, ce qui décide où porter un correctif. Preuve tenue à chaque passe : en retirant les titres, on retombe
+**à l'octet** sur les consignes d'avant le chantier.
 
-**DEUX RÈGLES DE L'OPÉRATEUR, POSÉES CE JOUR-LÀ** : aucune mention de pixel hors du socle, dans aucune fiche ni consigne ; et **aucun fichier Python neuf**,
-l'existant restant en place. Les contrôles qui les tiennent sont `check-consigne-units.php` et `check-no-new-python.php`.
+**LA CONSIGNE A DEUX REGISTRES, ET C'EST CE QUI REND TOUT CELA POSSIBLE** : ce qui doit atteindre l'image, et ce qui s'adresse à l'agent sans jamais parvenir à
+son modèle. Le second ne peut pas être dessiné. **Mais il ne sert pas à lui sous-traiter des contrôles** — un contrôle mécanisable reste chez nous, sinon c'est
+lui qui rendrait le verdict sur son propre travail, et on paierait en jetons ce qu'un script fait gratuitement.
 
-**LE TRI DU JETABLE EST FAIT** : `local/scripts/` est vide, 145 scripts supprimés, 54 promus sous `scripts/dev/` avec leurs citations réécrites. `W23
-outils-morts` et `S80 dossiers-en-anglais` ne sont plus bloqués : l'état est enregistré au commit `a146e19`.
+**UNE RÉFÉRENCE EST FIXE ET NE SUIT PLUS LA DERNIÈRE VERSION.** Elle se déclare au référentiel sous la clé `reference`, et se fige le jour où une version est
+jugée bonne. **Deux existent** : `TR-060-v12` et `TR-063-v19`, toutes deux validées le 2026-08-13.
+
+**LA PAGE D'ATELIER EXISTE**, `/workshop` : l'image, la consigne section par section avec son niveau, et la place du diff avec la consigne transmise. Elle relit
+et éprouve le découpage avant d'attribuer quoi que ce soit — empreinte et pavage — et dit qu'elle ne peut pas conclure plutôt que de deviner. Un essai vit sous
+`var/generations/trials/`, n'entre à aucun référentiel et ne brûle aucune version.
+
+**CE QUI RESTE EN CHANTIER, ET QUI A ÉTÉ ARRÊTÉ EN COURS** : la page d'atelier n'a ni diff ni critiques ancrées — sa structure complète est décrite au point
+`S94 atelier-generation`, avec les quatre décisions déjà prises. La planche de projection (`php scripts/build-projection-plate.php`) est juste et lisible, mais
+n'est référence de rien.
+
+**CE QU'IL FAUT SAVOIR SUR L'INDEX** : il se construit depuis `review-server/artefacts.json` et **non** depuis le registre des pages. Une page servie peut donc
+exister, répondre, et n'apparaître nulle part — c'est arrivé à `/workshop`. C'est `W2 pages-hors-index`.
+
+**LEÇON DE MÉTHODE PAYÉE CE JOUR-LÀ, ET ELLE EST ÉCRITE À `execution.md`** : la conception se tranche **avant** de déléguer, jamais à travers l'assistant. Le
+découpage de la consigne est parti en cinq ordres successifs pour un seul geste, chacun coûtant à l'assistant une relecture complète des règles et le rejeu de
+ses preuves. La surconsommation d'un assistant est un défaut de son donneur d'ordre.
 
 ### Comment on démarre
 

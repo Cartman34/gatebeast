@@ -41,6 +41,14 @@
             "address": "https://claude.ai/code/artifact/844640e3-8d10-47d5-b74d-aca74b99f63c"
         },
         {
+            "name": "L'atelier de génération",
+            "description": "les essais de consigne : l'image produite, la consigne envoyée section par section avec son niveau, et ce que l'agent a transmis à son propre modèle d'images",
+            "state": "alive",
+            "state_text": "vivant, servi en local depuis le 2026-08-13, jamais publié",
+            "address": null,
+            "_sans_adresse": "Cette page n'est pas publiée et n'a donc aucune adresse d'artefact. Elle lit des essais qui vivent sous var/, absent de toute publication : publiée, elle ne montrerait rien. L'index la mène par sa route locale, comme il le fait pour toute page servie."
+        },
+        {
             "name": "Maquette Campagne",
             "description": "32 × 24 cases, plan et maquette",
             "state": "alive",

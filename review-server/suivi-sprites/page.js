@@ -516,9 +516,20 @@
     drawer.scrollTop = 0;
     document.body.classList.add('drawer-open');
   }
+  /* UN DRAWER OUVERT SE ROUVRE À L'IDENTIQUE APRÈS UN RECHARGEMENT (opérateur, 2026-08-13). La page se reconstruit et se recharge toute seule dès qu'une sprite
+     est produite ou qu'un verdict change : refermé à ce moment-là, le drawer fait perdre sa place au milieu d'un jugement. « À l'identique » veut dire LA MÊME
+     VERSION, pas le même sujet — c'est le chemin de son image qui est retenu, la seule chose qui l'identifie. Même mémoire que la pile des panneaux : la session
+     de cet onglet, jamais la machine. */
+  var MEMORY_VERSION = 'gatebeast-sprites-version';
+  function rememberVersion(key) {
+    try { sessionStorage.setItem(MEMORY_VERSION, key || ''); } catch (error) { /* a frame may refuse storage: the page still works */ }
+  }
   function closeDrawer() {
     returnVersion();
     drawer.hidden = true;
+    paging.hidden = true;
+    strip.hidden = true;
+    rememberVersion('');
     document.body.classList.remove('drawer-open');
   }
   /* SECTION BUTTONS UNFOLD IN PLACE, THEY NO LONGER OPEN THE DRAWER (operator, 2026-08-12): the drawer now carries A WHOLE VERSION, not a text. A button opening
@@ -545,11 +556,70 @@
      — a copy would duplicate the images, which are written out in full in the page, and would double its weight. */
   var drawerHome = null;
   var drawerNode = null;
+  var paging = document.getElementById('version-paging');
+  var rankSaid = document.getElementById('version-rank');
+  var stepNext = document.getElementById('version-next');
+  var stepPrevious = document.getElementById('version-previous');
+  var strip = document.getElementById('version-strip');
+  /* EVERY VERSION OF ONE VARIANT, IN THE ORDER THE PAGE SHOWS THEM: the current one first, then the earlier ones, newest to oldest — which is why « suivante »
+     runs down the list and sits on the LEFT.
+     WHAT IS ENUMERATED IS THE CARDS, NOT THE `.version-full` NODES, and it is done WHILE EVERYTHING IS HOME — right after returnVersion(), before the new one is
+     moved. The earlier versions are folded INSIDE the current version's `.version-full`, which the drawer takes away with them: asked while the drawer holds it,
+     the page would answer that this variant has exactly one version, and the rank would be wrong on every card. */
+  function versionCards(carte) {
+    var variant = carte.closest('.variant');
+    if (!variant) { return [carte]; }
+
+    return [variant].concat(Array.prototype.slice.call(variant.querySelectorAll('.previous')));
+  }
+  /* WHICH VERSION A CARD IS, said by the path of its own image — the same key its verdict and its comment are filed under, so there is one identity and not two.
+     The card's own button carries it; only a card with no image at all has none, and such a card opens nothing anyway. */
+  function versionKey(carte) {
+    var door = carte.querySelector('.open-version');
+
+    return door ? door.getAttribute('data-for') : (carte.getAttribute('data-version') || '');
+  }
+  /* THE STRIP AT THE BOTTOM: one small image per version, the one being looked at marked. Its images are CLONES taken from the cards, at the size CSS gives them
+     — small enough that a quantity of versions is seen at a glance, which is the criterion the operator gave, never a dimension. */
+  function fillStrip(cards, rank) {
+    strip.textContent = '';
+    cards.forEach(function (card, index) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'version-thumb' + (index === rank ? ' version-thumb--current' : '');
+      button.setAttribute('data-version', versionKey(card));
+      if (index === rank) { button.setAttribute('aria-current', 'true'); }
+      var picture = card.querySelector('.picture img');
+      if (picture) {
+        var small = picture.cloneNode(false);
+        small.removeAttribute('width');
+        small.removeAttribute('height');
+        small.style.marginTop = '';
+        button.appendChild(small);
+      }
+      var mark = document.createElement('span');
+      mark.className = 'version-thumb-rank';
+      mark.textContent = String(index + 1);
+      button.appendChild(mark);
+      button.title = 'Version ' + (index + 1) + ' sur ' + cards.length + (index === 0 ? ' — la plus récente' : '');
+      /* A VERSION OF THE STRIP S'OUVRE COMME UNE VERSION DE LA LISTE, et par le même chemin : le bouton de sa carte. Rien de son comportement ne change, ce qui
+         est la demande — la bande est une seconde porte vers ce qui existe, jamais un second mécanisme. */
+      button.addEventListener('click', function () {
+        var door = card.querySelector('.open-version');
+        openVersion(door || card);
+      });
+      strip.appendChild(button);
+    });
+    strip.hidden = cards.length < 1;
+  }
   function openVersion(carrier) {
     var carte = carrier.closest('.variant, .previous');
     var full = carte.querySelector('.version-full');
     if (!full) { return; }
     returnVersion();
+    /* THE RANK IS TAKEN HERE, everything back in its place and nothing moved yet — see versionCards(). */
+    var cards = versionCards(carte);
+    var rank = cards.indexOf(carte);
     drawerHome = full.parentNode;
     drawerNode = full;
     /* THE DRAWER SAYS WHAT IT IS SHOWING (operator, 2026-08-12: « quand j'ouvre le drawer, il doit annoncer clairement le nom du sujet et le nom du variant »).
@@ -611,6 +681,12 @@
         vignette.style.height = 'auto';
         vignette.removeAttribute('width');
         vignette.removeAttribute('height');
+        /* AND THE ROOM RESERVED ABOVE THE IMAGE IS MAGNIFIED WITH IT. The grid rises out of the image to close its top tile, and the wrapper holds that room in
+           a margin the builder writes in pixels, for the thumbnail's size. Left as it is while the image doubles, the reserve would be half of what the grid
+           takes and the top tile would climb over the drawer's title. The margin is read off the ORIGINAL card, never off the clone: the clone is the one being
+           rewritten, and reading a value one is about to overwrite is how a factor gets applied twice. */
+        var reserve = parseFloat(window.getComputedStyle(image).marginTop) || 0;
+        clone.style.marginTop = (reserve * shown) / natural + 'px';
       }
       grande.appendChild(clone);
       drawerBody.appendChild(grande);
@@ -619,9 +695,27 @@
     }
     drawerBody.appendChild(full);
     full.hidden = false;
+    /* WHAT VERSION IS THIS, OF HOW MANY — the demand itself: « le drawer doit être plus clair sur la version regardée ». The title names the subject and the
+       variant, the path names the file; neither says where one stands among eighteen versions. */
+    rankSaid.textContent = 'Version ' + (rank + 1) + ' sur ' + cards.length + (rank === 0 ? ' — la plus récente' : '');
+    /* GAUCHE MÈNE À LA SUIVANTE, DROITE À LA PRÉCÉDENTE, et les bornes s'éteignent au lieu de disparaître : un bouton qui s'en va déplace l'autre sous le
+       curseur, et le clic suivant tombe sur ce qu'on ne visait pas. */
+    stepNext.disabled = rank + 1 >= cards.length;
+    stepPrevious.disabled = rank < 1;
+    stepNext.onclick = function () { stepTo(cards[rank + 1]); };
+    stepPrevious.onclick = function () { stepTo(cards[rank - 1]); };
+    paging.hidden = cards.length < 2;
+    fillStrip(cards, rank);
+    rememberVersion(versionKey(carte));
     drawer.hidden = false;
     drawer.scrollTop = 0;
     document.body.classList.add('drawer-open');
+  }
+  /* Aller d'une version à l'autre, c'est ouvrir l'autre — par sa propre porte, donc avec exactement le comportement qu'elle a déjà. */
+  function stepTo(card) {
+    if (!card) { return; }
+    var door = card.querySelector('.open-version');
+    openVersion(door || card);
   }
   /* WHAT WAS MOVED GOES BACK HOME ON CLOSING: left in the drawer, it would be missing from its card, and the next version would open onto nothing. */
   function returnVersion() {
@@ -710,6 +804,25 @@
       pushPanel(document.getElementById(id));
     });
   } catch (error) { /* storage refused or unreadable: the page simply opens closed */ }
+  /* PUIS LA VERSION QUI ÉTAIT OUVERTE, APRÈS LES PANNEAUX ET JAMAIS AVANT : le drawer s'ouvre PAR-DESSUS le panneau du sujet, donc le panneau doit être là
+     d'abord. La version se retrouve par le chemin de son image, comparé attribut à attribut plutôt que glissé dans un sélecteur — un chemin porte des barres et
+     des points, et un sélecteur composé à la main est la faute qui ne se voit qu'au premier chemin inhabituel.
+     ET SI ELLE ÉTAIT REPLIÉE, LE PLI S'OUVRE AVEC ELLE : une version antérieure vit dans un `details` refermé par la reconstruction, et « à l'identique » vaut
+     aussi pour ce qu'il a fallu ouvrir pour l'atteindre. Une version disparue entre deux constructions est simplement passée : ce qui n'existe plus ne se rouvre
+     pas, et la page ne se refuse pas pour autant. */
+  try {
+    var wanted = sessionStorage.getItem(MEMORY_VERSION);
+    if (wanted) {
+      Array.prototype.some.call(document.querySelectorAll('.open-version'), function (door) {
+        if (door.getAttribute('data-for') !== wanted) { return false; }
+        var fold = door.closest('details');
+        if (fold) { fold.open = true; }
+        openVersion(door);
+
+        return true;
+      });
+    }
+  } catch (error) { /* storage refused or unreadable: the drawer simply stays closed */ }
   Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (tile) {
     tile.addEventListener('click', function () {
       pushPanel(document.getElementById('fsp-' + tile.getAttribute('data-subject')));

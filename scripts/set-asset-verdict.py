@@ -24,11 +24,17 @@ Intention:
   the newest version that has not been discarded becomes current. That second half is the point: a
   verdict alone would leave a discarded image current, which is the failure this exists to end.
 
+  AND IT REPUBLISHES THE REVIEW PAGE, because it has just changed what that page shows. Without it the
+  page lies behind the command: on 2026-08-12 the oak's current version went back to v12 in the data
+  while the page still displayed v14, and the operator saw it first. Every write that changes what is
+  given to judge republishes, or nobody judges on what is displayed.
+
   Python rather than PHP because it reads and rewrites the same referential as record-asset.py, its
   only other writer, and the two must agree on how the file is loaded and dumped.
 """
 
 import argparse
+import importlib.util
 import json
 import pathlib
 import sys
@@ -36,6 +42,15 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REFERENTIAL = ROOT / "assets" / "subjects.json"
 VERDICTS = ("approved", "rework", "discarded")
+
+# THE REPUBLICATION IS TAKEN WHERE IT ALREADY LIVES, IT IS NOT COPIED. It belongs to the production command, which writes the same referential this one does and
+# which holds the lock keeping two concurrent rebuilds of that one page apart. Rewriting it here would give two versions of it, diverging at the first fix — and
+# the page's route has already changed once. The file is loaded by path because its name is hyphenated: this is the mechanism record-asset.py and
+# generate-sprite.py already use for check-subjects.py.
+GENERATE_SPRITE = pathlib.Path(__file__).resolve().parent / "generate-sprite.py"
+spec = importlib.util.spec_from_file_location("generate_sprite", GENERATE_SPRITE)
+generate_sprite = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(generate_sprite)
 
 
 def find_subject(data, code):
@@ -145,6 +160,10 @@ def main():
         json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(f"{REFERENTIAL.relative_to(ROOT)} écrit.")
+    # THE VERDICT IS WRITTEN, THAT MUCH IS ACQUIRED: a failed republication reports itself and the command still returns 0 — it does not undo the verdict and
+    # does not stop here. It comes AFTER the write, never before: rebuilding the page on data not yet laid down would display the state from before it.
+    generate_sprite.republish_review_page()
+
     return 0
 
 

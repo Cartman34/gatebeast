@@ -61,6 +61,46 @@ if ($path === '/notes') {
 }
 
 /**
+ * The critiques written on ONE TRIAL, filed inside that trial's own folder.
+ *
+ * A SECOND DOOR, AND NOT THE ONE ABOVE, BECAUSE THE FOYER IS THE POINT. `/notes` files under `review-server/notes/`, which is versioned and durable — exactly
+ * what these must not be (operator, 2026-08-13: « tes critiques n'ont pas à survivre, tu ne dois garder que les conclusions dans la doc et le code »). They are
+ * working matter: they live with their trial under `var/` and go with it. What they owe is to survive a REBUILD of the page, not a cleanup.
+ *
+ * THE TRIAL'S NAME IS CHECKED AGAINST THE FOLDERS THAT EXIST, never pasted into a path. This is a writing door: built by concatenation, a « ../ » in the request
+ * would write wherever it liked. Compared to a listing, it matches nothing and is refused.
+ *
+ * THE MERGING IS THE ONE `Notes` ALREADY DOES — key by key, under a lock, with one step back. It is handed the trial's folder as its destination rather than
+ * having a second merger written for this page, which would have to learn on its own the lesson that cost a morning of verdicts on 2026-08-11.
+ */
+if ($path === '/critiques') {
+    require_once $here . '/bootstrap.php';
+    require_once $here . '/lib/Trials.php';
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    $trials = Trials::get();
+    $trial = (string) ($_GET['trial'] ?? '');
+    if (!$trials->exists($trial)) {
+        http_response_code(404);
+        echo json_encode(['fault' => "aucun essai « {$trial} » sous " . Trials::HOME . " — rien n'est écrit."], JSON_UNESCAPED_UNICODE);
+
+        return true;
+    }
+    $file = new Notes($trials->home() . '/' . $trial);
+    // The section is the file's own name, so what lands on disk is « critiques.json » inside the trial: one name, said once, and the reader finds it by looking.
+    $section = str_replace('.json', '', Trials::CRITIQUES_FILE);
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+        $file->save($section, json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR));
+        echo '{"ecrit":true}';
+
+        return true;
+    }
+    echo json_encode($file->forRoute($section), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    return true;
+}
+
+/**
  * The rune anchor of one representation, posed from the review page.
  *
  * THE WRITE GOES THROUGH THE TOOL THAT ALREADY OWNS IT, `scripts/set-rune-anchor.py`, and not through a second writer of the referential written here. That tool

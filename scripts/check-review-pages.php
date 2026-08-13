@@ -131,6 +131,84 @@ $rules = [
         fn (string $html): bool => str_contains($html, 'function keepLocally(id)')
             && (bool) preg_match('/localStorage\.setItem\(OUTBOX/', $html) && str_contains($html, 'readOutbox()'),
     ],
+    // UNE CASE S'AFFICHE ENTIÈRE, ET CE COMPORTEMENT SE GARDE EN TROIS RÈGLES (opérateur, 2026-08-12 : « il ne doit jamais y avoir de demi case, une case doit être
+    // affichée entière même si incomplète. ça a déjà été dit et on refait des correctifs de trucs qui ont déjà été corrigés »). Il l'a payé deux fois, et
+    // l'historique du dépôt ne portait aucun correctif à reprendre — donc celui-ci n'existe que tant que quelque chose le tient. Trois mécanismes le composent et
+    // se cassent séparément : compter des rangées entières, faire monter le pavage au-dessus de l'image, et lui réserver la place. Une règle unique dirait
+    // « perdu » sans dire lequel.
+    [
+        'La grille ne pave jamais une demi-case',
+        'la vignette n\'est jamais un nombre entier de cases en hauteur — TR-063-v19 en fait 3,4 — et le pavage ancré au sol laissait la rangée du haut coupée ; '
+            . '« --tile-y » est un pourcentage d\'une boîte haute d\'un nombre ENTIER de rangées, donc 100 divisé par lui est entier, sur chaque grille de la page',
+        function (string $html): bool {
+            if (!preg_match_all('/--tile-y: ([\d.]+)%/', $html, $found)) {
+                return false;
+            }
+            foreach ($found[1] as $said) {
+                $rows = 100 / (float) $said;
+                if (abs($rows - round($rows)) > 1e-3) {
+                    return false;
+                }
+            }
+            return true;
+        },
+    ],
+    [
+        'Le pavage monte au-dessus de l\'image jusqu\'à la case entière',
+        'c\'est la GRILLE qui grandit, jamais l\'image : le sujet garde sa taille et sa place, et c\'est lui qui s\'arrête court dans une case dessinée entière — '
+            . 'agrandir l\'image changerait ce qu\'on juge',
+        fn (string $html): bool => (bool) preg_match('/\.footprint::before\s*\{[^}]*top:\s*calc\(-1 \* var\(--tile-rise\)\)/s', $html),
+    ],
+    [
+        'L\'enveloppe réserve la place que la grille prend au-dessus, et le drawer la grossit avec l\'image',
+        'sans la réserve, la case du haut passe par-dessus le nom de fichier et la date ; sans la mise à l\'échelle, elle vaut la moitié de ce que la grille '
+            . 'occupe dès que le drawer double l\'image',
+        fn (string $html): bool => (bool) preg_match('/<span class="picture" style="margin-top: [\d.]+px"/', $html)
+            && str_contains($html, 'clone.style.marginTop = (reserve * shown) / natural'),
+    ],
+    // LE DRAWER DIT QUELLE VERSION ON REGARDE, ET SE NAVIGUE — S91, demandé le 2026-08-13. Quatre règles, parce que quatre mécanismes indépendants portent cette
+    // demande : dire le rang, le changer par la pagination, le changer par la bande du bas, et le retrouver après un rechargement. La page les a déjà reperdus
+    // trois fois par réécriture, et c'est nommément ce que le point demande de ne pas laisser se reproduire.
+    [
+        'Le drawer dit quelle version on regarde, et sur combien',
+        'le titre nomme le sujet et le variant, le chemin nomme le fichier — aucun des deux ne dit où l\'on se trouve parmi dix-huit versions, et c\'est '
+            . 'exactement la demande de l\'opérateur : « le drawer doit être plus clair sur la version regardée »',
+        fn (string $html): bool => str_contains($html, 'id="version-rank"')
+            && (bool) preg_match("/'Version ' \+ \(rank \+ 1\) \+ ' sur ' \+ cards\.length/", $html),
+    ],
+    [
+        'La pagination est en haut du drawer, et la commande de GAUCHE va à la version SUIVANTE',
+        'le sens est l\'inverse de l\'usage courant et il est VOULU (opérateur, 2026-08-13 : « passer à gauche (suivante) et à droite (précédente) ») — les '
+            . 'versions vont de la plus récente à la plus ancienne, donc la suivante descend la liste. Un agent qui trouve cela surprenant l\'inversera, et '
+            . 'c\'est cette règle qui l\'arrête : le bouton de gauche mène à rang + 1, celui de droite à rang - 1',
+        function (string $html): bool {
+            $left = strpos($html, 'id="version-next"');
+            $rank = strpos($html, 'id="version-rank"');
+            $right = strpos($html, 'id="version-previous"');
+            if ($left === false || $rank === false || $right === false || $left > $rank || $rank > $right) {
+                return false;
+            }
+
+            return (bool) preg_match('/stepNext\.onclick = function \(\) \{ stepTo\(cards\[rank \+ 1\]\); \};/', $html)
+                && (bool) preg_match('/stepPrevious\.onclick = function \(\) \{ stepTo\(cards\[rank - 1\]\); \};/', $html);
+        },
+    ],
+    [
+        'La liste des versions reste toujours en bas du drawer, en petites images cliquables',
+        'la pagination S\'AJOUTE à elle, elle ne la remplace pas ; les images y sont petites pour qu\'on voie une quantité de versions d\'un coup d\'œil, et '
+            . 'chacune ouvre la sienne par la porte de sa propre carte, donc sans rien changer au comportement qu\'elle a déjà',
+        fn (string $html): bool => str_contains($html, 'id="version-strip"')
+            && (bool) preg_match('/\.version-strip\s*\{[^}]*position:\s*sticky[^}]*bottom:\s*0/s', $html)
+            && (bool) preg_match('/var door = card\.querySelector\(\x27\.open-version\x27\);/', $html),
+    ],
+    [
+        'Un drawer ouvert se rouvre sur la MÊME version après un rechargement',
+        'la page se reconstruit et se recharge toute seule dès qu\'une sprite sort ou qu\'un verdict change : refermé à ce moment-là, le drawer fait perdre sa '
+            . 'place au milieu d\'un jugement (opérateur, 2026-08-13). C\'est la même exigence que la saisie qui survit au rafraîchissement',
+        fn (string $html): bool => str_contains($html, "MEMORY_VERSION = 'gatebeast-sprites-version'")
+            && str_contains($html, 'rememberVersion(versionKey(carte));')
+            && str_contains($html, 'sessionStorage.getItem(MEMORY_VERSION)'),
+    ],
     [
         'La fermeture retombe sur le panneau visible quand la pile est vide',
         'la pile vit en mémoire : vidée alors qu\'un panneau est à l\'écran, le bouton de fermeture ne fait plus rien et la page reste bloquée',
