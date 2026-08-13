@@ -48,6 +48,15 @@ const BAND_MIN = 'height_min_ty';
 const BAND_MAX = 'height_max_ty';
 
 /**
+ * The step a floor is allowed to be written on (operator, 2026-08-13: « le minimum peut avoir une décimale mais autant garder un arrondi, soit 0,1 0,2 soit 0,25
+ * 0,5 »). The two steps he names are compatible — a quarter is not a multiple of a tenth, so the finer of the two is the one that admits both.
+ *
+ * THE CEILING HAS NO STEP AT ALL: it is a whole number of tiles, and that is not a rounding but a meaning. A ceiling says how far the subject may rise, and that
+ * right is granted by the tile — « s'il a accès à une dernière case, il peut l'occuper entièrement ».
+ */
+const MINIMUM_STEP = 0.05;
+
+/**
  * The call handed to the model. It computes nothing of its own: for each extent it asks tile_scale for the canvas it builds, and for what one TY is worth in
  * that same canvas — both public operations of the module — and returns their quotient, which is the canvas expressed in the unit the bands are declared in.
  *
@@ -106,6 +115,18 @@ function inTy(float $value): string
     return str_replace('.', ',', (string) round($value, 1)) . ' TY';
 }
 
+/**
+ * A figure AS IT IS WRITTEN in the referential, rounded by nobody.
+ *
+ * THE SHAPE OF A NUMBER CANNOT BE REPORTED THROUGH A ROUNDING. Saying « le plafond est 1,7 TY, or un plafond est entier » of a band that reads 1,71 accuses it of
+ * a fault its own message disproves, and the reader goes looking for a bug in the checker. Measurements are rounded because a canvas is a measurement; a declared
+ * figure is not measured, it is written, and it is shown as written.
+ */
+function asWritten(float $value): string
+{
+    return str_replace('.', ',', (string) $value) . ' TY';
+}
+
 $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
 
 // THE EXTENT IS TAKEN EXACTLY AS THE PRODUCTION COMMAND TAKES IT — the cover when the subject declares one, the footprint otherwise (scripts/generate-sprite.py,
@@ -134,7 +155,20 @@ foreach ($data['subjects'] as $code => $subject) {
 $canvases = canvasesInTy($root, $asked);
 
 $faults = [];
+$shapes = [];
 foreach ($judged as [$code, $reference, $key, $minimum, $maximum]) {
+    // LA FORME DES DEUX CHIFFRES SE JUGE AVANT LEUR CONTENU, et séparément : une fourchette peut très bien contenir sa toile tout en étant écrite en restes de
+    // division. Ce sont deux défauts distincts, et les confondre ferait disparaître l'un dès que l'autre est corrigé.
+    if ($maximum != floor($maximum)) {
+        $shapes[] = sprintf('%s / %s — le plafond est %s, or un plafond est un nombre ENTIER de cases : une case entamée est une case occupée.',
+            $code, $reference, asWritten($maximum));
+    }
+    // COMPARÉ EN CENTIÈMES ENTIERS, jamais en flottants : 0,05 ne se représente pas exactement, et une égalité de flottants signalerait au hasard des valeurs
+    // pourtant écrites au pas demandé.
+    if ((int) round($minimum * 100) % (int) round(MINIMUM_STEP * 100) !== 0) {
+        $shapes[] = sprintf('%s / %s — le plancher est %s, or il s\'arrondit au pas de %s : deux décimales sont la signature d\'une division, pas d\'un jugement.',
+            $code, $reference, asWritten($minimum), str_replace('.', ',', (string) MINIMUM_STEP));
+    }
     $canvas = $canvases[$key];
     if ($canvas >= $minimum && $canvas <= $maximum) {
         continue;
@@ -150,20 +184,25 @@ foreach ($judged as [$code, $reference, $key, $minimum, $maximum]) {
 }
 
 printf(
-    "%d variante(s) jugée(s) : %d fourchette(s) ne contiennent plus la toile du modèle. %d variante(s) sans fourchette, hors de portée de ce contrôle.\n",
+    "%d variante(s) jugée(s) : %d fourchette(s) ne contiennent plus la toile du modèle, %d mal formée(s). %d variante(s) sans fourchette, hors de portée de ce"
+    . " contrôle.\n",
     count($judged),
     count($faults),
+    count($shapes),
     count($bandless)
 );
 if ($detail) {
     foreach ($faults as $line) {
         printf("  %s\n", $line);
     }
+    foreach ($shapes as $line) {
+        printf("  FORME  %s\n", $line);
+    }
     foreach ($bandless as $line) {
         printf("  SANS FOURCHETTE  %s\n", $line);
     }
-} elseif ($faults) {
+} elseif ($faults || $shapes) {
     echo "« -v » les nomme.\n";
 }
 
-exit($faults ? 1 : 0);
+exit($faults || $shapes ? 1 : 0);

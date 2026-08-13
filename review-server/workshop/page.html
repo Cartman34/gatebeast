@@ -1,7 +1,9 @@
 <h1>L'atelier de génération</h1>
 <p class="lede">1 essai(s) de consigne.</p>
+<p class="legende"><span><del>Texte barré</del> — retiré depuis la version précédente</span><span><ins>Texte vert</ins> — ajouté depuis la version
+précédente</span><span><mark class="ancre">Texte souligné</mark> — la phrase qu'une critique met en cause</span></p>
 <p class="lede">Les essais vivent sous var/generations/trials/, qui n'est pas versionné : cette page liste ce qui existait quand elle a été construite, le
-2026-08-13 à 07:48. Un essai nettoyé depuis reste lisible ici et disparaîtra à la construction suivante.</p>
+2026-08-13 à 12:08. Un essai nettoyé depuis reste lisible ici et disparaîtra à la construction suivante.</p>
 <aside class="reload" id="reload" role="status" aria-live="polite">
   <p class="reload-word">Une nouvelle version de cette page est prête.</p>
   <span class="reload-ring">
@@ -10,44 +12,42 @@
     <button type="button" class="reload-button" id="reload-button" title="Recharger maintenant" aria-label="Recharger maintenant">↻</button>
   </span>
 </aside>
-<section class="trial"><h2>2026-08-13-BT-001</h2><div class="split"><div class="image"><img src="/var/generations/trials/2026-08-13-BT-001/BT-001.png" alt=""></div><div class="consigne"><article class="section"><h3>Comment travailler › Comment lire cette consigne <span class="level">common</span></h3><pre>## Comment travailler
-### Comment lire cette consigne (common)
-CETTE SECTION S&#039;ADRESSE À TOI, L&#039;AGENT QUI LIT CETTE CONSIGNE, ET À TOI SEUL : elle ne fait pas partie de ce qu&#039;il faut dessiner, et tu ne la transmets pas à
+<section class="trial"><h2>2026-08-13-BT-001</h2><div class="split"><div class="image"><img src="/var/generations/trials/2026-08-13-BT-001/BT-001.png" alt=""><div class="loose"><h3>Ce que je vois sur l'image</h3><article class="critique constat"><h4><span class="kind">Constat</span> Ce que je vois du bâtiment lui-même</h4><p>La cour est ouverte et lisible, la plongée est juste, le style tient. Ce qui cloche tient à la taille : le corps de bâtiment est trop court pour sa fourchette, et il flotte au-dessus du bord bas. Il n&#039;y a rien à reprendre dans la description du sujet — la reprise porte sur le cadrage et sur la mesure, pas sur le dessin.</p></article></div></div><div class="consigne"><article class="section"><h3>Comment travailler › Comment lire cette consigne <span class="level">common</span></h3><pre>CETTE SECTION S&#039;ADRESSE À TOI, L&#039;AGENT QUI LIT CETTE CONSIGNE, ET À TOI SEUL : elle ne fait pas partie de ce qu&#039;il faut dessiner, et tu ne la transmets pas à
 ton modèle d&#039;images.
 La consigne est découpée en sections, chacune ouverte par un titre. Une section porte son titre sous la forme « Titre (mot) », et le mot entre parenthèses
 nomme l&#039;endroit de NOTRE système d&#039;où vient la section : il nous sert à savoir où porter une correction, et il ne décrit rien de l&#039;image. Un titre SANS
 parenthèses regroupe les sections qui suivent et dit seulement de quoi elles parlent ensemble.
 Les titres et ces mots entre parenthèses sont donc de la structure, pas de la matière : ce qu&#039;il faut dessiner est le CONTENU des sections, et lui seul.
 
-</pre></article><article class="section"><h3>Comment travailler › Ce que tu nous rapportes <span class="level">common</span></h3><pre>### Ce que tu nous rapportes (common)
-CETTE SECTION S&#039;ADRESSE À TOI, L&#039;AGENT QUI LIT CETTE CONSIGNE, ET NON À TON MODÈLE D&#039;IMAGES : elle ne décrit rien de l&#039;image et tu ne la lui transmets pas.
+</pre></article><article class="section"><h3>Comment travailler › Ce que tu nous rapportes <span class="level">common</span></h3><pre>CETTE SECTION S&#039;ADRESSE À TOI, L&#039;AGENT QUI LIT CETTE CONSIGNE, ET NON À TON MODÈLE D&#039;IMAGES : elle ne décrit rien de l&#039;image et tu ne la lui transmets pas.
 Quand tu as fini, ton dernier message se termine par la consigne EXACTE que tu as transmise à ton modèle d&#039;images, encadrée par ces deux lignes, chacune seule
 sur sa ligne :
 &lt;&lt;&lt;CONSIGNE-TRANSMISE-DEBUT&gt;&gt;&gt;
 &lt;&lt;&lt;CONSIGNE-TRANSMISE-FIN&gt;&gt;&gt;
 Entre ces deux lignes, nous attendons le TEXTE LUI-MÊME, intégral et mot pour mot, tel que tu l&#039;as envoyé — la chose, et non un compte rendu de la chose.
-Si tu as envoyé plusieurs consignes successives, donne celle qui a produit l&#039;image que tu enregistres.
-
-</pre></article><article class="section"><h3>La sprite et son rendu › Ce que tu produis <span class="level">common</span></h3><pre>## La sprite et son rendu
-### Ce que tu produis (common)
-CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c&#039;est-à-dire une pièce détourée que le moteur d&#039;un jeu posera sur UNE CASE d&#039;une carte
+<mark class="ancre faute">Si tu as envoyé plusieurs consignes </mark><del>donne celle qui a produit l&#039;image que</del><mark class="ancre faute"><ins>successives, DONNE-LES TOUTES, dans l&#039;ordre où </ins></mark><del>enregistres.</del><mark class="ancre faute"><ins>tu les as envoyées</ins></mark><ins>, chacune précédée d&#039;une ligne
+disant ce qu&#039;elle produisait.
+</ins>
+</pre><article class="critique faute"><h4><span class="kind">Faute</span> On a demandé une consigne, l&#039;agent en a plusieurs et nous a rendu celle envoyée en dernier dans le temps</h4><p>Cette clause prévoit le cas et choisit mal — et « celle qui a produit l&#039;image » se lit de deux façons, puisque plusieurs passes y touchent. L&#039;agent travaille en plusieurs passes : il génère sur fond magenta, détoure, puis complète la toile. Ce qu&#039;il rapporte est la passe envoyée en dernier dans le temps, celle du fond magenta, et celle qui a dessiné le bâtiment n&#039;a jamais été rendue — cet essai n&#039;a d&#039;ailleurs aucun fichier de consigne transmise. Décidé avec l&#039;opérateur le 2026-08-13 : on demande TOUTES les passes, dans l&#039;ordre, chacune avec son texte intégral et ce qu&#039;elle produisait.</p></article></article><article class="section"><h3>La sprite et son rendu › Ce que tu produis <span class="level">common</span></h3><pre>CE QUE TU PRODUIS, ET POURQUOI CHAQUE CONTRAINTE CI-DESSOUS EXISTE : une SPRITE, c&#039;est-à-dire une pièce détourée que le moteur d&#039;un jeu posera sur UNE CASE d&#039;une carte
 quadrillée, vue en plongée. Ce n&#039;est pas une illustration : personne ne la regardera seule. Elle sera posée à côté de centaines d&#039;autres, et PLUSIEURS SPRITES PEUVENT
 occuper la même case — une herbe devant un arbre, un chemin sous un bâtiment : c&#039;est le moteur qui les empile dans le bon ordre, ce n&#039;est pas ton affaire et tu n&#039;as rien à
 anticiper de cela.
 
-</pre></article><article class="section"><h3>La sprite et son rendu › Style <span class="level">common</span></h3><pre>### Style (common)
-Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
+</pre></article><article class="section"><h3>La sprite et son rendu › Style <span class="level">common</span></h3><pre>Style graphique — définition complète : rendu 3D « toon volume », doux et chaleureux. Volumes sculptés
 et arrondis, comme de petites figurines modelées. Ombrage cel-shading en DEUX BANDES NETTES, toutes
 deux CLAIRES : une teinte pleinement éclairée et une teinte d&#039;ombre à peine plus soutenue, transition
 franche. AUCUN contour dessiné. Hautes lumières spéculaires discrètes, liseré de lumière sur les bords.
 Couleurs FRANCHES, RICHES ET SATURÉES — claires ET intenses à la fois, jamais ternes, grisées, pastel
 ou délavées. Détail de surface modéré : les grandes surfaces restent lisibles et unies.
 
-</pre></article><article class="section"><h3>La sprite et son rendu › Caméra <span class="level">common</span></h3><pre>### Caméra (common)
-Caméra : PROJECTION ORTHOGRAPHIQUE, direction de vue unique pour toute l&#039;image, azimut ZÉRO et site SOIXANTE DEGRÉS
+</pre></article><article class="section"><h3>La sprite et son rendu › Caméra <span class="level">common</span></h3><pre>Caméra : PROJECTION ORTHOGRAPHIQUE, direction de vue unique pour toute l&#039;image, azimut ZÉRO et site SOIXANTE DEGRÉS
 au-dessus du plan du sol. Les axes du monde sont ceux de la grille : X vers la droite, Y vers le fond, Z vers le
 haut.
-CETTE PROJECTION SE VÉRIFIE PAR TROIS MESURES, PAS À L&#039;IMPRESSION. Une case du monde est un carré d&#039;un mètre, et
+<mark class="ancre manque"><ins>LES QUATRE POINTS CARDINAUX SE LISENT SUR CES AXES, ET TOUTE DIRECTION DE CETTE CONSIGNE EST DONNÉE AVEC EUX</ins></mark><ins> : le
+SUD est le bord du monde le plus PROCHE de la caméra, donc le bas de l&#039;image ; le NORD est le plus lointain, donc le
+haut ; l&#039;EST est à droite, l&#039;OUEST à gauche. La caméra regarde depuis le sud vers le nord, et la face SUD d&#039;un sujet
+est celle qu&#039;elle voit.
+</ins>CETTE PROJECTION SE VÉRIFIE PAR TROIS MESURES, PAS À L&#039;IMPRESSION. Une case du monde est un carré d&#039;un mètre, et
 voici ce que son côté devient dans l&#039;image selon l&#039;axe qu&#039;il suit — ce sont aussi les trois unités dans lesquelles
 toute mesure de cette consigne est donnée :
 — le long de X, gauche-droite, un mètre occupe 96 PIXELS ; cette unité se note TX ;
@@ -56,7 +56,7 @@ toute mesure de cette consigne est donnée :
 — le long de Z, debout, un mètre occupe 48 PIXELS.
 On voit donc largement le DESSUS de ce qui est posé au sol, et les faces verticales tiennent dans la moitié de
 leur mesure : c&#039;est le rapport que cette caméra donne.
-CES MESURES SE VÉRIFIENT PAR DEUX ÉGALITÉS, ET CES DEUX ÉGALITÉS DÉCRIVENT LA GÉOMÉTRIE TOUT ENTIÈRE :
+<mark class="ancre constat">CES MESURES SE VÉRIFIENT PAR DEUX ÉGALITÉS, ET CES DEUX ÉGALITÉS DÉCRIVENT LA GÉOMÉTRIE TOUT ENTIÈRE</mark> :
 — UNE ARÊTE DEBOUT, qui suit Z, MONTE TOUT DROIT DANS L&#039;IMAGE : son sommet se dessine à la MÊME ABSCISSE que son
   pied, soit Δx = 0, et seule sa mesure le long de Z les sépare, verticalement. Un mur a donc exactement la même
   largeur en haut qu&#039;en bas, et les deux murs opposés d&#039;un bâtiment sont deux droites verticales parallèles ;
@@ -74,30 +74,29 @@ franchement plus sombre : le dessous d&#039;une couronne, les branches sous le f
 pied d&#039;un mur. Un sujet éclairé uniformément sur toute sa surface est un sujet sans volume. L&#039;ombrage se fait en
 deux bandes claires, et les faces tournées vers le bas restent lisibles. Pas d&#039;horizon, pas de ciel.
 
-</pre></article><article class="section"><h3>Le sujet et ses mesures › Le sujet à dessiner <span class="level">parameters</span></h3><pre>## Le sujet et ses mesures
-### Le sujet à dessiner (parameters)
-ASSET DE JEU — centre de soin, SEUL SUJET DE L&#039;IMAGE, destiné à être posé comme sprite sur une carte vue de
+</pre><article class="critique manque"><h4><span class="kind">Manque</span> Les points cardinaux ne sont définis nulle part, alors que toute direction devrait s&#039;y dire</h4><p>« En bas » désigne trois choses à la fois — le bord de l&#039;image, le pied du sujet, la rangée d&#039;emprise la plus proche de la caméra — et le générateur en choisit une. Un point cardinal n&#039;en désigne qu&#039;une. Mais il ne peut pas s&#039;employer tant qu&#039;il n&#039;est pas défini, et il doit l&#039;être ICI, au socle, juste après les axes : une direction définie deux fois est la répétition qui a déjà fait se contredire la caméra.</p></article><article class="critique constat"><h4><span class="kind">Constat</span> Les deux égalités ont marché — le bâtiment revient en vue plongeante</h4><p>C&#039;est le premier essai lancé depuis que la prose a été remplacée par Δx = 0, et le seul à ce jour où la cour est visible et où les murs opposés sont deux droites verticales parallèles. La clause précédente disait « projection orthographique », « azimut zéro », « aucun point de fuite » — une isométrie satisfaisait tout cela. Ces deux égalités, elles, ne peuvent pas se confondre avec elle. À garder tel quel.</p></article></article><article class="section"><h3>Le sujet et ses mesures › Le sujet à dessiner <span class="level">parameters</span></h3><pre>ASSET DE JEU — centre de soin, SEUL SUJET DE L&#039;IMAGE, destiné à être posé comme sprite sur une carte vue de
 dessus.
 
-</pre></article><article class="section"><h3>Le sujet et ses mesures › Dimensions de l&#039;image <span class="level">parameters</span></h3><pre>### Dimensions de l&#039;image (parameters)
-DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l&#039;image fait EXACTEMENT 16 TX de large, et sa hauteur tient ENTRE 13,12 ET 16,02 TY,
-soit 1102 à 1346 pixels — et c&#039;est le chiffre en pixels qui fait foi, jamais la fraction de case.
-Cette fourchette n&#039;est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l&#039;entoure. Elle a été
+</pre></article><article class="section"><h3>Le sujet et ses mesures › Dimensions de l&#039;image <span class="level">parameters</span></h3><pre>DIMENSIONS ATTENDUES, ET ELLES SONT CONTRACTUELLES : l&#039;image fait EXACTEMENT 16 TX de large, <del>sa hauteur</del><ins>et </ins><mark class="ancre faute"><ins>la MATIÈRE DESSINÉE y tient </ins></mark><del>13,12</del><mark class="ancre faute"><ins>ENTRE 13 </ins></mark><del>16,02 TY,
+soit 1102 à 1346 pixels — et c&#039;est le chiffre en pixels</del><mark class="ancre faute"><ins>ET 16 TY de haut,
+bandes transparentes exclues</ins></mark><ins> : ce </ins><del>fait foi,</del><ins>qui est mesuré est le dessin, jamais </ins><del>fraction</del><ins>la toile qui le porte.
+CE SONT LES CASES QUI FONT FOI, JAMAIS LE PIXEL : toute mesure </ins><del>case.</del><ins>de cette consigne se donne en TX et en TY, et rien ne se convertit.
+</ins>Cette fourchette n&#039;est pas indicative : en dessous, le sujet est écrasé dans son emprise et ne se dresse plus ; au-dessus, il écrase tout ce qui l&#039;entoure. Elle a été
 décidée pour CE sujet dans CETTE posture, et pour aucun autre : une image hors de ces deux nombres est refusée.
 
-</pre></article><article class="section"><h3>Le sujet et ses mesures › Assise au sol et élévation <span class="level">parameters</span></h3><pre>### Assise au sol et élévation (parameters)
-CE QUI TOUCHE LE SOL ET CE QUI S&#039;ÉLÈVE, ET C&#039;EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 16 TX de large sur
+</pre><article class="critique faute"><h4><span class="kind">Faute</span> La hauteur est tenue par du vide, et le contrat porte sur la boîte</h4><p>L&#039;image livrée fait 13,71 TY de haut et passe donc le contrat — mais l&#039;ENCRE ne fait que 11,77 TY, soit une case et demie SOUS le plancher. Le générateur ne dessine pas à nos dimensions : il complète la toile par des bandes transparentes pour les atteindre. Une boîte se complète à volonté, l&#039;encre non : mesurée sur la boîte, la fourchette ne veut plus rien dire et le verdict « hauteur tenue » est faux sans que rien ne le dise. La chaîne doit mesurer l&#039;encre.</p></article></article><article class="section"><h3>Le sujet et ses mesures › Assise au sol et élévation <span class="level">parameters</span></h3><pre>CE QUI TOUCHE LE SOL ET CE QUI S&#039;ÉLÈVE, ET C&#039;EST LA CHOSE LA PLUS SOUVENT MANQUÉE. Le sujet POSE AU SOL un rectangle de 16 TX de large sur
 10 TY de profondeur.
-Il occupe le BAS de l&#039;image, et sa dernière rangée tolère un léger débord pour que la matière se raccorde à ce qui l&#039;entoure.
-TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l&#039;image. Un sujet
+Il occupe le BAS de l&#039;image, et <del>dernière</del><mark class="ancre manque"><ins>sa rangée SUD — celle qui touche le bord bas — tolère </ins></mark><del>léger</del><mark class="ancre manque"><ins>un débord d&#039;UNE CASE AU </ins></mark><mark class="ancre manque">PLUS</mark> pour que la matière se
+raccorde à ce qui <ins>l&#039;entoure. Cette case est aussi la seule marge transparente admise aux bords gauche et droit de l&#039;image.
+LA BASE DU BÂTIMENT OCCUPE CETTE RANGÉE SUD : le pied du mur et le seuil y sont visibles, elle n&#039;est laissée ni en sol nu ni en vide.
+</ins>TOUT CE QUE LE SUJET DRESSE — murs, toit, tronc, feuillage — MONTE AU-DESSUS de ce rectangle et occupe le reste de la hauteur de l&#039;image. Un sujet
 entièrement contenu dans son rectangle au sol, sans rien qui s&#039;élève par-dessus, est refusé : c&#039;est un sujet écrasé, pas un sujet vu sous cette caméra.
 LE POINT DE POSE EST UNE MESURE, PAS UNE IMPRESSION : le MILIEU DE LA BASE du sujet — le pied du tronc, le seuil du bâtiment, le centre de la touffe — tombe à
-EXACTEMENT 768 PIXELS du bord gauche de l&#039;image, et repose sur le bord BAS de l&#039;image. Décalé, le sujet empêche de poser quoi que ce soit devant lui sur la
+<del>EXACTEMENT 768 PIXELS</del><ins>8 TX </ins>du bord gauche de l&#039;image, <ins>soit au MILIEU de sa largeur, et </ins><del>repose sur</del><mark class="ancre faute"><ins>touche le bord BAS de </ins></mark><del>l&#039;image.</del><mark class="ancre faute"><ins>l&#039;image : la première rangée de PIXELS du bas
+porte de la matière</ins></mark><ins>, et aucun vide ne subsiste sous le sujet. </ins>Décalé, le sujet empêche de poser quoi que ce soit devant lui sur la
 carte.
 
-</pre></article><article class="section"><h3>Le cadrage et l&#039;assemblage › Détourage <span class="level">common</span></h3><pre>## Le cadrage et l&#039;assemblage
-### Détourage (common)
-UN SEUL SUJET, ET RIEN D&#039;AUTRE. L&#039;image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s&#039;ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
+</pre><article class="critique manque"><h4><span class="kind">Manque</span> Rien n&#039;encadre la complétion de toile, alors qu&#039;elle est tolérée — et « dernière rangée » n&#039;a pas d&#039;axe</h4><p>Deux défauts dans la même ligne. D&#039;abord « sa dernière rangée » ne dit pas selon quel axe : la rangée nord et la rangée sud sont aux deux bouts de l&#039;emprise, et le générateur en choisit une seul — il faut écrire « sa rangée SUD ». Ensuite la tolérance, décidée le 2026-08-13, n&#039;est pas écrite : la complétion transparente est admise jusqu&#039;à UNE CASE aux bords gauche, droit et bas de l&#039;image ; au bord haut, la fourchette de hauteur est elle-même la tolérance, à condition qu&#039;elle se mesure sur l&#039;encre. L&#039;essai déborde des deux côtés de cette règle — 1,67 case de vide au-dessus, et un sujet qui ne touche pas le bord bas.</p></article><article class="critique faute"><h4><span class="kind">Faute</span> La base ne repose pas sur le bord bas — un quart de case de vide dessous</h4><p>Mesuré sur l&#039;image livrée : 0,27 case de lignes entièrement transparentes sous le sujet. La clause est écrite, elle n&#039;est pas tenue, et rien ne la contrôlait. Un bâtiment décollé du sol empêche de poser quoi que ce soit devant lui sur la carte — c&#039;est exactement l&#039;effet que la clause annonce du décalage horizontal, et le décalage vertical le produit aussi.</p></article></article><article class="section"><h3>Le cadrage et l&#039;assemblage › Détourage <span class="level">common</span></h3><pre>UN SEUL SUJET, ET RIEN D&#039;AUTRE. L&#039;image contient le sujet décrit ci-dessous et absolument rien de plus : rien ne s&#039;ajoute AUTOUR de lui, ni décor, ni autre sujet, ni cadre, ni bordure, ni texte. Tout
 ce que la description demande appartient au sujet et se dessine, quelle que soit la matière dont il est fait.
 
 LE FOND EST ENTIÈREMENT TRANSPARENT. L&#039;image est un PNG à canal alpha : tout ce qui n&#039;est pas le sujet a
@@ -116,20 +115,16 @@ transparente subsiste tout autour.
 
 
 
-</pre></article><article class="section"><h3>Le cadrage et l&#039;assemblage › Bords rejoints <span class="level">variant</span></h3><pre>### Bords rejoints (variant)
-CE SUJET NE S&#039;ASSEMBLE AVEC AUCUN VOISIN : sa matière ne se prolonge dans aucune case voisine, ne se raccorde à rien et ne fusionne avec rien. Il se dessine ENTIER, ses quatre côtés compris, et occupe toute l&#039;emprise annoncée jusqu&#039;à ses limites.
+</pre></article><article class="section"><h3>Le cadrage et l&#039;assemblage › Bords rejoints <span class="level">variant</span></h3><pre>CE SUJET NE S&#039;ASSEMBLE AVEC AUCUN VOISIN : sa matière ne se prolonge dans aucune case voisine, ne se raccorde à rien et ne fusionne avec rien. Il se dessine ENTIER, ses quatre côtés compris, et occupe toute l&#039;emprise annoncée jusqu&#039;à ses limites.
 
 
 
-</pre></article><article class="section"><h3>Règles de rendu <span class="level">common</span></h3><pre>## Règles de rendu (common)
-Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
+</pre></article><article class="section"><h3>Règles de rendu <span class="level">common</span></h3><pre>Aucun être vivant ne se décrit librement : le sujet ci-dessous est cité de sa fiche, mot pour mot, et se
 dessine EXACTEMENT comme décrit. Aucun animal réel n&#039;existe dans ce monde.
 
 L&#039;image ne porte aucune inscription : pas de texte, pas de chiffre, pas de cote, pas de grille.
 
-</pre></article><article class="section"><h3>Ce qu&#039;il est et ce qu&#039;il fait › Description du sujet <span class="level">description</span></h3><pre>## Ce qu&#039;il est et ce qu&#039;il fait
-### Description du sujet (description)
-LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
+</pre></article><article class="section"><h3>Ce qu&#039;il est et ce qu&#039;il fait › Description du sujet <span class="level">description</span></h3><pre>LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
 BT-001 : LE PROGRAMME — un centre de soin bâti pour ce qu&#039;il fait : on y accueille, on y soigne, et les bêtes qu&#039;on y soigne ont besoin d&#039;air et d&#039;abri. Rien de cubique ni de sévère : le bâtiment est
 CHALEUREUX et vivant, c&#039;est un lieu public où l&#039;on entre.
 
@@ -163,8 +158,7 @@ portant la feuille de l&#039;enseigne. Rien au-delà : le sol de la carte viendr
 
 
 
-</pre></article><article class="section"><h3>Rappel de la caméra <span class="level">common</span></h3><pre>## Rappel de la caméra (common)
-RAPPEL, ET C&#039;EST LA DERNIÈRE CONSIGNE — LA DIRECTION DE VUE EST CELLE DÉCRITE PLUS HAUT, la même pour le sujet
+</pre></article><article class="section"><h3>Rappel de la caméra <span class="level">common</span></h3><pre>RAPPEL, ET C&#039;EST LA DERNIÈRE CONSIGNE — LA DIRECTION DE VUE EST CELLE DÉCRITE PLUS HAUT, la même pour le sujet
 et pour le sol sur lequel il pose : azimut zéro, site soixante degrés, projection orthographique, avec ses trois
 mesures. Le sujet est vu sous cette direction-là, entier, du premier plan au fond.
 </pre></article></div></div><h3 class="transmise">Ce que l'agent a transmis à son modèle d'images</h3><p class="missing">Pas de consigne transmise : l'agent ne l'a pas rapportée. Sans elle, on ne peut pas distinguer une clause qui prescrivait mal d'une clause perdue à sa reformulation.</p></section>
@@ -288,17 +282,35 @@ mesures. Le sujet est vu sous cette direction-là, entier, du premier plan au fo
   .reload-button:hover { background: #eab853; }
   .reload-button:focus-visible { outline: 2px solid #e6e4e0; outline-offset: 2px; }
   .trial { margin: 2rem 0; padding-top: 1rem; border-top: 1px solid var(--trait); }
-  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  .split { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 1.5rem; align-items: start; }
+  /* L'image SUIT LA LECTURE de la consigne : on juge une phrase en la regardant, et une image restée en haut de page oblige à remonter à chaque critique. */
+  .image { position: sticky; top: 1rem; }
   .image img { max-width: 100%; height: auto; image-rendering: pixelated; }
-  .section { margin-bottom: 1rem; }
+  .section { margin-bottom: 1.25rem; }
   .section h3 { margin: 0 0 .25rem; font-size: .95rem; font-weight: 600; }
   .level { font-weight: 400; opacity: .7; font-size: .85rem; }
   pre { white-space: pre-wrap; word-break: break-word; margin: 0; font-size: .82rem; line-height: 1.45; }
   .whole { max-height: 32rem; overflow: auto; }
-  .survival { display: inline-block; font-size: .8rem; margin-bottom: .25rem; }
-  .survival.intacte { color: #4f8a4f; }
-  .survival.partielle { color: #a07a2a; }
-  .survival.disparue { color: #a04a4a; }
+  .state { display: inline-block; font-size: .8rem; margin-bottom: .25rem; }
+  .state.intact { color: #6aa06a; }
+  .state.partial { color: #c09a4a; }
+  .state.lost { color: #c06a6a; }
+  .state.unmeasurable, .state.unknown { opacity: .65; }
+  /* TROIS COULEURS, TROIS SENS, ET AUCUNE N'EN PORTE DEUX : rouge ce qui disparaît, vert ce qui s'ajoute, bleu la phrase qu'une critique met en cause. La
+     couleur de l'ancre passe par le SOULIGNÉ et jamais par le texte, sinon elle se mélangerait au rouge et au vert du diff sur les passages qui sont les deux. */
+  del { color: #c06a6a; text-decoration: line-through; text-decoration-thickness: 1px; }
+  ins { color: #6aa06a; text-decoration: none; }
+  mark.ancre { background: transparent; color: inherit; border-bottom: 2px solid #6a8ac0; padding-bottom: 1px; }
+  .critique { margin: .5rem 0 .5rem 1rem; padding: .5rem .75rem; border-left: 3px solid #6a8ac0; font-size: .85rem; }
+  .legende { display: flex; flex-wrap: wrap; gap: 1.25rem; font-size: .82rem; margin: .5rem 0 1.5rem; }
+  .legende span { opacity: .9; }
+  .critique h4 { margin: 0 0 .25rem; font-size: .88rem; }
+  .critique .kind { text-transform: uppercase; font-size: .72rem; letter-spacing: .04em; opacity: .8; margin-right: .4rem; }
+  .critique blockquote { margin: .25rem 0; padding-left: .6rem; border-left: 1px solid var(--trait); opacity: .8; font-style: italic; }
+  .critique p { margin: .25rem 0 0; }
+  .unplaceable { color: #c09a4a; }
+  .loose { margin-top: 1rem; }
+  .loose h3 { font-size: .95rem; margin: 0 0 .5rem; }
   .missing { font-size: .85rem; opacity: .8; }
 </style>
 <script>

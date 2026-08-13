@@ -14,6 +14,18 @@ document empilait une section par séance, ce que sa propre première ligne inte
 
 ### OÙ ON EN EST À LA FIN DU 2026-08-13
 
+**CE QU'ON REPREND EN OUVRANT LA SÉANCE SUIVANTE, ET IL N'Y A PAS À CHERCHER AILLEURS : `S97 consigne-propre`.** L'opérateur l'a demandé nommément en fin de
+séance. **On ne travaille plus en regénérant : on écrit une consigne propre de bout en bout en MODIFIANT le texte déjà généré, et on ne reporte dans le code que
+ce qui fonctionne.** Le générateur est donc gelé — `scripts/asset_common.py` et `scripts/generate-sprite.py` sont à l'identique, une modification y a été faite
+puis annulée le jour même, et la référence de `diff-prompts.sh` est refigée sur ce code. Tout l'état du sujet est à sa description, `php scripts/backlog.php show
+consigne-propre` : où en est la `v2`, comment se fabrique une version, et ce qui reste à relire.
+
+**LA CONSIGNE A DES VERSIONS, ET LE DIFF SE FAIT D'UNE VERSION À LA SUIVANTE.** `v1` est le texte que la chaîne a produit, sous `var/generations/trials/` ; les
+suivantes vivent à `review-server/critiques/<essai>/<consigne>.v<N>.txt`, avec leurs critiques sous le même nom de version. La page `/workshop` montre la version
+active, son diff par lots de mots dans le texte, et les critiques ancrées sur la phrase qu'elles mettent en cause — rouge barré ce qui disparaît, vert ce qui
+s'ajoute, souligné bleu la phrase critiquée, et une légende le dit. Une version se fabrique par
+`php local/scripts/revise-consigne.php <source> <cible> <édits.json>`, qui refuse tout remplacement ne trouvant pas exactement une occurrence.
+
 **LES VERDICTS DE L'OPÉRATEUR SONT UN PLAN DE TRAVAIL, ET ILS SE LISENT AVANT DE PRODUIRE QUOI QUE CE SOIT.** `php scripts/remarks.php list` les donne tous ;
 `new` ne dit que ce qui a bougé, et s'arrêter à son « aucun verdict neuf » revient à ne jamais les lire. **Ce qui attend encore :** l'est, trois fois sur deux
 sujets — `SP-001` (v4, v5, v6) regarde à gauche alors que l'est est la droite, et `HU-000-v5` revient déformé ; `CH-021`, le style de `v2` et aucun cours d'eau

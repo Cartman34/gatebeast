@@ -160,6 +160,14 @@ piloter son projet.
 - **CE QUE LE FORMAT INTERDIT, ET C'EST LUI QUI COÛTE** : noyer la question dans ce qui l'a produite. Une question qui commence par expliquer le défaut, ses causes et ce qui a déjà été corrigé oblige
   l'opérateur à lire une page pour trouver la ligne qui appelle sa réponse — et il la relit deux fois pour être sûr de n'avoir rien manqué. **Le diagnostic n'est pas la question.** Une question qui
   dépasse une dizaine de lignes n'est pas mal écrite : elle contient autre chose qu'une question, et c'est cet autre chose qui doit sortir.
+- **UN MESSAGE DIT LE RÉSULTAT ET CE QUI ATTEND L'OPÉRATEUR, JAMAIS LE CHEMIN QUI Y MÈNE** (opérateur, 2026-08-13 : « pourquoi tu m'envoies des pavés ? c'est
+  interdit »). Ce qui vaut pour une question vaut pour un compte rendu : au-delà d'une dizaine de lignes, un message contient autre chose qu'un message, et c'est
+  cet autre chose qui doit sortir. **L'analyse vit au point, et `show <REF>` l'ouvre** — la recopier dans le message fait relire deux fois et noie la ligne qui
+  appelle une réponse. Trois messages de trente à cinquante lignes sont partis le 2026-08-13 alors que leur diagnostic était déjà écrit à son foyer.
+- **ET UNE RÈGLE QUE L'OPÉRATEUR DONNE S'ÉCRIT DANS LA FOULÉE, À SON FOYER** (même jour : « pourquoi tu ne l'écris pas directement plutôt que de créer un
+  document encore plus lourd pour te dire de faire plus tard ce que tu dois faire maintenant ? »). L'inscrire à la pile pour plus tard ajoute un point à relire,
+  laisse la règle inappliquée entre-temps, et fait payer deux fois le même geste. **Cela prime sur l'attente du `GO`** : ce qui est dicté n'attend pas d'être
+  dépilé, il est déjà décidé.
 - **Chaque message se termine par deux lignes de récapitulatif** : ce qui attend l'opérateur, ce qui attend l'agent. Code et trois mots par point, quatre points par ligne au plus, un compteur au-delà.
 - **L'OPÉRATEUR N'ATTEND QUE DEUX CHOSES DE L'AGENT : UN `GO` À DONNER, OU DES QUESTIONS À TRANCHER** (opérateur, 2026-08-11 : « y'a que deux types de choses que tu attends de moi : un go ou des
   questions »). La ligne « attente opérateur » ne porte donc que l'un ou l'autre, et **rien d'autre n'y figure** : ce qui attend vraiment une réponse se pose comme question, au format, dans le corps

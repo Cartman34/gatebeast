@@ -6585,8 +6585,8 @@
           "main": true,
           "ref": "orientation-south_action-idle_frame-01",
           "label": "Vue principale",
-          "height_min_ty": 13.12,
-          "height_max_ty": 16.02
+          "height_min_ty": 13,
+          "height_max_ty": 16
         },
         {
           "orientation": "south",
@@ -6874,8 +6874,8 @@
           ],
           "ref": "orientation-south_action-idle_p2_frame-01",
           "label": "Proposition 2",
-          "height_min_ty": 13.12,
-          "height_max_ty": 16.02
+          "height_min_ty": 13,
+          "height_max_ty": 16
         },
         {
           "orientation": "south",
@@ -7159,8 +7159,8 @@
           ],
           "ref": "orientation-south_action-idle_p3_frame-01",
           "label": "Proposition 3",
-          "height_min_ty": 13.12,
-          "height_max_ty": 16.02
+          "height_min_ty": 13,
+          "height_max_ty": 16
         }
       ]
     },

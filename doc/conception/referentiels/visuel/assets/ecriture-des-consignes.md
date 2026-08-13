@@ -103,6 +103,55 @@ mesure qui manque au socle s'y ajoute ; elle ne se calcule pas dans la descripti
 **ET UN CONTRÔLE LES TIENT** : `php scripts/check-consigne-units.php` balaie les descriptions et les clauses de variant, et signale l'unité de pixel comme la formule de rapport. Ses essais :
 `php scripts/dev/trial-consigne-units.php`.
 
+## LE GÉNÉRATEUR COMPLÈTE L'IMAGE POUR ATTEINDRE NOS DIMENSIONS — CE QUI EST TOLÉRÉ, ET CE QUI NE L'EST PAS
+
+**CONSTATÉ LE 2026-08-13** en lisant ce que l'agent a réellement exécuté : il ne dessine pas à nos dimensions, il **complète la toile** par des bandes
+transparentes pour les atteindre (`alpha_composite`). Notre contrat de dimensions est donc satisfaissable par du vide, et une chaîne qui mesure la **boîte**
+enregistrerait « hauteur tenue » sur une image complétée — l'erreur transparente que les règles du dépôt interdisent.
+
+**DÉCISION DE L'OPÉRATEUR, 2026-08-13** : « c'est acceptable mais uniquement sur la dernière case », puis, précisant : « je parlais de complétion à gauche et à
+droite, voire en bas. En haut, la hauteur, on s'en fout un peu, normalement tu es censé mettre une tolérance pour quelque chose d'acceptable ». Ce qui donne
+trois règles, et elles ne se confondent pas :
+
+- **AUX BORDS GAUCHE, DROIT ET BAS DE L'IMAGE, LA COMPLÉTION EST TOLÉRÉE JUSQU'À UNE CASE** — le débord de la **rangée SUD de l'emprise**, celle que la clause
+  d'assise prévoit déjà pour que la matière se raccorde à ce qui l'entoure. Au-delà d'une case, le sujet n'est pas cadré comme demandé : l'image est refusée.
+- **AU BORD HAUT DE L'IMAGE, LA COMPLÉTION N'EST PAS UNE FAUTE EN SOI** : la fourchette de hauteur **est** la tolérance, et elle existe pour ça. Ce qui n'est pas
+  toléré, c'est qu'elle cesse de vouloir dire quelque chose.
+- **DONC LA HAUTEUR SE MESURE SUR L'ENCRE, JAMAIS SUR LA BOÎTE.** Une boîte se complète à volonté ; l'encre, non. Mesurée sur la boîte, la fourchette laisse
+  passer n'importe quoi et le verdict est faux sans que rien ne le dise. **Un bâtiment doit voir sa base occuper la rangée SUD de son emprise** — le pied du mur
+  et le seuil y sont visibles, elle n'est laissée ni en sol nu ni en vide.
+
+**CE QUE L'ESSAI `2026-08-13-BT-001` DONNE SOUS CETTE RÈGLE** : 1,67 case de vide au-dessus, 0,27 case en dessous, et **une encre de 11,77 TY pour un plancher à
+13,12** — le bâtiment est réellement plus court que le minimum de sa fourchette, et seule la complétion le faisait passer.
+
+## UN ORDINAL SE DONNE TOUJOURS AVEC SON AXE, ET UNE DIRECTION SE DIT EN POINTS CARDINAUX
+
+**Règle de l'opérateur, 2026-08-13 : « quand tu dis dernière ou premier, c'est ambigu, dernier par rapport à quel critère ? ».** Un rang n'existe que le long
+d'un ordre, et une consigne en manipule au moins quatre à la fois : la profondeur du monde, la hauteur dans l'image, le fil du texte, et le temps. « La dernière
+rangée » se lit aussi bien comme celle du fond que comme celle du premier plan — deux rangées opposées, à deux bouts de l'emprise.
+
+**CE QU'ON ÉCRIT À LA PLACE : le critère, pas le rang.** « La passe envoyée en dernier dans le temps » ; « la clause qui se lit le plus près du sujet ». C'est
+plus long de quatre mots et cela ne se lit que d'une façon.
+
+**ET UNE DIRECTION DANS LE MONDE SE NOMME PAR SON POINT CARDINAL, JAMAIS PAR UN CÔTÉ D'IMAGE** (même jour : « tu peux aussi nommer les directions avec les points
+cardinaux, comme ça il sait quand tu parles du sud ; c'est plus clair qu'en bas, il ne sait pas si c'est le bas de l'image ou du bâtiment »). « En bas » désigne
+trois choses à la fois — le bord de l'image, le pied du sujet, et la rangée d'emprise la plus proche de la caméra —, et le générateur en choisit une. **La
+rangée SUD**, **la façade SUD**, **le bord EST de l'emprise** ne désignent qu'une chose, et les points cardinaux sont déjà ceux du socle : X va vers l'est, Y
+s'enfonce vers le nord, la caméra regarde depuis le sud. Les orientations du référentiel les emploient déjà (`orientation-south`).
+
+**ET UN NOM QUI SE COMPTE PORTE SON UNITÉ, COMME UN NOMBRE** (même jour, sur « aucune ligne transparente en dessous » : « ligne de case ? peu clair »). Une
+ligne, une rangée, un bord se comptent en **cases** ou en **pixels**, et les deux mesures diffèrent d'un facteur quatre-vingt-quatre : une rangée de cases vide
+sous un sujet est un défaut grossier, une rangée de pixels vide est un défaut d'un pixel. **On écrit « rangée de cases » ou « rangée de pixels », jamais
+« ligne » seule.** C'est le prolongement exact de la règle du référentiel technique — aucun nombre ne s'écrit sans son unité —, appliquée aux noms que l'on
+compte.
+
+**CE QUI RESTE DIT EN CÔTÉS D'IMAGE, ET C'EST LA SEULE EXCEPTION** : ce qui parle de **l'image en tant que fichier** — la marge transparente au bord haut, la
+matière qui touche le bord bas. Là, il n'y a pas de direction du monde à nommer, et un point cardinal serait faux.
+
+**ET LE GÉNÉRATEUR NE DEMANDE PAS DE PRÉCISION, IL TRANCHE SEUL.** Face à un ordinal sans axe, il en choisit un et dessine — l'erreur ne se voit qu'à l'image,
+une génération plus tard. C'est la même famille que la caméra dite « en plongée » sans dire écrasée, et que « projection orthographique » qui laissait passer
+une isométrie : une formulation qui a l'air précise et qui autorise deux résultats.
+
 ## Ce qu'une clause doit porter — quatre choses, et elles sont toutes obligatoires
 
 Ce sont les quatre que l'opérateur nomme, et l'ordre importe peu :

@@ -180,10 +180,27 @@
   <h1>La pile</h1>
   <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
   décision qui t'appartient. <strong>Chaque carte porte ton vote</strong> : ce que tu veux voir traité, et ce que tu rejettes — une task rejetée sort de la pile. Le vote se retire en recliquant.</p>
-  <p class="compte">1 en attente de toi · 16 à moi · php scripts/backlog.php next</p>
+  <p class="compte">2 en attente de toi · 19 à moi · php scripts/backlog.php next</p>
   <div class="grid">
   <article class="point" data-status="proposed">
-    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 43</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <p class="point-tete"><span class="point-ref">numerotation-series</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 30</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>La numérotation des séries saute : deux questions ouvertes numérotées Q1 et Q24, et Q1 a déjà servi</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CONSTATÉ LE 2026-08-13</strong>, en ouvrant deux questions à la suite : la première a reçu <code>Q1</code>, la seconde <code>Q24</code>. Les deux sont ouvertes, et il manque vingt-deux<br />
+numéros entre elles.</p>
+<p><strong>LA CAUSE, dans <code>Backlog::nextRef()</code></strong> (<code>review-server/lib/Backlog.php</code>) : le relevé des numéros employés balaie <strong>tous</strong> les points de la série, clos compris,<br />
+alors que le drapeau qui décide du redémarrage à 1 ne regarde que les <strong>ouverts</strong>. Quand la série est vide, on repart donc à 1 — ce qui est la règle — mais<br />
+l&#039;ajout suivant reprend le maximum de <strong>l&#039;historique</strong> et saute à 24.</p>
+<p><strong>CE QUE ÇA CASSE</strong> : <code>Q1</code> a déjà existé et été clos ; deux points portent maintenant le même code à deux dates, et rien ne les distingue quand l&#039;opérateur<br />
+répond « Q1 ». C&#039;est la collision que le commentaire de la fonction dit avoir corrigée le 2026-08-08 — elle est revenue par l&#039;autre bout.</p>
+<p><strong>LE CORRECTIF TIENT EN UN MOT</strong> : le maximum se prend sur les points <strong>ouverts</strong> de la série, puisque c&#039;est leur ouverture qui interdit le redémarrage. Les<br />
+essais de la commande n&#039;en couvrent pas le cas ; il s&#039;écrit avec.</p>
+</details>
+    <div class="acts" data-id="numerotation-series"><label class="act act--wanted"><input type="checkbox" data-id="numerotation-series" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="numerotation-series" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="numerotation-series" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-13 · repris le 2026-08-13</p>
+  </article>
+  <article class="point" data-status="proposed">
+    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 43</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
     <h2>Le hook de fin de tour ne connaît pas la fin de séance et refuse de laisser l&#039;agent s&#039;arrêter</h2>
     <details class="point-corps"><summary>Ce que ça engage</summary><p><strong><code>hook-stop.php</code> REFUSE LA FIN DE TOUR TANT QU&#039;IL RESTE DES TÂCHES, ET IL NE CONNAÎT PAS LA FIN DE SÉANCE.</strong> Le 2026-08-12, l&#039;opérateur écrit « Termine,<br />
 enregistre tout, fin de session » ; tout est terminé, enregistré, le serveur fermé — et le hook renvoie « TU NE T&#039;ARRÊTES PAS : 16 tâches sont encore à faire ».</p>
@@ -202,10 +219,13 @@ garderait tout son sens dans le seul cas où il a été écrit — un agent qui 
   </article>
   </div>
   <details class="clos">
-    <summary>Les 16 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
+    <summary>Les 19 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
     <ul class="mien">
+    <li><span class="point-ref">consigne-propre</span> Une consigne propre de bout en bout, écrite en modifiant le texte généré — le sujet de la reprise</li>
     <li><span class="point-ref">atelier-generation</span> Une page d&#039;atelier : la consigne, ses niveaux, l&#039;image, et le diff avec la consigne transmise</li>
     <li><span class="point-ref">pages-hors-index</span> Une page servie peut n&#039;apparaître dans aucun index : deux listes tenues à la main, rien ne les accorde</li>
+    <li><span class="point-ref">remplissage-image</span> Le générateur complète l&#039;image pour atteindre nos dimensions : interdire ce remplissage, ou l&#039;accepter en le mesurant</li>
+    <li><span class="point-ref">passes-generateur</span> Le générateur ne rapporte que sa dernière passe : lui demander toutes ses passes, ou seulement celle qui dessine</li>
     <li><span class="point-ref">emprise-non-rect</span> Une emprise ne sait être qu&#039;un rectangle : un bâtiment en L rendrait le référentiel et la consigne faux</li>
     <li><span class="point-ref">outils-morts</span> Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</li>
     <li><span class="point-ref">refus-avec-solution</span> Chaque refus doit nommer le geste qui débloque, à commencer par les contrôles de séance</li>

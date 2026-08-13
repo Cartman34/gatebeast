@@ -79,9 +79,19 @@ Ce nœud couvre l'organisation de l'affichage et ce que chaque asset doit porter
   `scripts/tile_scale.py`), et les rustines empilées dessus le 2026-08-10 — plancher d'une case sur la hauteur déclarée, tolérances élargies pour les sujets qui montaient peu. **Toutes traitaient le
   même défaut par son symptôme.** Le signe qu'il fallait chercher ailleurs : appliquer le plancher d'une case à la hauteur déclarée faisait dépasser d'une demi-case tout sujet qui ne se dresse pas,
   c'est-à-dire supprimait la possibilité même qu'un sujet soit plat.
+- **LE PLAFOND EST UN NOMBRE ENTIER DE CASES, TOUJOURS.** Décision de l'opérateur, 2026-08-13 : « ça ne doit pas dépasser 16 cases de haut (TY), tu dois une
+  taille max forcément en un nombre fixe de cases, y'a pas de demie case — s'il a accès à une dernière case, il peut l'occuper entièrement ». Un plafond dit
+  **jusqu'où le sujet a le droit de monter**, et ce droit se donne par case : une case entamée est une case occupée, et lui en accorder 16,02 ne lui donne pas
+  plus de place qu'en accorder 16 — cela ajoute seulement deux centièmes que personne n'a jugés.
+- **LE PLANCHER PEUT AVOIR UNE DÉCIMALE, MAIS ARRONDIE** (même jour) — un pas de 0,1 ou de 0,25, jamais une valeur à deux décimales. Le plancher dit **à partir
+  de quand le sujet cesse d'être écrasé**, ce qui est un jugement plus fin qu'une case ; il reste un jugement, et un jugement ne sort pas d'une division.
+- **CE QUI A PRODUIT CETTE RÈGLE** : les fourchettes en place sont des **amorces reprises de l'ancienne formule**, jamais relues — `BT-001` déclarait 13,12 à
+  16,02 TY. Deux décimales sont la signature d'un nombre calculé, et elles font passer pour un jugement ce qui n'est que le reste d'une division supprimée.
+  `BT-001` est repassé à **13 à 16** le 2026-08-13 ; les autres restent à relire, une par une, puisque chacune est un jugement distinct.
 - **CE QUE LA HAUTEUR DÉCLARÉE RESTE, SI ELLE RESTE** : une donnée de jeu — ce que le sujet mesure dans le monde —, jamais une donnée de production. Elle ne commande plus aucune toile et ne juge plus
   aucune image.
 
 ## Questions ouvertes
 
-Aucune : le modèle est arrêté ; le contrat exact du port de rendu s'écrira au socle applicatif, sans rouvrir ces choix. Le **format du référentiel des sujets** reste à écrire, et il l'est en même temps que le fichier lui-même — il ne se décide plus, il se rédige.
+Aucune : le modèle est arrêté ; le contrat exact du port de rendu s'écrira au socle applicatif, sans rouvrir ces choix. Le **format du référentiel des sujets**
+reste à écrire, et il l'est en même temps que le fichier lui-même — il ne se décide plus, il se rédige.
