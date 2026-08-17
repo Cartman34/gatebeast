@@ -309,6 +309,17 @@ piloter son projet.
 - **Tout libellé et tout titre affiché commence par une majuscule** — « Vue principale », jamais « vue principale ». Une seule majuscule, celle du début : elle ne se répète pas à chaque mot. Les codes
   et les adresses techniques gardent leur casse exacte, celle des fichiers (`OB-010`, `cutout/cloture/...`), aucune majuscule ajoutée. Une interface où la casse varie d'un libellé à l'autre donne
   l'impression que personne ne l'a relue — c'est le genre de détail qui se corrige une fois par page tant que la règle n'existe pas.
+- **TOUTE PAGE PORTE UN TITRE, UNE FAVICON, ET DIT SON CHEMIN D'ACCÈS JUSQU'À L'INDEX** (opérateur, 2026-08-17 : « toute page référence son arbo d'accès et
+  chaque page est accessible par l'index »). **L'arborescence a deux niveaux au plus pour l'instant, l'index étant le premier**, et chaque page est joignable
+  depuis lui. Une page servie qui n'affiche ni son nom ni d'où elle vient ne s'atteint que par son adresse : on y arrive par un lien, on ne sait plus remonter,
+  et elle finit oubliée — c'est ce qui est arrivé à `/workshop`, servie et absente de tout index. **Un onglet sans titre ni favicon ne se retrouve pas non plus**
+  quand cinq pages de revue sont ouvertes côte à côte.
+- **UNE SPRITE MONTRÉE PAR UN OUTIL PORTE TOUJOURS SON QUADRILLAGE DE CASES, ET LA MAQUETTE EST LA SEULE EXCEPTION** (opérateur, 2026-08-17 : « on doit voir les
+  cases représentées. ça doit toujours être le cas sur les outils, hors maquette »). Sans lui, une image se juge dans le vide : rien ne dit ce qu'elle occupe au
+  sol, ce que son volume déborde, ni où tombent ses axes. La maquette échappe à la règle parce qu'on y regarde la sprite **dans** une scène au lieu de la
+  mesurer. **Rien ne se redessine pour cela** : `review-server/lib/FootprintGrid.php` porte le pavage, le balisage et la réserve, `footprint-grid.css` son
+  style, et toute page qui montre une sprite les appelle — **et un outil se corrige pour s'y conformer** (même relevé : « les outils doivent pouvoir être
+  amélioré s'il faut »).
 - **ON PARLE EN CASES, JAMAIS EN PIXELS** (opérateur, 2026-08-10). Toute mesure adressée à l'opérateur — message, question, compte rendu, libellé de page — se dit dans l'unité du jeu : « une case et
   demie », pas « 132 px ». Le pixel reste ce que le code calcule et ce que l'échelle fait foi ; il n'est pas ce dont on parle. Un chiffre en pixels oblige son lecteur à refaire la division pour savoir
   de quoi il s'agit, et deux hauteurs comparées en pixels ne se comparent plus dès que la finesse du maître change.

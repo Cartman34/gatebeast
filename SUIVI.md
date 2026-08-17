@@ -12,13 +12,63 @@ la cible à `doc/conception/`, les mots au [glossaire](doc/glossaire.md), et tou
 document empilait une section par séance, ce que sa propre première ligne interdit. **Ce qui en a été retiré n'est pas dans un diff, il est dans
 [doc/journal-des-seances.md](doc/journal-des-seances.md)** — versionné, citable, et qui ne dit que le pourquoi des décisions passées, jamais l'état courant.
 
-### OÙ ON EN EST À LA FIN DU 2026-08-13
+### OÙ ON EN EST AU 2026-08-17
 
-**CE QU'ON REPREND EN OUVRANT LA SÉANCE SUIVANTE, ET IL N'Y A PAS À CHERCHER AILLEURS : `S97 consigne-propre`.** L'opérateur l'a demandé nommément en fin de
-séance. **On ne travaille plus en regénérant : on écrit une consigne propre de bout en bout en MODIFIANT le texte déjà généré, et on ne reporte dans le code que
-ce qui fonctionne.** Le générateur est donc gelé — `scripts/asset_common.py` et `scripts/generate-sprite.py` sont à l'identique, une modification y a été faite
-puis annulée le jour même, et la référence de `diff-prompts.sh` est refigée sur ce code. Tout l'état du sujet est à sa description, `php scripts/backlog.php show
-consigne-propre` : où en est la `v2`, comment se fabrique une version, et ce qui reste à relire.
+**LE SEUL SUJET OUVERT EST `S97 consigne-propre`, ET IL SE TRAITE HORS DÉPILEMENT** (opérateur, 2026-08-17 : « ce sujet est sensible alors on arrête le
+dépilement, tu traites ce sujet »). **On ne travaille plus en regénérant : on écrit une consigne propre de bout en bout en MODIFIANT le texte déjà généré, et on
+ne reporte dans le code que ce qui fonctionne.** Le générateur est donc gelé — `scripts/asset_common.py` et `scripts/generate-sprite.py` sont à l'identique, et
+la référence de `diff-prompts.sh` est refigée sur ce code. Tout l'état du sujet est à sa description, `php scripts/backlog.php show consigne-propre`.
+
+**CE QU'ON PREND À LA REPRISE, EN PRIORITÉ 1 : `S1 suggestions-gen`.** L'agent générateur propose des corrections à la clause de caméra, dans
+`local/projection-camera-prompt.diff`. Sa première suggestion était juste et est déjà appliquée en `v6`.
+
+**LE BACKLOG NE SUIT PLUS, ET C'EST À TRAITER** (opérateur, 2026-08-17 : « le backlog lui n'est pas au courant de tant de détails, tu es coincé sur le même
+sujet depuis trop longtemps et le backlog ne sert plus, c'est un problème »). `S97 consigne-propre` est ouvert depuis le 2026-08-13 et a absorbé toute la
+séance : la source de l'atelier, le foyer des consignes, six versions, quatre outils de mesure. Rien de cela n'est dans sa description, et les points voisins —
+`S94`, `S98`, `S99`, `Q1` — décrivent un état dépassé. **Un sujet qui dure une semaine cesse d'être un point de pile** : il faudra soit le découper en points
+qui se ferment, soit lui donner un foyer à lui et le sortir de la pile.
+
+**CE QUI N'A PAS ÉTÉ FAIT AUJOURD'HUI ET ATTEND** : reporter dans le code ce qui a été tenu (`S97`, dernière étape) ; les blocs de source `style`, `detourage`
+et `reponse`, qui restent en texte plat ; l'état par édit affiché sur la page (`S98`) ; et la `v6`, écrite et **non générée**.
+
+**L'ATELIER A SA PROPRE SOURCE DE VÉRITÉ, SÉPARÉE DE L'APPLICATION** (opérateur, 2026-08-17 : « on ne travaille que pour l'atelier de génération, on définit tout
+bien et après on appliquera à l'application. Sinon tu vas faire les modifs à moitié et laisser des reliquats un peu partout »). Rien de `scripts/` ni de
+`doc/conception/` n'est aligné dessus, et **c'est voulu** : on définit d'abord, en un lieu, on applique ensuite.
+
+- **`review-server/workshop/source/` — les blocs de règle**, un par sujet : `projection`, `lumiere`, `dimensions`, `assise`. Chacun porte **l'explication et la
+  clause exacte** qui part au générateur, dans le même fichier, pour qu'on ne puisse pas corriger l'une en oubliant l'autre.
+- **`php review-server/workshop/check-source.php`** tient la cohérence **mécaniquement** : chaque bloc déclare en en-tête les mots qu'il **gouverne**, et aucun
+  autre ne peut les employer. On ne gouverne que ce qu'on **énonce**, jamais le vocabulaire partagé — `TX`, `TY` et les cardinaux se définissent à la projection
+  et s'emploient partout. La liste se sépare par des **points-virgules**, parce qu'une valeur gouvernée porte des décimales.
+- **`php review-server/workshop/apply-source.php <SUJET> <bloc>`** est le seul chemin entre la source et une version. Il remplace une **section entière**, et
+  **il écrit toujours dans la version en attente** — celle qui suit la dernière générée. Empiler une version par correction est mécaniquement impossible.
+
+**LA CONSIGNE VIT SOUS `review-server/workshop/consignes/<SUJET>/`, VERSIONNÉE DE BOUT EN BOUT, RACINE COMPRISE.** Elle était à cheval sur deux répertoires dont
+un jetable, et son identité était une date. Un fichier se nomme `<SUJET>.v<N>.<quoi>.<ext>` — `prompt`, `image`, `edits`, `generation`, `transmitted`,
+`critiques` — parce qu'un nom doit dire de qui il est et ce qu'il est. Les trois incohérences qui restaient sont à `S99 consigne-structuree`.
+
+**LA `v5` EST GÉNÉRÉE, LA `v6` EST EN ATTENTE.** Une version en attente se **modifie** tant qu'elle n'est pas générée ; une version qui porte une image est
+close. **AUCUNE GÉNÉRATION NE PART SANS L'ACCORD DE L'OPÉRATEUR** — trois versions ont été empilées et une génération dépensée sans qu'il l'ait demandé.
+
+**ET LA MESURE DE LA `v5` NE VAUT RIEN, CE QUI EST LE CONSTAT LE PLUS IMPORTANT DE LA SÉANCE.** Elle sort à 16,00 TX sur 13,30 TY, pile dans le contrat, marges
+à 0,01 — et c'est faux. `php local/scripts/show-generator-calls.php <journal>` montre ce que l'agent exécute réellement : `src.crop(box).resize((1536,1120))`.
+**Il détoure, recadre sur la matière, puis ÉTIRE l'image à nos dimensions.** L'encre remplit donc la toile par construction, et **aucune mesure sur l'encre ne
+peut plus voir la déformation** — c'est l'erreur transparente que ce dépôt chasse, le contrôle rendant « tout va bien » sans avoir rien contrôlé. `Q1
+remplissage-image` ne porte plus la bonne question : le sujet n'est pas le remplissage, c'est **l'étirement**.
+
+**LES OUTILS DE MESURE** : `php scripts/check-parallel-projection.php <image>` chiffre la dérive de la silhouette rangée par rangée et rend un verdict — la `v5`
+perd la projection sur 11 arêtes, la pire de 392 rangées à 0,112. `php local/scripts/measure-trial-image.php <image>` donne toile, encre et marges.
+`review-server/lib/SpriteMeasures.php` porte les deux, partagé avec la page.
+
+**LA GÉNÉRATION ENREGISTRE SA SESSION ET SA CONSIGNE TRANSMISE** : `php scripts/generate-version.php <SUJET.vN.prompt.txt>` écrit `<…>.generation.json`, et
+`php review-server/workshop/extract-transmitted.php <SUJET> <rang>` sort du journal du générateur le texte qu'il a réellement envoyé à son modèle d'images —
+il le rapportait depuis le début, personne ne le ramassait. **Aucun comptage phrase par phrase n'est affiché** : l'agent réécrit au lieu de relayer, donc tout
+sortait « Disparue », y compris sur les sections qu'on lui demande de ne pas transmettre.
+
+**LE QUADRILLAGE DE CASES SE MONTRE SUR TOUS LES OUTILS, HORS MAQUETTE**, et la règle est aux [règles du dépôt](doc/regles-du-depot.md). La feuille de la grille
+a quitté la page des sprites pour vivre avec son service, `review-server/lib/footprint-grid.css` : les deux pages la chargent, aucune ne la redéclare. Et
+`check-review-pages.php` lit maintenant **ce que la page charge**, au lieu d'une liste de fichiers tenue à la main — c'est cette liste qui a déclaré perdu un
+comportement intact, une feuille plus loin.
 
 **LA CONSIGNE A DES VERSIONS, ET LE DIFF SE FAIT D'UNE VERSION À LA SUIVANTE.** `v1` est le texte que la chaîne a produit, sous `var/generations/trials/` ; les
 suivantes vivent à `review-server/critiques/<essai>/<consigne>.v<N>.txt`, avec leurs critiques sous le même nom de version. La page `/workshop` montre la version
@@ -88,8 +138,9 @@ rien et la fin de tour n'est jamais refusée.
 
 **Le prompt de reprise, à donner tel quel à une session neuve :**
 
-> Travaille dans ~/projects/gatebeast. Lis AGENTS.md, puis doc/regles-du-depot.md en entier, puis la première section de SUIVI.md — elle contient tout le reste. Mode dépilement continu, annonce-le
-> et arrête-toi.
+> Travaille dans ~/projects/gatebeast. Lis AGENTS.md, puis doc/regles-du-depot.md en entier, puis `~/projects/conceptions/methode/collaboration.md`, puis la
+> première section de SUIVI.md — elle dit sur quoi on reprend et en quelle priorité, et elle contient tout le reste. Démarre le serveur de revue. Tu ne
+> génères aucune image sans mon accord, et tu réponds à une question sans rien modifier. Annonce le mode et arrête-toi.
 
 **LA REVUE SE REGARDE EN LOCAL** : `php review-server/serve.php`, puis l'adresse qu'il imprime — **elle est configurée dans `review-server/config.json`, et `php review-server/url.php` la dit**, le
 port se changeant là et nulle part ailleurs. **Cinq pages** — l'Index, `/inventory` qui dit ce que chaque sujet **est**, `/backlog` qui porte les **points ouverts du projet** et reçoit les votes, le

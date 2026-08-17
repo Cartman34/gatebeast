@@ -180,10 +180,45 @@
   <h1>La pile</h1>
   <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
   décision qui t'appartient. <strong>Chaque carte porte ton vote</strong> : ce que tu veux voir traité, et ce que tu rejettes — une task rejetée sort de la pile. Le vote se retire en recliquant.</p>
-  <p class="compte">2 en attente de toi · 19 à moi · php scripts/backlog.php next</p>
+  <p class="compte">3 en attente de toi · 21 à moi · php scripts/backlog.php next</p>
   <div class="grid">
   <article class="point" data-status="proposed">
-    <p class="point-tete"><span class="point-ref">numerotation-series</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 30</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <p class="point-tete"><span class="point-ref">consigne-structuree</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 20</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>La consigne n&#039;est qu&#039;un texte plat : ses niveaux sont des etiquettes, pas des sources</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CE POINT EST NÉ DE DEUX MAUVAISES QUESTIONS</strong> (<code>Q27 sort-des-versions</code>, <code>Q28 perimetre-source</code>), et de l&#039;ordre de l&#039;opérateur du 2026-08-17 : « elles ont<br />
+peut-être une origine qui est un vrai problème. Tu dois le déterminer et arrêter d&#039;accepter des problèmes et des incohérences. » Voici l&#039;origine, et c&#039;est une<br />
+seule.</p>
+<p><strong>LA CONSIGNE N&#039;EXISTE QUE COMME UN TEXTE PLAT. SA STRUCTURE EST UNE ANNOTATION, PAS UNE ARCHITECTURE.</strong> Les titres et les niveaux — <code>common</code>, <code>type</code>,<br />
+<code>variant</code>, <code>description</code>, <code>parameters</code>, <code>call</code> — sont écrits DANS le texte assemblé et décrivent d&#039;où chaque passage est censé venir. Mais rien ne tient ces<br />
+niveaux séparément, rien ne les vérifie, et rien ne peut être modifié à sa source : il n&#039;y a qu&#039;une seule copie, le texte lui-même. Tout le reste en découle.</p>
+<p>## LES TROIS INCOHÉRENCES QUE ÇA PRODUIT, ET AUCUNE N&#039;EST UNE QUESTION À POSER</p>
+<p><strong>1. LA CHAÎNE DE VERSIONS EST À CHEVAL SUR DEUX RÉPERTOIRES, DONT UN JETABLE.</strong> La <code>v1</code> vit sous <code>var/generations/trials/</code>, qui n&#039;est pas versionné et que la<br />
+page annonce elle-même comme effaçable — « un essai nettoyé depuis reste lisible ici et disparaîtra à la construction suivante ». Les <code>v2</code> et suivantes vivent<br />
+sous <code>review-server/critiques/</code>, qui est versionné. <strong>Une chaîne dont la racine peut disparaître n&#039;est pas une chaîne</strong> : le jour où le nettoyage passe, tous les<br />
+diffs perdent leur origine et aucune version ne sait plus d&#039;où elle vient.</p>
+<p><strong>2. L&#039;IDENTITÉ D&#039;UNE CHAÎNE EST UNE DATE, PAS UN SUJET.</strong> Le dossier s&#039;appelle <code>2026-08-13-BT-001</code>. La date est celle d&#039;une génération d&#039;il y a quatre jours et<br />
+ne dit rien du travail en cours ; le sujet, lui, est ce sur quoi on travaille. C&#039;est cette date qui a fait naître <code>Q27</code> : dès qu&#039;on écrit une consigne<br />
+autrement, on se demande s&#039;il faut un dossier neuf — une question qui n&#039;existerait pas si le dossier portait le sujet et son variant.</p>
+<p><strong>3. LES NIVEAUX SONT DÉCLARÉS ET NE SONT SOURCÉS NULLE PART.</strong> Une section porte <code>description</code> ou <code>parameters</code>, mais il n&#039;existe aucun bloc <code>description</code> ni<br />
+aucun bloc <code>parameters</code> dont elle serait le rendu. C&#039;est ce qui a fait naître <code>Q28</code> : en cherchant où poser la source des données de sujet, il n&#039;y avait rien à<br />
+reprendre — seulement des étiquettes sur un texte. <strong>Une étiquette qui ne renvoie à rien ne garantit rien</strong>, et deux sections du même niveau peuvent se<br />
+contredire sans que rien ne le voie.</p>
+<p>## CE QUI EST DÉJÀ EN PLACE</p>
+<p><code>review-server/workshop/source/projection.md</code> est le premier bloc de source réel : la projection y est définie une fois, et aucun autre fichier de l&#039;atelier n&#039;a<br />
+le droit de la redire. C&#039;est le modèle des blocs suivants.</p>
+<p>## CE QUE ÇA APPELLE</p>
+<ul>
+<li><strong>Une chaîne de versions entièrement versionnée, dans un seul répertoire</strong>, racine comprise.</li>
+<li><strong>Une identité qui nomme le sujet et son variant</strong>, jamais une date.</li>
+<li><strong>Un bloc de source par niveau</strong>, dont le texte assemblé est le rendu — et un contrôle qui refuse qu&#039;une phrase de la consigne n&#039;ait pas de bloc d&#039;origine.</li>
+</ul>
+</details>
+    <div class="acts" data-id="consigne-structuree"><label class="act act--wanted"><input type="checkbox" data-id="consigne-structuree" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="consigne-structuree" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="consigne-structuree" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-17 · repris le 2026-08-17</p>
+  </article>
+  <article class="point" data-status="proposed">
+    <p class="point-tete"><span class="point-ref">numerotation-series</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 30</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
     <h2>La numérotation des séries saute : deux questions ouvertes numérotées Q1 et Q24, et Q1 a déjà servi</h2>
     <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CONSTATÉ LE 2026-08-13</strong>, en ouvrant deux questions à la suite : la première a reçu <code>Q1</code>, la seconde <code>Q24</code>. Les deux sont ouvertes, et il manque vingt-deux<br />
 numéros entre elles.</p>
@@ -200,7 +235,7 @@ essais de la commande n&#039;en couvrent pas le cas ; il s&#039;écrit avec.</p>
     <p class="point-pied">Créé le 2026-08-13 · repris le 2026-08-13</p>
   </article>
   <article class="point" data-status="proposed">
-    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 43</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
+    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 43</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
     <h2>Le hook de fin de tour ne connaît pas la fin de séance et refuse de laisser l&#039;agent s&#039;arrêter</h2>
     <details class="point-corps"><summary>Ce que ça engage</summary><p><strong><code>hook-stop.php</code> REFUSE LA FIN DE TOUR TANT QU&#039;IL RESTE DES TÂCHES, ET IL NE CONNAÎT PAS LA FIN DE SÉANCE.</strong> Le 2026-08-12, l&#039;opérateur écrit « Termine,<br />
 enregistre tout, fin de session » ; tout est terminé, enregistré, le serveur fermé — et le hook renvoie « TU NE T&#039;ARRÊTES PAS : 16 tâches sont encore à faire ».</p>
@@ -219,12 +254,14 @@ garderait tout son sens dans le seul cas où il a été écrit — un agent qui 
   </article>
   </div>
   <details class="clos">
-    <summary>Les 19 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
+    <summary>Les 21 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
     <ul class="mien">
     <li><span class="point-ref">consigne-propre</span> Une consigne propre de bout en bout, écrite en modifiant le texte généré — le sujet de la reprise</li>
     <li><span class="point-ref">atelier-generation</span> Une page d&#039;atelier : la consigne, ses niveaux, l&#039;image, et le diff avec la consigne transmise</li>
+    <li><span class="point-ref">suggestions-gen</span> Traiter les suggestions de l&#039;agent generateur sur la clause de camera</li>
     <li><span class="point-ref">pages-hors-index</span> Une page servie peut n&#039;apparaître dans aucun index : deux listes tenues à la main, rien ne les accorde</li>
     <li><span class="point-ref">remplissage-image</span> Le générateur complète l&#039;image pour atteindre nos dimensions : interdire ce remplissage, ou l&#039;accepter en le mesurant</li>
+    <li><span class="point-ref">suivi-tests-consigne</span> Une version de consigne ne dit pas si elle a été testée, ni quelle correction a porté</li>
     <li><span class="point-ref">passes-generateur</span> Le générateur ne rapporte que sa dernière passe : lui demander toutes ses passes, ou seulement celle qui dessine</li>
     <li><span class="point-ref">emprise-non-rect</span> Une emprise ne sait être qu&#039;un rectangle : un bâtiment en L rendrait le référentiel et la consigne faux</li>
     <li><span class="point-ref">outils-morts</span> Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</li>

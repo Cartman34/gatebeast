@@ -28,10 +28,16 @@ $html = file_get_contents($page);
 // LA PAGE, C'EST AUSSI CE QU'ELLE CHARGE. Its style and its script moved out into their own files on 2026-08-09, and the built page now only carries a link and a
 // src towards them. Reading the page alone would then declare nine behaviours lost while every one of them was intact, one file away — a validator that follows the
 // content is part of the move, not a step to remember afterwards.
-foreach (['page.css', 'page.js'] as $carried) {
-    $path = $root . '/review-server/suivi-sprites/' . $carried;
+//
+// AND WHAT IT LOADS IS READ FROM THE PAGE, NEVER FROM A LIST WRITTEN HERE. The two file names used to be typed in this file, so the day the tile grid moved to
+// its own sheet beside its service — `review-server/lib/footprint-grid.css`, 2026-08-17 — this check declared a behaviour lost while it was intact one file
+// away, exactly the failure the paragraph above describes. A list maintained by hand is a second declaration of what the page loads, and the two drift.
+preg_match_all('/<(?:link[^>]+href|script[^>]+src)="([^"]+\.(?:css|js))"/i', $html, $carried);
+foreach ($carried[1] as $reference) {
+    // A reference is absolute from the served root, or relative to the page's own folder — both forms are in use, and both resolve to a file of this repository.
+    $path = str_starts_with($reference, '/') ? $root . $reference : dirname($page) . '/' . $reference;
     if (!is_file($path)) {
-        fwrite(STDERR, "FAULT « {$carried} » manque à la page des sprites : elle le charge et il n'existe pas.\n");
+        fwrite(STDERR, "FAULT « {$reference} » manque à la page des sprites : elle le charge et il n'existe pas.\n");
         exit(1);
     }
     $html .= "\n" . file_get_contents($path);

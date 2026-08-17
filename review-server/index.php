@@ -251,7 +251,32 @@ foreach ($artifacts as $artifact) {
     $byCategory[$artifact['category']][] = $artifact;
 }
 
-$groupsHtml = renderGroup('Vivants', $byCategory['alive'], 'alive', $markdownWarnings)
+// CHAQUE PAGE SERVIE EST JOIGNABLE DEPUIS L'INDEX, ET LA LISTE VIENT DU REGISTRE DES PAGES (opérateur, 2026-08-17 : « chaque page est accessible par
+// l'index »). Cet index se construisait depuis le SEUL registre des artefacts publiés, si bien qu'une page pouvait être servie, répondre, et n'apparaître nulle
+// part — c'est arrivé à /workshop, servie pendant quatre jours sans qu'aucun lien n'y mène. Les deux listes existent pour deux choses différentes et aucune
+// n'est tenue à la main : `pages.php` dit ce qui est servi ici, `artefacts.json` ce qui est publié ailleurs.
+//
+// SEULES CELLES QUI MANQUENT SONT LISTÉES : une page déjà présente au registre porte déjà sa carte et son lien, et la répéter donnerait deux entrées pour une
+// page — l'index cesserait de dire ce qu'il y a.
+$known = [];
+foreach ($artifacts as $artifact) {
+    $known[$artifact['name']] = true;
+}
+$servedItems = '';
+foreach (require __DIR__ . '/pages.php' as $page) {
+    if (isset($known[$page['title']])) {
+        continue;
+    }
+    $servedItems .= sprintf("\n<a class=\"card card-alive\" href=\"%s\">\n  <h3 class=\"card-name\">%s</h3>\n"
+        . "  <p class=\"card-state\">Servie ici, et absente du registre des artefacts.</p>\n</a>",
+        escape($page['route']), escape($page['title']));
+}
+$servedHtml = $servedItems === ''
+    ? ''
+    : "\n<section class=\"group group-alive\">\n  <h2 class=\"group-title\">Servies ici, et nulle part ailleurs</h2>\n  <div class=\"group-cards\">\n    "
+        . $servedItems . "\n  </div>\n</section>";
+$groupsHtml = $servedHtml
+    . renderGroup('Vivants', $byCategory['alive'], 'alive', $markdownWarnings)
     . renderGroup('Archivés', $byCategory['archived'], 'archived', $markdownWarnings)
     . renderGroup('Clos', $byCategory['closed'], 'closed', $markdownWarnings)
     . renderGroup('À ne pas rouvrir', $byCategory['forbidden'], 'forbidden', $markdownWarnings);
@@ -479,8 +504,9 @@ header('Content-Type: text/html; charset=utf-8');
 <body>
 <h1>Index</h1>
 <p class="page-intro">Une seule adresse à retenir : la porte d'entrée vers toutes les pages de revue du projet
-GateBeast — celles qui sont servies ici et celles qui ont été publiées. Construite depuis le registre
-<code>review-server/artefacts.json</code>, seule source de vérité — rien ici n'est ajouté à la main.</p>
+GateBeast — celles qui sont servies ici et celles qui ont été publiées. Construite depuis deux registres et rien
+d'autre : <code>review-server/artefacts.json</code> pour ce qui est publié, <code>review-server/pages.php</code>
+pour ce qui est servi ici. Aucune page n'y est ajoutée à la main, et aucune ne peut manquer.</p>
 <?= $groupsHtml ?>
 
 <?= $anomaliesHtml ?>

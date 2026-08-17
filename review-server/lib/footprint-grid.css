@@ -1,0 +1,56 @@
+/* USAGE
+     The stylesheet of the tile grid laid over a sprite, wherever a sprite is shown. It goes with `review-server/lib/FootprintGrid.php`, which produces the
+     markup these rules dress, and it is linked by every tool page showing a sprite — never copied into one.
+
+   INTENTION
+     THE GRID IS SHOWN ON EVERY TOOL, AND ITS STYLE MUST BE ONE (operator, 2026-08-17: « on doit voir les cases représentées. ça doit toujours être le cas sur
+     les outils, hors maquette »). The markup already lived in a service for that exact reason; its style stayed behind in the sprites page's own sheet, so the
+     second page to draw a grid had to copy it — and the copy would answer differently the first time a line width or a token moved, with nothing on screen
+     saying which one was right.
+
+     THE COLOURS ARE THEME TOKENS, NEVER VALUES WRITTEN HERE: this sheet draws, the theme colours. */
+
+/* THE WRAPPER HUGS THE IMAGE, and it is what the grid measures itself against: laid on the card, the grid announced a sprite as wide as the whole card. */
+.picture { position: relative; display: inline-block; line-height: 0; }
+/* THE FOOTPRINT GRID IS NOT CALLED « grid »: that name belongs to the tile grid of the sprites page's layout, and taking it back made the whole page go
+   absolute — empty sections, three tiles floating off the page. A name already taken in the same sheet is a name taken, and a class is not chosen for being
+   the most obvious.
+   THE GRID NEVER MASKS THE IMAGE: one-pixel lines, and nothing filled — the sprite is being judged, the grid only places it. */
+.footprint { position: absolute; inset: 0; pointer-events: none; }
+/* UNE CASE EST TOUJOURS ENTIÈRE, MÊME LÀ OÙ L'IMAGE NE LA REMPLIT PAS (opérateur, 2026-08-12 : « il ne doit jamais y avoir de demi case, une case doit être
+   affichée entière même si incomplète »). The paving is anchored on the ground and the picture is never a whole number of tiles tall, so the top row was a
+   fraction with no line to close it. The tiling therefore RISES above the image by `--tile-rise` — a percentage of the image's height, so it follows any
+   magnification like everything else here — and `--tile-y` is a percentage of that risen box, which is exactly a whole number of rows tall.
+   NOTHING ELSE RISES WITH IT: the ground footprint, the overhang cover and the two axes stay measured on the image, which is what they describe. The room the
+   rise needs is reserved by a margin on `.picture`, given by the builder. */
+.footprint::before {
+  content: ""; position: absolute; top: calc(-1 * var(--tile-rise)); right: 0; bottom: 0; left: 0;
+  background-image: linear-gradient(to right, var(--overlay-soft) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--overlay-soft) 1px, transparent 1px);
+  background-size: var(--tile) var(--tile-y);
+  background-position: bottom left;
+}
+/* THE GROUND FOOTPRINT IS ANCHORED AT THE BOTTOM AND CENTRED: that is where the subject touches the ground, and that rectangle is what the plan places it by.
+   AND IT IS A FRAME, NEVER A FILL (operator, 2026-08-17, capture in hand: « le marquage d'emprise change la couleur. Je dois le voir derrière »). Its tint lay
+   over the sprite and shifted every colour inside the footprint, so the same tile read one way inside the rectangle and another outside — and the colours are
+   precisely what is being judged. It is also what this sheet already promised two rules above: « the grid NEVER masks the image, one-pixel lines and nothing
+   filled ». The rule was written and the fill contradicted it. */
+.footprint-ground {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  border: 1px solid var(--footprint-edge);
+}
+/* THE COVER IS WHAT THE VOLUME OVERHANGS — the whole picture, since that is what it is laid on. It is drawn only when it exceeds the footprint.
+   IT MUST NOT LOOK LIKE THE FOOTPRINT (operator, 2026-08-12: « je dois voir clairement les cases avec emprise et les cases de débordement, avec le nouveau
+   thème j'ai perdu une partie à ce niveau-là »). Two things to tell apart, so two colours and two line styles: the footprint is a solid accented rectangle, the
+   overhang a dashed one in its own colour. Both are theme tokens — never a value written here. */
+/* ET IL EST HACHURÉ, PARCE QU'UN CONTOUR SEUL SE PERD (opérateur, 2026-08-12 : « on ne voit pas bien la couverture de dépassement »). Le tireté dit où le
+   débordement s'arrête, jamais ce qu'il couvre : sur un bosquet clair, sa propre couronne l'avale. Les hachures le REMPLISSENT sans le masquer — traits d'un
+   pixel, écartés de huit, dans la couleur du débordement au voile près : c'est la règle de cette feuille, « la grille ne masque jamais l'image », et une sprite
+   se juge AU TRAVERS. L'angle et l'écart sont du dessin et vivent ici ; la couleur est un jeton, déclarée dans les trois thèmes sous `--overhang-hatch`. */
+.footprint-cover {
+  position: absolute; inset: 0; border: 1px dashed var(--overhang-edge);
+  background-image: repeating-linear-gradient(45deg, var(--overhang-hatch) 0 1px, transparent 1px 8px);
+}
+.footprint-axis { position: absolute; background: var(--overlay); }
+.footprint-axis--x { left: 0; right: 0; bottom: 0; height: 1px; }
+.footprint-axis--y { top: 0; bottom: 0; left: 50%; width: 1px; }

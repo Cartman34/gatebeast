@@ -29,6 +29,14 @@ class WordDiff
     public const ADD = 'add';
 
     /**
+     * The share of the NEW text that must survive from the old one for a change to still read as a retouch rather than a rewrite.
+     *
+     * A THIRD, and the figure is a judgement rather than a measure: below it, what two texts share is the grammar of the language — articles, prepositions,
+     * relative pronouns — and marking those as « kept » says nothing about the meaning. It is declared here so that raising it is a decision, not a habit.
+     */
+    public const REWRITE_FLOOR = 0.35;
+
+    /**
      * Below this many characters, a run matching both texts proves nothing about having been KEPT — see merged().
      *
      * The figure is `PromptDiff::EVIDENCE_FLOOR`, and it is stated here rather than borrowed: the two answer different questions — one asks whether a sentence
@@ -87,7 +95,17 @@ class WordDiff
         return $runs;
     }
 
-    /** One changed hunk, compared word by word — or a pure removal or addition, which needs no comparison at all. */
+    /**
+     * One changed hunk, compared word by word — or a pure removal or addition, which needs no comparison at all.
+     *
+     * UN PARAGRAPHE ENTIÈREMENT RÉÉCRIT EST UN PARAGRAPHE SUPPRIMÉ ET UN PARAGRAPHE AJOUTÉ, PAS DES BOUTS (opérateur, 2026-08-17 : « quand un paragraphe est
+     * entièrement ré-écrit, c'est un paragraphe entier supprimé et un entier ajouté, pas de petits bouts en petits bouts »). Deux rédactions différentes du même
+     * sujet partagent des dizaines de mots vides — « de », « la », « et », « qui » — et un diff de mots les épingle un à un, rendant les deux textes en confettis
+     * rouges et verts où l'on ne lit plus ni l'ancien ni le nouveau. Sous le plancher de survie, le mot à mot ne renseigne plus : il obscurcit.
+     *
+     * LE PLANCHER PORTE SUR CE QUI SURVIT, pas sur ce qui change, et il se mesure sur le texte NEUF : c'est celui qu'on lit. Au-dessus, une retouche se voit mieux
+     * mot à mot ; en dessous, on veut voir les deux rédactions entières, l'une après l'autre.
+     */
     private function hunk(string $removed, string $added): array
     {
         if ($removed === '') {
@@ -96,8 +114,18 @@ class WordDiff
         if ($added === '') {
             return [['op' => self::REMOVE, 'text' => $removed]];
         }
+        $runs = $this->runs($removed, $added);
+        $kept = 0;
+        foreach ($runs as $run) {
+            if ($run['op'] === self::KEEP) {
+                $kept += strlen($run['text']);
+            }
+        }
+        if (strlen($added) > 0 && $kept / strlen($added) < self::REWRITE_FLOOR) {
+            return [['op' => self::REMOVE, 'text' => $removed], ['op' => self::ADD, 'text' => $added]];
+        }
 
-        return $this->runs($removed, $added);
+        return $runs;
     }
 
     /**

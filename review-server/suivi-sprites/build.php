@@ -608,6 +608,8 @@ $page = <<<'HTML'
      variables du thème, les modules injectés, et la valeur que le filtre compare.
      CHEMIN RELATIF, ET C'EST MESURÉ : la page construite s'ouvre aussi comme un simple fichier, et un chemin absolu n'y résout pas — la sonde a montré une page
      entièrement muette. Les trois fichiers vivent dans le même dossier, donc le nom suffit, servi comme ouvert à la main. -->
+<!-- LA GRILLE DE CASES EST LA MÊME SUR TOUS LES OUTILS, donc sa feuille vit avec son service et se charge avant celle de la page. -->
+<link rel="stylesheet" href="/review-server/lib/footprint-grid.css">
 <link rel="stylesheet" href="/review-server/suivi-sprites/page.css">
 <style>
 {$reloadStyles}

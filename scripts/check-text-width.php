@@ -51,6 +51,25 @@ function isProse(string $line, string $path): bool
     return (bool) preg_match('#^\s*(//|/\*|\*|\#)#u', $line);
 }
 
+/**
+ * True when the line is a JSON string value — the third kind of line that CANNOT be folded, for exactly the reason the two others cannot.
+ *
+ * JSON HAS NO LINE CONTINUATION: a string value carrying a paragraph is one line by construction, and the only way to shorten it is to shorten the TEXT, which
+ * is an editorial choice and never a wrap — the very criterion this file already applies to a Markdown table row and to an inventory entry. The data files of
+ * the project hold prose in such values: the critiques of a consigne, the intention of an edit. Reported, they teach everyone to ignore the tool; and the fix
+ * an agent would reach for — cutting the sentence — is the forbidden substitution the common method names.
+ *
+ * THE EXEMPTION IS THE VALUE, NOT THE FILE: a long line of nested JSON on one row stays reported, because that one folds.
+ */
+function isJsonStringValue(string $line, string $path): bool
+{
+    if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) !== 'json') {
+        return false;
+    }
+
+    return (bool) preg_match('/^\s*"[^"]*"\s*:\s*".*",?\s*$/u', $line);
+}
+
 /** True when a line looks like the middle of a hand-wrapped paragraph: prose that stops short and does not close a sentence. */
 function continuesAParagraph(string $line, string $path = ''): bool
 {
@@ -73,6 +92,12 @@ function continuesAParagraph(string $line, string $path = ''): bool
     if (str_ends_with($trimmed, ';')) {
         return false;
     }
+    // A « clé: valeur » LINE IS A DECLARATION, AND A RUN OF THEM IS A HEADER — never a folded paragraph. A header is one key per line by construction: joining
+    // two of them would destroy the data, which is precisely what this rule exists never to ask for. Without it, the five-line header of a source block was
+    // reported as a paragraph wrapped too short.
+    if (preg_match('/^[a-zA-ZÀ-ÿ_][\w-]*\s*:\s*\S/u', $trimmed)) {
+        return false;
+    }
 
     return (bool) preg_match('/[a-zA-ZÀ-ÿ0-9,:]$/u', $trimmed) && !preg_match('/^\s*([-*+>#|]|\d+\.|```)/u', ltrim($trimmed));
 }
@@ -92,18 +117,25 @@ foreach ($paths as $path) {
     }
     $lines = explode("\n", file_get_contents($path));
     $run = [];
+    // UN BLOC DE CODE CLÔTURÉ EST DU CONTENU VERBATIM, ET SE REPLIER N'A AUCUN SENS DEDANS. Ce qu'il porte est reproduit tel quel — une commande, un extrait, la
+    // clause exacte qu'un générateur va lire —, et rejoindre deux de ses lignes changerait la chose reproduite. C'est la même raison que la ligne de tableau
+    // Markdown, déjà exemptée du plafond : le seul « correctif » possible serait de réécrire le contenu, ce qui est un choix éditorial et jamais un repli.
+    $fenced = false;
     foreach ($lines as $index => $line) {
         $number = $index + 1;
         $width = mb_strlen($line);
         // Two kinds of line CANNOT be folded, and reporting them is pure noise — the only answer would be a shorter text, an editorial choice, never a wrap:
         // a Markdown table row, whose row ends at the line break, and an inventory entry, which the tooling reads whole by its « - **CODE » opening. Exempt
         // from the ceiling, and from it alone.
-        $unbreakable = (bool) preg_match('/^\s*\||^- \*\*[A-Z]{2,3}-\d{3} /u', $line);
+        if (preg_match('/^\s*```/', $line)) {
+            $fenced = !$fenced;
+        }
+        $unbreakable = (bool) preg_match('/^\s*\||^- \*\*[A-Z]{2,3}-\d{3} /u', $line) || isJsonStringValue($line, $path) || $fenced;
         if ($width > CEILING && !$unbreakable) {
             echo "{$path}:{$number} : {$width} caractères, plafond " . CEILING . "\n";
             $faults++;
         }
-        if (continuesAParagraph($line, $path)) {
+        if (!$fenced && continuesAParagraph($line, $path)) {
             $run[] = $number;
             continue;
         }
