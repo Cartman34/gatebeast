@@ -1,7 +1,8 @@
 # Les règles du dépôt — GateBeast
 
 **Usage :** ce que lit et applique tout agent qui **construit** le projet, avant d'agir — les règles de tenue du dépôt et les renvois vers ce qui fait foi. On y arrive par
-[AGENTS.md](../AGENTS.md), qui oriente chaque agent selon son rôle et dit à qui ces règles s'adressent. Dépôt du projet GateBeast, jeu original de collection de créatures.
+[AGENT-START.md](../AGENT-START.md), qui oriente chaque agent selon son rôle et dit à qui ces règles s'adressent. Dépôt du projet GateBeast, jeu original de
+collection de créatures.
 
 **Intention :** réunir ce qu'un agent doit savoir pour ne pas nuire, et rien de plus. **Ce fichier n'est pas un fourre-tout** : une règle qui dit ce que le jeu doit être va à la conception, une règle
 sur le contenu d'un document va dans ce document, une règle de conduite valable au-delà de GateBeast va à la méthode commune. Ne reste ici que ce qui n'a pas d'autre foyer — et ce qui s'en trouve un
@@ -64,6 +65,11 @@ piloter son projet.
     inconnu, une incohérence, ou s'il veut proposer quelque chose ; sinon il fait, et il rend compte quand c'est fini. C'est le mode **par défaut**.
   - **Lot** — l'agent n'exécute rien avant d'avoir annoncé ce qu'il compte faire et reçu la validation de l'opérateur. Ce qui remonte remonte groupé, jamais sujet par sujet, et l'opérateur tranche en
     bloc. Y vont sans qu'il ait à le redire : toute proposition, toute génération d'image, tout verdict à demander.
+- **UNE GÉNÉRATION D'IMAGE NE SE DÉPILE JAMAIS, ET C'EST UNE EXCEPTION AU DÉPILEMENT CONTINU** (opérateur, 2026-08-19 : « faudra que tu exclues les générations
+  du dépilement mais que tu traites le reste, que ça avance »). Un point qui demande une image se traite **jusqu'à la consigne**, et il s'arrête là : le texte
+  est écrit, la version est en attente, et la génération se propose. Le `GO` du dépilement ne vaut pas accord pour dépenser une génération, et cela reste vrai
+  quel que soit le mode — c'est le prolongement de la règle « une génération ne se lance que sur une demande explicite », qui vit à la production d'images.
+  **Ce qui l'a fait écrire** : d'autres agents éprouvent la projection parallèle de leur côté, et le reste de la pile n'avance pas pendant ce temps.
 - **Le mode s'annonce avant de commencer, et l'agent s'arrête sur cette annonce** — à commencer par son démarrage, où c'est le mode par défaut qui s'applique et où il doit donc l'annoncer comme les
   autres : l'opérateur confirme, et l'agent part. Une annonce sans arrêt ne sert à rien, elle passe dans le flux et l'opérateur découvre le mode au résultat.
 - **LA FORME D'UN ORDRE, ET ELLE EST LA MÊME POUR LES DEUX MOTS** (opérateur, 2026-08-11 : « il doit avoir les mêmes règles »). Un ordre **ouvre sa ligne**, s'écrit **en capitales**, et se termine
@@ -290,11 +296,34 @@ piloter son projet.
 
 - **Le générateur d'images est l'agent Codex, enveloppé par `scripts/generate-image.php`** (versionné avec le projet). Personne ne l'appelle directement : un seul outil commande un sprite de bout en
   bout ([chaîne de production](doc/conception/referentiels/visuel/assets/chaine-de-production.md)).
-- **Trois barrières séparent le générateur d'images des règles du dépôt, et elles se couvrent l'une l'autre.** `AGENTS.md` ne porte plus aucune règle et se contente d'orienter, en
-  lui disant explicitement que rien d'ici ne le concerne ; son enveloppe coupe la lecture automatique des instructions du dépôt, à l'appel ; et la consigne qu'il reçoit le lui redit en toutes lettres.
+- **QUATRE BARRIÈRES SÉPARENT LE GÉNÉRATEUR D'IMAGES DES RÈGLES DU DÉPÔT, ET ELLES SE COUVRENT L'UNE L'AUTRE.** **Le fichier d'orientation ne porte aucun des
+  deux noms qu'une enveloppe d'agent charge toute seule** — il s'appelle `AGENT-START.md` depuis le 2026-08-19, et ni `AGENTS.md` ni `CLAUDE.md` n'existent plus
+  (opérateur : « ils font des interférences avec mes agents »). Il ne porte par ailleurs aucune règle et se contente d'orienter, en
+  disant explicitement que rien d'ici ne concerne l'illustrateur ; l'enveloppe coupe la lecture automatique des instructions du dépôt, à l'appel ; et la consigne
+  reçue le lui redit en toutes lettres, **sans nommer aucun fichier** — une phrase qui exclut un document par son nom cesse d'exclure quoi que ce soit le jour
+  où ce document est renommé.
   Constaté le 2026-08-06 : deux
   générations ont répondu « mode lot : cette génération nécessite votre validation » au lieu de dessiner, parce que la règle des modes venait d'être écrite dans le fichier qu'il chargeait. Ce qui doit
   parvenir au rôle `illustrator` s'écrit **dans sa consigne**, jamais dans un document du dépôt.
+- **UNE CONSIGNE EMPLOIE LE VOCABULAIRE CONVENTIONNEL DU MÉTIER, JAMAIS LE NÔTRE** (opérateur, 2026-08-18 : « tu dois utiliser des nommages standards, il connaît
+  ce que connaît internet, c'est une IA aussi. Les termes doivent être précis et ceux qu'on utilise conventionnellement partout »). Le générateur a appris sur ce
+  qui est publié : un terme que tout le monde emploie porte pour lui une définition entière, quand une périphrase maison ne porte rien et se réinterprète. On
+  écrit donc **`yaw`, `pitch`, `roll`** pour l'orientation d'une caméra, **`orthographic`** pour la projection, **`isométrie`** et **`trois-quarts`** pour ce
+  qu'on interdit — les mots des moteurs et de l'infographie, pas les nôtres. **Inventer un nom revient à décrire à un spécialiste ce qu'il sait déjà, dans une
+  langue qu'il ne parle pas.**
+- **ET CE QUI COMPTE EST CE QU'ON DOIT VOIR, PAS LE PARAMÈTRE QUI LE PRODUIT.** Un modèle d'images ne calcule ni un angle ni une formule : il dessine ce qu'on
+  lui décrit. « Plongée soixante degrés » lui a valu sept versions d'élévation frontale, parce que rien ne disait ce que soixante degrés donnent à voir. Un
+  paramètre se donne **avec son résultat visible**, et c'est le résultat qui prescrit.
+- **UNE GÉNÉRATION NE SE LANCE QUE SUR UNE DEMANDE EXPLICITE, ET « EXPLICITE » VEUT DIRE QUE LA PHRASE DEMANDE LA GÉNÉRATION ELLE-MÊME** (opérateur, 2026-08-18 :
+  « la génération ne peut être que demandée explicitement. Aucune directive implicite ne doit provoquer le lancement d'une génération »). Le test ne porte pas
+  sur ce que l'agent comprend, il porte sur les mots reçus : « lance une génération », « génère la v7 ». **Tout le reste est implicite et ne vaut rien** — ce
+  qu'il faudrait obtenir, ce qu'il faut faire d'abord, ce qui manque, ce qui serait mieux. **« On doit d'abord générer X » dit l'ordre des choses, pas qu'on les
+  lance** : c'est cette lecture qui a fait écrire une version et dépenser une génération le 2026-08-18, par le même agent qui venait d'écrire trois messages
+  disant qu'aucune génération ne partirait sans accord. **Le doute vaut refus** : devant une phrase qu'on hésite à lire comme un ordre, on ne lance pas, on
+  demande.
+- **ET DÉFAIRE EST UNE MESURE COMME UNE AUTRE : ON N'ANNULE PAS PLUS QU'ON NE LANCE** (même relevé : « son annulation non plus »). Repris sur un geste qu'il
+  n'avait pas demandé, l'agent veut effacer ce qu'il vient de faire — et il prend alors une SECONDE décision à la place de l'opérateur, pour réparer la
+  première. Ce qui existe reste, l'agent le dit, et c'est l'opérateur qui décide de ce qu'on en fait.
 - **Une seule génération par version, aucune relance sans accord** — sauf la reprise unique prévue par la chaîne de production des assets
   ([chaîne de production](doc/conception/referentiels/visuel/assets/chaine-de-production.md)), qui ne vaut que pour elle.
 - **Toute sprite générée est inscrite à son sujet et l'artefact de suivi est republié — sans exception** ([chaîne de production](doc/conception/referentiels/visuel/assets/chaine-de-production.md)).

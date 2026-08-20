@@ -180,10 +180,26 @@
   <h1>La pile</h1>
   <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
   décision qui t'appartient. <strong>Chaque carte porte ton vote</strong> : ce que tu veux voir traité, et ce que tu rejettes — une task rejetée sort de la pile. Le vote se retire en recliquant.</p>
-  <p class="compte">3 en attente de toi · 21 à moi · php scripts/backlog.php next</p>
+  <p class="compte">6 en attente de toi · 14 à moi · php scripts/backlog.php next</p>
   <div class="grid">
+  <article class="point" data-status="pending-decision">
+    <p class="point-tete"><span class="point-ref">commit-en-cours</span><span class="point-status">À trancher — attend une décision de l&#039;opérateur : l&#039;accord d&#039;enregistrer le travail en cours</span><span class="point-prio">priorité 6</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <h2>Enregistrer le travail en cours, pour débloquer le renommage des dossiers d&#039;images</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CE QUI BLOQUE</strong> : <code>php scripts/dev/rename-asset-folders.php</code> refuse de démarrer sur un arbre de travail sale, et c&#039;est délibéré — <strong>421 fichiers changent<br />
+d&#039;adresse et 310 chemins enregistrés sont réécrits</strong>, ce qui ne se relit pas dans un diff mêlé à autre chose. <code>git status</code> après coup doit rendre compte de ce<br />
+script et de rien d&#039;autre.</p>
+<p><strong>CE QUI EST EN COURS ET NON ENREGISTRÉ, AU 2026-08-20</strong> : une trentaine de fichiers — les outils et contrôles écrits depuis le 2026-08-18, le renommage de<br />
+<code>AGENTS.md</code> en <code>AGENT-START.md</code> et la suppression de <code>CLAUDE.md</code>, les corrections de l&#039;atelier, et les blocs de source de la projection.</p>
+<p><strong>CE QUE LA MÉTHODE DIT</strong> : le commit se propose en fin de séance, jamais à la reprise — « sinon tu ne sais plus ce qui a été fait ». Et aucune écriture<br />
+d&#039;historique ne se fait sans ordre explicite.</p>
+<p><strong>CE QUI DÉPEND DE LA RÉPONSE</strong> : <code>S80 dossiers-en-anglais</code> en entier. Le script est écrit, éprouvé à blanc, et il attend.</p>
+</details>
+    <div class="acts" data-id="commit-en-cours"><label class="act act--wanted"><input type="checkbox" data-id="commit-en-cours" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="commit-en-cours" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="commit-en-cours" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-20 · repris le 2026-08-20</p>
+  </article>
   <article class="point" data-status="proposed">
-    <p class="point-tete"><span class="point-ref">consigne-structuree</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 20</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
+    <p class="point-tete"><span class="point-ref">consigne-structuree</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 20</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
     <h2>La consigne n&#039;est qu&#039;un texte plat : ses niveaux sont des etiquettes, pas des sources</h2>
     <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CE POINT EST NÉ DE DEUX MAUVAISES QUESTIONS</strong> (<code>Q27 sort-des-versions</code>, <code>Q28 perimetre-source</code>), et de l&#039;ordre de l&#039;opérateur du 2026-08-17 : « elles ont<br />
 peut-être une origine qui est un vrai problème. Tu dois le déterminer et arrêter d&#039;accepter des problèmes et des incohérences. » Voici l&#039;origine, et c&#039;est une<br />
@@ -217,66 +233,115 @@ le droit de la redire. C&#039;est le modèle des blocs suivants.</p>
     <textarea class="comment" data-id="consigne-structuree" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
     <p class="point-pied">Créé le 2026-08-17 · repris le 2026-08-17</p>
   </article>
-  <article class="point" data-status="proposed">
-    <p class="point-tete"><span class="point-ref">numerotation-series</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 30</span><span class="point-attend">attend : agent</span><span class="point-rang">2</span></p>
-    <h2>La numérotation des séries saute : deux questions ouvertes numérotées Q1 et Q24, et Q1 a déjà servi</h2>
-    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CONSTATÉ LE 2026-08-13</strong>, en ouvrant deux questions à la suite : la première a reçu <code>Q1</code>, la seconde <code>Q24</code>. Les deux sont ouvertes, et il manque vingt-deux<br />
-numéros entre elles.</p>
-<p><strong>LA CAUSE, dans <code>Backlog::nextRef()</code></strong> (<code>review-server/lib/Backlog.php</code>) : le relevé des numéros employés balaie <strong>tous</strong> les points de la série, clos compris,<br />
-alors que le drapeau qui décide du redémarrage à 1 ne regarde que les <strong>ouverts</strong>. Quand la série est vide, on repart donc à 1 — ce qui est la règle — mais<br />
-l&#039;ajout suivant reprend le maximum de <strong>l&#039;historique</strong> et saute à 24.</p>
-<p><strong>CE QUE ÇA CASSE</strong> : <code>Q1</code> a déjà existé et été clos ; deux points portent maintenant le même code à deux dates, et rien ne les distingue quand l&#039;opérateur<br />
-répond « Q1 ». C&#039;est la collision que le commentaire de la fonction dit avoir corrigée le 2026-08-08 — elle est revenue par l&#039;autre bout.</p>
-<p><strong>LE CORRECTIF TIENT EN UN MOT</strong> : le maximum se prend sur les points <strong>ouverts</strong> de la série, puisque c&#039;est leur ouverture qui interdit le redémarrage. Les<br />
-essais de la commande n&#039;en couvrent pas le cas ; il s&#039;écrit avec.</p>
+  <article class="point" data-status="pending-decision">
+    <p class="point-tete"><span class="point-ref">voie-projection</span><span class="point-status">À trancher — attend une décision de l&#039;opérateur : la voie par laquelle on reprend la projection</span><span class="point-prio">priorité 20</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
+    <h2>Par quelle voie on reprend la projection parallèle, la voie textuelle ayant donné ce qu&#039;elle pouvait</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>LE SUJET EST L&#039;ALIGNEMENT PARALLÈLE DES MURS</strong> (opérateur, 2026-08-18 : « la seule chose que je demande actuellement, c&#039;est que la projection soit<br />
+parallèle »). Huit versions, et la <code>v8</code> est la meilleure : la pire dérive passe de 0,897 à <strong>0,100</strong> pixel par pixel de descente. <strong>Ce n&#039;est toujours pas<br />
+parallèle.</strong></p>
+<p><strong>CE QUI A ÉTÉ ÉPUISÉ, ET CE QUI NE L&#039;EST PAS :</strong></p>
+<ul>
+<li><strong>Écrire mieux dans le socle</strong> — épuisé une fois : le texte est arrivé entier, prioritaire, non reformulé, et il a échoué. Puis <strong>rouvert</strong> par le vocabulaire<br />
+  conventionnel — <code>yaw</code>, <code>pitch</code>, <code>roll</code> — et par le fait de dire ce que chaque paramètre <strong>donne à voir</strong>. C&#039;est ce qui a produit la <code>v8</code>.</li>
+<li><strong>Relire toute la consigne contre la projection</strong> — fait en <code>v8</code>, et c&#039;est ce qui a le plus rapporté : cinq sections tiraient contre la caméra sans jamais la<br />
+  contredire, dont l&#039;orientation des faîtages, qui n&#039;était écrite nulle part.</li>
+<li><strong>Ce qui reste, et qui n&#039;a jamais été essayé</strong> : une <strong>référence visuelle</strong> au lieu d&#039;une prescription ; une reprise <strong>en deux temps</strong> — composer la<br />
+  géométrie, puis l&#039;habiller ; un <strong>redressement après coup</strong>, mécanique, sur l&#039;image livrée.</li>
+</ul>
+<p><strong>CE QUI EST DÉJÀ SÛR ET NE SE REDISCUTE PAS</strong> : la transmission n&#039;est plus en cause. L&#039;agent traduit en anglais, en termes conventionnels, caméra en tête, et<br />
+<code>check-transmitted.php</code> mesure que rien de chiffré ne se perd.</p>
+<p><strong>CE QUI DÉPEND DE LA RÉPONSE</strong> : tout le sujet. D&#039;autres agents éprouvent la projection de leur côté depuis le 2026-08-19, donc rien ne se génère ici — mais<br />
+la voie décidée dira quoi ÉCRIRE en attendant.</p>
 </details>
-    <div class="acts" data-id="numerotation-series"><label class="act act--wanted"><input type="checkbox" data-id="numerotation-series" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="numerotation-series" data-act="dismissed"><span>Rejeter</span></label></div>
-    <textarea class="comment" data-id="numerotation-series" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
-    <p class="point-pied">Créé le 2026-08-13 · repris le 2026-08-13</p>
+    <div class="acts" data-id="voie-projection"><label class="act act--wanted"><input type="checkbox" data-id="voie-projection" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="voie-projection" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="voie-projection" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-20 · repris le 2026-08-20</p>
   </article>
   <article class="point" data-status="proposed">
-    <p class="point-tete"><span class="point-ref">hook-fin-de-seance</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 43</span><span class="point-attend">attend : agent</span><span class="point-rang">3</span></p>
-    <h2>Le hook de fin de tour ne connaît pas la fin de séance et refuse de laisser l&#039;agent s&#039;arrêter</h2>
-    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong><code>hook-stop.php</code> REFUSE LA FIN DE TOUR TANT QU&#039;IL RESTE DES TÂCHES, ET IL NE CONNAÎT PAS LA FIN DE SÉANCE.</strong> Le 2026-08-12, l&#039;opérateur écrit « Termine,<br />
-enregistre tout, fin de session » ; tout est terminé, enregistré, le serveur fermé — et le hook renvoie « TU NE T&#039;ARRÊTES PAS : 16 tâches sont encore à faire ».</p>
-<p><strong>CE QU&#039;IL PROPOSE À LA PLACE EST PIRE QUE LE DÉFAUT</strong> : « une tâche qui ne peut pas avancer sans l&#039;opérateur se passe en blocked ». Aucune des seize n&#039;est<br />
-bloquée — elles sont simplement en attente d&#039;une séance. Les passer en <code>blocked</code> pour faire taire le hook écrirait un état faux dans la pile, ce qui est<br />
-exactement ce que la règle sur la garde du dépilement interdit : un défaut se constate, il ne se compense pas.</p>
-<p><strong>LA PILE N&#039;EST JAMAIS VIDE, ET C&#039;EST NORMAL.</strong> Un hook qui exige zéro tâche pour autoriser un arrêt exige une condition qui ne se produira pas. Ce qui doit<br />
-l&#039;autoriser, c&#039;est <strong>l&#039;ordre de l&#039;opérateur</strong>, comme pour le reste : <code>GO</code> arme le dépilement, <code>STOP</code> le désarme, et une fin de séance annoncée met fin au tour.<br />
-La parole de l&#039;opérateur est déjà lisible — <code>scripts/check-last-order.php</code> lit le dernier mot du transcrit, entrées <code>queue-operation</code> comprises.</p>
-<p><strong>CE QUI EST PROPOSÉ</strong> : que <code>hook-stop.php</code> lise le dernier ordre par le même chemin, et laisse l&#039;agent s&#039;arrêter dès que le dépilement n&#039;est pas armé. Il<br />
-garderait tout son sens dans le seul cas où il a été écrit — un agent qui rend la main au milieu d&#039;un dépilement armé, sans rien dire.</p>
+    <p class="point-tete"><span class="point-ref">edits-incomplets</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 25</span><span class="point-attend">attend : agent</span><span class="point-rang">4</span></p>
+    <h2>Le journal d&#039;édits d&#039;une version ne porte pas ce qu&#039;apply-source y écrit</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CONSTATÉ LE 2026-08-18, EN POSANT LA CLAUSE DE PROJECTION DANS LA <code>v6</code> DE <code>BT-001</code>.</strong> Une version en attente se modifie par <strong>deux chemins qui ne se<br />
+connaissent pas</strong>, et un seul des deux laisse une trace rejouable.</p>
+<ul>
+<li><strong><code>php review-server/workshop/apply-source.php &lt;SUJET&gt; &lt;bloc&gt;</code></strong> remplace une section entière par la clause du bloc de source. Il écrit dans la version en<br />
+  attente et <strong>n&#039;inscrit rien au journal d&#039;édits</strong>.</li>
+<li><strong><code>php local/scripts/revise-consigne.php &lt;source&gt; &lt;cible&gt; &lt;édits.json&gt;</code></strong> applique des remplacements exacts, et son fichier d&#039;édits <strong>est</strong> le journal.</li>
+</ul>
+<p><strong>CE QUE ÇA CASSE</strong> : <code>BT-001.v6.edits.json</code> déclare <code>&quot;source&quot;: &quot;BT-001.v5.prompt.txt&quot;</code> et porte trois édits. Les rejouer sur la <code>v5</code> ne redonne <strong>pas</strong> la <code>v6</code><br />
+telle qu&#039;elle est sur le disque, puisque la section « Caméra » y a été posée par <code>apply-source.php</code>. Or le modèle de versions écrit noir sur blanc que « le<br />
+fichier d&#039;édits est reconstructible et se rejoue » — c&#039;est ce qui garantit qu&#039;une version n&#039;a pas gagné en chemin une différence que personne n&#039;a décidée.</p>
+<p><strong>ET C&#039;EST UNE ERREUR TRANSPARENTE</strong> : le fichier d&#039;édits a l&#039;air complet, il est bien formé, il se rejoue sans lever la moindre faute. Il produit simplement un<br />
+autre texte que celui qu&#039;on lit sur la page. Rien ne le dit.</p>
+<p><strong>DEUX SORTIES POSSIBLES, ET ELLES ENGAGENT</strong> : soit <code>apply-source.php</code> inscrit son remplacement au journal comme un édit ordinaire — le journal redevient<br />
+complet, au prix d&#039;un <code>before</code> qui recopie la section entière ; soit le journal cesse de prétendre rejouer et déclare quels de ses changements viennent d&#039;un<br />
+bloc de source, la reconstruction se faisant alors bloc par bloc plutôt que par remplacement de texte.</p>
 </details>
-    <div class="acts" data-id="hook-fin-de-seance"><label class="act act--wanted"><input type="checkbox" data-id="hook-fin-de-seance" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="hook-fin-de-seance" data-act="dismissed"><span>Rejeter</span></label></div>
-    <textarea class="comment" data-id="hook-fin-de-seance" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
-    <p class="point-pied">Créé le 2026-08-12 · repris le 2026-08-13</p>
+    <div class="acts" data-id="edits-incomplets"><label class="act act--wanted"><input type="checkbox" data-id="edits-incomplets" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="edits-incomplets" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="edits-incomplets" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-18 · repris le 2026-08-18</p>
+  </article>
+  <article class="point" data-status="proposed">
+    <p class="point-tete"><span class="point-ref">critiques-sous-var</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 26</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
+    <h2>Une critique s&#039;écrit à la main mais vit sous var/, où la garde refuse la main</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>CONSTATÉ LE 2026-08-18, EN CORRIGEANT LA MIGRATION DES CONSIGNES SOUS <code>var/</code>.</strong> Une critique est écrite <strong>à la main</strong> — c&#039;est un jugement porté sur une phrase<br />
+de la consigne —, et elle vit désormais à côté de la version qu&#039;elle juge, donc sous <code>var/generations/consignes/&lt;SUJET&gt;/</code>.</p>
+<p><strong>OR <code>scripts/hook-guard-scopes.sh</code> REFUSE TOUTE ÉCRITURE À LA MAIN SOUS <code>var/</code></strong>, et il a raison de le faire : <code>var/</code> ne reçoit que ce qu&#039;un programme écrit en<br />
+tournant. L&#039;agent ne peut donc plus déposer une critique qu&#039;en passant par un script — ce qui a été fait pour les édits, avec <code>local/scripts/add-edit.php</code>, un<br />
+jetable écrit pour contourner la garde.</p>
+<p><strong>CE QUE DISAIT LE FOYER PRÉCÉDENT</strong> : le bloc d&#039;intention de <code>review-server/lib/Critiques.php</code> avait explicitement écarté <code>var/</code> pour cette raison, et rangé les<br />
+critiques sous <code>review-server/critiques/</code>. La migration a renversé ce choix sans le rouvrir — ce qui est légitime, l&#039;opérateur ayant décidé que la chaîne entière<br />
+descendait sous <code>var/</code> —, mais l&#039;argument qu&#039;elle contredit n&#039;a été tranché nulle part.</p>
+<p><strong>CE QUI EST À DÉCIDER</strong> : soit la critique reste sous <code>var/</code> et <strong>une commande</strong> l&#039;écrit, comme <code>remarks.php</code> le fait déjà pour les verdicts de l&#039;opérateur —<br />
+c&#039;est le geste cohérent, et la garde n&#039;a alors plus rien à dire ; soit les critiques remontent dans un foyer où une main peut écrire, et elles cessent de vivre<br />
+à côté de la version qu&#039;elles jugent.</p>
+<p><strong>CE QUI NE PRESSE PAS</strong> : rien n&#039;est cassé aujourd&#039;hui. La lecture fonctionne — sept critiques de la <code>v2</code> s&#039;affichent à nouveau depuis que le chemin est calculé<br />
+par <code>Consignes</code> —, seule l&#039;écriture demande un détour.</p>
+</details>
+    <div class="acts" data-id="critiques-sous-var"><label class="act act--wanted"><input type="checkbox" data-id="critiques-sous-var" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="critiques-sous-var" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="critiques-sous-var" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-18 · repris le 2026-08-18</p>
+  </article>
+  <article class="point" data-status="pending-decision">
+    <p class="point-tete"><span class="point-ref">doublon-projection</span><span class="point-status">À trancher — attend une décision de l&#039;opérateur : lequel des deux outils de projection on garde</span><span class="point-prio">priorité 30</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
+    <h2>Deux outils mesurent la projection parallèle : lequel garde-t-on ?</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>DEUX OUTILS RÉPONDENT À LA MÊME QUESTION — la sprite tient-elle la projection parallèle ? — ET L&#039;UN NE CONCLUT QUE TROIS FOIS SUR DIX.</strong></p>
+<ul>
+<li><strong><code>python3 scripts/check-axonometry.py &lt;image&gt;</code></strong> lit le contour extérieur et compare la pente des deux côtés. <strong>Sur les 186 sprites livrées, il en juge 55</strong> :<br />
+  54 tenues, une hors norme — <code>TR-065</code>, 13,2° de convergence. Les 131 autres ne se laissent pas lire : un feuillage dentelé, une couronne qui masque ses propres<br />
+  côtés. Il aurait fallu <code>scikit-image</code> pour lire les arêtes intérieures, et cet outil n&#039;a jamais été accordé.</li>
+<li><strong><code>php scripts/check-parallel-projection.php &lt;image&gt;</code></strong> mesure la dérive de la silhouette <strong>rangée par rangée</strong> et conclut toujours, avec un chiffre : la pire<br />
+  arête, en pixels par pixel de descente.</li>
+</ul>
+<p><strong>CE QUI A ÉTÉ CORRIGÉ SANS ATTENDRE, PARCE QUE C&#039;ÉTAIT UNE ERREUR TRANSPARENTE</strong> : le premier affichait « OK » et sortait en code 0 sur les 131 qu&#039;il ne savait<br />
+pas lire, tout en écrivant « aucun verdict » sur la même ligne. <strong>Ces 131 sprites passaient donc pour validées.</strong> Il a désormais trois états.</p>
+<p><strong>CE QUI RESTE À TRANCHER</strong> : le doublon lui-même. La règle du dépôt dit que le Python <strong>décroît sans jamais croître</strong>, et que deux outils pour la même chose<br />
+sont deux vérités dont aucune ne fait foi.</p>
+<p><strong>CE QUE LE PREMIER SAIT FAIRE ET QUE LE SECOND NE FAIT PAS</strong> : lire les <strong>arêtes intérieures</strong> quand la silhouette est trop irrégulière — c&#039;est ce qu&#039;il tente<br />
+avant de renoncer. Le second ne lit que la silhouette, et compte donc un rampant de pignon comme une dérive, ce qui gonfle ses chiffres.</p>
+<p><strong>CE QUI DÉPEND DE LA RÉPONSE</strong> : rien de bloquant aujourd&#039;hui. C&#039;est un ménage, et il attend.</p>
+</details>
+    <div class="acts" data-id="doublon-projection"><label class="act act--wanted"><input type="checkbox" data-id="doublon-projection" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="doublon-projection" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="doublon-projection" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-20 · repris le 2026-08-20</p>
   </article>
   </div>
   <details class="clos">
-    <summary>Les 21 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
+    <summary>Les 14 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
     <ul class="mien">
     <li><span class="point-ref">consigne-propre</span> Une consigne propre de bout en bout, écrite en modifiant le texte généré — le sujet de la reprise</li>
-    <li><span class="point-ref">atelier-generation</span> Une page d&#039;atelier : la consigne, ses niveaux, l&#039;image, et le diff avec la consigne transmise</li>
-    <li><span class="point-ref">suggestions-gen</span> Traiter les suggestions de l&#039;agent generateur sur la clause de camera</li>
-    <li><span class="point-ref">pages-hors-index</span> Une page servie peut n&#039;apparaître dans aucun index : deux listes tenues à la main, rien ne les accorde</li>
-    <li><span class="point-ref">remplissage-image</span> Le générateur complète l&#039;image pour atteindre nos dimensions : interdire ce remplissage, ou l&#039;accepter en le mesurant</li>
-    <li><span class="point-ref">suivi-tests-consigne</span> Une version de consigne ne dit pas si elle a été testée, ni quelle correction a porté</li>
-    <li><span class="point-ref">passes-generateur</span> Le générateur ne rapporte que sa dernière passe : lui demander toutes ses passes, ou seulement celle qui dessine</li>
     <li><span class="point-ref">emprise-non-rect</span> Une emprise ne sait être qu&#039;un rectangle : un bâtiment en L rendrait le référentiel et la consigne faux</li>
-    <li><span class="point-ref">outils-morts</span> Deux outils appellent des fichiers disparus : list-variants.py et la file de production des sprites</li>
-    <li><span class="point-ref">refus-avec-solution</span> Chaque refus doit nommer le geste qui débloque, à commencer par les contrôles de séance</li>
-    <li><span class="point-ref">comments-en-anglais</span> Les commentaires français du serveur de revue, à repasser en anglais</li>
     <li><span class="point-ref">dossiers-en-anglais</span> Les six répertoires d&#039;images portent des noms français</li>
-    <li><span class="point-ref">fautes-unifiees</span> Les commandes n&#039;ont pas toutes le rendu unique des fautes</li>
-    <li><span class="point-ref">audit-journal</span> Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</li>
-    <li><span class="point-ref">sondes-servies</span> Les sondes qui ouvrent un fichier rendent une page nue depuis le découpage du style et du script</li>
     <li><span class="point-ref">service-sonde</span> Un service de sonde pour la page servie et la copie greffée</li>
     <li><span class="point-ref">comparaison-variants</span> La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</li>
     <li><span class="point-ref">valeurs-fr-restantes</span> Les valeurs francaises restantes dans le code : 23, dont trois familles bloquees</li>
     <li><span class="point-ref">locales-francaises</span> Variables locales françaises dans les constructeurs de pages, à corriger au fil de l&#039;eau</li>
     <li><span class="point-ref">bash-simple</span> Écrire à la méthode : une commande bash reste simple, le contenu passe par un fichier</li>
     <li><span class="point-ref">hauteur-monde</span> La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</li>
+    <li><span class="point-ref">passes-generateur</span> Le générateur ne rapporte que sa dernière passe : lui demander toutes ses passes, ou seulement celle qui dessine</li>
+    <li><span class="point-ref">suivi-tests-consigne</span> Une version de consigne ne dit pas si elle a été testée, ni quelle correction a porté</li>
+    <li><span class="point-ref">comments-en-anglais</span> Les commentaires français du serveur de revue, à repasser en anglais</li>
+    <li><span class="point-ref">fautes-unifiees</span> Les commandes n&#039;ont pas toutes le rendu unique des fautes</li>
+    <li><span class="point-ref">audit-journal</span> Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</li>
     </ul>
   </details>
 </div>

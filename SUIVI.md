@@ -12,15 +12,135 @@ la cible à `doc/conception/`, les mots au [glossaire](doc/glossaire.md), et tou
 document empilait une section par séance, ce que sa propre première ligne interdit. **Ce qui en a été retiré n'est pas dans un diff, il est dans
 [doc/journal-des-seances.md](doc/journal-des-seances.md)** — versionné, citable, et qui ne dit que le pourquoi des décisions passées, jamais l'état courant.
 
-### OÙ ON EN EST AU 2026-08-17
+### OÙ ON EN EST AU 2026-08-19
+
+**LES GÉNÉRATIONS SORTENT DU DÉPILEMENT** (opérateur, 2026-08-19 : « faudra que tu exclues les générations du dépilement mais que tu traites le reste, que ça
+avance »). D'autres agents éprouvent la projection parallèle de leur côté. Un point qui demande une image se traite **jusqu'à la consigne**, et s'arrête là. La
+règle est aux [règles du dépôt](doc/regles-du-depot.md).
+
+**LA `v8` EST LE MEILLEUR RÉSULTAT DE LA SÉRIE, ET LA PROJECTION N'EST TOUJOURS PAS PARALLÈLE.** La pire dérive passe de **0,897 à 0,100** pixel par pixel de
+descente, et 13 arêtes dérivent contre 18. Ce qui l'a produite : la relecture de toute la consigne contre la projection, où **cinq sections tiraient contre la
+caméra sans jamais la contredire** — l'orientation des faîtages n'était écrite nulle part, la proportion que la profondeur doit occuper non plus, la volumétrie
+ne parlait que de façades, le style appelait le trois-quarts, et la caméra était redite en termes vagues avant sa propre clause. Tout est à
+`S97 consigne-propre`.
+
+**ET LE LEVIER DE LA `v7` ÉTAIT LE BON** : l'agent ne relaie plus notre prose, il **traduit** — en anglais, dans les termes des moteurs, caméra en tête. Ce qui
+part au modèle d'images est passé de 12 744 à 6 082 caractères, sans qu'aucune contrainte chiffrée se perde.
+
+**LE FICHIER D'ORIENTATION S'APPELLE `AGENT-START.md`, ET `CLAUDE.md` N'EXISTE PLUS** (opérateur, 2026-08-19 : « je veux qu'on renomme urgemment le fichier
+AGENTS.md et qu'on supprime CLAUDE.md, ils font des interférences avec mes agents »). Ces deux noms sont chargés **automatiquement** par les enveloppes
+d'agents, y compris par celles qui n'ont rien à faire de ce projet. Sous son nom actuel, plus rien ne le charge tout seul : **il se lit parce qu'on le nomme**,
+et le prompt de reprise le nomme. Toutes les références ont suivi — les règles du dépôt, l'enveloppe du générateur, le contrôle des chemins cités, celui de la
+largeur. **Et la consigne envoyée au générateur d'images ne nomme plus aucun fichier** : une phrase qui exclut un document par son nom cesse d'exclure quoi que
+ce soit le jour où ce document est renommé, et rien ne le dirait.
+
+### CE QUI A ÉTÉ FAIT HORS GÉNÉRATION, LE 2026-08-19
+
+- **`W34 pages-hors-index` est fermé** : `php scripts/check-pages-indexed.php` accorde les deux listes tenues à la main — ce qui est servi, ce que l'index
+  montre —, et `bash scripts/dev/trial-pages-indexed.sh` l'éprouve sur un cas faux.
+- **`W23 outils-morts` est fermé** : `sprite-queue.py`, `run-fence-campaign.py` et `list-variants.py` sont retirés du dépôt. Le relevé
+  `scripts/python-inventory.json` garde leurs entrées — **le refiger est un geste de l'opérateur**.
+- **`W35 numerotation-series` est fermé** : la numérotation ne compte plus que les points **ouverts**, et `php scripts/dev/trial-series-numbering.php` tient les
+  six cas de la règle. Passé sur le code d'avant, il rend le défaut constaté : « attendu Q2, obtenu Q24 ».
+- **`Q24 passes-generateur` et `S94 atelier-generation` sont ré-analysés** : leur part faisable est faite, le reste est nommé.
+- **AUCUN CONTRÔLE NE TIENT PLUS DE LISTE DE FICHIERS EN DUR** (opérateur, 2026-08-19 : « aucun fichier n'est à analyser en dur, ça n'a aucun sens »).
+  `php scripts/check-cited-paths.php` **découvre** les documents — tout `.md` de la racine et de `doc/` — au lieu d'en nommer trois. Sa liste tenait encore
+  `CLAUDE.md`, supprimé le jour même : elle aurait balayé un document absent sans le dire, et n'aurait jamais vu un document ajouté depuis.
+  `bash scripts/dev/trial-cited-paths.sh` le prouve en déposant un document que rien ne nomme et en exigeant qu'il soit lu.
+- **ON MESURE ENFIN CE QUI SE PERD ENTRE NOTRE CONSIGNE ET CE QUE L'AGENT ENVOIE** (`S94 atelier-generation`). Depuis qu'on lui demande de **traduire**, un diff
+  mot à mot ne peut plus rien dire : il rendrait « disparue » sur tout, y compris sur ce qui arrive intact. **Ce qui survit à une traduction, c'est le nombre** —
+  « 16 TX » devient « exactly 16 TX drawn width », et le chiffre est la seule chose qu'on ne peut pas redire autrement sans changer la contrainte.
+  `php review-server/workshop/check-transmitted.php <SUJET> <rang>` les compte, et **la page d'atelier affiche le même verdict au-dessus de la consigne
+  transmise**, depuis le même service — `review-server/lib/TransmittedNumbers.php`. Il mesure une **présence**, jamais un sens : les chiffres sont arrivés, ce
+  que l'image en fait se juge ailleurs.
+- **CE QU'IL A TROUVÉ TOUT DE SUITE** : la `v7` et la `v8` perdaient toutes deux **le yaw de 45° qui définit l'isométrie**. L'agent transmettait « not
+  isometric » — l'interdit sans son chiffre, donc sans ce qu'il faut éviter. Corrigé au bloc de source, qui dit maintenant que c'est le chiffre qui écarte.
+- **`S94 atelier-generation` EST FERMÉ** : la page porte maintenant tout ce que la demande décrivait — un onglet par version générée, l'image avec sa grille et
+  ses mesures, la consigne section par section, le diff vers la version suivante, ce que la transmission a perdu, **la consigne transmise découpée en passes**
+  sous leurs titres, **ce que la version a changé édit par édit** avec son état, et les critiques ancrées.
+- **`S98 suivi-tests-consigne` : l'état d'un édit s'écrit par une commande qui refuse un verdict sans preuve.**
+  `php review-server/workshop/set-edit-state.php <SUJET> <rang> <édit> <état> [observation]` — quatre états, et les trois qui affirment quelque chose exigent
+  leur observation. « Un état de test ne s'écrit jamais tout seul par l'agent qui espère » cesse d'être une consigne de vigilance. **Les six édits de la `v8`
+  sont posés** : trois tenus, trois non observables sur cet essai.
+- **`S95 emprise-non-rect` attend son déclencheur, et le déclencheur est mécanique.**
+  `php scripts/check-footprints-rectangular.php` refuse dès qu'une emprise cesse d'être un rectangle plein et nomme le point à ouvrir ; son essai le prouve sur
+  les huit formes qu'un bâtiment en L produirait. **Ce contrôle est fait pour se déclencher une seule fois, dans longtemps** — le jour venu ne doit pas être
+  celui où l'on découvre s'il fonctionne.
+- **`Q1 remplissage-image` EST FERMÉ, ET SA RÉPONSE EST UN CONSTAT** : **le générateur ne recadre ni n'étire plus depuis la `v7`**. Il exécutait un détourage
+  puis `crop().resize()` ; sur les `v7` et `v8` il n'exécute **aucun** appel Python et l'image est copiée telle que son modèle l'a rendue. Ce qui a changé
+  entre-temps est la seule chose qui a changé : on lui demande de traduire au lieu de relayer. **L'outil qui le prouve est monté au dépôt** —
+  `php review-server/workshop/show-generator-calls.php <SUJET> <rang>` —, il vivait en jetable alors qu'il porte la preuve de trois décisions.
+- **`S90 refus-avec-solution` EST FERMÉ, ET UNE MACHINE LE TIENT** : `php scripts/check-tools.php` contrôle en quatrième colonne qu'une commande pouvant sortir
+  en code 1 offre une issue — le mot « Solution », ou une commande du dépôt nommée en toutes lettres. Onze commandes étaient muettes, les onze sont traitées.
+  **Ce contrôle s'est trompé deux fois avant d'être juste**, et les deux erreurs sont écrites dans son commentaire : il criait d'abord sur `remarks.php`, qui
+  écrit pourtant le geste en clair ; puis il acceptait toute commande nommée n'importe où, **donc le bloc d'usage de chaque script** — plus rien n'aurait jamais
+  été signalé.
+- **UN CONTRÔLE DE LA LANGUE DES COMMENTAIRES EXISTE** (`W30 comments-en-anglais`) : `php scripts/check-comment-language.php [fichiers…]`. Rien ne surveillait
+  cela — `check-code-language.py` juge les noms et les valeurs, pas la prose autour. **La dette est chiffrée à 623 commentaires dans 140 fichiers**, elle se
+  solde au fil de l'eau comme la règle le prévoit, et **tout ce que j'avais écrit en français ce jour-là est corrigé** : le contrôle m'a trouvé avant tout le
+  monde. Lui aussi s'est trompé d'abord — il coupait les citations de l'opérateur ligne par ligne et prenait leur suite pour du français, soit 118 faux
+  positifs.
+- **UN BOOTSTRAP DE COMMANDE EXISTE** (`W31 fautes-unifiees`) : `scripts/bootstrap.php`, sur le modèle de celui du serveur de revue. Deux lignes —
+  `require_once __DIR__ . '/bootstrap.php'; $root = bootCommand($argv);` — câblent les fautes en exceptions, répondent à `-h` depuis le bloc d'usage de
+  l'appelant, et rendent la racine. **Six commandes l'adoptent, lancées une par une** ; le reste suivra de même, jamais en série — `asExceptions()` arrête net
+  une commande qui vivait avec un avertissement silencieux, ce qui est le but et se découvre en la lançant.
+- **`S80 dossiers-en-anglais` EST PRÊT ET ATTEND UN ARBRE PROPRE, DONC UN COMMIT.**
+  `php scripts/dev/rename-asset-folders.php --dry-run` montre le geste entier : **421 fichiers** changent d'adresse et **310 chemins enregistrés** sont réécrits
+  dans neuf fichiers, dont **les remarques de l'opérateur, rangées par chemin d'image**. Le script refuse de démarrer sur un arbre sale, pour que `git status`
+  après coup rende compte de lui et de rien d'autre.
+- **DEUX SONDES ÉCRIVAIENT DANS LES DONNÉES DE L'OPÉRATEUR, ET ON L'A DÉCOUVERT EN LES LANÇANT** (`W21 sondes-servies`, fermé). `probe-verdicts.php` a inscrit
+  un « validé » sur la tuile d'herbe pendant cette séance ; `probe-remarque-course.php` y laisse une remarque. **C'est l'accident du 2026-08-11**, celui qui a
+  fait écrire la règle. Ces deux-là ne peuvent pas être muselées — être écrites est ce qu'elles mesurent —, donc elles **mémorisent le fichier avant et le
+  restaurent après**, en disant ce qui a été retiré. Les trois autres sont ramenées sur `Probe`, qui sert la copie depuis la même origine **et la muselle**.
+- **UN CONTRÔLE RENDAIT « OK » SUR CE QU'IL N'AVAIT PAS PU LIRE** (`W22 audit-journal`) : `python3 scripts/check-axonometry.py` affichait « OK » et sortait en
+  code 0 en écrivant « aucun verdict » sur la même ligne. **Sur 186 sprites livrées, il en juge 55** — les 131 autres passaient pour validées. Trois états
+  maintenant, l'indécidable s'affiche `?`, leur nombre est dit, et le message renvoie vers l'outil qui conclut. **Deux outils répondent à la même question et
+  l'un ne conclut que trois fois sur dix : lequel garder est une décision de l'opérateur.**
+- **ET CE CONTRÔLE EST VERT POUR LA PREMIÈRE FOIS** : `doc/journal-des-seances.md` en est exclu, parce qu'un **document d'historique cite par nature ce qui
+  n'existe plus**. Ses quatre citations mortes rendaient le verdict rouge en permanence sur un dépôt sain — et un contrôle qui reste rouge cesse d'être lu,
+  ce que ce fichier existe justement pour empêcher ailleurs.
+
+### OÙ ON EN ÉTAIT AU 2026-08-18
 
 **LE SEUL SUJET OUVERT EST `S97 consigne-propre`, ET IL SE TRAITE HORS DÉPILEMENT** (opérateur, 2026-08-17 : « ce sujet est sensible alors on arrête le
 dépilement, tu traites ce sujet »). **On ne travaille plus en regénérant : on écrit une consigne propre de bout en bout en MODIFIANT le texte déjà généré, et on
 ne reporte dans le code que ce qui fonctionne.** Le générateur est donc gelé — `scripts/asset_common.py` et `scripts/generate-sprite.py` sont à l'identique, et
 la référence de `diff-prompts.sh` est refigée sur ce code. Tout l'état du sujet est à sa description, `php scripts/backlog.php show consigne-propre`.
 
-**CE QU'ON PREND À LA REPRISE, EN PRIORITÉ 1 : `S1 suggestions-gen`.** L'agent générateur propose des corrections à la clause de caméra, dans
-`local/projection-camera-prompt.diff`. Sa première suggestion était juste et est déjà appliquée en `v6`.
+**LE SUJET EST L'ALIGNEMENT PARALLÈLE DES MURS, ET RIEN D'AUTRE** (opérateur, 2026-08-18 : « l'atelier doit mener à produire une image de CDS qui respecte
+l'alignement parallèle des murs », puis « les murs doivent être alignés avec les bords, en lui donnant les bonnes consignes »).
+
+**ET LA `v6` A TRANCHÉ UNE QUESTION QU'ON SE POSAIT DEPUIS UNE SEMAINE : LE TEXTE N'EST PLUS EN CAUSE.** Générée le 2026-08-18, session
+`01a013c9-0084-7811-bbc0-7714a5a44835`. `BT-001.v6.transmitted.txt` établit que l'agent a transmis notre clause de caméra **mot pour mot et en première
+position**, sous le titre qu'il a lui-même écrit — « Caméra et projection — à appliquer avant toute autre décision ». **C'est la première fois qu'on prouve que
+notre texte parvient intact au modèle d'images.** Et la projection est **plus mauvaise qu'avant** : 10 arêtes dérivent, la pire à 0,231 pixel par pixel de
+descente contre 0,112 en `v5`. Les pans de toit des deux ailes s'évasent en trapèzes.
+
+**CE QUE ÇA COMMANDE : ÉCRIRE MIEUX DANS LE SOCLE N'EST PLUS LE LEVIER.** Le socle arrive entier, prioritaire, non reformulé, et il échoue. Ce qui reste est
+d'un autre ordre — une référence visuelle plutôt qu'une prescription, une reprise en deux temps, un redressement après coup —, **et rien de tout cela n'est
+décidé**. C'est à `S97 consigne-propre`.
+
+**UNE PISTE A ÉTÉ OUVERTE ET N'EST PAS ÉPUISÉE, ELLE : ON ÉCRIVAIT DANS NOTRE LANGUE** (opérateur, 2026-08-18 : « tu dois utiliser des nommages standards, il
+connaît ce que connaît internet, c'est une IA aussi »). La clause de caméra dit maintenant `yaw 0°`, `pitch 60°`, `roll 0°`, `orthographic` — les mots des
+moteurs et de l'infographie —, et l'isométrie est écartée par ce qui la définit vraiment, un `yaw` de 45°. **Et un paramètre se donne désormais avec son
+résultat visible** : `pitch 60` dit que le dessus des toits occupe la plus grande part de la silhouette et que le sol de l'emprise se voit devant le bâtiment.
+Les deux règles sont aux [règles du dépôt](doc/regles-du-depot.md). **Rien de tout cela n'a encore été éprouvé** : la clause est au bloc de source et n'est
+montée dans aucune version.
+
+**L'ÉTIREMENT N'EST PAS LA CAUSE, ET C'EST MESURÉ** : la boîte détourée fait 1246 × 880, rapport 1,4159, contre 1,3714 pour la cible — donc **un étirement réel
+de 3,2 %**, quand la projection est perdue de 0,112 pixel par pixel de descente, un ordre de grandeur au-dessus. `Q1 remplissage-image` reste vraie et cesse de
+bloquer ; elle est passée en priorité 27. L'outil de la réponse : `php local/scripts/show-crop-box.php <journal>`.
+
+**LES SUGGESTIONS DU GÉNÉRATEUR SUR LA CAMÉRA SONT TRAITÉES** (`S100 suggestions-gen`, fermé le 2026-08-18) : cinq retenues, une refusée, une réécrite. Le tri
+complet et ses raisons sont à la description du point. Ce qui est entré : trois **tests** vérifiables sur la formule de projection, un azimut zéro qui nomme ce
+qu'il interdit — la vue de trois-quarts, l'isométrie —, la face est-ouest vue par la tranche, l'interdit de tourner une partie du sujet, et la suppression du
+rappel final de caméra qui redisait le socle dans d'autres mots.
+
+**TOUS LES CHEMINS DE LA CHAÎNE DE CONSIGNES SE CALCULENT À UN SEUL ENDROIT**, `review-server/lib/Consignes.php` : le foyer `var/generations/consignes/`, le
+moule `<SUJET>.v<N>.<quoi>.<ext>`, la liste fermée des pièces, le rang de la version en attente. **Quatre lecteurs en tenaient chacun sa copie** et la migration
+sous `var/` n'en avait corrigé qu'un : `apply-source.php` refusait tout sujet comme sans foyer, `extract-transmitted.php` écrivait à côté d'un dossier disparu,
+et `Critiques.php` cherchait dans un répertoire retiré — la page annonçait « aucune critique » sur sept critiques présentes sur le disque. Aucune ne levait quoi
+que ce soit.
 
 **LE BACKLOG NE SUIT PLUS, ET C'EST À TRAITER** (opérateur, 2026-08-17 : « le backlog lui n'est pas au courant de tant de détails, tu es coincé sur le même
 sujet depuis trop longtemps et le backlog ne sert plus, c'est un problème »). `S97 consigne-propre` est ouvert depuis le 2026-08-13 et a absorbé toute la
@@ -28,8 +148,17 @@ séance : la source de l'atelier, le foyer des consignes, six versions, quatre o
 `S94`, `S98`, `S99`, `Q1` — décrivent un état dépassé. **Un sujet qui dure une semaine cesse d'être un point de pile** : il faudra soit le découper en points
 qui se ferment, soit lui donner un foyer à lui et le sortir de la pile.
 
-**CE QUI N'A PAS ÉTÉ FAIT AUJOURD'HUI ET ATTEND** : reporter dans le code ce qui a été tenu (`S97`, dernière étape) ; les blocs de source `style`, `detourage`
-et `reponse`, qui restent en texte plat ; l'état par édit affiché sur la page (`S98`) ; et la `v6`, écrite et **non générée**.
+**CE QUI ATTEND** : décider par quelle voie on reprend, la voie textuelle étant épuisée sur la projection ; traiter le nouveau diff de suggestions du générateur,
+`local/projection-camera-prompt.diff`, réécrit et non traité ; monter la clause de caméra du bloc de source dans une version, **ce qui reste à demander puisqu'il
+n'y a plus de version en attente** ; la passe de largeur de ligne, qui aura sa propre version (la `v6` compte 8 écarts, la plus longue ligne à 440 caractères) ;
+reporter dans le code ce qui a été tenu (`S97`, dernière étape) ; les blocs de source `style`, `detourage` et `reponse`, qui restent en texte plat ; l'état par
+édit affiché sur la page (`S98`).
+
+**UNE `v7` A EXISTÉ LE 2026-08-18 ET A ÉTÉ SUPPRIMÉE SUR ORDRE.** Elle mettait le sujet de côté pour un bâtiment générique ; elle n'avait pas été demandée, et sa
+génération non plus. Ce qu'elle a appris est gardé : avec une description libre, les murs sont sortis verticaux et parallèles aux bords, mais l'image était une
+élévation quasi frontale, hors contrat de largeur, et le corps n'avait aucune profondeur — parce que la description écrite laissait libre l'emprise au lieu de
+la rappeler. **Les deux règles que cet écart a fait écrire sont aux [règles du dépôt](doc/regles-du-depot.md)** : une génération ne part que sur une demande
+explicite, et défaire est une mesure au même titre que faire.
 
 **L'ATELIER A SA PROPRE SOURCE DE VÉRITÉ, SÉPARÉE DE L'APPLICATION** (opérateur, 2026-08-17 : « on ne travaille que pour l'atelier de génération, on définit tout
 bien et après on appliquera à l'application. Sinon tu vas faire les modifs à moitié et laisser des reliquats un peu partout »). Rien de `scripts/` ni de
@@ -42,10 +171,13 @@ bien et après on appliquera à l'application. Sinon tu vas faire les modifs à 
   et s'emploient partout. La liste se sépare par des **points-virgules**, parce qu'une valeur gouvernée porte des décimales.
 - **`php review-server/workshop/apply-source.php <SUJET> <bloc>`** est le seul chemin entre la source et une version. Il remplace une **section entière**, et
   **il écrit toujours dans la version en attente** — celle qui suit la dernière générée. Empiler une version par correction est mécaniquement impossible.
+  **Mais il n'inscrit rien au journal d'édits**, si bien que rejouer ce journal ne redonne pas la version : c'est `W36 edits-incomplets`, en proposition.
 
-**LA CONSIGNE VIT SOUS `review-server/workshop/consignes/<SUJET>/`, VERSIONNÉE DE BOUT EN BOUT, RACINE COMPRISE.** Elle était à cheval sur deux répertoires dont
-un jetable, et son identité était une date. Un fichier se nomme `<SUJET>.v<N>.<quoi>.<ext>` — `prompt`, `image`, `edits`, `generation`, `transmitted`,
-`critiques` — parce qu'un nom doit dire de qui il est et ce qu'il est. Les trois incohérences qui restaient sont à `S99 consigne-structuree`.
+**LA CONSIGNE VIT SOUS `var/generations/consignes/<SUJET>/`, CHAÎNE ENTIÈRE, RACINE COMPRISE — ET RIEN N'Y EST COMMITÉ.** Ce sont des essais, et l'image d'une
+seule version pèse plus que tout le code du dépôt : ce qui doit leur survivre n'est pas leur texte mais ce qu'ils ont appris, et cela se reporte au bloc de
+source et au code. Un fichier se nomme `<SUJET>.v<N>.<quoi>.<ext>` — `prompt`, `image`, `edits`, `generation`, `transmitted`, `critiques`, `parts` — parce qu'un
+nom doit dire de qui il est et ce qu'il est. **`review-server/lib/Consignes.php` est le seul endroit où ce moule et ce foyer se calculent**, et aucun lecteur ne
+recompose un chemin à la main. Les trois incohérences qui restaient sont à `S99 consigne-structuree`.
 
 **LA `v5` EST GÉNÉRÉE, LA `v6` EST EN ATTENTE.** Une version en attente se **modifie** tant qu'elle n'est pas générée ; une version qui porte une image est
 close. **AUCUNE GÉNÉRATION NE PART SANS L'ACCORD DE L'OPÉRATEUR** — trois versions ont été empilées et une génération dépensée sans qu'il l'ait demandé.
@@ -70,10 +202,9 @@ a quitté la page des sprites pour vivre avec son service, `review-server/lib/fo
 `check-review-pages.php` lit maintenant **ce que la page charge**, au lieu d'une liste de fichiers tenue à la main — c'est cette liste qui a déclaré perdu un
 comportement intact, une feuille plus loin.
 
-**LA CONSIGNE A DES VERSIONS, ET LE DIFF SE FAIT D'UNE VERSION À LA SUIVANTE.** `v1` est le texte que la chaîne a produit, sous `var/generations/trials/` ; les
-suivantes vivent à `review-server/critiques/<essai>/<consigne>.v<N>.txt`, avec leurs critiques sous le même nom de version. La page `/workshop` montre la version
-active, son diff par lots de mots dans le texte, et les critiques ancrées sur la phrase qu'elles mettent en cause — rouge barré ce qui disparaît, vert ce qui
-s'ajoute, souligné bleu la phrase critiquée, et une légende le dit. Une version se fabrique par
+**LA CONSIGNE A DES VERSIONS, ET LE DIFF SE FAIT D'UNE VERSION À LA SUIVANTE.** Toutes vivent dans le même dossier, `v1` comprise, avec leurs critiques sous le
+même nom de version. La page `/workshop` montre la version active, son diff par lots de mots dans le texte, et les critiques ancrées sur la phrase qu'elles
+mettent en cause — rouge barré ce qui disparaît, vert ce qui s'ajoute, souligné bleu la phrase critiquée, et une légende le dit. Une version se fabrique par
 `php local/scripts/revise-consigne.php <source> <cible> <édits.json>`, qui refuse tout remplacement ne trouvant pas exactement une occurrence.
 
 **LES VERDICTS DE L'OPÉRATEUR SONT UN PLAN DE TRAVAIL, ET ILS SE LISENT AVANT DE PRODUIRE QUOI QUE CE SOIT.** `php scripts/remarks.php list` les donne tous ;
@@ -138,9 +269,14 @@ rien et la fin de tour n'est jamais refusée.
 
 **Le prompt de reprise, à donner tel quel à une session neuve :**
 
-> Travaille dans ~/projects/gatebeast. Lis AGENTS.md, puis doc/regles-du-depot.md en entier, puis `~/projects/conceptions/methode/collaboration.md`, puis la
-> première section de SUIVI.md — elle dit sur quoi on reprend et en quelle priorité, et elle contient tout le reste. Démarre le serveur de revue. Tu ne
+> Travaille dans ~/projects/gatebeast. Lis AGENT-START.md, puis doc/regles-du-depot.md en entier, puis `~/projects/conceptions/methode/collaboration.md`, puis
+> la première section de SUIVI.md — elle dit sur quoi on reprend et en quelle priorité, et elle contient tout le reste. Démarre le serveur de revue. Tu ne
 > génères aucune image sans mon accord, et tu réponds à une question sans rien modifier. Annonce le mode et arrête-toi.
+
+**LE FICHIER D'ORIENTATION S'APPELLE `AGENT-START.md`, ET C'EST DÉLIBÉRÉ** (opérateur, 2026-08-19 : « je veux qu'on renomme urgemment le fichier AGENTS.md et
+qu'on supprime CLAUDE.md, ils font des interférences avec mes agents »). Les deux noms précédents sont chargés automatiquement par les enveloppes d'agents, y
+compris par celles qui n'ont rien à faire des règles de ce projet — c'est cette lecture involontaire que le renommage supprime. **Le prompt de reprise doit donc
+le nommer**, puisque plus rien ne le charge tout seul.
 
 **LA REVUE SE REGARDE EN LOCAL** : `php review-server/serve.php`, puis l'adresse qu'il imprime — **elle est configurée dans `review-server/config.json`, et `php review-server/url.php` la dit**, le
 port se changeant là et nulle part ailleurs. **Cinq pages** — l'Index, `/inventory` qui dit ce que chaque sujet **est**, `/backlog` qui porte les **points ouverts du projet** et reçoit les votes, le
