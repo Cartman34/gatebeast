@@ -1125,12 +1125,12 @@
             "ref": "service-sonde",
             "code": "P4",
             "label": "Un service de sonde pour la page servie et la copie greffée",
-            "description": "**LES SONDES RÉPÈTENT LE MÊME TRIO, ET IL N'A PAS DE FOYER.** Relevé le 2026-08-12, en retirant le chemin du navigateur de dix-sept d'entre elles : ce n'était pas la seule répétition, seulement la\nplus visible. Chaque sonde qui regarde la page servie réécrit les trois mêmes gestes, une quinzaine de lignes chacun :\n\n1. **Aller chercher la page servie, ou échouer en disant de lancer le serveur** — `file_get_contents` sur l'adresse, puis le même message de faute, recopié.\n2. **Y greffer un script et écrire la copie sous `var/tmp/`** — toujours en fin de fichier, jamais avant `</body>`, pour la raison écrite au suivi.\n3. **Rouvrir la copie par le serveur**, jamais par le disque, pour qu'elle ait son style, son script et son état.\n\n**POURQUOI CE N'EST PAS UNE SIMPLE REDITE** : les deux premiers gestes portent chacun une règle apprise à ses dépens — la greffe en fin de fichier, et l'ouverture par le serveur plutôt que par le\nfichier. Une règle qu'on réapprend à chaque sonde est une règle qu'une sonde sur dix appliquera de travers, et celle-là rendra un défaut qui n'existe pas.\n\n**CE QUI RETIENT DE LE FAIRE DANS LA FOULÉE** : chaque sonde greffe **un script différent**, et c'est tout l'objet de la sonde. Le service ne peut donc pas prendre la greffe elle-même, seulement la\nrecevoir — l'API se dessine avant de s'écrire, contrairement au navigateur dont les trois gestes étaient identiques partout. D'où la proposition plutôt que l'exécution.\n\n**CE QUE JE PROPOSE** : un service `Probe`, chargé par le bootstrap comme `Browser`, qui offre « la page servie » et « la copie greffée, servie à son tour », la greffe restant l'argument de l'appelant.",
-            "status": "todo",
+            "description": "**LE SERVICE PROPOSÉ EXISTE, ET IL A SERVI LE 2026-08-19 — FERMÉ SANS RIEN AJOUTER.**\n\n**CE QUI ÉTAIT PROPOSÉ** : un service `Probe`, chargé comme `Browser`, offrant « la page servie » et « la copie greffée, servie à son tour », la greffe restant\nl'argument de l'appelant — puisque chaque sonde greffe un script différent, et que c'est tout son objet.\n\n**CE QUI EXISTE**, dans `review-server/lib/Probe.php` :\n\n- **`page(route)`** — la page **demandée au serveur**, pas lue sur le disque. Demander prouve du même coup qu'il répond ; une sonde qui ouvrirait la copie\n  pendant que le serveur est éteint échouerait plus tard, sur la copie, avec un message parlant d'autre chose.\n- **`serve(html, script, nom)`** — la copie greffée, écrite sous `var/tmp/` et **rendue par le serveur**, donc de la même origine. Et **muselée** au passage :\n  toute requête qui n'est pas un `GET` est refusée, comptée sur `window.__probeWrites`, ce qui empêche une sonde qui regarde d'écrire dans les données de\n  l'opérateur.\n\n**CE QU'IL A DÉBLOQUÉ LE 2026-08-19** : trois sondes y ont été ramenées, et deux ont été prises en flagrant délit d'écriture dans les verdicts — voir\n`W21 sondes-servies`. Sans ce service partagé, chacune réapprenait les deux règles à ses dépens, et une sur dix les appliquait de travers.\n\n**Fermé le 2026-08-20** — le service Probe existe et a servi : page servie, copie greffée et muselée",
+            "status": "done",
             "priority": 37,
             "waiting": "agent",
             "created": "2026-08-12",
-            "updated": "2026-08-13"
+            "updated": "2026-08-20"
         },
         {
             "ref": "navigateur-service",
@@ -1635,13 +1635,13 @@
         {
             "ref": "passes-generateur",
             "code": "Q24",
-            "label": "Le générateur ne rapporte que sa dernière passe : lui demander toutes ses passes, ou seulement celle qui dessine",
+            "label": "Reporter dans la chaîne de production ce que l'atelier sait faire des passes du générateur",
             "description": "**RÉPONSE DE L'OPÉRATEUR, 2026-08-13 : A — TOUTES LES PASSES, DANS L'ORDRE.** La question est tranchée, ce point est du travail.\n\n## CE QUI EST FAIT, DANS L'ATELIER — RÉ-ANALYSÉ LE 2026-08-19\n\n**LA CONSIGNE LES DEMANDE.** La section « Ce que tu nous rapportes » dit : « Si tu as envoyé plusieurs consignes successives, DONNE-LES TOUTES, dans l'ordre où\ntu les as envoyées, chacune précédée d'une ligne disant ce qu'elle produisait. » C'est dans la chaîne de versions de l'atelier depuis la `v5`.\n\n**L'EXTRACTION LES RAMASSE TOUTES.** `php review-server/workshop/extract-transmitted.php <SUJET> <rang>` lit le journal du générateur, prend **chaque** bloc\nentre les marqueurs, écarte les doublons — l'événement de l'agent et son écho —, et les écrit numérotées : `===== PASSE n =====`. Une seule passe s'écrit\ntelle quelle, sans en-tête.\n\n**ET ÇA MARCHE, C'EST MESURÉ** : la `v6` a rendu **deux** passes — celle qui dessine et celle qui refait le fond magenta —, la `v7` une seule.\n\n## CE QUI RESTE, ET C'EST BLOQUÉ PAR LE GEL DU GÉNÉRATEUR\n\n**`transmitted_prompt()` dans `scripts/generate-sprite.py` garde toujours la DERNIÈRE réponse portant les marqueurs.** C'est le chemin de production, distinct de\nl'atelier : la chaîne qui produit les sprites livrables n'a donc pas encore le bénéfice de ce qui vient d'être établi ici. **Ce code ne se touche pas tant que la\nconsigne n'est pas propre** — c'est la règle du sujet `S97 consigne-propre`, et c'est délibéré. Le report se fera avec le reste de ce qui a été tenu.\n\n**LA PAGE D'ATELIER N'EMPILE PAS ENCORE LES PASSES** : elle montre le texte transmis d'un bloc, marqueurs de passe compris. Lisible, mais le diff ne se tient\npas passe par passe. C'est à `S94 atelier-generation`.",
             "status": "todo",
             "priority": 45,
             "waiting": "agent",
             "created": "2026-08-13",
-            "updated": "2026-08-19"
+            "updated": "2026-08-20"
         },
         {
             "ref": "numerotation-series",
