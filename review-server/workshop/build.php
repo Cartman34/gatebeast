@@ -27,6 +27,8 @@ require_once $root . '/review-server/lib/WordDiff.php';
 require_once $root . '/review-server/lib/Inventory.php';
 require_once $root . '/review-server/lib/FootprintGrid.php';
 require_once $root . '/review-server/lib/SpriteMeasures.php';
+require_once $root . '/review-server/lib/Consignes.php';
+require_once $root . '/review-server/lib/TransmittedNumbers.php';
 require_once $root . '/scripts/Tools.php';
 bootBuild();
 
@@ -39,17 +41,6 @@ $reload = Reload::get();
 $parts = PromptParts::get();
 $critiques = Critiques::get();
 $inventory = new Inventory($root);
-
-/**
- * Where the consignes of the workshop live: one directory per subject, and inside it every version with its own files.
- *
- * SOUS `var/`, DONC JAMAIS COMMITÉES (opérateur, 2026-08-17). Ce sont des essais, et l'image d'une seule version pèse trois mégaoctets — plus que tout le code
- * du dépôt réuni. Ce qui doit survivre à un essai n'est pas son texte mais ce qu'il a appris, et cela se reporte à la source et au code.
- *
- * ET IL N'Y EN A QU'UN SEUL : le foyer précédent, `review-server/critiques/`, a été retiré avec son contenu. Deux dossiers pour la même chose, c'est deux
- * vérités dont aucune ne fait foi.
- */
-const CONSIGNES = 'var/generations/consignes';
 
 /** The projected tile, in pixels of the delivered image — the published ratio, 96 across by 84 deep, and never the sine of the camera angle. */
 const TX_PIXELS = 96;
@@ -67,28 +58,19 @@ function escape(string $text): string
  * WHEN a generation happened and nothing about what is being worked on — so writing a consigne differently raised the false question « faut-il un dossier
  * neuf ? ». The subject is the work; the date belongs to a version, which records its own.
  *
- * AND THE WHOLE CHAIN IS VERSIONED, ROOT INCLUDED. Half of it lived under `var/`, which this repository sweeps and which the page itself announces as
- * disposable: a chain whose v1 can vanish leaves every later diff without an origin. Everything now lives under `review-server/workshop/consignes/`.
+ * AND THE WHOLE CHAIN LIVES IN ONE FOLDER, ROOT INCLUDED. It used to straddle two, of which one was disposable: a chain whose v1 can vanish leaves every later
+ * diff without an origin. The single foyer is declared by `Consignes`, and by it alone — this page is one of its four readers.
  */
-function consignes(string $root): array
+function consignes(): array
 {
-    $directory = "$root/" . CONSIGNES;
-    if (!is_dir($directory)) {
-        return [];
-    }
     $found = [];
-    foreach (scandir($directory) as $entry) {
-        if ($entry === '.' || $entry === '..' || !is_dir("$directory/$entry")) {
-            continue;
-        }
-        $home = "$directory/$entry";
+    foreach (Consignes::get()->subjects() as $subject) {
         $found[] = [
-            'name' => $entry,
-            'code' => $entry,
-            'versions' => versionsOf($home),
+            'name' => $subject,
+            'code' => $subject,
+            'versions' => versionsOf($subject),
         ];
     }
-    sort($found);
 
     return $found;
 }
@@ -107,20 +89,19 @@ function consignes(string $root): array
  * A VERSION CARRIES ITS OWN IMAGE, AND THAT IS WHAT MAKES IT TESTABLE (operator, 2026-08-17: « il faut que le système te permette d'avoir un suivi sur ces
  * tests »). Absent, the version has not been generated, and the page says so instead of showing another version's image as though this text had produced it.
  */
-function versionsOf(string $home): array
+function versionsOf(string $subject): array
 {
-    $subject = basename($home);
+    $consignes = Consignes::get();
     $versions = [];
-    $rank = 1;
-    while (is_file($path = "$home/$subject.v$rank.prompt.txt")) {
-        $image = "$home/$subject.v$rank.image.png";
+    foreach ($consignes->ranksOf($subject) as $rank) {
+        $image = $consignes->file($subject, $rank, 'image');
         // LA CONSIGNE TRANSMISE APPARTIENT À UNE VERSION, comme son image et sa session : c'est le texte que l'agent a envoyé à son propre modèle EN LISANT
         // CETTE VERSION-LÀ. La chercher au rang 1 pour tout le monde — ce que faisait ce fichier — la montrait pour une version et la cachait pour les autres.
-        $transmitted = "$home/$subject.v$rank.transmitted.txt";
-        $versions[] = ['label' => "v$rank", 'path' => $path, 'image' => is_file($image) ? $image : null,
+        $transmitted = $consignes->file($subject, $rank, 'transmitted');
+        $versions[] = ['label' => "v$rank", 'path' => $consignes->file($subject, $rank, 'prompt'),
+            'image' => is_file($image) ? $image : null,
             'transmitted' => is_file($transmitted) ? $transmitted : null,
-            'meta' => metaOf("$home/$subject.v$rank.generation.json")];
-        $rank++;
+            'meta' => metaOf($consignes->file($subject, $rank, 'generation'))];
     }
 
     return $versions;
@@ -172,6 +153,105 @@ function pictureMarkup(string $root, Inventory $inventory, array $trial, ?string
 
     return sprintf('<span class="picture" style="%s"><img src="%s" width="%d" height="%d" alt="">%s</span>',
         $grid->pictureStyle($tiling), escape($source), $size[0], $size[1], $grid->markup($subject, $spread, $tiling));
+}
+
+/**
+ * What a version CHANGED, edit by edit, with the reason of each and whether it has been tested.
+ *
+ * THE STATE PER EDIT IS THE GRAIN THAT DECIDES A REPORT INTO THE CODE (`S98 suivi-tests-consigne`), and it lived in a file nobody opened. A version carries a
+ * handful of corrections; some are proven by its image, some are not observable on that essai, and only the proven ones are owed to the code. Shown as one
+ * version-wide verdict, they cannot be told apart — and reporting them all is how a correction that never worked ends up in the socle.
+ *
+ * « NON TESTÉE » IS THE HONEST DEFAULT AND IT STAYS UNTIL A MEASURE SAYS OTHERWISE. « Tenue » is posted on a measure or on the operator's verdict, never on an
+ * impression from re-reading the text — an agent judging his own correction by looking at it will find it good every time.
+ */
+function editsMarkup(array $journal): string
+{
+    if ($journal['fault'] !== null) {
+        return '<p class="missing">' . escape($journal['fault']) . '</p>';
+    }
+    if ($journal['edits'] === []) {
+        return '';
+    }
+    $states = ['tenue' => 'intact', 'non tenue' => 'lost', 'non testée' => 'unknown'];
+    $items = '';
+    foreach ($journal['edits'] as $edit) {
+        $state = $edit['test'] ?? 'non testée';
+        $items .= sprintf('<li><span class="state %s">%s</span> <strong>%s</strong><p class="edit-why">%s</p>%s</li>',
+            escape($states[$state] ?? 'unmeasurable'), escape($state), escape($edit['id'] ?? 'sans identifiant'),
+            escape($edit['intention'] ?? 'Aucune intention écrite — on ne saura pas pourquoi cette correction a été faite.'),
+            isset($edit['observation']) ? '<p class="edit-why">Observé : ' . escape($edit['observation']) . '</p>' : '');
+    }
+    $note = $journal['note'] === null ? '' : '<p class="edit-note">' . escape($journal['note']) . '</p>';
+
+    return sprintf('<h3 class="transmise">Ce que cette version a changé, et ce qu\'on en sait</h3>%s<ul class="edits">%s</ul>', $note, $items);
+}
+
+/**
+ * The transmitted text, cut into the PASSES the agent says it sent — one block each, with its own heading.
+ *
+ * THE AGENT WORKS IN SEVERAL PASSES, AND ONLY ONE OF THEM DRAWS. The `v6` sent two: the one that produced the building, and one that repainted the background
+ * magenta for the cutout. Shown as a single block, the second reads as a continuation of the first, and one looks for the drawing clause inside a text that only
+ * talks about background colour — which is exactly the confusion that cost three days in August.
+ *
+ * TWO HEADINGS ARE RECOGNISED, AND NEITHER IS INVENTED HERE. `===== PASSE n =====` is written by `extract-transmitted.php` when the agent emits several marked
+ * blocks; « Consigne n — ce qu'elle produisait : » is what the agent writes itself, because the consigne asks it for « une ligne disant ce qu'elle produisait ».
+ * Anything else stays one block: a text nobody can cut is shown whole rather than cut at a guess.
+ */
+function passesOf(string $transmitted): array
+{
+    $parts = preg_split('/^(===== PASSE \d+ =====|Consigne \d+[^\n]*)$/m', $transmitted, -1, PREG_SPLIT_DELIM_CAPTURE);
+    if (count($parts) < 3) {
+        return [['title' => null, 'text' => $transmitted]];
+    }
+    $passes = [];
+    // What precedes the first heading belongs to no pass: it is a preamble, and it is shown as such rather than attached to one at random.
+    if (trim($parts[0]) !== '') {
+        $passes[] = ['title' => null, 'text' => trim($parts[0])];
+    }
+    for ($rank = 1; $rank < count($parts); $rank += 2) {
+        $passes[] = ['title' => trim($parts[$rank]), 'text' => trim($parts[$rank + 1] ?? '')];
+    }
+
+    return $passes;
+}
+
+/** The transmitted text as one block per pass, each under its heading. */
+function passesMarkup(string $transmitted): string
+{
+    $passes = passesOf($transmitted);
+    if (count($passes) === 1 && $passes[0]['title'] === null) {
+        return '<pre class="whole">' . escape($passes[0]['text']) . '</pre>';
+    }
+    $blocks = '';
+    foreach ($passes as $pass) {
+        $blocks .= $pass['title'] === null ? '' : '<h4 class="passe">' . escape($pass['title']) . '</h4>';
+        $blocks .= '<pre class="whole">' . escape($pass['text']) . '</pre>';
+    }
+
+    return sprintf('<p class="state">%d passe(s) transmise(s) — une seule d\'entre elles dessine, les autres retouchent.</p>%s',
+        count($passes), $blocks);
+}
+
+/**
+ * What the transmission lost, said above the transmitted text — or that it lost nothing, which is just as much an answer.
+ *
+ * IT SAYS WHAT IT MEASURES IN THE SAME BREATH: presence of a figure, never respect of a constraint. « Rien de chiffré n'a été perdu » on a version whose image
+ * is wrong must not read as « la consigne a été suivie » — the numbers arrived, that is all it can see, and the picture is judged elsewhere.
+ */
+function lossMarkup(array $verdict): string
+{
+    if ($verdict['lost'] === []) {
+        return sprintf('<p class="state intact">Aucune contrainte chiffrée perdue en chemin — les %d nombres de la consigne sont dans ce texte.'
+            . ' Cela dit qu\'ils sont ARRIVÉS, jamais que l\'image les respecte.</p>', $verdict['wanted']);
+    }
+    $items = '';
+    foreach ($verdict['lost'] as $number => $line) {
+        $items .= sprintf('<li><strong>%s</strong> — %s</li>', escape((string) $number), escape(mb_strimwidth($line, 0, 150, '…')));
+    }
+
+    return sprintf('<p class="state lost">%d contrainte(s) chiffrée(s) perdue(s) en chemin, sur %d : le nombre n\'apparaît nulle part dans ce que'
+        . ' l\'agent a envoyé.</p><ul class="lost-numbers">%s</ul>', count($verdict['lost']), $verdict['wanted'], $items);
 }
 
 /** What a generation recorded of itself — its session above all. Absent, the version was never generated, or was generated before the record existed. */
@@ -240,18 +320,28 @@ function defaultVersion(array $versions): string
     return $default;
 }
 
-/** What one version's view says of itself: whose image is shown, which text is read beside it, and what the diff between them means. */
-function viewState(array $version, ?array $next, int $count): string
+/**
+ * What one version's view says of itself: whose image is shown, which text is read beside it, and what the diff between them means.
+ *
+ * A VERSION'S TAB LOOKS FORWARD: its image, and the text of the NEXT one marked with the diff between them (operator, 2026-08-19: « sur la v7, il semble que je
+ * vois le diff entre v6 et v7 au lieu du diff entre v7 et v8 »). One looks at an image while reading what has been corrected SINCE it — that is « what is left
+ * to prove ». So a generated version's diff still moves, and that is intended: it follows the corrections written for the next one, until that one is generated
+ * in turn and takes over with its own diff.
+ *
+ * THIS VIEW WAS REMOVED AND PUT BACK THE SAME DAY, and the mistake is worth writing down: on a remark saying the last version's corrections could not be seen,
+ * the tab was turned backwards. The real cause was elsewhere — NO pending version existed at that moment, so there was nothing to show. A page that is empty
+ * because there is nothing to see is not a wrong page, and turning its meaning around to fill the screen broke what worked.
+ */
+function viewState(array $version, ?array $next, int $generated): string
 {
-    $carries = $version['image'] === null
-        ? "La {$version['label']} n'a jamais été générée."
-        : "Image : {$version['label']}, produite par le texte de cette version.";
+    $carries = "Image : {$version['label']}, produite par le texte de cette version.";
     if ($next === null) {
-        return "$carries Elle est la dernière des $count versions : le texte ci-contre est le sien, sans diff — rien ne l'attend.";
+        return "$carries Elle est la dernière des $generated versions générées, et aucune version en attente ne la suit :"
+            . " il n'y a donc pas de diff tant que la suivante n'est pas écrite.";
     }
 
-    return "$carries Le texte ci-contre est celui de la {$next['label']}, et le diff montre ce qui a changé DEPUIS cette image"
-        . " — donc ce qui reste à éprouver. Sur $count versions.";
+    return "$carries Le texte ci-contre est celui de la {$next['label']}, qui n'est pas encore générée, et le diff montre ce qui a changé"
+        . " DEPUIS cette image — donc ce qui reste à éprouver. Sur $generated versions générées.";
 }
 
 /**
@@ -408,7 +498,7 @@ function critiqueMarkup(array $one): string
         escape($one['kind']), escape(Critiques::KINDS[$one['kind']]), escape($one['title']), $quote, $unplaceable, escape($one['text']));
 }
 
-$trials = consignes($root);
+$trials = consignes();
 $panels = '';
 foreach ($trials as $trial) {
     $versions = $trial['versions'];
@@ -421,15 +511,33 @@ foreach ($trials as $trial) {
     // UNE VUE PAR VERSION, ET ON NAVIGUE ENTRE ELLES (opérateur, 2026-08-17 : « chaque image conserve son prompt et on peut voir le diff de cette image avec la
     // suivante pour voir ce qui a changé. par défaut, je vois la dernière image avec le dernier diff mais je peux retrouver son prompt initial et naviguer
     // entre les différentes versions »). La vue d'une version montre SON image et le texte de la version SUIVANTE, marqué du diff qui les sépare : c'est cela,
-    // « ce qui a changé depuis cette image ». La dernière version n'a pas de suivante et montre donc son texte nu.
+    // « ce qui a changé depuis cette image ».
     //
-    // ET LE DIFF NE REMONTE JAMAIS EN ARRIÈRE : un diff vers la version PRÉCÉDENTE montrerait des changements que l'image porte DÉJÀ, et une version
-    // fraîchement générée s'afficherait couverte de rouge et de vert alors que rien ne l'attend.
+    // AND THE DIFF NEVER LOOKS BACK: a diff towards the PREVIOUS version would show changes the image ALREADY carries, and a freshly generated version would
+    // display covered in red and green while nothing awaits it. The last version has no successor and therefore shows its bare text, saying so — as long as no
+    // pending version exists there is nothing to compare, and that is an answer, not a defect.
+    // AND A VERSION WITHOUT AN IMAGE HAS NO TAB (operator, 2026-08-19: « le bouton v8 ne doit être dispo que si la v8 est générée, c'est comme ça pour la
+    // version à venir, on ne la voit pas. Elle sera présente dans l'interface quand générée »). Its text is ALREADY readable, in the diff of the last generated
+    // version: giving it a tab of its own would show it twice — once marked with the diff, once bare — with nothing saying which is which. A tab is therefore
+    // the address of an IMAGE, and a pending version has none.
     $views = '';
     $tabs = '';
+    $consignes = Consignes::get();
     $default = defaultVersion($versions);
+    $generated = 0;
+    foreach ($versions as $version) {
+        $generated += $version['image'] === null ? 0 : 1;
+    }
+    if ($generated === 0) {
+        $panels .= sprintf('<section class="trial"><h2>%s</h2><p class="missing">Aucune version de ce sujet n\'a été générée :'
+            . ' il n\'y a pas encore d\'image à regarder, donc rien à juger.</p></section>', escape($trial['name']));
+        continue;
+    }
     foreach ($versions as $index => $version) {
         $next = $versions[$index + 1] ?? null;
+        if ($version['image'] === null) {
+            continue;
+        }
         $shown = $next ?? $version;
         $body = file_get_contents($shown['path']);
         $earlier = $next === null ? null : file_get_contents($version['path']);
@@ -494,8 +602,13 @@ foreach ($trials as $trial) {
 
         // LA CONSIGNE TRANSMISE VIT DANS LA VUE DE SA VERSION, et non plus en pied de panneau : hors de la version, elle donnait à croire qu'un seul texte avait
         // été transmis pour toute la chaîne. Absente, on dit lequel des deux cas c'est — l'agent n'a rien rapporté, ou la version n'a jamais été générée.
+        //
+        // AND WHAT IT LOST IS READ ABOVE IT, not only at the command line. Since the agent is asked to TRANSLATE, nobody can see by eye whether a constraint
+        // survived the journey: the words changed on purpose. The verdict comes from the same service as `review-server/workshop/check-transmitted.php` —
+        // nothing is recomputed here, or the page and the command would end up contradicting each other.
         $transmittedBlock = $transmitted !== null
-            ? '<pre class="whole">' . escape($transmitted) . '</pre>'
+            ? lossMarkup(TransmittedNumbers::get()->compare(file_get_contents($version['path']), $transmitted))
+                . passesMarkup($transmitted)
             : ($version['image'] === null
                 ? '<p class="missing">Cette version n\'a pas été générée : il n\'y a pas de consigne transmise.</p>'
                 : '<p class="missing">L\'agent n\'a rien rapporté entre ses marqueurs pour cette version. Sans ce texte, on ne peut pas distinguer une clause'
@@ -506,13 +619,17 @@ foreach ($trials as $trial) {
         $tabs .= sprintf('<button type="button" class="version-tab%s" data-version="%s"%s>%s%s</button>',
             $current ? ' current' : '', escape($version['label']), $current ? ' aria-current="true"' : '',
             escape($version['label']), $version['image'] === null ? '' : ' <span class="dot" title="Cette version a une image">●</span>');
+        // THE PER-EDIT STATE BEARS ON THE TEXT ONE READS, so on the version shown in the column — the next one when it exists. Its corrections are the ones
+        // being judged, and what will be reported into the code depends on them.
+        $named = $consignes->partsOf($shown['path']);
+        $edits = $named === null ? ['edits' => [], 'note' => null, 'fault' => null] : $consignes->editsOf($named['subject'], $named['rank']);
         $views .= sprintf('<div class="version-view%s" data-version="%s"%s><p class="version">%s</p>'
             . '<div class="split"><div class="image">%s%s</div><div class="consigne">%s</div></div>'
-            . '<h3 class="transmise">Ce que l\'agent a transmis à son modèle d\'images, pour cette version</h3>%s</div>',
+            . '<h3 class="transmise">Ce que l\'agent a transmis à son modèle d\'images, pour cette version</h3>%s%s</div>',
             $current ? '' : ' hidden', escape($version['label']), $current ? '' : ' hidden',
-            escape(viewState($version, $next, count($versions))),
+            escape(viewState($version, $next, $generated)),
             pictureMarkup($root, $inventory, $trial, $version['image']) . figuresMarkup($version), $looseBlock, $blocks,
-            $transmittedBlock);
+            $transmittedBlock, editsMarkup($edits));
     }
 
     $panels .= sprintf(
@@ -535,9 +652,10 @@ $page = <<<'HTML'
 <p class="legende"><span><del>Texte barré</del> — retiré depuis l'image affichée</span><span><ins>Texte vert</ins> — ajouté depuis
 l'image affichée</span><span><mark class="ancre">Texte souligné</mark> — la phrase qu'une critique met en cause</span><span>● — cette version a une
 image</span></p>
-<p class="lede">Une consigne vit sous review-server/workshop/consignes/, un répertoire par sujet, versionné de bout en bout — racine comprise. Ses règles
-sont définies une seule fois sous review-server/workshop/source/, et php review-server/workshop/check-source.php refuse qu'un bloc parle de ce qu'un autre
-gouverne. Page construite le {$built}.</p>
+<p class="lede">Une consigne vit sous var/generations/consignes/, un répertoire par sujet, chaîne entière — racine comprise. Ce sont des essais, jamais
+commités : ce qui doit leur survivre n'est pas leur texte mais ce qu'ils ont appris. Les règles se définissent une seule fois sous
+review-server/workshop/source/, et php review-server/workshop/check-source.php refuse qu'un bloc parle de ce qu'un autre gouverne. Page construite le
+{$built}.</p>
 {$reloadMarkup}
 {$trials}
 <style>
@@ -545,7 +663,12 @@ gouverne. Page construite le {$built}.</p>
 {$layout}
 {$reloadStyles}
   .trial { margin: 2rem 0; padding-top: 1rem; border-top: 1px solid var(--trait); }
-  .split { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 1.5rem; align-items: start; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; }
+  /* THE CONSIGNE SCROLLS IN ITS OWN COLUMN, AND ITS HEIGHT IS BOUNDED (operator, 2026-08-18: « la colonne de droite avec la consigne doit être d'une hauteur
+     limitée sinon ça scroll longtemps et je ne peux pas voir ce qui est envoyé réellement au générateur »). Unbounded, the sixteen thousand characters of the
+     consigne pushed the TRANSMITTED one — the only text saying what the image model actually read — screens away, and comparing the two, which is why this
+     page exists, could not be done. */
+  .consigne { max-height: calc(100vh - 6rem); overflow: auto; padding-right: .75rem; }
   /* L'image SUIT LA LECTURE de la consigne : on juge une phrase en la regardant, et une image restée en haut de page oblige à remonter à chaque critique. */
   .image { position: sticky; top: 1rem; }
   .image img { max-width: 100%; height: auto; image-rendering: pixelated; }
@@ -593,6 +716,15 @@ gouverne. Page construite le {$built}.</p>
   .state.partial { color: #c09a4a; }
   .state.lost { color: #c06a6a; }
   .state.unmeasurable, .state.unknown { opacity: .65; }
+  .lost-numbers { margin: .25rem 0 .75rem 1.2rem; padding: 0; font-size: .82rem; }
+  .lost-numbers li { margin-bottom: .2rem; }
+  /* A PASS IS A BLOCK OF ITS OWN, AND ITS HEADING SAYS SO: run together, the pass that draws and the one that repaints the background read as a single text. */
+  h4.passe { margin: 1rem 0 .3rem; font-size: .88rem; font-weight: 600; }
+  /* WHAT A VERSION CHANGED, EDIT BY EDIT: that grain is what decides a report into the code, not a version-wide verdict. */
+  .edits { margin: .5rem 0 0; padding: 0; list-style: none; }
+  .edits li { margin-bottom: .9rem; padding-left: .75rem; border-left: 1px solid var(--trait); }
+  .edit-why { margin: .2rem 0 0; font-size: .84rem; opacity: .85; }
+  .edit-note { margin: .3rem 0 .8rem; font-size: .84rem; opacity: .85; }
   /* TROIS COULEURS, TROIS SENS, ET AUCUNE N'EN PORTE DEUX : rouge ce qui disparaît, vert ce qui s'ajoute, bleu la phrase qu'une critique met en cause. La
      couleur de l'ancre passe par le SOULIGNÉ et jamais par le texte, sinon elle se mélangerait au rouge et au vert du diff sur les passages qui sont les deux. */
   del { color: #c06a6a; text-decoration: line-through; text-decoration-thickness: 1px; }
