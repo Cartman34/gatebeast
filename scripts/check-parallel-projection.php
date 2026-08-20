@@ -6,6 +6,12 @@
  *
  *   Exits 1 as soon as one image drifts, so it can gate a version before its corrections are carried back into the code.
  *
+ *   THIS ONE MEASURES; `scripts/check-axonometry.py` JUDGES — said here so nobody merges them believing they are a duplicate (`Q26 doublon-projection`, settled
+ *   on 2026-08-20 by measurement). This file returns a DRIFT IN FIGURES on any image whatever, which is what compares two versions of one sprite: 0.897 then
+ *   0.100 says the correction worked. It reads the silhouette only, so it counts a gable's rake as drift — legitimately oblique, and its figures are inflated by
+ *   it. The other returns a VERDICT — converging, parallel, or not enough structure — read on inner edges and straight segments, so it concludes where the
+ *   outline says nothing: buildings and fences. Neither can do the other's work.
+ *
  * INTENTION
  *   THIS IS THE DEFECT THE EYE ARGUES ABOUT AND A COLUMN OF FIGURES SETTLES. Under the socle's camera — orthographic, azimuth zero — every line running
  *   north-south projects VERTICAL, at ground level and at any height: a footprint edge, a wall foot, a roof eave. A silhouette boundary that drifts steadily as

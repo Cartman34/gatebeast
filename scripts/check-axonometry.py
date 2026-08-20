@@ -16,7 +16,12 @@ DELIBERATELY WITHOUT ANY NEW LIBRARY. A Hough transform over detected edges woul
 scikit-image, which is not installed and is not on the project's validated tool list — and an unvalidated tool is asked for, never tried (règles du dépôt). This version uses numpy and Pillow, which
 the chain already carries. What it costs is written above: it reads the outline, not the inner edges, so a subject whose sides are hidden by its own crown says "cannot conclude" more often.
 
-Python rather than PHP for the usual reason: image measurement lives here, and this asks the same two libraries every other measuring tool asks.
+THIS ONE JUDGES; `scripts/check-parallel-projection.php` MEASURES — said here so nobody merges them believing they are a duplicate (`Q26 doublon-projection`,
+settled on 2026-08-20 by measurement). This file returns a VERDICT — converging, parallel, or not enough structure — read on inner edges and straight segments,
+so it concludes where the outline says nothing: 37 buildings out of 38, 18 fences out of 38. The other returns a DRIFT IN FIGURES on any image whatever, which
+is what compares two versions of one sprite; it reads the silhouette only, so it counts a gable's rake as drift. Neither can do the other's work.
+
+Python rather than PHP for the usual reason: image measurement lives here, and this asks the same libraries every other measuring tool asks.
 """
 
 import json
