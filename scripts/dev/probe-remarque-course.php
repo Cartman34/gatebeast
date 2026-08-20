@@ -73,9 +73,23 @@ $probe = "<script>(function () {"
 
 file_put_contents($page, file_get_contents($page) . $probe);
 
+// THE OPERATOR'S NOTES ARE PUT BACK, like `probe-verdicts.php` does and for the same reason: this probe TYPES a remark to prove the typing survives the answer,
+// so it cannot be muzzled — being written is what it measures. What it can do is remember the file and restore it, or it leaves a remark nobody wrote.
+$before = is_file($notes) ? file_get_contents($notes) : null;
+
 $shot = $root . '/var/tmp/probe-remarque-course.png';
 Browser::get()->shot($served, $shot, 1400, 700, 12000);
 
+$after = is_file($notes) ? file_get_contents($notes) : null;
 printf("Tir d'écran : %s\n", $shot);
-printf("La remarque « %s » est-elle dans le dépôt ? %s\n", $mark, str_contains((string) file_get_contents($notes), $mark) ? 'OUI' : 'NON');
+printf("La remarque « %s » est-elle dans le dépôt ? %s\n", $mark, str_contains((string) $after, $mark) ? 'OUI' : 'NON');
+
+if ($after !== $before) {
+    if ($before === null) {
+        unlink($notes);
+    } else {
+        file_put_contents($notes, $before);
+    }
+    echo "LA REMARQUE ÉCRITE PAR CETTE SONDE A ÉTÉ RETIRÉE : les données de l'opérateur sont revenues à leur état d'avant.\n";
+}
 echo "Reconstruis la page pour retirer la sonde : php review-server/build.php /sprites\n";

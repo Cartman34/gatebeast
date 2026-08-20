@@ -163,12 +163,12 @@ def verdict(path):
     alpha = numpy.asarray(Image.open(path).convert("RGBA"))[:, :, 3]
     measured = sides(alpha)
     if measured is None:
-        return True, "silhouette trop courte pour mesurer ses côtés — aucun verdict"
+        return None, "silhouette trop courte pour mesurer ses côtés — aucun verdict"
     ys, lefts, rights = measured
     left_angle, left_rough = lean(ys, lefts)
     right_angle, right_rough = lean(ys, rights)
     if left_rough > MAXIMUM_ROUGHNESS or right_rough > MAXIMUM_ROUGHNESS:
-        return True, (f"côtés trop irréguliers pour conclure (irrégularité {left_rough:.1f} px à gauche, "
+        return None, (f"côtés trop irréguliers pour conclure (irrégularité {left_rough:.1f} px à gauche, "
                       f"{right_rough:.1f} px à droite) — aucun verdict")
     # DEUX CÔTÉS QUI PENCHENT DU MÊME CÔTÉ SONT UN SUJET INCLINÉ, PAS UNE PERSPECTIVE : c'est leur écart qui trahit le point de fuite, jamais leur pente commune.
     taper = abs(left_angle - right_angle)
@@ -181,7 +181,11 @@ def verdict(path):
 
 
 def main(paths):
+    # THREE STATES, AND « I CANNOT CONCLUDE » IS NOT A FAVOURABLE VERDICT (repository rules name it: a check returning "all is well" when it could check
+    # nothing). This command printed "OK", exit code 0 included, on both cases of impossibility, while writing "aucun verdict" on the very same line: the
+    # sentence was right and the prefix said the opposite — and the prefix is what one reads when scanning a list.
     faults = 0
+    unread = 0
     for name in paths:
         path = Path(name)
         if not path.is_file():
@@ -189,8 +193,18 @@ def main(paths):
             faults += 1
             continue
         kept, sentence = verdict(path)
-        print(f"{'OK  ' if kept else 'HORS'} {path.name} — {sentence}")
-        faults += 0 if kept else 1
+        mark = "?   " if kept is None else ("OK  " if kept else "HORS")
+        print(f"{mark} {path.name} — {sentence}")
+        if kept is None:
+            unread += 1
+        elif not kept:
+            faults += 1
+
+    if unread:
+        # THE COUNT OF THE UNJUDGED IS SPOKEN, OR THEY READ AS VALIDATIONS. The exit code stays 0 when nothing is HORS: refusing on an image one could not
+        # read would make the command permanently red on buildings, which it has never been able to judge.
+        print(f"\n{unread} image(s) n'ont PAS PU être jugées — ce n'est pas une validation.")
+        print("  Solution — « php scripts/check-parallel-projection.php <image> » mesure la dérive rangée par rangée et conclut, lui.")
 
     return 1 if faults else 0
 

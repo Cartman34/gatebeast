@@ -17,17 +17,13 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/review-server/bootstrap.php';
+require_once $root . '/review-server/lib/Probe.php';
 bootBuild();
 
 require_once dirname(__DIR__) . '/Tools.php';
 Tools::get()->helpIfAsked($argv, __FILE__);
 
-$server = ReviewServer::get();
-$served = $server->urlFor('/sprites');
-$html = @file_get_contents($served);
-if ($html === false) {
-    throw new RuntimeException("FAULT la revue ne répond pas sur {$served} — lancez php review-server/serve.php.");
-}
+$html = Probe::get()->page('/sprites');
 
 // The images are named rather than discovered: the probe answers a question about THESE states, and a discovered set would silently change meaning the day their
 // verdicts change. They are the ones the store actually holds — a pending remark on a current version, and a current version whose predecessor was commented then
@@ -62,13 +58,14 @@ $probe = "<script>window.addEventListener('load', function () {"
     . "}, 5000);"
     . "});</script>";
 
-// THE PROBE PAGE IS OPENED THROUGH THE SERVER, NOT FROM THE DISK, and that is the whole reason this file exists twice over: the page reads its verdicts by XHR,
-// and a document opened from file:// has the origin « null », so the browser refuses that call before it leaves. The page then shows every remark empty — which
-// looks exactly like the defect one is trying to measure. Written into a directory the server already serves, it is same-origin and the call goes through.
-$copy = $root . '/var/tmp/sonde-remarque-traitee.html';
-file_put_contents($copy, $html . $probe);
-
-$dom = Browser::get()->dom($server->urlFor('/var/tmp/' . basename($copy)), 12000);
+// THE PROBE PAGE IS OPENED THROUGH THE SERVER, NOT FROM THE DISK, and that is the whole reason this care is taken: the page reads its verdicts by XHR, and a
+// document opened from file:// has the origin « null », so the browser refuses that call before it leaves. The page then shows every remark empty — which looks
+// exactly like the defect one is trying to measure.
+//
+// AND IT GOES THROUGH `Probe::serve()` RATHER THAN WRITING ITS OWN COPY (`W21 sondes-servies`): the service serves it from the same origin AND muzzles it, so
+// this probe cannot write into the operator's notes while looking at them. Rolled by hand, the copy was served but never muzzled — which is how a probe that
+// only meant to look left ten empty verdicts behind on 2026-08-11.
+$dom = Browser::get()->dom(Probe::get()->serve($html, $probe, 'remarque-traitee'), 12000);
 if (preg_match('#<div id="sonde">(.*?)</div>#s', $dom, $found)) {
     echo trim($found[1]) . "\n";
     exit(0);

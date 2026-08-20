@@ -460,8 +460,8 @@ def republish_review_page() -> bool:
     """Rebuild the sprites review page; return False, naming the command that repairs it, when the rebuild fails.
 
     EVERY WRITE THAT CHANGES WHAT THE PAGE SHOWS REPUBLISHES IT, or nobody can judge on what is displayed. The repository rule names the two together, in one
-    sentence: every sprite produced is recorded under its subject AND the review artefact is republished, without exception. The mechanism used to live in
-    `scripts/sprite-queue.py`, a production queue that died when its two generators merged into this command; the republication fell with it, silently, and
+    sentence: every sprite produced is recorded under its subject AND the review artefact is republished, without exception. The mechanism used to live in the
+    sprite production queue, since removed, which died when its two generators merged into this command; the republication fell with it, silently, and
     three sprites produced on 2026-08-12 appeared nowhere. Hung on a queue that can be removed, it disappears with that queue — its place is in the command
     that produces, the very one that already records into the referential.
 
@@ -1060,9 +1060,9 @@ dessus.
     # THE SPLIT IS FROZEN WITH THE CONSIGNE, AND AS SOON AS IT IS: the two are only useful together, and the reserved name is what tells them apart from the
     # next version's pair. Written after the reservation, so it can never claim a consigne another process took.
     print(f"découpage figé : {write_prompt_parts(image.with_suffix('.txt'), prompt).relative_to(REPO)}")
-    # REBUILDING THE REVIEW PAGE BELONGS TO THIS COMMAND NOW, NOT TO A QUEUE. It lived in `scripts/sprite-queue.py`, which held the ordering between two
-    # concurrent generations; that queue died when the two generators merged, and the republication fell with it. The ordering is now held by the lock inside
-    # `republish_review_page()`. The export and the report have always belonged here — they concern this image and nothing else.
+    # REBUILDING THE REVIEW PAGE BELONGS TO THIS COMMAND NOW, NOT TO A QUEUE. It lived in the sprite production queue, since removed, which held the ordering
+    # between two concurrent generations; that queue died when the two generators merged, and the republication fell with it. The ordering is now held by the
+    # lock inside `republish_review_page()`. The export and the report have always belonged here — they concern this image and nothing else.
     print(f"génération vers {image.relative_to(REPO)}")
 
     run = production_report.Run(name)

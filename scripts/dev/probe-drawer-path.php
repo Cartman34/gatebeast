@@ -18,16 +18,17 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/review-server/bootstrap.php';
+require_once $root . '/review-server/lib/Probe.php';
 bootBuild();
 
 require_once dirname(__DIR__) . '/Tools.php';
 Tools::get()->helpIfAsked($argv, __FILE__);
 
-$served = ReviewServer::get()->urlFor('/sprites');
-$html = @file_get_contents($served);
-if ($html === false) {
-    throw new RuntimeException("FAULT la revue ne répond pas sur {$served} — lancez php review-server/serve.php.");
-}
+// THE PROBE SERVICE OWNS BOTH GESTURES NOW (`W21 sondes-servies`): fetching the served page, and serving the doctored copy back from the SAME origin. Writing
+// the copy to a local file and giving it a `<base href>` was not enough — the origin stays `file://`, so the very request under test is the one the browser
+// refuses. `Probe::serve()` also muzzles the copy before it is opened, which a hand-rolled file did not: ten empty verdicts were written into the operator's
+// own notes on 2026-08-11 by a probe that clicked to measure.
+$html = Probe::get()->page('/sprites');
 
 // THE PROBE IS APPENDED AT THE END OF THE FILE, never before </body>: the built page carries no such tag, so a replacement on it would change nothing and the
 // probe would report a clean run on a page it never touched.
@@ -50,10 +51,7 @@ $probe = "<script>window.addEventListener('error', function (e) {"
     . " + ' — TEXTE : [' + document.getElementById('drawer-body').textContent.slice(0, 60) + ']';"
     . "});</script>";
 
-$copy = $root . '/var/tmp/drawer-path-probe.html';
-file_put_contents($copy, '<base href="' . $served . '">' . $html . $probe);
-
-$dom = Browser::get()->dom($copy);
+$dom = Browser::get()->dom(Probe::get()->serve($html, $probe, 'drawer-path'));
 if (preg_match('#<div id="sonde">(.*?)</div>#s', $dom, $found)) {
     echo trim($found[1]) . "\n";
     exit(0);

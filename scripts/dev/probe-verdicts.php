@@ -62,9 +62,26 @@ $probe = "<script>window.addEventListener('load', function () {"
 
 file_put_contents($page, file_get_contents($page) . $probe);
 
+// THE OPERATOR'S VERDICTS ARE PUT BACK, AND THIS PROBE IS THE ONLY ONE THAT HAS TO. Every other probe muzzles its copy before clicking; this one exists to prove
+// the click REACHES the file, so it cannot. What it can do is remember the file and restore it — otherwise it leaves a verdict nobody gave. It left « validé »
+// on the grass tile on 2026-08-19, exactly the accident of 2026-08-11 that the repository rule was written for: ten empty entries, removed one by one.
+$before = is_file($notes) ? file_get_contents($notes) : null;
+
 $shot = $root . '/var/tmp/probe-verdicts.png';
 Browser::get()->shot($served, $shot, 1400, 700, 12000);
 
+$after = is_file($notes) ? file_get_contents($notes) : null;
 printf("Tir d'écran : %s\n", $shot);
-printf("Le fichier du dépôt contient maintenant :\n%s\n", is_file($notes) ? file_get_contents($notes) : '(rien)');
-echo "Reconstruis la page pour retirer la sonde : php review-server/suivi-sprites/build.php\n";
+printf("Le fichier du dépôt contenait, juste après le clic :\n%s\n", $after ?? '(rien)');
+
+if ($after !== $before) {
+    if ($before === null) {
+        unlink($notes);
+    } else {
+        file_put_contents($notes, $before);
+    }
+    echo "LE VERDICT ÉCRIT PAR CETTE SONDE A ÉTÉ RETIRÉ : les données de l'opérateur sont revenues à leur état d'avant.\n";
+} else {
+    echo "AUCUNE ÉCRITURE N'A ATTEINT LE FICHIER — c'est le défaut que cette sonde cherche, et il est là.\n";
+}
+echo "Reconstruis la page pour retirer la sonde : php review-server/build.php /sprites\n";
