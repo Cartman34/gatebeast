@@ -336,7 +336,7 @@ piloter son projet.
   fois les points du projet et les choses du monde, l'opérateur a cherché des boutons de vote sur la page des points, et il a fallu trois allers-retours pour découvrir qu'on ne parlait pas de la même
   page. Le mot ambigu se retire des **deux** noms, et chacune prend un nom qui ne se confond avec rien.
 - **Tout libellé et tout titre affiché commence par une majuscule** — « Vue principale », jamais « vue principale ». Une seule majuscule, celle du début : elle ne se répète pas à chaque mot. Les codes
-  et les adresses techniques gardent leur casse exacte, celle des fichiers (`OB-010`, `cutout/cloture/...`), aucune majuscule ajoutée. Une interface où la casse varie d'un libellé à l'autre donne
+  et les adresses techniques gardent leur casse exacte, celle des fichiers (`OB-010`, `cutout/fence/...`), aucune majuscule ajoutée. Une interface où la casse varie d'un libellé à l'autre donne
   l'impression que personne ne l'a relue — c'est le genre de détail qui se corrige une fois par page tant que la règle n'existe pas.
 - **TOUTE PAGE PORTE UN TITRE, UNE FAVICON, ET DIT SON CHEMIN D'ACCÈS JUSQU'À L'INDEX** (opérateur, 2026-08-17 : « toute page référence son arbo d'accès et
   chaque page est accessible par l'index »). **L'arborescence a deux niveaux au plus pour l'instant, l'index étant le premier**, et chaque page est joignable

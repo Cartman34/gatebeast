@@ -38,20 +38,26 @@ const FOLDERS = [
 const FAMILIES = ['tuile' => 'tile'];
 /** Where images live, under `assets/`. */
 const HOMES = ['cutout', 'poc'];
-/** Every file that records a path against those folders. A file absent from this list keeps a dead path, silently — that is the whole risk of this rename. */
-const REWRITTEN = [
-    'assets/subjects.json',
-    'assets/catalogue.json',
-    'assets/jugements.json',
-    'scripts/thumbnails.json',
-    'scripts/asset_common.py',
-    'scripts/generate-image.php',
-    'scripts/dev/probe-handled-remark.php',
-    'review-server/notes/sprites.json',
-    'review-server/tasks.json',
-    'doc/glossaire.md',
-    'doc/regles-du-depot.md',
-];
+/**
+ * Where citations are looked for. NOT WHICH FILES — a hand-held list keeps a dead path in whatever it forgot, silently (operator, 2026-08-19: « aucun fichier
+ * n'est à analyser en dur, ça n'a aucun sens »).
+ *
+ * ITS FIRST VERSION HELD ELEVEN NAMES AND MISSED ONE: `scripts/build-fence-geometry-svg.py` cites the image it took its measurements from, in a comment, and
+ * that citation would have stayed dead — `check-tools.php` caught it after the fact. What is swept is now discovered, and the sweep is what makes the rename
+ * one gesture instead of a list to maintain.
+ */
+const SEARCHED_TREES = ['assets', 'scripts', 'review-server', 'doc'];
+/** Extensions that can carry a path. Images and archives are skipped: they are what MOVES, never what names. */
+const SEARCHED_EXTENSIONS = ['json', 'php', 'py', 'md', 'sh', 'js', 'css', 'txt'];
+/** Not swept: unversioned by design, or the images themselves. */
+const SKIPPED = ['assets/cutout', 'assets/poc', 'assets/maquette', 'var', 'local'];
+/**
+ * Two files that carry the old names ON PURPOSE and must keep them.
+ *
+ * The session journal cites what existed the day it was written — rewriting it would falsify the record it exists to hold. This script itself carries both
+ * names, in the very table that maps one to the other.
+ */
+const KEPT = ['doc/journal-des-seances.md', 'scripts/dev/rename-asset-folders.php'];
 
 $apply = in_array('--apply', $argv, true);
 $dry = in_array('--dry-run', $argv, true);
@@ -87,15 +93,39 @@ foreach ($moves as [$from, $to]) {
     printf("  %s → %s (%d fichier(s))\n", $from, $to, $count);
 }
 
-$rewrites = [];
-foreach (REWRITTEN as $relative) {
-    $path = $root . '/' . $relative;
-    if (!is_file($path)) {
-        fwrite(STDERR, "FAULT « $relative » est absent, alors qu'il porte des chemins à réécrire.\n"
-            . "  Solution — corriger la constante REWRITTEN de ce script : un fichier oublié garde un chemin mort, sans le dire.\n");
-        exit(1);
+/** Every file of the swept trees that could carry a path — discovered, never listed. */
+function searched(string $root): array
+{
+    $found = [];
+    foreach (SEARCHED_TREES as $tree) {
+        if (!is_dir($root . '/' . $tree)) {
+            continue;
+        }
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $tree, FilesystemIterator::SKIP_DOTS));
+        foreach ($iterator as $file) {
+            if (!$file->isFile() || !in_array($file->getExtension(), SEARCHED_EXTENSIONS, true)) {
+                continue;
+            }
+            $relative = substr($file->getPathname(), strlen($root) + 1);
+            if (in_array($relative, KEPT, true)) {
+                continue;
+            }
+            foreach (SKIPPED as $skipped) {
+                if (str_starts_with($relative, $skipped . '/')) {
+                    continue 2;
+                }
+            }
+            $found[] = $relative;
+        }
     }
-    $body = file_get_contents($path);
+    sort($found);
+
+    return $found;
+}
+
+$rewrites = [];
+foreach (searched($root) as $relative) {
+    $body = file_get_contents($root . '/' . $relative);
     $hits = 0;
     foreach (HOMES as $home) {
         foreach (FOLDERS as $french => $english) {

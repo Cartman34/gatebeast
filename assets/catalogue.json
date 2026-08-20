@@ -20,8 +20,8 @@
       "images": [
         {
           "address": "orientation-south_action-idle_frame-01",
-          "path": "assets/cutout/sol/CH-001.png",
-          "source": "assets/poc/sol/CH-001.png",
+          "path": "assets/cutout/ground/CH-001.png",
+          "source": "assets/poc/ground/CH-001.png",
           "measures": {
             "size_px": {
               "width": 192,
@@ -67,8 +67,8 @@
       "images": [
         {
           "address": "orientation-south_action-idle_frame-01",
-          "path": "assets/cutout/personnage/HU-000.png",
-          "source": "assets/poc/personnage/HU-000.png",
+          "path": "assets/cutout/character/HU-000.png",
+          "source": "assets/poc/character/HU-000.png",
           "measures": {
             "size_px": {
               "width": 660,
@@ -114,8 +114,8 @@
       "images": [
         {
           "address": "orientation-south_action-idle_shape-ew_frame-01",
-          "path": "assets/cutout/cloture/OB-010_shape-ew.png",
-          "source": "assets/poc/cloture/OB-010_shape-ew.png",
+          "path": "assets/cutout/fence/OB-010_shape-ew.png",
+          "source": "assets/poc/fence/OB-010_shape-ew.png",
           "measures": {
             "size_px": {
               "width": 190,
@@ -161,8 +161,8 @@
       "images": [
         {
           "address": "orientation-south_action-idle_frame-01",
-          "path": "assets/cutout/sol/SOL-001.png",
-          "source": "assets/poc/sol/SOL-001.png",
+          "path": "assets/cutout/ground/SOL-001.png",
+          "source": "assets/poc/ground/SOL-001.png",
           "measures": {
             "size_px": {
               "width": 1254,

@@ -1,6 +1,6 @@
 {
     "verdicts": {
-        "cutout/batiment/BT-001-v11.png": {
+        "cutout/building/BT-001-v11.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
@@ -10,7 +10,7 @@
                 "reason": "Cause trouvée et corrigée à la fiche : elle demandait de voir le mur jusqu'au sol sans dire sous quel angle, d'où une façade en élévation. BT-001-v14 est produite sous la caméra du monde."
             }
         },
-        "cutout/batiment/BT-001_proposition-p2-v5.png": {
+        "cutout/building/BT-001_proposition-p2-v5.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
@@ -20,7 +20,7 @@
                 "reason": "Reprise livrée le 2026-08-11 en v6, sur ce motif exact — le verdict se donne maintenant sur la v6."
             }
         },
-        "cutout/batiment/BT-001_proposition-p3-v5.png": {
+        "cutout/building/BT-001_proposition-p3-v5.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
@@ -30,7 +30,7 @@
                 "reason": "Reprise livrée le 2026-08-11 en v6, sur ce motif exact — le verdict se donne maintenant sur la v6."
             }
         },
-        "cutout/sol/CH-021_shape-ns-v3.png": {
+        "cutout/ground/CH-021_shape-ns-v3.png": {
             "approved": false,
             "discarded": false,
             "rework": true
@@ -51,7 +51,7 @@
                 "reason": "Reprise livrée le 2026-08-11 en v13, sur ce motif exact — le verdict se donne maintenant sur la v13."
             }
         },
-        "cutout/personnage/HU-000-v2.png": {
+        "cutout/character/HU-000-v2.png": {
             "rework": false,
             "discarded": false,
             "approved": true,
@@ -72,13 +72,13 @@
             "discarded": false,
             "approved": true
         },
-        "cutout/sol/CH-021_shape-ns-v4.png": {
+        "cutout/ground/CH-021_shape-ns-v4.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
             "comment": "Je veux le style de v2. Ne pas mettre de cours d'eau sur l'image !!!"
         },
-        "cutout/sol/CH-021_shape-ew.png": {
+        "cutout/ground/CH-021_shape-ew.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
@@ -90,17 +90,17 @@
             "rework": true,
             "comment": "Déformé par rapport à v5"
         },
-        "cutout/batiment/BT-001_proposition-p2-v6.png": {
+        "cutout/building/BT-001_proposition-p2-v6.png": {
             "approved": false,
             "discarded": false,
             "rework": true
         },
-        "cutout/batiment/BT-001-v12.png": {
+        "cutout/building/BT-001-v12.png": {
             "approved": false,
             "discarded": false,
             "rework": true
         },
-        "cutout/batiment/BT-001_proposition-p3-v6.png": {
+        "cutout/building/BT-001_proposition-p3-v6.png": {
             "approved": false,
             "discarded": false,
             "rework": true
@@ -121,7 +121,7 @@
             "rework": true,
             "comment": "Revenir à la v5 avec un tronc plus fin, il s'évase en gross racines qui entrent dans le sol et semblent impraticables. Il faut corriger l'angle de vue aussi, ça doit être le même pour tous. je ne compnrends pas pourquoi cet arbre est différent. Revois entierement la description s'il faut."
         },
-        "cutout/batiment/BT-002.png": {
+        "cutout/building/BT-002.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
@@ -131,17 +131,17 @@
                 "reason": "BT-002-v2 porte l'usure moyenne et la nature légère : tuiles manquantes, crépi tombé par plaques, fissure, volet dégondé, lierre sur un pignon."
             }
         },
-        "cutout/batiment/BT-002_proposition-p3-v4.png": {
+        "cutout/building/BT-002_proposition-p3-v4.png": {
             "rework": false,
             "discarded": false,
             "approved": true
         },
-        "cutout/batiment/BT-002_proposition-p2.png": {
+        "cutout/building/BT-002_proposition-p2.png": {
             "rework": false,
             "discarded": false,
             "approved": true
         },
-        "cutout/sol/CH-021_shape-ns-v5.png": {
+        "cutout/ground/CH-021_shape-ns-v5.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
@@ -164,18 +164,18 @@
             "discarded": false,
             "approved": true
         },
-        "cutout/personnage/HU-000-v5.png": {
+        "cutout/character/HU-000-v5.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
             "comment": "Sprite déformé, ce n'es tpas le premier a avoir un soucis avec l'est"
         },
-        "cutout/personnage/HU-000-v3.png": {
+        "cutout/character/HU-000-v3.png": {
             "rework": false,
             "discarded": false,
             "approved": true
         },
-        "cutout/personnage/HU-000-v4.png": {
+        "cutout/character/HU-000-v4.png": {
             "rework": false,
             "discarded": false,
             "approved": true
@@ -190,35 +190,35 @@
             "discarded": false,
             "rework": true
         },
-        "cutout/batiment/BT-002-v2.png": {
+        "cutout/building/BT-002-v2.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
             "comment": "Moins de casse, un peu plus de saleté. faut que ça paraisse ancien mais faut pas en faire de trop non plus !!!"
         },
-        "cutout/batiment/BT-001-v14.png": {
+        "cutout/building/BT-001-v14.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
             "comment": "Mieux pas vu parallèle stricte non respectée. c'est comment à tous les batiments !! Donc ça ne doit pas être rpécisé dans lad escription batiment ou la consigne additionnelles, c'est DANS LES BATIMENTS !!! (voir plus que les batiments mais peut de choses sont vraiment carr"
         },
-        "cutout/batiment/BT-001_proposition-p2-v7.png": {
+        "cutout/building/BT-001_proposition-p2-v7.png": {
             "approved": false,
             "discarded": false,
             "rework": true
         },
-        "cutout/batiment/BT-001_proposition-p3-v7.png": {
+        "cutout/building/BT-001_proposition-p3-v7.png": {
             "approved": false,
             "discarded": false,
             "rework": true
         },
-        "cutout/batiment/BT-001-v15.png": {
+        "cutout/building/BT-001-v15.png": {
             "approved": false,
             "discarded": false,
             "rework": true,
             "comment": "A rendre parallèles. TOUS les batiments doivent respecter la vue parallèle !! C'es timpératif ! et ce n'es tpas à préciser pour chaque batiment ou chaque sprite, c'est le socle. "
         },
-        "cutout/personnage/HU-000-v6.png": {
+        "cutout/character/HU-000-v6.png": {
             "rework": false,
             "discarded": false,
             "approved": true

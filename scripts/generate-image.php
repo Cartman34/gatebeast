@@ -31,7 +31,7 @@ const JOB_TIMEOUT = 900;
 // report names this file, so retrieving what happened during a generation costs nothing.
 const TRACES = __DIR__ . '/../var/generations';
 // The agent always runs from the PROJECT ROOT, never from the folder its image happens to land in. A session belongs to the directory it was launched from
-// and is offered nowhere else, so scattering them across assets/poc/sol, assets/poc/cloture and the rest made them unfindable afterwards. From the root,
+// and is offered nowhere else, so scattering them across assets/poc/ground, assets/poc/fence and the rest made them unfindable afterwards. From the root,
 // every session of the project is listed in one place — and every path a consigne quotes, reference or plan, is reachable from there too.
 const PROJECT_ROOT = __DIR__ . '/..';
 

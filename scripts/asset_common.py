@@ -41,8 +41,8 @@ ASSETS = Path(__file__).resolve().parents[1] / "assets" / "poc"
 # destination: deriving where to WRITE from where a reference happens to sit is what once sent two
 # produced tracés into assets/revue-da/, among the reference plates, because the reference given for
 # them lived there. The destination depends on the sujet, full stop.
-CODE_FOLDER = {"TR": "vegetation", "BT": "batiment", "CH": "sol", "OB": "cloture",
-               "HU": "personnage", "SP": "creature"}
+CODE_FOLDER = {"TR": "vegetation", "BT": "building", "CH": "ground", "OB": "fence",
+               "HU": "character", "SP": "creature"}
 
 # A single, lone asterisk on each side — never a pair. Markdown bold ("**word**") is built from pairs
 # of this same character, so a naive split on "*" tears bold spans into empty fragments and can no
@@ -303,12 +303,12 @@ JOUEUR = ("HU-000", "2 cases debout",
           "compacte, tête un peu grande.")
 
 TYPES = {
-    "sol": ("tuile", "une tuile de sol"),
-    "batiment": ("cutout", "un bâtiment"),
+    "ground": ("tile", "une tuile de sol"),
+    "building": ("cutout", "un bâtiment"),
     "vegetation": ("cutout", "un élément de végétation"),
-    "personnage": ("cutout", "un personnage humain"),
+    "character": ("cutout", "un personnage humain"),
     "creature": ("cutout", "une créature"),
-    "cloture": ("trace", "une pièce de clôture"),
+    "fence": ("trace", "une pièce de clôture"),
     "chemin": ("trace", "une pièce de chemin"),
 }
 
@@ -352,7 +352,7 @@ def definition(footprint: tuple, famille: str) -> str:
     fixing its height would squash its base off its tiles.
     """
     columns, rows = footprint
-    if famille == "tuile":
+    if famille == "tile":
         return (f"DIMENSIONS ATTENDUES : exactement {columns} case(s) sur {rows}. La matière doit "
                 f"couvrir toute cette surface, bord à bord.")
 
@@ -527,16 +527,16 @@ def prompt(type_asset: str, code: str, footprint: tuple = None, reference_name: 
     famille, label = TYPES[type_asset]
     taille, description = fiche(code)
     footprint = footprint or FOOTPRINTS.get(code, DEFAULT_FOOTPRINT)
-    cadrage = {"tuile": CADRAGE_TUILE, "trace": CADRAGE_TRACE}.get(famille, CADRAGE_CUTOUT)
+    cadrage = {"tile": CADRAGE_TUILE, "trace": CADRAGE_TRACE}.get(famille, CADRAGE_CUTOUT)
     destination = ("destinée à être répétée en damier pour couvrir le sol d'une carte vue de dessus"
-                   if famille == "tuile" else
+                   if famille == "tile" else
                    "SEUL SUJET DE L'IMAGE, destiné à être détouré et posé comme sprite sur une carte "
                    "vue de dessus")
     entete = (f"ASSET DE JEU — {label}, {destination}.\nÉCHELLE ANNONCÉE : {taille}.\n"
               f"{definition(footprint, famille)}")
 
     blocs = [STYLE_FR, CAMERA_FR, entete, cadrage]
-    if famille != "tuile":
+    if famille != "tile":
         blocs.append(emprise_clause(footprint, trace=famille == "trace"))
     if famille == "trace":
         blocs.append(TRACE_FR)

@@ -3,7 +3,7 @@
   "version": 2,
   "judgments": [
     {
-      "image": "assets/poc/cloture/OB-010_shape-ew_posts-1.png",
+      "image": "assets/poc/fence/OB-010_shape-ew_posts-1.png",
       "score": 8,
       "total": 9,
       "verdict": "retenue",
@@ -57,7 +57,7 @@
       "report": "Le bois est trop orangé et lisse par rapport à la référence, argentée et texturée. Pour le reste — sujet, cadrage, transparence, angle, lumière — c'est conforme."
     },
     {
-      "image": "assets/poc/cloture/OB-010_shape-ns_posts-1-v2.png",
+      "image": "assets/poc/fence/OB-010_shape-ns_posts-1-v2.png",
       "score": 7,
       "total": 9,
       "verdict": "à refaire",
@@ -111,7 +111,7 @@
       "report": "Défaut structurel : il manque une des deux lisses attendues et le poteau n'est pas au centre de la case, ce qui compromet le raccordement bord à bord avec les cases voisines. Le style, la lumière et la transparence sont corrects."
     },
     {
-      "image": "assets/poc/cloture/OB-010_shape-es_posts-1.png",
+      "image": "assets/poc/fence/OB-010_shape-es_posts-1.png",
       "score": 7,
       "total": 9,
       "verdict": "à refaire",

@@ -118,7 +118,7 @@ ailleurs. Traduction figée, pour que personne n'en réinvente une seconde : `gr
 `human`, `creature`.
 
 **ATTENTION À DEUX HOMONYMES QUI N'ONT PAS BOUGÉ** : le **calque** `sol` garde son nom — c'est une autre notion que le type `ground` —, et les **répertoires** du
-disque (`assets/cutout/sol/`, `poc/batiment/`…) viennent du préfixe du code, pas du type : ils sont encore en français, et les renommer déplace des fichiers.
+disque (`assets/cutout/ground/`, `poc/building/`…) viennent du préfixe du code, pas du type : ils sont encore en français, et les renommer déplace des fichiers.
 
 ## Termes bannis
 

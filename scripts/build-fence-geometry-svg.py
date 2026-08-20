@@ -26,7 +26,7 @@ import json
 import sys
 from pathlib import Path
 
-# Measured on assets/poc/cloture/usage-OB-010-v2.png, one cell being 192 px. Every value is a
+# Measured on assets/poc/fence/usage-OB-010-v2.png, one cell being 192 px. Every value is a
 # fraction of a cell, so the drawing follows the tile size wherever it is used.
 POST_DIAMETER = 0.32
 POST_HEIGHT = 0.58          # ground to cap; the cap stands above the upper rail
