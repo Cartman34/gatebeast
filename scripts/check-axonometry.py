@@ -61,6 +61,17 @@ MINIMUM_EDGE_PIXELS = 200         # below this on either side, the subject has n
 WALLS_TOP = 0.70
 WALLS_BOTTOM = 0.94
 
+# READING SEGMENTS RATHER THAN PIXELS, FOR THE SUBJECTS MADE OF FEW UPRIGHTS. A fence is mostly transparent: a handful of posts, and rails running east-west.
+# Its upright pixels are a minority in any band, so the median tilt of a gradient drowns them — which is why the silhouette reading judged 4 fences out of 38.
+# A Hough transform weighs SEGMENTS, so three posts count as three lines.
+#
+# THE LENGTH IS A FRACTION OF THE IMAGE, NEVER A NUMBER OF PIXELS. The delivered sprites run from 96 px tall for a one-cell fence to 1536 for a building: a
+# threshold of thirty pixels asks a post to cross a quarter of the small one and a fiftieth of the large one. Fixed at thirty, it found ONE near-vertical
+# segment on a fence that carries six. What a post has in common across every size is that it crosses a good share of the HEIGHT.
+SEGMENT_HEIGHT_SHARE = 0.15       # a segment shorter than this share of the image is a texture detail, not a post or a jamb
+SEGMENT_FLOOR = 12                # below this many pixels, no share is long enough to mean anything
+MINIMUM_SEGMENTS = 2              # below two per half, one line decides alone and any noise becomes a verdict
+
 
 def sides(alpha):
     """The left and right boundary of the silhouette, row by row, over the body of the subject. None when there is nothing to measure."""
@@ -96,17 +107,72 @@ def lean(ys, xs):
     return float(numpy.degrees(numpy.arctan(slope))), float(numpy.std(residual))
 
 
-def is_built(path):
-    """Whether this file draws a BUILT subject, read from the referential by the code in its name — never guessed from the letters."""
+def type_of(path):
+    """The referential's type for this file, read by the code in its name — never guessed from the letters. None when the code is not declared."""
     stem = Path(path).stem
     code = stem.split("_")[0].rsplit("-v", 1)[0]
     try:
         data = json.loads((Path(__file__).resolve().parent.parent / "assets" / "subjects.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        return False
+        return None
     subject = (data.get("subjects") or {}).get(code)
 
-    return bool(subject) and subject.get("type") == "building"
+    return subject.get("type") if subject else None
+
+
+def is_built(path):
+    """Whether this file draws a BUILT subject — the favourable case for reading inner edges off a gradient."""
+    return type_of(path) == "building"
+
+
+def straight_segments(path):
+    """(median tilt, spread, count) — how far the long near-vertical SEGMENTS stand from the vertical, in degrees. None when there are too few.
+
+    WHY A HOUGH TRANSFORM AND NOT THE GRADIENT USED FOR BUILDINGS. The gradient reading takes the MEDIAN tilt of every strong edge pixel in a band, which works
+    on a wall — a broad, continuous surface whose edges dominate the count. A fence is the opposite: mostly transparent, a few narrow posts, and rails that run
+    east-west. Its upright pixels are a minority in any band one picks, so the median drowns them. A Hough transform finds SEGMENTS instead of counting pixels,
+    so three posts weigh as three lines rather than as a handful of pixels among thousands.
+
+    AND IT DOES NOT COMPARE TWO HALVES, WHICH IS THE OTHER HALF OF THE FIX. Comparing left against right is how one tells a tapered volume from a tilted one —
+    it needs two OPPOSITE sides. A piece of assembly has none: a one-cell fence carries a single post, and every segment landed on one half while the other
+    stayed empty, so the reading gave up on the very subject it was written for. What a post owes is simpler and stronger: under this projection an upright is
+    VERTICAL wherever it stands, so the median tilt is the measure, and no second side is needed.
+
+    THE SPREAD IS RETURNED BUT NOT JUDGED, and that is deliberate. On this one-cell fence the segments run from -5.7° to +6.8° — twelve degrees of spread on a
+    post that is plainly upright, because the wood is round and its grain is drawn. Judging the spread would condemn a texture; judging the median reads the
+    post.
+
+    THIS IS WHAT `scikit-image` WAS ASKED FOR, and the measurement that decided it: the silhouette reading judged 4 fences out of 38 — a fence's outline is a
+    comb, and no straight line fits it. Its posts, meanwhile, are the frankest uprights in the whole referential.
+    """
+    from skimage.feature import canny
+    from skimage.transform import probabilistic_hough_line
+
+    image = Image.open(path)
+    alpha = numpy.asarray(image.convert("RGBA"))[:, :, 3]
+    grey = numpy.asarray(image.convert("L"), dtype=float) / 255.0
+    # THE EDGES ARE SOUGHT INSIDE THE SUBJECT, NEVER ON ITS CUTOUT BOUNDARY: the alpha edge is the silhouette, which is exactly what this reading exists to
+    # avoid. Eroding the opaque mask by a few pixels drops that boundary and keeps the drawn lines.
+    inside = scipy.ndimage.binary_erosion(alpha > 128, numpy.ones((5, 5), dtype=bool))
+    if not inside.any():
+        return None
+    edges = canny(grey, sigma=1.5) & inside
+    length = max(SEGMENT_FLOOR, int(alpha.shape[0] * SEGMENT_HEIGHT_SHARE))
+    lines = probabilistic_hough_line(edges, threshold=10, line_length=length, line_gap=3)
+    if not lines:
+        return None
+
+    tilts = []
+    for (x0, y0), (x1, y1) in lines:
+        if y1 == y0:
+            continue
+        tilt = numpy.degrees(numpy.arctan2(x1 - x0, abs(y1 - y0)))
+        if abs(tilt) < NEAR_VERTICAL_DEGREES:
+            tilts.append(tilt)
+    if len(tilts) < MINIMUM_SEGMENTS:
+        return None
+
+    return float(numpy.median(tilts)), float(numpy.max(tilts) - numpy.min(tilts)), len(tilts)
 
 
 def inner_lean(path):
@@ -159,6 +225,18 @@ def verdict(path):
                                f"(gauche {left:+.1f}°, droite {right:+.1f}°, sur {pixels} pixels d'arête)")
             return True, (f"projection parallèle tenue, lue sur les arêtes intérieures : {taper:.1f}° d'écart "
                           f"(gauche {left:+.1f}°, droite {right:+.1f}°, sur {pixels} pixels d'arête)")
+
+    # THE STRAIGHT SEGMENTS, FOR WHAT IS MADE OF FEW UPRIGHTS. A fence's outline is a comb and no line fits it, but its posts are the frankest uprights of the
+    # whole referential — they simply have to be found as SEGMENTS rather than counted as pixels.
+    if type_of(path) == "fence":
+        found = straight_segments(path)
+        if found is not None:
+            median, spread, count = found
+            if abs(median) > CONVERGENCE_DEGREES:
+                return False, (f"MONTANTS PENCHÉS : leur inclinaison médiane est de {median:+.1f}° de la verticale, au-delà des "
+                               f"{CONVERGENCE_DEGREES}° tolérés (sur {count} segments, étendue {spread:.1f}°)")
+            return True, (f"montants verticaux, lus sur les segments droits : inclinaison médiane {median:+.1f}° "
+                          f"(sur {count} segments, étendue {spread:.1f}°)")
 
     alpha = numpy.asarray(Image.open(path).convert("RGBA"))[:, :, 3]
     measured = sides(alpha)
