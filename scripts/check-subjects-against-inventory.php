@@ -144,4 +144,8 @@ foreach ($faults as $fault) {
     echo '  ' . $fault . "\n";
 }
 printf("\n%d écart(s) entre le référentiel et l'inventaire, sur %d sujet(s) contrôlés.\n", count($faults), count($subjects));
+// UN REFUS NOMME LE GESTE QUI DÉBLOQUE (`S90 refus-avec-solution`). Ici il y a un choix à faire, et le refus doit le dire : les deux côtés sont écrits à la
+// main, donc aucun des deux n'a raison par construction — c'est la CIBLE qui tranche, et la cible est l'inventaire de la conception.
+echo "  Solution — l'inventaire de « doc/conception/ » dit ce que le sujet EST : c'est lui qui fait foi, et le référentiel se corrige pour s'y conformer.\n";
+echo "  Si c'est l'inventaire qui est faux, il se corrige d'abord, et sa correction est une décision de conception, pas un alignement de données.\n";
 exit(1);

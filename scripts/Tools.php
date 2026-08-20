@@ -187,6 +187,11 @@ class Tools
     public function answersHelp(string $path): bool
     {
         $source = (string) file_get_contents($path);
+        // A COMMAND THAT BOOTS HAS ALREADY ANSWERED: `bootCommand($argv)` wires the failures and hands the help question to this very service, so the two flags
+        // no longer appear in the file itself. Without this, adopting the bootstrap made every command it touched look as though it had lost its help.
+        if (preg_match('~bootCommand\(\s*\$argv~', $source)) {
+            return true;
+        }
 
         return str_contains($source, '--help') && str_contains($source, '-h');
     }

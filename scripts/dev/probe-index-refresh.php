@@ -43,6 +43,9 @@ printf("signature après : %s\n", trim($after));
 
 if (trim($before) === trim($after)) {
     echo "LA SIGNATURE N'A PAS BOUGÉ — le bandeau ne peut pas apparaître, quelle que soit la page ouverte. C'est là qu'est le défaut.\n";
+    // UN REFUS NOMME LE GESTE QUI DÉBLOQUE (`S90 refus-avec-solution`) : une sonde qui constate sans dire où regarder fait recommencer le diagnostic.
+    echo "  Solution — la signature est calculée par le serveur à partir des fichiers de page : vérifier qu'il relit bien le fichier reconstruit,\n";
+    echo "  et non une copie gardée en mémoire. Reconstruire d'abord — « php review-server/build.php <route> » — pour écarter la page périmée.\n";
     exit(1);
 }
 

@@ -206,17 +206,24 @@ class Backlog
     {
         $series = strtoupper($series);
         $used = [];
-        $open = false;
         // THE SERIES NUMBER LIVES IN THE CODE, NEVER IN THE REF (2026-08-08): refs became twenty-character slugs, so matching them against "letters + digits" matched nothing at all and every new
         // point was numbered 1. The first add since the slug migration produced a second "Q1" — the field that carries the counter is the one that must be read.
+        //
+        // AND ONLY OPEN POINTS ARE COUNTED, NEVER THE HISTORY (`W35 numerotation-series`). The survey used to sweep ALL points, closed ones included, while the
+        // restart condition looked only at open ones: an empty series correctly restarted at 1, then the NEXT add took the maximum of the history and jumped.
+        // Two questions opened the same day were numbered « Q1 » and « Q24 », twenty-two numbers missing between them, and « Q1 » had already belonged to a
+        // closed point: two points carried one code at two dates, and nothing told them apart when the operator answered. This is exactly the collision the
+        // 2026-08-08 fix had closed, come back by the other end.
         foreach ($this->all() as $point) {
+            if (!in_array($point['status'], self::OPEN_STATUSES, true)) {
+                continue;
+            }
             if (preg_match('/^([A-Z]+)(\d+)$/', $point['code'] ?? '', $found) && $found[1] === $series) {
                 $used[] = (int) $found[2];
-                $open = $open || in_array($point['status'], self::OPEN_STATUSES, true);
             }
         }
 
-        return $series . ($open && $used ? max($used) + 1 : 1);
+        return $series . ($used === [] ? 1 : max($used) + 1);
     }
 
     /**

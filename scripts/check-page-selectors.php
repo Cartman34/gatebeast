@@ -103,8 +103,13 @@ foreach ($pages as $path) {
 
 if ($faults) {
     $faults = array_values(array_unique($faults));
+    // UN REFUS NOMME LE GESTE QUI DÉBLOQUE (`S90 refus-avec-solution`), et ici les deux causes appellent des gestes opposés — dire laquelle est la moitié du
+    // travail. Le sélecteur a été renommé d'un côté seulement, ou le balisage qu'il visait a disparu : réparer le mauvais des deux déplace le défaut.
     fwrite(STDERR, count($faults) . " sélecteur(s) sans cible :\n" . implode("\n", $faults) . "\n"
-        . "\nUn sélecteur qui ne trouve rien ne lève aucune erreur : le bouton ne fait simplement plus rien.\n");
+        . "\nUn sélecteur qui ne trouve rien ne lève aucune erreur : le bouton ne fait simplement plus rien.\n"
+        . "  Solution — ouvrir le balisage nommé ci-dessus et chercher ce que le sélecteur visait : ou bien il a été renommé d'un seul côté, et c'est le\n"
+        . "  script qui suit ; ou bien l'élément a disparu, et c'est le comportement qu'il faut rebrancher, pas le sélecteur qu'il faut adapter.\n"
+        . "  Reconstruire la page d'abord — « php review-server/build.php <route> » —, car un balisage périmé donne des cibles qui n'existent plus.\n");
     exit(1);
 }
 

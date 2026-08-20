@@ -104,7 +104,9 @@ if ($missing > 0 && $current !== $legacy) {
 }
 
 if ($faults) {
-    fwrite(STDERR, count($faults) . " défaut(s) sur le thème des sprites :\n  " . implode("\n  ", $faults) . "\n");
+    // UN REFUS NOMME LE GESTE QUI DÉBLOQUE (`S90 refus-avec-solution`) : un nom de thème hors de son module est un nom qui ne suivra pas le jour où il change.
+    fwrite(STDERR, count($faults) . " défaut(s) sur le thème des sprites :\n  " . implode("\n  ", $faults) . "\n"
+        . "  Solution — un nom de thème s'écrit dans son module et nulle part ailleurs : le retirer de l'endroit signalé et l'y lire.\n");
     exit(1);
 }
 

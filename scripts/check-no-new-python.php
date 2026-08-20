@@ -62,5 +62,8 @@ if ($detail) {
 } else {
     printf("« -v » les nomme.\n");
 }
-printf("Un fichier Python neuf se réécrit en PHP. Le relevé ne se refige que sur décision de l'opérateur.\n");
+// UN REFUS NOMME LE GESTE QUI DÉBLOQUE (`S90 refus-avec-solution`), et celui-ci en a deux dont un seul appartient à l'agent — la distinction EST la solution.
+printf("Solution — réécrire ce fichier en PHP : c'est le langage de l'outillage, et le Python décroît sans jamais croître.\n");
+printf("  Le refiger au relevé — « php scripts/check-no-new-python.php --freeze » — est un geste que l'opérateur AUTORISE, jamais une commodité\n");
+printf("  qu'on s'accorde pour faire passer son propre ajout : refigé sans décision derrière, le relevé ne garde plus rien.\n");
 exit(1);

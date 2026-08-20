@@ -16,7 +16,7 @@ fi
 
 reference="${1:-var/tmp/consignes-avant}"
 current="var/tmp/consignes-courantes"
-[ -d "$current" ] || { echo "Pas de consignes courantes — lancez d'abord scripts/diff-prompts.sh"; exit 1; }
+[ -d "$current" ] || { echo "Pas de consignes courantes. Solution — lancez d'abord « bash scripts/diff-prompts.sh », qui les réassemble."; exit 1; }
 
 gaps=0
 for file in "$reference"/*.txt; do
