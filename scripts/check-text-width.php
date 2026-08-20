@@ -9,8 +9,9 @@
  *   php scripts/check-text-width.php -h|--help — this text
  *
  * INTENTION
- *   The ceiling is 200 characters and it is the project's ONLY length standard (AGENTS.md). Agents break it in one direction far more often than the other: they fold their text to eighty or a hundred
- *   characters, because that is the habit they arrive with and because the file they are editing is already folded that way. Both reasons are forbidden — a rule that is written outranks anything the
+ *   The ceiling is 200 characters and it is the project's ONLY length standard (`doc/regles-du-depot.md`). Agents break it in one direction far more often than
+ *   the other: they fold their text to eighty or a hundred characters, because that is the habit they arrive with and because the file they are editing is
+ *   already folded that way. Both reasons are forbidden — a rule that is written outranks anything the
  *   surrounding file happens to do — and neither is fixed by asking an agent to be careful: the habit returns the moment attention lapses. So the rule gets a machine that enforces it.
  *
  *   A FOLDED RUN is what catches that habit, and it cannot be caught line by line: one short line proves nothing (a title, a list item, a closing sentence). What proves folding is a RUN of
@@ -81,7 +82,7 @@ function continuesAParagraph(string $line, string $path = ''): bool
         return false;
     }
     // A line closing on a sentence mark, a list item, a heading, a table row or a fenced block is a line that CHOSE to be short — never evidence of folding. An INSTRUCTION is exempt whatever its
-    // width (AGENTS.md), and it gives itself away by punctuation prose does not use: an assignment, a call, a bracket, a sigil. Without this, every short
+    // width (`doc/regles-du-depot.md`), and it gives itself away by punctuation prose does not use: an assignment, a call, a bracket, a sigil. Without this, every short
     // statement of a script counted as folded prose.
     if (preg_match('/[=(){}\[\]$]/u', $trimmed)) {
         return false;
@@ -151,5 +152,14 @@ foreach ($paths as $path) {
     }
 }
 
-echo $faults ? "{$faults} écart(s) au standard de largeur.\n" : count($paths) . " fichier(s) au standard.\n";
-exit($faults ? 1 : 0);
+if ($faults === 0) {
+    echo count($paths) . " fichier(s) au standard.\n";
+    exit(0);
+}
+// UN REFUS NOMME LE GESTE QUI DÉBLOQUE (`S90 refus-avec-solution`, opérateur du 2026-08-12 : « une erreur doit TOUJOURS être affichée avec ses solutions, au
+// moins une »). Celui-ci a refusé quatre fois dans la même séance en disant seulement « 2 écarts », pendant que l'outil qui replie le texte au plafond
+// dormait, versionné, à un répertoire de là — et il a été refait à la main les quatre fois. Le remède n'est pas la mémoire du lecteur, c'est la sortie.
+echo "{$faults} écart(s) au standard de largeur.\n";
+echo "  Solution, pour une ligne TROP LONGUE — « php scripts/dev/trim-to-ceiling.php <fichiers> » replie celles qui dépassent le plafond de peu.\n";
+echo "  Pour un paragraphe REPLIÉ TROP COURT, aucun outil : ses lignes se rejoignent à la main, le texte visant " . CEILING . " et non la largeur d'origine.\n";
+exit(1);

@@ -19,14 +19,15 @@
  *   la doc et le code »). What must remain is what a critique CHANGED — the rule written to the referential, the fix in the socle. So no durable home is built for
  *   them here, on purpose.
  *
- *   WHERE THEY LIVE, AND THE TWO OBVIOUS PLACES ARE BOTH CLOSED. Beside the trial under var/ is refused by `scripts/hook-guard-scopes.sh`, and rightly: var/ takes
- *   what a PROGRAM writes while running, and a critique is written by hand. Under local/ is refused too — « l'app n'a pas le droit d'accéder à local »
- *   (operator, 2026-08-13), and this page IS the app. So they live where the review server already keeps hand-written matter it must read,
- *   review-server/critiques/<trial>/<consigne>.critiques.json, next to review-server/notes/ which holds the operator's own remarks the same way.
+ *   THEY LIVE BESIDE THE VERSION THEY JUDGE, and their path is DEDUCED from the consigne's — `<SUBJECT>.v<N>.critiques.json` in the same folder, whose foyer is
+ *   `Consignes::HOME`. Holding a second folder in parallel is what made this service report « aucune critique » while the file sat on disk one directory away,
+ *   after the consignes moved under var/ on 2026-08-17. A critique names the version it judges, so it is filed under that version's name.
  *
- *   VERSIONED IS NOT A DURABLE HOME. Being in the repository does not make them a record to keep: they are deleted with their trial, and nothing reads them
- *   afterwards. What survives a trial is what its critiques CHANGED, at its own foyer.
+ *   AND ITS FOYER IS NOT A DURABLE HOME. Being on disk does not make a critique a record to keep: it is deleted with its trial, and nothing reads it afterwards.
+ *   What survives a trial is what its critiques CHANGED, at its own foyer — the source block, the code.
  */
+
+require_once __DIR__ . '/Consignes.php';
 
 class Critiques
 {
@@ -57,7 +58,9 @@ class Critiques
      */
     public function read(string $promptPath, string $body, string $root): array
     {
-        $path = $root . '/review-server/critiques/' . basename(dirname($promptPath)) . '/' . basename($promptPath, '.txt') . '.critiques.json';
+        // THEY LIVE BESIDE THE VERSION THEY JUDGE, and `Consignes` computes that path — this file does not know the naming mould and has no business knowing
+        // it. Holding a second copy here made the page say « aucune critique » while the file sat on disk one directory away.
+        $path = Consignes::get()->beside($promptPath, 'critiques');
         if (!is_file($path)) {
             return ['critiques' => [], 'fault' => null];
         }

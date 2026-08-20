@@ -6,6 +6,11 @@
 de travail, et a répondu « mode lot : cette génération nécessite votre validation » au lieu de dessiner — deux générations perdues le 2026-08-06. Un fichier de règles qui s'adresse à tout le monde
 s'applique à tout le monde. Celui-ci ne s'adresse à personne : il oriente, et le contenu vit ailleurs.
 
+**ET SON NOM N'EST NI `AGENTS.md` NI `CLAUDE.md`, DÉLIBÉRÉMENT** (opérateur, 2026-08-19 : « je veux qu'on renomme urgemment le fichier AGENTS.md et qu'on supprime CLAUDE.md, ils font des interférences
+avec mes agents »). Ces deux noms-là sont chargés **automatiquement** par les enveloppes d'agents, y compris par celles qui n'ont rien à faire de ce projet : le fichier était lu sans que personne le
+demande, et ses orientations parasitaient des agents qui travaillaient sur autre chose. Sous ce nom, plus rien ne le charge tout seul — **il se lit parce qu'on le nomme**, et le prompt de reprise du
+[suivi](SUIVI.md) le nomme.
+
 ## Quel est ton rôle ?
 
 Ce dépôt connaît **trois rôles**, et chacun a ses règles. Le rôle est toujours attribué explicitement par l'opérateur : il ne doit jamais être déduit de la tâche, du contexte ou des actions demandées.
@@ -19,8 +24,9 @@ est défini ici.
 consigne reçue. Tu ne demandes aucune validation, tu n'annonces aucun mode de travail, tu ne poses aucune question et tu n'exécutes aucun script du projet ; tu dessines, tu enregistres le fichier
 au chemin demandé, et c'est tout. Le dépôt n'est là que pour que tu puisses ouvrir les fichiers de référence que la consigne nomme.
 
-**Rôle `sprite-experimenter`** — on t'a demandé d'expérimenter une méthode de production de sprites, de générer et juger directement des images avec le générateur interne, de construire des maquettes de review et de
-consigner les résultats de ces expérimentations. Tu travailles uniquement dans `local/codex-sprite-experiment/`. Les règles du rôle `manager`, les scripts du projet et le reste du dépôt ne s'appliquent pas à toi.
+**Rôle `sprite-experimenter`** — on t'a demandé d'expérimenter une méthode de production de sprites, de générer et juger directement des images avec le générateur interne, de construire des maquettes
+de review et de consigner les résultats de ces expérimentations. Tu travailles uniquement dans `local/codex-sprite-experiment/`. Les règles du rôle `manager`, les scripts du projet et le reste du
+dépôt ne s'appliquent pas à toi.
 Tu peux lire un fichier extérieur à ce dossier seulement lorsque l'opérateur le nomme explicitement. Le rôle `illustrator` est distinct : tu l'ignores et tu ne le lances pas. Tu conserves dans ton
 dossier chaque prompt, résultat, méthode, valeur, analyse, version remplacée et page HTML nécessaires pour reprendre l'expérimentation sans perte.
 

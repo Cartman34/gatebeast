@@ -22,36 +22,65 @@
  *   a placeholder, which names a family rather than a file.
  */
 
-$root = dirname(__DIR__);
-$detail = in_array('-v', $argv, true) || in_array('--verbose', $argv, true);
-if (in_array('-h', $argv, true) || in_array('--help', $argv, true)) {
-    foreach (array_slice(file(__FILE__, FILE_IGNORE_NEW_LINES), 2, 5) as $line) {
-        echo trim(preg_replace('~^\s*\*\s?~', '', $line)), "\n";
-    }
-    exit(0);
-}
+require_once __DIR__ . '/bootstrap.php';
 
-/** The documents a human reads, and where they live. Code is not swept: a wrong path there is a fault the program raises by itself. */
-const DOCUMENTS = ['SUIVI.md', 'PLAN-ACTION.md', 'CLAUDE.md'];
-const DOCUMENT_TREES = ['doc'];
+$root = bootCommand($argv);
+$detail = in_array('-v', $argv, true) || in_array('--verbose', $argv, true);
+
+/**
+ * Where the documents are looked for. NOT WHICH ONES — the list of documents is not written anywhere (operator, 2026-08-19: « aucun fichier n'est à analyser en
+ * dur, ça n'a aucun sens »).
+ *
+ * A HAND-HELD LIST OF FILES STOPS BEING TRUE THE DAY A FILE IS RENAMED, AND NOTHING SAYS SO. This check held three names, one of which — `CLAUDE.md` — had just
+ * been deleted: it would have swept a document that no longer exists, silently, since an absent file was not a fault here. And a document added tomorrow would
+ * never have been swept at all. Every `.md` of these trees is read, whatever it is called.
+ */
+const DOCUMENT_TREES = ['.', 'doc'];
 /** Unversioned by design: what they hold comes and goes, and its absence proves nothing. */
 const TRANSIENT = ['var/', 'local/'];
+/** Not swept, and each for its own reason: unversioned by design, or not a document of this project. */
+const SKIPPED_TREES = ['var', 'local', 'node_modules', 'vendor', '.git', 'assets'];
+/**
+ * A DOCUMENT OF RECORD CITES WHAT EXISTED THE DAY IT WAS WRITTEN, and that is its whole nature — the session journal names tools, images and referentials that
+ * have since been renamed or removed, and rewriting it to keep this check green would falsify the record it exists to hold.
+ *
+ * IT IS NAMED BY WHAT IT IS, NOT BY ITS PATH: a check that stays red forever stops being read, which is exactly the fault this file was written to prevent in
+ * others. Four dead citations sat in it permanently, so the verdict was « 4 ne mènent nulle part » on a healthy repository, every single day.
+ */
+const RECORDS = ['doc/journal-des-seances.md'];
 
 $files = [];
-foreach (DOCUMENTS as $name) {
-    if (is_file($root . '/' . $name)) {
-        $files[] = $name;
-    }
-}
 foreach (DOCUMENT_TREES as $tree) {
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $tree, FilesystemIterator::SKIP_DOTS));
+    $home = $tree === '.' ? $root : $root . '/' . $tree;
+    if (!is_dir($home)) {
+        continue;
+    }
+    // LA RACINE NE SE PARCOURT PAS EN PROFONDEUR : ses sous-répertoires sont du code, des images ou du jetable, et `doc/` est balayé pour lui-même juste après.
+    $iterator = $tree === '.'
+        ? new IteratorIterator(new FilesystemIterator($home, FilesystemIterator::SKIP_DOTS))
+        : new RecursiveIteratorIterator(new RecursiveDirectoryIterator($home, FilesystemIterator::SKIP_DOTS));
     foreach ($iterator as $file) {
-        if ($file->isFile() && $file->getExtension() === 'md') {
-            $files[] = substr($file->getPathname(), strlen($root) + 1);
+        if (!$file->isFile() || $file->getExtension() !== 'md') {
+            continue;
         }
+        $relative = substr($file->getPathname(), strlen($root) + 1);
+        if (in_array($relative, RECORDS, true)) {
+            continue;
+        }
+        foreach (SKIPPED_TREES as $skipped) {
+            if (str_starts_with($relative, $skipped . '/')) {
+                continue 2;
+            }
+        }
+        $files[] = $relative;
     }
 }
+$files = array_values(array_unique($files));
 sort($files);
+if ($files === []) {
+    fwrite(STDERR, "FAULT aucun document Markdown trouvé sous " . implode(', ', DOCUMENT_TREES) . " : un balayage qui ne lit rien ne peut rien conclure.\n");
+    exit(1);
+}
 
 $dead = [];
 $seen = 0;
@@ -98,6 +127,12 @@ if ($detail) {
     }
 } elseif ($dead) {
     echo "« -v » les nomme.\n";
+}
+if ($dead) {
+    // UN REFUS NOMME LE GESTE QUI DÉBLOQUE (`S90 refus-avec-solution`), et ici les deux issues sont opposées : ou le chemin a bougé, ou la promesse est morte.
+    echo "  Solution — si le fichier a été déplacé ou renommé, corriger la citation ; s'il n'existe plus, RETIRER la phrase qui le promet plutôt que de la\n";
+    echo "  laisser envoyer le lecteur nulle part. Un document d'historique, lui, cite ce qui existait le jour où il a été écrit : il ne se réécrit pas, il\n";
+    echo "  se déclare à la constante RECORDS de ce fichier.\n";
 }
 
 exit($dead ? 1 : 0);

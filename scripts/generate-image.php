@@ -106,11 +106,16 @@ function startJob(array $task): ?array {
 		. "\n\nTU ES UN ILLUSTRATEUR. TA SEULE TÂCHE EST DE GÉNÉRER CETTE IMAGE et de l'enregistrer au format PNG dans ./$relative. Aucun autre fichier."
 		. "\nTu génères l'image toi-même, avec ton propre outil de génération d'images. N'exécute AUCUN script du dépôt, n'appelle aucun outil du projet et"
 		. " ne relance aucune chaîne de production : ce dépôt n'est là que pour que tu puisses ouvrir les fichiers de référence cités dans la consigne."
-		// The same trap one level up: AGENTS.md is ALSO this agent's own instruction file, and it carries the rules written for the agents who BUILD the
+		// The same trap one level up: the repository's instruction file is ALSO this agent's own, and it carries the rules written for the agents who BUILD the
 		// project — working modes, batches, validations to ask for. Two runs read them and answered « mode lot : cette génération nécessite votre validation »
 		// instead of drawing, costing two versions for nothing. Those rules address the `manager` role and never the `illustrator` one; this says so where the
 		// agent cannot miss it. Role names stay in English whatever the language around them — they are identifiers, and the method's glossary owns them.
-		. "\nTON RÔLE EST `illustrator`, ET LES RÈGLES DU DÉPÔT NE S'APPLIQUENT PAS À TOI, `AGENTS.md` COMPRIS : elles s'adressent au rôle `manager`, celui"
+		//
+		// AND IT NAMES NO FILE ANY MORE (operator, 2026-08-19: « je veux qu'on renomme urgemment le fichier AGENTS.md […] ils font des interférences avec mes
+		// agents »). `AGENTS.md` became `AGENT-START.md`, and a sentence that names the file it excludes stops excluding anything the day the file is renamed —
+		// silently, since nothing reads that sentence but the agent. What is excluded is the RULES, whatever document happens to carry them.
+		. "\nTON RÔLE EST `illustrator`, ET AUCUNE RÈGLE DE CE DÉPÔT NE S'APPLIQUE À TOI, quel que soit le fichier qui la porte : elles s'adressent au rôle"
+		. " `manager`, celui"
 		. " qui construit le projet. Tu ne demandes aucune validation, tu n'annonces aucun mode de travail, tu ne poses aucune question : tu dessines, tu"
 		. " enregistres le fichier, et c'est tout. La consigne ci-dessus est ta seule autorité.";
 	$model = $GLOBALS['model'];
@@ -120,7 +125,7 @@ function startJob(array $task): ?array {
 	//                                 (`codex exec resume <id>`) to see what actually happened during a generation, so it is captured and reported below.
 	//   --skip-git-repo-check         lets it run although the working directory is inside a repository it did not clone itself; without it, it refuses to start.
 	//   --sandbox workspace-write     grants it writing INSIDE the working directory and nowhere else: it must drop its PNG, and must not touch the machine.
-	//   -c project_doc_max_bytes=0    caps how many bytes of the repository's instruction document it loads at startup — AGENTS.md, up to some thirty-two
+	//   -c project_doc_max_bytes=0    caps how many bytes of the repository's instruction document it loads at startup — `AGENT-START.md`, up to some thirty-two
 	//                                 kilobytes by default. Those rules address the agents who BUILD the project, and reading them made two generations answer
 	//                                 « mode lot : cette génération nécessite votre validation » instead of drawing. ZERO, and no other figure, because the cap
 	//                                 keeps the HEAD of the file: any value above zero feeds it the first lines, which are precisely where the rules that

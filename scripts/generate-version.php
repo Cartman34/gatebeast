@@ -19,6 +19,7 @@
 
 $root = dirname(__DIR__);
 require_once __DIR__ . '/Tools.php';
+require_once $root . '/review-server/lib/Consignes.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
 
@@ -27,14 +28,15 @@ if ($prompt === null || !is_file($prompt)) {
     fwrite(STDERR, "USAGE : php scripts/generate-version.php <SUJET.vN.prompt.txt>\n");
     exit(2);
 }
-// LE NOM DIT LE SUJET, LE RANG ET CE QUE C'EST, et les fichiers qu'on écrit à côté suivent le même moule : `<SUJET>.v<N>.image.png`,
-// `<SUJET>.v<N>.generation.json`. Le déduire d'une simple substitution d'extension donnerait `…prompt.png`, qui ne dit plus rien.
-if (!str_ends_with($prompt, '.prompt.txt')) {
+// THE NAME SAYS THE SUBJECT, THE RANK AND WHAT IT IS, and `Consignes` is what reads that mould and hands back the sibling files. Deducing it here by swapping
+// an extension would give `…prompt.png`, which names nothing — and would write a convention that already lives elsewhere a second time, in another dialect.
+$consignes = Consignes::get();
+$named = $consignes->partsOf($prompt);
+if ($named === null || $named['what'] !== 'prompt') {
     fwrite(STDERR, "FAULT « $prompt » n'est pas une version de consigne : elle se nomme <SUJET>.v<N>.prompt.txt.\n");
     exit(1);
 }
-$stem = substr($prompt, 0, -strlen('.prompt.txt'));
-$image = "$stem.image.png";
+$image = $consignes->beside($prompt, 'image');
 if (is_file($image)) {
     fwrite(STDERR, "FAULT « $image » existe déjà : une seule génération par version, et une relance se décide.\n"
         . "  Solution — supprimer l'image pour la refaire, ou écrire une version neuve.\n");
@@ -74,6 +76,7 @@ $meta = [
     'session' => $session,
     'generated' => date('c'),
 ];
-file_put_contents("$stem.generation.json", json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
+file_put_contents($consignes->beside($prompt, 'generation'),
+    json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
 
 printf("%s — image écrite, session %s\n", $image, $session ?? 'NON RETROUVÉE (le journal du générateur ne la porte pas)');

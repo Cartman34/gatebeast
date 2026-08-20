@@ -16,6 +16,7 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/scripts/Tools.php';
+require_once $root . '/review-server/lib/Consignes.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
 
@@ -26,9 +27,10 @@ if ($subject === null || $wanted === null) {
     exit(2);
 }
 
-$home = "$root/review-server/workshop/consignes/$subject";
+$consignes = Consignes::get();
+$home = $consignes->homeOf($subject);
 if (!is_dir($home)) {
-    fwrite(STDERR, "FAULT le sujet « $subject » n'a pas de foyer sous review-server/workshop/consignes/.\n");
+    fwrite(STDERR, "FAULT le sujet « $subject » n'a pas de foyer sous " . Consignes::HOME . "/.\n");
     exit(1);
 }
 
@@ -57,29 +59,17 @@ if ($block === null) {
     exit(1);
 }
 
-// MODIFIER UNE VERSION N'EST PAS EN CRÉER UNE NOUVELLE (opérateur, 2026-08-17 : « le diff d'une version peut être modifié tant que la version suivante n'est pas
-// générée »). Il n'y a jamais qu'UNE version en attente : celle qui suit la dernière GÉNÉRÉE. Tant qu'elle n'a pas d'image, chaque correction la réécrit sur
-// place, et le diff qu'on lit reste celui d'une seule version. Empiler une version par correction — ce qui a été fait trois fois de suite — donne une chaîne
-// dont aucun maillon n'a été éprouvé et un diff qui ne se rapporte plus à rien.
-$generated = 0;
-$last = 0;
-for ($rank = 1; is_file("$home/$subject.v$rank.prompt.txt"); $rank++) {
-    $last = $rank;
-    if (is_file("$home/$subject.v$rank.image.png")) {
-        $generated = $rank;
-    }
-}
-if ($last === 0) {
+// THERE IS ONLY EVER ONE PENDING VERSION, and `Consignes` names it: the one that follows the last GENERATED. The computation lives there because the page and
+// this script must name the same one, and two loops written side by side end up disagreeing.
+if ($consignes->ranksOf($subject) === []) {
     fwrite(STDERR, "FAULT le sujet « $subject » ne porte aucune version.\n");
     exit(1);
 }
-$pending = $generated + 1;
+$generated = $consignes->generatedRank($subject);
+$rank = $consignes->pendingRank($subject);
+$target = $consignes->file($subject, $rank, 'prompt');
 // La source est la version en attente si elle existe déjà — on la reprend —, sinon la dernière générée, dont elle sera le premier écart.
-$source = is_file("$home/$subject.v$pending.prompt.txt")
-    ? "$home/$subject.v$pending.prompt.txt"
-    : "$home/$subject.v$generated.prompt.txt";
-$target = "$home/$subject.v$pending.prompt.txt";
-$rank = $pending;
+$source = is_file($target) ? $target : $consignes->file($subject, $generated, 'prompt');
 $body = file_get_contents($source);
 
 // LA SECTION VA DE SON TITRE AU TITRE SUIVANT, quel qu'en soit le niveau de titre : c'est le découpage que la consigne annonce elle-même dans sa première
