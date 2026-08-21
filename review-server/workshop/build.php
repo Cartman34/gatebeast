@@ -624,7 +624,7 @@ foreach ($trials as $trial) {
         $named = $consignes->partsOf($shown['path']);
         $edits = $named === null ? ['edits' => [], 'note' => null, 'fault' => null] : $consignes->editsOf($named['subject'], $named['rank']);
         $views .= sprintf('<div class="version-view%s" data-version="%s"%s><p class="version">%s</p>'
-            . '<div class="split"><div class="image">%s%s</div><div class="consigne">%s</div></div>'
+            . '<div class="split"><div class="image">%s%s</div><div class="prompt">%s</div></div>'
             . '<h3 class="transmise">Ce que l\'agent a transmis à son modèle d\'images, pour cette version</h3>%s%s</div>',
             $current ? '' : ' hidden', escape($version['label']), $current ? '' : ' hidden',
             escape(viewState($version, $next, $generated)),
@@ -668,7 +668,7 @@ review-server/workshop/source/, et php review-server/workshop/check-source.php r
      limitée sinon ça scroll longtemps et je ne peux pas voir ce qui est envoyé réellement au générateur »). Unbounded, the sixteen thousand characters of the
      consigne pushed the TRANSMITTED one — the only text saying what the image model actually read — screens away, and comparing the two, which is why this
      page exists, could not be done. */
-  .consigne { max-height: calc(100vh - 6rem); overflow: auto; padding-right: .75rem; }
+  .prompt { max-height: calc(100vh - 6rem); overflow: auto; padding-right: .75rem; }
   /* L'image SUIT LA LECTURE de la consigne : on juge une phrase en la regardant, et une image restée en haut de page oblige à remonter à chaque critique. */
   .image { position: sticky; top: 1rem; }
   .image img { max-width: 100%; height: auto; image-rendering: pixelated; }

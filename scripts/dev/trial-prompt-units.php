@@ -1,8 +1,8 @@
 <?php
 /**
  * USAGE
- *   php scripts/dev/trial-consigne-units.php            feeds check-consigne-units.php the lines it must report and the ones it must ignore, and reports
- *   php scripts/dev/trial-consigne-units.php -h|--help  this text
+ *   php scripts/dev/trial-prompt-units.php            feeds check-prompt-units.php the lines it must report and the ones it must ignore, and reports
+ *   php scripts/dev/trial-prompt-units.php -h|--help  this text
  *
  *   Writes two sample files under var/tmp/ and reads nothing else. Exits non-zero as soon as one case answers the wrong way.
  *
@@ -26,7 +26,7 @@ require_once dirname(__DIR__) . '/Tools.php';
 Tools::get()->helpIfAsked($argv, __FILE__);
 
 $root = dirname(__DIR__, 2);
-$directory = $root . '/var/tmp/trial-consigne-units';
+$directory = $root . '/var/tmp/trial-prompt-units';
 if (!is_dir($directory)) {
     mkdir($directory, 0777, true);
 }
@@ -83,7 +83,7 @@ file_put_contents($referential, json_encode([
 /** Runs the check in detail mode and gives back what it named, one find per entry. */
 function finds(string $root, string $path): array
 {
-    $command = sprintf('php %s %s -v', escapeshellarg($root . '/scripts/check-consigne-units.php'), escapeshellarg($path));
+    $command = sprintf('php %s %s -v', escapeshellarg($root . '/scripts/check-prompt-units.php'), escapeshellarg($path));
     exec($command, $output, $status);
     if ($status > 1) {
         throw new RuntimeException("le contrôle s'est arrêté sur une faute (code {$status}) : " . implode(' / ', $output));

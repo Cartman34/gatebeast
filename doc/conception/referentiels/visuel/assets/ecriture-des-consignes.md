@@ -100,8 +100,8 @@ le bâtiment d'après cette porte, elle faisait basculer l'image entière. `BT-0
 haute que large », ni « plus haut que large », ni « presque carré ». Le générateur reçoit la correspondance et la projection une fois, par le socle, et déduit lui-même ce que ça donne à l'écran. Une
 mesure qui manque au socle s'y ajoute ; elle ne se calcule pas dans la description qui en a besoin.
 
-**ET UN CONTRÔLE LES TIENT** : `php scripts/check-consigne-units.php` balaie les descriptions et les clauses de variant, et signale l'unité de pixel comme la formule de rapport. Ses essais :
-`php scripts/dev/trial-consigne-units.php`.
+**ET UN CONTRÔLE LES TIENT** : `php scripts/check-prompt-units.php` balaie les descriptions et les clauses de variant, et signale l'unité de pixel comme la formule de rapport. Ses essais :
+`php scripts/dev/trial-prompt-units.php`.
 
 ## LE GÉNÉRATEUR COMPLÈTE L'IMAGE POUR ATTEINDRE NOS DIMENSIONS — CE QUI EST TOLÉRÉ, ET CE QUI NE L'EST PAS
 

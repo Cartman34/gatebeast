@@ -1,10 +1,10 @@
 <?php
 /**
  * USAGE
- *   php scripts/check-consigne-units.php            the verdict: how many pixel units and image ratios the consigne sources carry outside the socle
- *   php scripts/check-consigne-units.php <file>...  the same, on the files given instead of the default scope — a .json is read as the subject referential, anything else line by line
- *   php scripts/check-consigne-units.php -v         each find, with the rule it breaks and the file and the line or the key that carries it
- *   php scripts/check-consigne-units.php -h|--help  this text
+ *   php scripts/check-prompt-units.php            the verdict: how many pixel units and image ratios the consigne sources carry outside the socle
+ *   php scripts/check-prompt-units.php <file>...  the same, on the files given instead of the default scope — a .json is read as the subject referential, anything else line by line
+ *   php scripts/check-prompt-units.php -v         each find, with the rule it breaks and the file and the line or the key that carries it
+ *   php scripts/check-prompt-units.php -h|--help  this text
  *
  * INTENTION
  *   A SHEET SPEAKS IN TILES, AND THE PROJECTION BELONGS TO THE SOCLE ALONE, scripts/asset_common.py. Two rules follow from that one fact, and this holds both. They live, with their reasons, at

@@ -131,6 +131,19 @@ EXEMPT = {
     "scripts/check-code-language.py",
 }
 
+# A FRENCH WORD SOUGHT INSIDE FRENCH PROSE IS NOT A FRENCH VALUE, AND TRANSLATING IT WOULD BREAK THE SEARCH. These files hold needles, not data: they look for
+# « largeur » or « poteau » in the subject descriptions, which are French by rule and will stay so. Rendered in English, the pattern would match nothing and the
+# check that uses it would pass on everything — silently.
+#
+# THEY ARE NAMED HERE RATHER THAN LEFT TO BE REDISCOVERED. Counted as debt, they made this control report twenty findings that nobody could act on, which is how
+# a control stops being run (`S88 valeurs-fr-restantes`, measured on 2026-08-20: of its twenty-three findings, most were needles).
+SEARCHES_FRENCH_PROSE = {
+    "scripts/check-subject-parameters.php",
+    "scripts/dev/trial-height-bands.php",
+    "local/scripts/dump-grid-history.sh",
+}
+EXEMPT |= SEARCHES_FRENCH_PROSE
+
 
 def french_words(text):
     return {word for word in re.findall(r"[A-Za-zÀ-ÿ_]+", text.lower()) if word in FORBIDDEN}
