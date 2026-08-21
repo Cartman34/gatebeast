@@ -141,12 +141,38 @@ SEARCHES_FRENCH_PROSE = {
     "scripts/check-subject-parameters.php",
     "scripts/dev/trial-height-bands.php",
     "local/scripts/dump-grid-history.sh",
+    # These two LOOK FOR the French debt, so their patterns are made of it. Counting them as debt would mean the tools that measure a problem count as the
+    # problem — and each word added to their search would raise the very number they exist to lower.
+    "local/scripts/count-french-locals.sh",
+    "local/scripts/list-french-locals.sh",
 }
 EXEMPT |= SEARCHES_FRENCH_PROSE
 
+# A PREFIX THAT NAMES REAL FILES IS NOT A FRENCH VALUE, IT IS THEIR ADDRESS. Six plates live under `assets/revue-da/` as `planche-p1-campagne-v8.png` and the
+# like, cited by name in `doc/conception/referentiels/visuel/planches-de-reference.md`. Code that builds those names must spell them as they are: renaming the
+# prefix means renaming the assets AND rewriting the conception that quotes them, which is a decision, not a cleanup.
+#
+# THEY ARE DECLARED RATHER THAN SILENCED. Left in the count, five findings nobody can act on sat at the top of every listing, and a debt that cannot be paid
+# hides the one that can — `S88 valeurs-fr-restantes` carries the decision, and this comment is what points at it.
+NAMES_REAL_ASSETS = {
+    "scripts/build-planches-page.py",
+    "scripts/build-plate-reports.py",
+    "scripts/build-projection-plate.php",
+    "scripts/plate_common.py",
+}
+EXEMPT |= NAMES_REAL_ASSETS
+
 
 def french_words(text):
-    return {word for word in re.findall(r"[A-Za-zÀ-ÿ_]+", text.lower()) if word in FORBIDDEN}
+    """The forbidden French words a text carries, camelCase included.
+
+    A CAMELCASE NAME IS SEVERAL WORDS, AND THIS READ ONLY THE WHOLE. Lowercasing `$largeurDeLaPage` gives one token, `largeurdelapage`, which matches nothing —
+    so every French word glued to another passed unseen, which is to say most of the names an agent writes. `$titreMien` was caught only because the check also
+    reads `$titre` elsewhere in that same file. Splitting on the capitals first is what makes the rule bite where names are actually built.
+    """
+    split = re.sub(r"(?<=[a-zà-ÿ])(?=[A-ZÀ-Þ])", " ", text)
+
+    return {word for word in re.findall(r"[A-Za-zÀ-ÿ_]+", split.lower()) if word in FORBIDDEN}
 
 
 def operator_text(literal):
@@ -267,6 +293,7 @@ def check_text(path, source):
     # corrigée » ended at the apostrophe, and « consigne » was reported as a symbol.
     literal = re.compile(r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"")
     inside_block = False
+    inside_html = False
     # A SHELL HEREDOC IS A PAYLOAD, NOT CODE. What a shell script sends to another command — a sample file, a JSON body, a fixture — is data written between two
     # markers, and reading it as code made a trial that feeds the checker French on purpose report its own fixture, five times. PHP heredocs are NOT skipped and
     # must not be: there the heredoc is markup a builder produces, and it interpolates real names the rule applies to.
@@ -286,6 +313,14 @@ def check_text(path, source):
         # writes ` * `, but an ordinary `/* … */` paragraph just indents — so they were read as code, and any punctuation the French prose happened to contain
         # was enough to make them look like it. « Ce qui dépasse se parcourt en largeur ; … » held a semicolon, and « largeur » was reported as a symbol.
         code = line
+        # THE TWO BLOCK COMMENTS ARE FOLLOWED SEPARATELY, and mixing them would be worse than not reading HTML at all: an unclosed `<!--` looking for a `*/`
+        # would swallow the whole rest of the file, silently, and this control would pass on everything after it.
+        if inside_html:
+            closing = code.find("-->")
+            if closing == -1:
+                continue
+            code = code[closing + 3:]
+            inside_html = False
         if inside_block:
             closing = code.find("*/")
             if closing == -1:
@@ -296,6 +331,14 @@ def check_text(path, source):
         opening = code.find("/*")
         if opening != -1:
             inside_block = True
+            code = code[:opening]
+        # AN HTML COMMENT IS PROSE TOO, AND IT WAS THE ONLY KIND LEFT UNREAD. A page builder writes `<!-- TOUTE PAGE DIT SON CHEMIN … -->` into the markup it
+        # produces: that is a comment explaining the code, so it belongs to `check-comment-language.php` and not here — this file judges NAMES and VALUES, as
+        # its own intention says. Three findings sat in the listing for that reason alone, and a finding nobody can act on is what makes a listing unread.
+        code = re.sub(r"<!--.*?-->", " ", code)
+        opening = code.find("<!--")
+        if opening != -1:
+            inside_html = True
             code = code[:opening]
         if line_comment.match(code):
             continue

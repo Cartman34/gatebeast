@@ -1153,13 +1153,13 @@ document.querySelectorAll('.plan').forEach(function (section) {
   /* LA LARGEUR SE CALCULE SUR LE DESSIN ENTIER, PAS SUR LES SEULES CASES : le tracé porte aussi son titre, ses marges et sa légende, tous comptés dans son repère.
      Poser la largeur à « colonnes fois la taille de case » donnait donc des cases plus grandes que demandé — le dessin entier faisait la taille de sa grille seule.
      On passe par le rapport du repère : une case du repère vaut « cote » unités, on veut qu'elle en fasse « pixels » à l'écran, et tout le reste suit. */
-  function largeurPour(pixels) {
+  function widthFor(pixels) {
     return svg.viewBox.baseVal.width / Number(dessin.dataset.cote) * pixels;
   }
 
   function zoomer(pixels) {
     dessin.classList.add('fixe');
-    svg.style.width = largeurPour(pixels) + 'px';
+    svg.style.width = widthFor(pixels) + 'px';
     taille.textContent = 'Ajuster à la fenêtre';
     Array.prototype.forEach.call(section.querySelectorAll('.zoom'), function (bouton) {
       bouton.setAttribute('aria-pressed', Number(bouton.dataset.zoom) === pixels ? 'true' : 'false');
@@ -1172,7 +1172,7 @@ document.querySelectorAll('.plan').forEach(function (section) {
 
   taille.addEventListener('click', function () {
     var fixe = dessin.classList.toggle('fixe');
-    svg.style.width = fixe ? largeurPour(24) + 'px' : '';
+    svg.style.width = fixe ? widthFor(24) + 'px' : '';
     taille.textContent = fixe ? 'Ajuster à la fenêtre' : 'Taille par case';
     Array.prototype.forEach.call(section.querySelectorAll('.zoom'), function (bouton) {
       bouton.setAttribute('aria-pressed', fixe && Number(bouton.dataset.zoom) === 24 ? 'true' : 'false');

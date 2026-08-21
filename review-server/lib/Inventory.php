@@ -19,7 +19,7 @@ class Inventory
     private array $labels;
 
     /** @var string[] Codes the inventory documents could not put a name to — reported, never papered over with the code itself. */
-    public array $sansLibelle = [];
+    public array $unlabelled = [];
 
     public function __construct(private string $root = __DIR__ . '/../..')
     {
@@ -55,7 +55,7 @@ class Inventory
         return $codes;
     }
 
-    /** The French name of a subject, read from the inventory documents where a human wrote it. Falls back to the code, and says so in sansLibelle. */
+    /** The French name of a subject, read from the inventory documents where a human wrote it. Falls back to the code, and says so in unlabelled. */
     public function label(string $code): string
     {
         return $this->labels[$code] ?? $code;
@@ -148,7 +148,7 @@ class Inventory
                     continue 2;
                 }
             }
-            $this->sansLibelle[] = $code;
+            $this->unlabelled[] = $code;
         }
 
         return $labels;

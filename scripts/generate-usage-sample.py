@@ -205,10 +205,10 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
     # every other one does — an image nobody can account for is an image nobody can judge.
     run = production_report.Run(f"usage-{code}", kind="subjects")
     run.model = model
-    with run.step("consigne"):
+    with run.step("prompt"):
         pass
     try:
-        with run.step("génération"):
+        with run.step("generation"):
             # The model travels as an environment value, the same way the parallelism does: it is a
             # setting of the run, never part of the consigne, which must stay the same text whatever
             # produced it.
@@ -221,7 +221,7 @@ LE SUJET, cité de sa fiche — dessine-le EXACTEMENT ainsi :
             print(result.stdout, end="", flush=True)
             run.session = production_report.Run.session_of(result.stdout)
     finally:
-        with run.step("rapport"):
+        with run.step("report"):
             run.write(image, prompt)
 
     return result.returncode

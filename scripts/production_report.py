@@ -2,9 +2,9 @@
 
 USAGE
   run = Run("OB-010_shape-ew_posts-2_portillon-gate-open")
-  with run.step("consigne"):
+  with run.step("prompt"):
       prompt = assemble()
-  with run.step("génération"):
+  with run.step("generation"):
       generate(prompt)
   run.write(image_path, prompt, extras)
 

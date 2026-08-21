@@ -91,7 +91,7 @@ HTML;
     visible.select();
   }
 
-  function parLeVieuxChemin(texte) {
+  function byTheOldPath(texte) {
     var champ = document.createElement('textarea');
     champ.value = texte;
     champ.setAttribute('readonly', 'readonly');
@@ -119,12 +119,12 @@ HTML;
       navigator.clipboard.writeText(texte).then(function () {
         dire(true, texte);
       }, function () {
-        dire(parLeVieuxChemin(texte), texte);
+        dire(byTheOldPath(texte), texte);
       });
 
       return;
     }
-    dire(parLeVieuxChemin(texte), texte);
+    dire(byTheOldPath(texte), texte);
   });
 
   window.gatebeastReleve();

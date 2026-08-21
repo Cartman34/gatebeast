@@ -236,9 +236,10 @@ def report(path, profile, data):
     rgb = numpy.asarray(raw.convert("RGB"))
     height, width = rgb.shape[:2]
     is_ground = profile is not None and profile.type in GROUND_TYPES
-    # THESE ARE DIRECTORY NAMES, NOT TYPE VALUES, which is why they stayed French when `GROUND_TYPES` went English on 2026-08-12: the folders on disk come from
-    # the code prefix (`CH` -> `sol`), not from the declared type. Translating them means moving files — a separate task.
-    if profile is None and path.parent.name in ("sol", "chemin"):
+    # THESE ARE DIRECTORY NAMES, NOT TYPE VALUES: the folders on disk come from the code prefix (`CH` -> `ground`), not from the declared type. They were
+    # French until the folders themselves were renamed on 2026-08-20 — and this line went on naming « sol », a directory that no longer exists, so an image
+    # whose subject is not in the referential stopped being recognised as ground. Nothing said so: the fallback simply never fired again.
+    if profile is None and path.parent.name in ("ground", "path"):
         is_ground = True
 
     print(f"\n{path.name}  {width}x{height}  "

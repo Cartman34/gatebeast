@@ -1091,10 +1091,10 @@ dessus.
     print(f"génération vers {image.relative_to(REPO)}")
 
     run = production_report.Run(name)
-    with run.step("consigne"):
+    with run.step("prompt"):
         pass  # already assembled and frozen above; the step records it as done
     try:
-        with run.step("génération"):
+        with run.step("generation"):
             done = subprocess.run(["php", str(REPO / "scripts" / "generate-image.php"),
                                    str(image), prompt], cwd=REPO.parent,
                                   capture_output=True, text=True)
@@ -1117,7 +1117,7 @@ dessus.
                   f"  Solution — la réponse complète de l'agent reste dans « {(run.traces / f'{image.stem}-generateur.jsonl').relative_to(REPO)} » : "
                   f"cherches-y « {TRANSMITTED_START} ». Si elle n'y est pas non plus, il n'a pas suivi la demande et c'est la clause « Ce que tu nous "
                   f"rapportes » qu'il faut revoir.", flush=True)
-        with run.step("redimensionnement"):
+        with run.step("resize"):
             # The delivery resize belongs to the run, and so does its own account of itself: the
             # sizes, the measured silhouette and the pose point it computes are exactly what the
             # final report has to carry (operator, 2026-08-05). Captured rather than left on the
@@ -1131,7 +1131,7 @@ dessus.
                 "```\n" + (exported.stdout or exported.stderr or "aucune sortie").strip() + "\n```")
             if exported.returncode:
                 raise SystemExit(f"FAULT le redimensionnement de {name} a échoué.")
-        with run.step("inscription"), held("subjects", "une inscription au référentiel"):
+        with run.step("record"), held("subjects", "une inscription au référentiel"):
             # LE RÉFÉRENTIEL EST UN FICHIER UNIQUE, DONC L'INSCRIPTION SE FAIT À UN SEUL À LA FOIS. Le verrou du variant ne protège que les lancements du MÊME
             # variant ; deux sujets différents produits ensemble se retrouvaient à réécrire le même fichier, et le 2026-08-12 il en a perdu des inscriptions.
             # Le verrou est pris ici, au plus tard et pour le temps le plus court : une génération dure deux minutes, son inscription un centième de seconde.
@@ -1153,7 +1153,7 @@ dessus.
     finally:
         # Written whatever happened: a run that broke is exactly the one whose timings and consigne
         # someone will want to read.
-        with run.step("rapport"):
+        with run.step("report"):
             run.write(image, prompt, extras)
 
     # AFTER THE RECORDING, AND OUTSIDE THE REPORT'S STEPS. Outside the `try`, because a generation that broke has nothing new to show: the page is only rebuilt

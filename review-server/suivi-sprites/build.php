@@ -772,6 +772,6 @@ $page = strtr($page, [
 file_put_contents($outputPath, $page);
 printf("%s — %d sujets, %.1f ko%s\n", $outputPath, count($inventory->subjects()), strlen($page) / 1024,
     $missing ? ', ' . count($missing) . ' image(s) illisible(s)' : '');
-if ($inventory->sansLibelle) {
-    fwrite(STDERR, 'SANS LIBELLÉ : ' . implode(', ', $inventory->sansLibelle) . "\n");
+if ($inventory->unlabelled) {
+    fwrite(STDERR, 'SANS LIBELLÉ : ' . implode(', ', $inventory->unlabelled) . "\n");
 }
