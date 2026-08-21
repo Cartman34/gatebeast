@@ -36,7 +36,7 @@ n'éprouve que lui-même.
 
 **LE `STOP` EN PLEIN TOUR EST LISIBLE, ET LA SONDE EXISTAIT DÉJÀ.** Le transcrit porte des entrées `queue-operation` — clés `type, operation, timestamp, sessionId, content` — où chaque message
 glissé en cours de tour apparaît deux fois : `enqueue` avec son contenu, puis `remove` ou `dequeue`. Le `STOP` de la séance y est. **`Q12 stop-mi-tour` est donc caduque** : la réponse n'est ni « la
-garde grogne » ni « l'agent désarme », c'est « on lit le mot ». Reste à faire : `hook-transcript.php` rend ces entrées, `hook-stop.php` y cherche le dernier ordre, en comptant un message une seule
+garde grogne » ni « l'agent désarme », c'est « on lit le mot ». **FAIT** — les deux hooks portent la clé depuis le 2026-08-11 ; ce qui suit décrit l'état d'alors. Reste à faire : `hook-transcript.php` rend ces entrées, `hook-stop.php` y cherche le dernier ordre, en comptant un message une seule
 fois malgré ses deux lignes. Sonde : `php scripts/dev/show-queue-operation.php <transcript.jsonl>`.
 
 **UN POINT SE DÉSIGNE PAR SON CODE ET SA REF, ET LE CODE PORTE UN NOMBRE — POUR TOUTES LES SÉRIES, PAS SEULEMENT LES QUESTIONS** (opérateur, 2026-08-11 : « comme pour les questions, comme pour
@@ -63,7 +63,7 @@ apparaît **deux fois** : `enqueue` avec son contenu, puis `remove` ou `dequeue`
 `php scripts/dev/show-queue-operation.php <transcript.jsonl>`.
 
 **DONC LE HOOK DE FIN DE TOUR PEUT LIRE LE `STOP` EN PLEIN TOUR : IL LIT DÉJÀ CE FICHIER.** `Q12 stop-mi-tour` est **caduque** — sa réponse n'est ni `A` ni `B`, elle est « le mot est lisible, on le
-lit ». Ce qu'il reste à faire est du code, plus un arbitrage : `hook-transcript.php` doit rendre les entrées `queue-operation`, et `hook-stop.php` y chercher le dernier ordre comme il le fait déjà
+lit ». **FAIT** — les deux hooks portent la clé depuis le 2026-08-11 ; ce qui suit décrit l'état d'alors. Ce qu'il reste à faire est du code, plus un arbitrage : `hook-transcript.php` doit rendre les entrées `queue-operation`, et `hook-stop.php` y chercher le dernier ordre comme il le fait déjà
 dans les messages de l'opérateur. **Attention à `enqueue` suivi de `remove`** : un même message compte une fois, pas deux.
 
 **LE PAYLOAD DU HOOK DU PROMPT, EN ENTIER, ET IL NE PORTE AUCUNE PILE** : `session_id`, `transcript_path`, `cwd`, `prompt_id`, `permission_mode`, `hook_event_name`, `prompt`, `session_title`. Rien
@@ -233,10 +233,9 @@ inscrire avant d'aller plus loin.
 depuis le dossier parent, la session ne les charge pas, le `GO` n'arme rien et la fin de tour n'est jamais refusée. Constaté le 2026-08-08, après une journée entière où le dépilement n'a tenu que sur
 la discipline de l'agent.
 
-**Le prompt de reprise, à donner tel quel à une session neuve** — ouvrir la session dans `~/projects/gatebeast`, puis :
-
-> Travaille dans ~/projects/gatebeast. Lis AGENTS.md, puis doc/regles-du-depot.md en entier, puis la première section de SUIVI.md — elle contient tout le reste. Mode dépilement continu, annonce-le
-> et arrête-toi.
+**Le prompt de reprise ne s'écrit pas ici** : il vit dans [SUIVI.md](../SUIVI.md), « Le prompt de reprise, à donner tel quel à une session neuve ». La copie que ce
+journal en portait avait dérivé — elle nommait encore `AGENTS.md`, renommé `AGENT-START.md` le 2026-08-19 — et envoyait une session neuve lire un fichier disparu. Ce qui reste ici est la raison
+d'être du prompt, énoncée juste au-dessus : la session s'ouvre depuis la racine du dépôt, sans quoi les hooks ne se chargent pas.
 
 **LES TÂCHES NE SONT PLUS DANS CE DOCUMENT.** Elles vivent dans `review-server/tasks.json` et **une seule commande les lit et les écrit** : `php scripts/backlog.php`. Ses sous-commandes : `next`
 donne la première à prendre, `list` les range, `show <REF>` en ouvre une en entier, `add <SÉRIE> <priorité> <libellé> [ref]`, `set <REF> <champ> <valeur> [attendu]`, `describe`, `close` les modifient.
@@ -485,7 +484,11 @@ encore moins. Tant qu'aucun `GO` n'est donné, l'agent n'écrit que ce document.
 **TOUT ARRÊT MET FIN AU `GO`.** Une question de l'opérateur, un ordre ponctuel, une interruption : dès que l'agent s'arrête, l'autorisation est consommée. Elle ne se reprend pas d'elle-même une fois
 la parenthèse refermée — il en faut une neuve, donnée explicitement. **À porter aux règles du dépôt**, avec les deux modes, au prochain `GO`.
 
-**Le compteur de chaque série vit ici**, pour survivre au résumé du contexte : la numérotation est **continue tant qu'un seul point de la série reste ouvert**, et ne repart à 1 que lorsque la série est
+**LE COMPTEUR NE VIT PLUS ICI** — il se calcule dans `Backlog::nextRef()`, à partir de `review-server/tasks.json`, et `php scripts/backlog.php` est la seule
+commande qui l'écrit. Ce qui suit est le compteur **tel qu'il était le 2026-08-07**, et les séries l'ont depuis largement dépassé. **Le tableau qui suit est
+de la même date** : ses lignes non barrées se lisent comme ouvertes et ne le sont plus — vérifié le 2026-08-21, six des sept points qu'aucun code du backlog
+ne porte ont été faits depuis, et le septième a rejoint le backlog sous `S102 largeur-des-chemins`. **On ne prend pas de travail dans ce
+tableau : on le prend par `php scripts/backlog.php next`.** Ce qui suit : la numérotation est **continue tant qu'un seul point de la série reste ouvert**, et ne repart à 1 que lorsque la série est
 entièrement répondue. Dernier numéro attribué — **Q1**, **P11**, **S24**, **T3**, **W9**. *(La série des questions est repartie à 1 : toutes les précédentes sont répondues.)* *(La série des questions est repartie à 1 le 2026-08-07 : Q1 à Q7 étaient toutes répondues, et Q1 et Q2
 le sont à leur tour.)* **Une question fermée numérote aussi ses options**, en lettres — `Q1A`, `Q1B` — pour qu'une réponse tienne en un code seul. *(Cette ligne disait `Q4`, `P3`, `S2`, `T1` alors que le tableau porte déjà `P10`, `S6` et `T2` : elle n'avait pas suivi. Un compteur faux rend le prochain numéro
 attribué en double, donc il est recalé sur le plus grand numéro réellement attribué dans chaque série.)*
@@ -1379,8 +1382,8 @@ sont sa décision ; les propositions `p3` du centre de soin et de la maison de f
 portent encore leurs propres copies du relevé et de la lecture d'inventaire.
 
 **Mode en cours** : aucun, et le dépilement attend une confirmation explicite. Un ordre reçu le 2026-08-06 est **exécuté aux trois quarts** : les définitions sont passées au glossaire (inventaire des
-sujets, référentiel toujours qualifié), la façon d'écrire une description au mode d'emploi de l'inventaire, l'entête de `AGENTS.md` et la règle générale des entêtes à la méthode. **Reste à faire de
-cet ordre : relancer les deux densités d'herbe** — la moyenne et la dense, l'une après l'autre et jamais en parallèle tant qu'aucun verrou ne protège l'inventaire, avec la planche de campagne en
+sujets, référentiel toujours qualifié), la façon d'écrire une description au mode d'emploi de l'inventaire, l'entête de `AGENTS.md` et la règle générale des entêtes à la méthode. **FAIT depuis — TR-064 porte quatre sprites en densité moyenne et huit en densité forte. Ce qui suit décrit l'état d'alors : relancer les deux
+densités d'herbe** — la moyenne et la dense, l'une après l'autre et jamais en parallèle tant qu'aucun verrou ne protège l'inventaire, avec la planche de campagne en
 référence. La clairsemée n'est pas concernée : sa description est la description de base, celle qui passait déjà.
 
 ### Production
@@ -1595,7 +1598,10 @@ propose 2 autres herbes hautes (nouveaux sujets) ». **L'opérateur : la zone de
 
 **Solution retenue par l'opérateur** : autoriser des cases de chemin **sous le bâtiment**. Le sol se dessine d'abord, le bâtiment se pose par-dessus, et le chemin peut alors remonter jusqu'à la porte quelle que soit la hauteur à laquelle elle se trouve dans l'image.
 
-**Ce que ça implique, et qui n'existe pas encore** : un plan refuse aujourd'hui deux sujets sur une même case — c'est même son seul contrôle d'occupation. Il faudra que la déclaration porte des **calques** : une case peut avoir un sol ET un volume posé dessus. Le rendu en calques est déjà la façon dont le jeu affiche la carte, donc la conception ne s'y oppose pas ; c'est le format du plan qui est à étendre. **Rien n'est engagé là-dessus.**
+**Ce que ça implique, et qui n'existe pas encore** : un plan refuse aujourd'hui deux sujets sur une même case — c'est même son seul contrôle d'occupation. Il faudra que la déclaration porte des
+**calques** : une case peut avoir un sol ET un volume posé dessus. Le rendu en calques est déjà la façon dont le jeu affiche la carte, donc la conception ne s'y oppose pas ; c'est le format du plan
+qui est à étendre. **Rien n'est engagé là-dessus.** La décision, elle, a rejoint son foyer le 2026-08-21 : [format de composition](conception/referentiels/visuel/format-de-composition.md), « un chemin
+passe sous un bâtiment ». Ce qui reste ici n'est que le soir où elle a été prise.
 
 **LA CLAUSE D'UN VARIANT N'ARRIVAIT PAS AU GÉNÉRATEUR — défaut d'outillage constaté le 2026-08-05, RÉPARÉ le 2026-08-06.** Vérifié sur la consigne réellement envoyée pour `TR-064` en
 densité `dense` (`var/generations/sprites/TR-064_densite-dense-v4-rapport.md`) : elle ne portait **aucun mot** de la description propre à `dense`, seulement la description de base du
@@ -1627,6 +1633,12 @@ chacune était en réalité une vue principale. Les verdicts « trop proche de l
 Le bouton d'information sans son mot, le champ de commentaire qui s'ouvre sur deux lignes et grandit jusqu'à quatre, le score revenu à sa source, la pastille réduite à deux mots, le détail des critères passé en popin avec mesure et attendu. **Tous corrigés et publiés.**
 
 ## Registre des sujets
+
+**CE REGISTRE N'EST PLUS À JOUR, ET SON RATTRAPAGE EST UN POINT OUVERT : `S103 registre-du-journal`.** Sur ses 33 lignes, 24 ne sont pas marquées faites et
+**aucune n'a de point au backlog sous sa référence** — elles se lisent comme du travail en cours et personne ne sait lesquelles le sont encore. Elles se
+tranchent une par une, en ouvrant la fiche ou la page que chacune nomme ; `php scripts/backlog.php show S103` dit comment. **Le travail à prendre se prend
+par `php scripts/backlog.php next`, jamais ici.**
+
 
 **Le suivi guide, il ne fait pas foi : la vérité est sur le disque** (opérateur, 2026-08-05). Tout sujet donné par l'opérateur entre ici avec son numéro, sa référence, son titre et son statut ; le registre se met à jour à chaque échange.
 
@@ -1952,46 +1964,10 @@ Les cinq premières tiennent la cible de lumière et l'échelle humaine. Détail
 
 ## Les outils
 
-**Aucun outil ne se réinvente : on cherche ici d'abord.** Le tableau dit, pour chaque besoin, l'outil à employer. Tous les scripts sont dans `scripts/`, en anglais, exécutables depuis la racine du dépôt.
-
-### Ce qu'il faut employer, par usage
-
-| Besoin | Outil à employer |
-|---|---|
-| **Dessiner un plan de composition** (avant toute génération) | `plan_svg.py` — le moteur unique : plan **à plat vu de dessus**, grille, emprises colorées, tracés, habitants, légende, contrôles bloquants. Ne jamais redessiner un plan à la main ni en perspective. |
-| Plan de composition d'une planche de référence | `build-plan-svg.py` (32 × 24) |
-| Rendre un plan de composition depuis son JSON déclaratif | `build-composition-plan.py <plan.json>` — générique, contrôles bloquants |
-| Vérifier la cohérence d'un tracé (formes, raccords) | `plan_svg.check_traces()` — par calcul, jamais à l'œil |
-| Assembler une consigne de planche | `plate_common.py` (socle français, fiches témoins, `shoot()` anti-doublon) |
-| Assembler une consigne d'asset | `asset_common.py`, via `generate-asset.py` |
-| Contrôler une consigne avant génération | `check-plate-prompts.py` — bloque en cas de faute |
-| Générer une image | `generate-image.php` — **jamais appelé à la main**, la chaîne passe par `generate-asset.py` |
-| Détourer un asset | `cut-asset.py` |
-| Mesurer un asset | `check-asset.py` (transparence, emprise, raccord, lumière) |
-| Mesurer une planche | `analyze-plate.py` (mesures + verdict lumière) |
-| Convertir case ↔ pixels, dimensionner | `tile_scale.py` — **seul détenteur** des deux valeurs : case d'écran à 24 px, finesse de livraison dimensionnée sur le zoom maximum |
-| Exporter un livrable | `export-asset.py` — redimensionne, ne rogne rien, mesure l'emprise et le point de pose |
-| Lire ou contrôler le référentiel des sujets | `check-subjects.py` — affiche la valeur résolue du passage, niveau par niveau |
-| Commander une sprite, quelle qu'elle soit | `generate-sprite.py <ref du sujet> <ref du variant>` — tout est lu au référentiel ; elle exporte, inscrit et écrit son rapport |
-| Commander tout un jeu de pièces | `run-fence-campaign.py` — une seule campagne, une seule référence |
-| Commander un exemple d'usage | `generate-usage-sample.py` depuis un plan de composition |
-| Enfiler des demandes de sprite et les traiter au fil de l'eau | `sprite-queue.py` — file à `local/sprite-queue.jsonl`, reconstruction de la page sérialisée |
-| Rééchantillonner une image | `resize-image.py` |
-| Construire une page de revue | `build-planches-page.py`, `build-calibration-page.py`, et `review-server/suivi-sprites/build.php` pour le suivi des sprites |
-| Regarder un SVG que j'ai produit | `rsvg-convert` vers un PNG dans `local/` — un agent ne sait pas lire un SVG, il lit une image matricielle |
-
-Les `generate-planche-*.py` et `generate-humans-calibration-*.py` sont conservés tels quels : un fichier par passage, ils ne se rejouent pas.
-
-### Outils extérieurs et versions constatées
-
-| Outil | Version | Usage |
-|---|---|---|
-| Codex (`codex`) | codex-cli 0.147.0 | le générateur d'images, enveloppé par `generate-image.php` |
-| PHP | 8.4.24 | le wrapper du générateur |
-| Python | 3.12.3 | tout le reste de l'outillage |
-| `rsvg-convert` | 2.58.0 | SVG → PNG, pour que l'agent puisse regarder ce qu'il produit |
-
-Toute version se reconstate avant de s'y fier : une version écrite ici est un constat daté, pas une garantie.
+**Rien sur les outils ne s'écrit ici.** La carte « quel outil pour quel besoin » vit à [doc/outils/index.md](outils/index.md) et les outils extérieurs avec
+leurs versions à [doc/outils-exterieurs.md](outils-exterieurs.md). Ce journal en portait des copies : celle de la carte a dérivé sans que rien ne le dise, et
+nommait encore trois scripts retirés du dépôt. **Une donnée que les règles disent de consulter ne se recopie pas dans un récit de séance** — elle y vieillit,
+et personne ne rouvre deux mille lignes pour la corriger.
 
 ## Les deux pages de suivi du POC
 

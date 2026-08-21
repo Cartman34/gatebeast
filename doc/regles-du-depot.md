@@ -278,6 +278,11 @@ piloter son projet.
 - **ET C'EST UNE MACHINE QUI LE TIENT, PAS LA BONNE VOLONTÉ DES AGENTS** : `php scripts/check-no-new-python.php` refuse tout `.py` versionné absent du relevé `scripts/python-inventory.json`, lui-même
   produit du dépôt et jamais tenu à la main. **Le refiger — `--freeze` — est un geste que l'opérateur autorise**, jamais une commodité qu'on s'accorde pour faire passer son propre ajout : refigé sans
   décision derrière, le relevé ne garde plus rien. Ses essais : `php scripts/dev/trial-no-new-python.php`.
+- **AUCUN OUTIL NE SE RÉINVENTE : ON CHERCHE À [doc/outils/index.md](outils/index.md) D'ABORD.** La carte dit, pour chaque besoin, l'outil à employer, et un
+  agent qui écrit un script sans l'avoir ouverte en écrit un deuxième pour un besoin déjà couvert. **Cette règle n'était écrite nulle part** avant le
+  2026-08-21 : elle vivait en tête du tableau, dans le journal des séances, où personne ne la lisait — et le tableau lui-même y avait dérivé, nommant encore
+  trois scripts retirés du dépôt. **Un outil retiré ou ajouté se note à la carte le jour même**, sinon elle redérive et une carte fausse coûte plus cher qu'une
+  carte absente.
 - **La liste des outils validés de ce dépôt** — Python pour l'outillage, PHP pour l'enveloppe du générateur, Codex comme générateur d'images, `rsvg-convert` pour regarder un SVG produit — est tenue
   à [doc/outils-exterieurs.md](outils-exterieurs.md), à lire là plutôt qu'à recopier ici. Elle vivait dans `SUIVI.md`, et l'élagage du 2026-08-11 a rendu ce renvoi mort avant qu'on le corrige.
   **La règle qui dit qu'un outil non validé se demande au lieu de s'essayer** est montée à la méthode commune, avec l'interdit d'aller chercher hors du dépôt.

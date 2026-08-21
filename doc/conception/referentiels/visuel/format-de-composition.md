@@ -22,6 +22,10 @@ Ce format est une convention interne. Il se lit de haut en bas : ce qui est écr
 - **Un ravin n'est pas une source d'eau, et ce n'est pas un ruisseau : c'est une crevasse** — une entaille profonde et rocheuse dans le sol, réellement dangereuse, qu'on ne franchit que par un pont. Il peut être sec ou porter un torrent tout au fond, mais il se lit d'abord comme un gouffre, jamais comme un cours d'eau posé sur le sol. Et tout cours d'eau, où qu'il soit, vient de quelque part et va quelque part : il entre par un bord, sort par un bord, ou naît d'une source explicite.
 - **Pin ≠ sapin** : les deux essences se nomment et se décrivent distinctement ; demander l'une ne doit pas produire l'autre.
 - **Rien n'empiète sur les cases voisines vers le bas, la gauche ou la droite.** Seule la hauteur déborde vers le haut de l'écran, puisqu'un bâtiment haut se dresse au-dessus de son emprise et masque ce qui est derrière.
+- **UN CHEMIN PASSE SOUS UN BÂTIMENT, ET C'EST LA SEULE SUPERPOSITION ADMISE** — décision de l'opérateur, 2026-08-05, sur la sprite du centre de soin. La porte ne tombe pas sur le bord bas de
+  l'image : le porche, les massifs et le socle descendent en dessous d'elle, si bien qu'un chemin arrêté au ras de l'emprise s'immobilise à une ou deux cases de la porte, et rien ne les relie. Le
+  sol se dessine d'abord, le bâtiment se pose par-dessus : le chemin peut alors remonter jusqu'à la porte quelle que soit la hauteur où elle se trouve dans la sprite. Écarté : remonter la porte au
+  bas de la sprite — elle cesserait d'être une porte de bâtiment pour devenir une découpe de bord.
 - Tout est **droit** : bâtiments, clôtures et cultures suivent les axes de la grille. Deux éléments voisins peuvent s'accorder — un appentis contre un mur, une haie le long d'un champ — sans jamais se chevaucher.
 
 ## Structure d'une composition

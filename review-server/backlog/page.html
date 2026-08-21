@@ -180,7 +180,7 @@
   <h1>La pile</h1>
   <p class="lede measure"><strong>Ce qui attend une réponse de toi, et rien d'autre</strong> — une task que j'ai proposée et qui attend ton accord, ou une
   décision qui t'appartient. <strong>Chaque carte porte ton vote</strong> : ce que tu veux voir traité, et ce que tu rejettes — une task rejetée sort de la pile. Le vote se retire en recliquant.</p>
-  <p class="compte">4 en attente de toi · 5 à moi · php scripts/backlog.php next</p>
+  <p class="compte">6 en attente de toi · 4 à moi · php scripts/backlog.php next</p>
   <div class="grid">
   <article class="point" data-status="proposed">
     <p class="point-tete"><span class="point-ref">consigne-structuree</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 20</span><span class="point-attend">attend : agent</span><span class="point-rang">le prochain</span></p>
@@ -285,15 +285,80 @@ par <code>Consignes</code> —, seule l&#039;écriture demande un détour.</p>
     <textarea class="comment" data-id="critiques-sous-var" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
     <p class="point-pied">Créé le 2026-08-18 · repris le 2026-08-20</p>
   </article>
+  <article class="point" data-status="proposed">
+    <p class="point-tete"><span class="point-ref">largeur-des-chemins</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 40</span><span class="point-attend">attend : agent</span><span class="point-rang">5</span></p>
+    <h2>Les pieces du chemin n&#039;ont pas toutes la meme largeur</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>LES PIÈCES DU CHEMIN N&#039;ONT PAS TOUTES LA MÊME LARGEUR, ET SA DESCRIPTION EN DEMANDE UNE SEULE — LES DEUX TIERS DE LA CASE.</strong> Constat rouvert le 2026-08-21<br />
+par l&#039;audit du journal (<code>W22</code>), à partir des mesures déjà inscrites au référentiel : <strong>rien n&#039;a été régénéré pour l&#039;établir</strong>.</p>
+<p>## L&#039;ÉTAT PRÉSENT, MESURÉ</p>
+<p><code>CH-019 dirt-path-01</code>, dernière version de chaque forme, lue sur l&#039;axe qui porte la bande — largeur de contact pour ce qui court du nord au sud, hauteur de<br />
+bande pour ce qui court d&#039;est en ouest, les deux ne se lisant pas sur le même axe :</p>
+<p>| Forme | Dernière version | Part de la case |<br />
+|---|---|---|<br />
+| <code>ns</code> — ligne nord-sud | <code>CH-019_shape-ns-v3.png</code> | <strong>66,7 %</strong> — conforme |<br />
+| <code>ew</code> — ligne est-ouest | <code>CH-019_shape-ew-v6.png</code> | <strong>67,9 %</strong> — conforme |<br />
+| <code>e</code> — extrémité est | <code>CH-019_shape-e-v2.png</code> | <strong>72,6 %</strong> |<br />
+| <code>w</code> — extrémité ouest | <code>CH-019_shape-w-v2.png</code> | <strong>47,6 %</strong> |<br />
+| <code>s</code> — extrémité sud | <code>CH-019_shape-s.png</code> | <strong>66,7 %</strong> |<br />
+| <code>n</code> — extrémité nord | <code>CH-019_shape-n-v2.png</code> | <strong>24,0 %</strong> |<br />
+| <code>nesw</code> — croisée | <code>CH-019_shape-nesw-v2.png</code> | <strong>25,0 %</strong> |</p>
+<p>## CE QUI EST FAUX, ET CE QUI NE L&#039;EST PLUS</p>
+<p><strong>LE DÉFAUT D&#039;ORIGINE EST RÉSOLU</strong> : le journal le décrivait comme « 67 % en nord-sud, 25 % en est-ouest », et la <code>v6</code> de l&#039;est-ouest est à 67,9 %. C&#039;est ce<br />
+qui rend ce point différent de celui qu&#039;il remplace.</p>
+<p><strong>CE QUI RESTE FAUX SE VOIT AILLEURS, ET SUR TROIS PIÈCES.</strong> L&#039;extrémité nord et la croisée sont à <strong>un quart de case</strong> là où la ligne qu&#039;elles prolongent en<br />
+fait deux tiers : un chemin qui s&#039;y raccorde se rétrécit de moitié à la jonction. Et les deux extrémités est et ouest, qui sont la même pièce vue des deux<br />
+côtés, ne s&#039;accordent pas entre elles — <strong>72,6 % contre 47,6 %</strong>.</p>
+<p><strong>C&#039;EST UN DÉFAUT DE RACCORD, PAS UN DÉFAUT D&#039;ALLURE</strong> : deux pièces voisines qui ne partagent pas la même largeur laissent une marche visible à chaque case,<br />
+et le plan ne peut rien y faire — il déclare des cases, pas des largeurs.</p>
+<p>## CE QUE ÇA DEMANDE, ET CE QUI L&#039;EMPÊCHE AUJOURD&#039;HUI</p>
+<p><strong>TROIS PIÈCES À REPRODUIRE</strong> — <code>n</code>, <code>nesw</code>, et celle des deux extrémités est/ouest qui s&#039;écarte des deux tiers. <strong>Les générations sont hors du dépilement</strong><br />
+(opérateur, 2026-08-20 : d&#039;autres agents éprouvent la projection), donc ce point <strong>attend l&#039;opérateur</strong> et ne se prend pas tout seul.</p>
+<p><strong>LA MESURE, ELLE, N&#039;ATTEND RIEN</strong> : <code>local/scripts/largeur-chemins.py</code> la relit du référentiel en une commande, et c&#039;est elle qui dira si une reprise a tenu.<br />
+Ce qu&#039;il manque pour que le défaut cesse de revenir, c&#039;est un contrôle qui <strong>refuse</strong> un jeu de pièces dont les largeurs ne s&#039;accordent pas — aujourd&#039;hui rien<br />
+ne compare deux pièces d&#039;un même profil entre elles.</p>
+</details>
+    <div class="acts" data-id="largeur-des-chemins"><label class="act act--wanted"><input type="checkbox" data-id="largeur-des-chemins" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="largeur-des-chemins" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="largeur-des-chemins" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-21 · repris le 2026-08-21</p>
+  </article>
+  <article class="point" data-status="proposed">
+    <p class="point-tete"><span class="point-ref">registre-du-journal</span><span class="point-status">À valider — proposé par l&#039;agent, il ne s&#039;y met pas avant votre accord</span><span class="point-prio">priorité 45</span><span class="point-attend">attend : agent</span><span class="point-rang">6</span></p>
+    <h2>Vingt-quatre demandes de l&#039;operateur ne vivent que dans le journal</h2>
+    <details class="point-corps"><summary>Ce que ça engage</summary><p><strong>VINGT-QUATRE DEMANDES DE L&#039;OPÉRATEUR NE VIVENT QUE DANS LE JOURNAL DES SÉANCES, ET AUCUNE AUTORITÉ NE LES PORTE.</strong> Constat de l&#039;audit <code>W22</code>, le 2026-08-21.</p>
+<p>## L&#039;ÉTAT PRÉSENT</p>
+<p>Le journal tient une section « Registre des sujets » ouverte par la phrase <strong>« tout sujet donné par l&#039;opérateur entre ici avec son numéro »</strong> — c&#039;est donc une<br />
+liste d&#039;entrée, pas un récit. Elle compte <strong>33 lignes : 9 marquées faites, 24 qui ne le sont pas</strong>, et <strong>pas une seule de ces 24 n&#039;a de point au backlog sous<br />
+sa référence</strong>. Ce que <code>python3 local/scripts/registre-du-journal.py</code> mesure en une commande.</p>
+<p>Ces lignes ne sont pas des notes : elles nomment un geste précis et un sujet précis — « fiche à corriger » sur le grand chêne, le pommier, les sapins ;<br />
+« consigne à corriger » sur l&#039;herbe clairsemée et l&#039;angle nord-ouest de clôture ; « à trancher » sur la matière du chemin, le mot banni, les sprites<br />
+orphelines ; « en défaut » sur l&#039;exemple d&#039;usage du chemin et l&#039;icône d&#039;information.</p>
+<p>## POURQUOI CE N&#039;EST PAS UN SIMPLE IMPORT</p>
+<p><strong>AUCUNE DES 24 NE PEUT ÊTRE TRANCHÉE PAR MACHINE, ET C&#039;EST MESURÉ</strong> : <code>local/scripts/registre-echantillon.py</code> a éprouvé quatre d&#039;entre elles — le sapin <code>v6</code><br />
+non inscrit, le mot banni, la planche laissée dans les assets, le décor de toit du centre de soin — et <strong>n&#039;a conclu sur aucune</strong>. Ses comptes ne distinguent<br />
+pas ce que la ligne visait de ce qui lui ressemble. Une sonde qui ne peut pas conclure le dit : elle l&#039;a dit.</p>
+<p><strong>LES DEUX FAÇONS DE SE TROMPER SONT SYMÉTRIQUES.</strong> Verser les 24 au backlog sans les regarder remplirait le dépilement de travail peut-être fait depuis trois<br />
+semaines — et un point faux coûte plus cher qu&#039;un point absent. Les déclarer périmées en bloc perdrait des demandes que l&#039;opérateur a réellement faites, ce<br />
+que le registre existe précisément pour empêcher.</p>
+<p>## CE QUI EST DÛ</p>
+<p><strong>LES REGARDER UNE PAR UNE, ET N&#039;OUVRIR QUE CE QUI EST ENCORE VRAI.</strong> Chacune se tranche en ouvrant la fiche, la consigne ou la page qu&#039;elle nomme — c&#039;est du<br />
+travail de lecture, pas d&#039;outillage. Le rythme n&#039;a pas d&#039;importance ; ce qui compte est qu&#039;aucune ne se referme sans qu&#039;on ait regardé.</p>
+<p><strong>CE QUI RESTE VRAI VA AU BACKLOG SOUS SA RÉFÉRENCE D&#039;ORIGINE</strong>, pour que le registre et le backlog se répondent. <strong>Ce qui est fait se barre dans le<br />
+registre</strong>, comme les neuf premières lignes l&#039;ont été.</p>
+<p><strong>ET LE REGISTRE FERME QUAND IL EST VIDE</strong> : une liste d&#039;entrée dans un document qui ne fait pas foi est exactement ce que <code>W22</code> cherche. Tant qu&#039;il reste une<br />
+ligne, elle se lit comme du travail en cours par qui rouvre le journal.</p>
+</details>
+    <div class="acts" data-id="registre-du-journal"><label class="act act--wanted"><input type="checkbox" data-id="registre-du-journal" data-act="wanted"><span>À travailler</span></label><label class="act act--dismissed"><input type="checkbox" data-id="registre-du-journal" data-act="dismissed"><span>Rejeter</span></label></div>
+    <textarea class="comment" data-id="registre-du-journal" rows="2" placeholder="Ce que tu veux dire là-dessus."></textarea>
+    <p class="point-pied">Créé le 2026-08-21 · repris le 2026-08-21</p>
+  </article>
   </div>
   <details class="clos">
-    <summary>Les 5 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
+    <summary>Les 4 tasks qui ne t'attendent pas — du travail dû, déjà décidé</summary>
     <ul class="mien">
     <li><span class="point-ref">consigne-propre</span> Une consigne propre de bout en bout, écrite en modifiant le texte généré — le sujet de la reprise</li>
     <li><span class="point-ref">emprise-non-rect</span> Une emprise ne sait être qu&#039;un rectangle : un bâtiment en L rendrait le référentiel et la consigne faux</li>
     <li><span class="point-ref">comparaison-variants</span> La comparaison de variants sélectionnés, à 48 px par case, dans la fiche du sujet</li>
     <li><span class="point-ref">hauteur-monde</span> La hauteur d&#039;un sujet dans le monde n&#039;a pas d&#039;unité propre, distincte de TX et TY</li>
-    <li><span class="point-ref">audit-journal</span> Auditer le journal des seances : chaque constat doit avoir un foyer ailleurs</li>
     </ul>
   </details>
 </div>
