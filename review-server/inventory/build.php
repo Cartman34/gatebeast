@@ -352,8 +352,8 @@ $page = <<<'HTML'
   /* LE VOTE VA AU SERVEUR AU MOMENT OÙ IL SE DONNE, ET LE SERVEUR EST LE SEUL ÉCRIVAIN. Une page est une copie sur un écran, possiblement ancienne : laisser
      chaque copie écrire ferait gagner le dernier rechargement. C'est le mécanisme de la page des sprites, repris tel quel — la section diffère, pas le geste. */
   /* THE SECTION KEY IS ENGLISH LIKE EVERY STORED VALUE, and renaming it cost nothing: it was thought to be blocked by a data migration — « la renommer les
-     orphelinerait » — but no vote has ever been cast on this page, so `review-server/notes/inventory.json` does not exist and there was nothing to orphan.
-     A blockage assumed rather than checked kept a finding in the pile for eight days. */
+     orphelinerait » — but no vote has ever been cast on this page, so its notes file under review-server/notes/ was never created and there was nothing to
+     orphan. A blockage assumed rather than checked kept a finding in the pile for eight days. */
   var SECTION = 'subjects';
   var state = {};
   var ready = false;

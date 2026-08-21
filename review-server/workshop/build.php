@@ -177,10 +177,16 @@ function editsMarkup(array $journal): string
     $items = '';
     foreach ($journal['edits'] as $edit) {
         $state = $edit['test'] ?? 'non testée';
-        $items .= sprintf('<li><span class="state %s">%s</span> <strong>%s</strong><p class="edit-why">%s</p>%s</li>',
+        // CE QUI EST REPORTÉ DANS LE CODE SE VOIT ICI, ET C'EST LA FIN DU CHEMIN D'UNE CORRECTION : écrite, éprouvée, puis portée quelque part. Sans cette
+        // dernière ligne, on ne distingue pas une correction qui a servi d'une correction restée dans son essai.
+        $reported = isset($edit['reported'])
+            ? '<p class="edit-why"><strong>Reporté dans</strong> : ' . escape($edit['reported']) . '</p>'
+            : '';
+        $items .= sprintf('<li><span class="state %s">%s</span> <strong>%s</strong><p class="edit-why">%s</p>%s%s</li>',
             escape($states[$state] ?? 'unmeasurable'), escape($state), escape($edit['id'] ?? 'sans identifiant'),
             escape($edit['intention'] ?? 'Aucune intention écrite — on ne saura pas pourquoi cette correction a été faite.'),
-            isset($edit['observation']) ? '<p class="edit-why">Observé : ' . escape($edit['observation']) . '</p>' : '');
+            isset($edit['observation']) ? '<p class="edit-why">Observé : ' . escape($edit['observation']) . '</p>' : '',
+            $reported);
     }
     $note = $journal['note'] === null ? '' : '<p class="edit-note">' . escape($journal['note']) . '</p>';
 
