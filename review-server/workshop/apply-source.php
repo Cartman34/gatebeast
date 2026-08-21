@@ -16,7 +16,7 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/scripts/Tools.php';
-require_once $root . '/review-server/lib/Consignes.php';
+require_once $root . '/review-server/lib/Prompts.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
 
@@ -27,10 +27,10 @@ if ($subject === null || $wanted === null) {
     exit(2);
 }
 
-$consignes = Consignes::get();
-$home = $consignes->homeOf($subject);
+$prompts = Prompts::get();
+$home = $prompts->homeOf($subject);
 if (!is_dir($home)) {
-    fwrite(STDERR, "FAULT le sujet « $subject » n'a pas de foyer sous " . Consignes::HOME . "/.\n");
+    fwrite(STDERR, "FAULT le sujet « $subject » n'a pas de foyer sous " . Prompts::HOME . "/.\n");
     exit(1);
 }
 
@@ -59,17 +59,17 @@ if ($block === null) {
     exit(1);
 }
 
-// THERE IS ONLY EVER ONE PENDING VERSION, and `Consignes` names it: the one that follows the last GENERATED. The computation lives there because the page and
+// THERE IS ONLY EVER ONE PENDING VERSION, and `Prompts` names it: the one that follows the last GENERATED. The computation lives there because the page and
 // this script must name the same one, and two loops written side by side end up disagreeing.
-if ($consignes->ranksOf($subject) === []) {
+if ($prompts->ranksOf($subject) === []) {
     fwrite(STDERR, "FAULT le sujet « $subject » ne porte aucune version.\n");
     exit(1);
 }
-$generated = $consignes->generatedRank($subject);
-$rank = $consignes->pendingRank($subject);
-$target = $consignes->file($subject, $rank, 'prompt');
+$generated = $prompts->generatedRank($subject);
+$rank = $prompts->pendingRank($subject);
+$target = $prompts->file($subject, $rank, 'prompt');
 // La source est la version en attente si elle existe déjà — on la reprend —, sinon la dernière générée, dont elle sera le premier écart.
-$source = is_file($target) ? $target : $consignes->file($subject, $generated, 'prompt');
+$source = is_file($target) ? $target : $prompts->file($subject, $generated, 'prompt');
 $body = file_get_contents($source);
 
 // LA SECTION VA DE SON TITRE AU TITRE SUIVANT, quel qu'en soit le niveau de titre : c'est le découpage que la consigne annonce elle-même dans sa première

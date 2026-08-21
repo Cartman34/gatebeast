@@ -20,14 +20,14 @@
  *   them here, on purpose.
  *
  *   THEY LIVE BESIDE THE VERSION THEY JUDGE, and their path is DEDUCED from the consigne's — `<SUBJECT>.v<N>.critiques.json` in the same folder, whose foyer is
- *   `Consignes::HOME`. Holding a second folder in parallel is what made this service report « aucune critique » while the file sat on disk one directory away,
+ *   `Prompts::HOME`. Holding a second folder in parallel is what made this service report « aucune critique » while the file sat on disk one directory away,
  *   after the consignes moved under var/ on 2026-08-17. A critique names the version it judges, so it is filed under that version's name.
  *
  *   AND ITS FOYER IS NOT A DURABLE HOME. Being on disk does not make a critique a record to keep: it is deleted with its trial, and nothing reads it afterwards.
  *   What survives a trial is what its critiques CHANGED, at its own foyer — the source block, the code.
  */
 
-require_once __DIR__ . '/Consignes.php';
+require_once __DIR__ . '/Prompts.php';
 
 class Critiques
 {
@@ -58,9 +58,9 @@ class Critiques
      */
     public function read(string $promptPath, string $body, string $root): array
     {
-        // THEY LIVE BESIDE THE VERSION THEY JUDGE, and `Consignes` computes that path — this file does not know the naming mould and has no business knowing
+        // THEY LIVE BESIDE THE VERSION THEY JUDGE, and `Prompts` computes that path — this file does not know the naming mould and has no business knowing
         // it. Holding a second copy here made the page say « aucune critique » while the file sat on disk one directory away.
-        $path = Consignes::get()->beside($promptPath, 'critiques');
+        $path = Prompts::get()->beside($promptPath, 'critiques');
         if (!is_file($path)) {
             return ['critiques' => [], 'fault' => null];
         }

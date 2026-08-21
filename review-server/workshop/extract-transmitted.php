@@ -16,7 +16,7 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/scripts/Tools.php';
-require_once $root . '/review-server/lib/Consignes.php';
+require_once $root . '/review-server/lib/Prompts.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
 
@@ -90,12 +90,12 @@ if ($blocks === []) {
     exit(1);
 }
 
-$consignes = Consignes::get();
-if (!is_dir($consignes->homeOf($subject))) {
-    fwrite(STDERR, "FAULT le sujet « $subject » n'a pas de foyer sous " . Consignes::HOME . "/, et rien ne s'écrit à côté d'un dossier absent.\n");
+$prompts = Prompts::get();
+if (!is_dir($prompts->homeOf($subject))) {
+    fwrite(STDERR, "FAULT le sujet « $subject » n'a pas de foyer sous " . Prompts::HOME . "/, et rien ne s'écrit à côté d'un dossier absent.\n");
     exit(1);
 }
-$target = $consignes->file($subject, (int) $rank, 'transmitted');
+$target = $prompts->file($subject, (int) $rank, 'transmitted');
 $written = count($blocks) === 1
     ? $blocks[0] . "\n"
     : implode("\n", array_map(fn (int $rank, string $block) => "===== PASSE " . ($rank + 1) . " =====\n$block\n", array_keys($blocks), $blocks));

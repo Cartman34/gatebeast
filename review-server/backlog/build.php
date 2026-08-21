@@ -205,7 +205,7 @@ $page = <<<'HTML'
   <div class="grid">
 {$ouverts}  </div>
   <details class="clos">
-    <summary>{$titreMien}</summary>
+    <summary>{$mineTitle}</summary>
     <ul class="mien">
 {$miens}    </ul>
   </details>
@@ -337,7 +337,7 @@ $page = strtr($page, [
     '{$ouverts}' => $openMarkup !== '' ? $openMarkup
         : "  <p class=\"lede measure\">Rien ne t'attend dans la pile : tu as déjà tranché tout ce qui s'y trouve, et le reste est du travail dû, listé plus bas."
             . " <strong>Ce qui t'attend est ailleurs</strong> : les sprites à juger, sur <a href=\"/sprites\">le suivi des sprites</a>.</p>\n",
-    '{$titreMien}' => sprintf('Les %d tasks qui ne t\'attendent pas — du travail dû, déjà décidé', count($mine)),
+    '{$mineTitle}' => sprintf('Les %d tasks qui ne t\'attendent pas — du travail dû, déjà décidé', count($mine)),
     '{$miens}' => $mineMarkup,
 ]);
 

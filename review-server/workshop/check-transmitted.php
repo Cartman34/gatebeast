@@ -14,7 +14,7 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/scripts/Tools.php';
-require_once $root . '/review-server/lib/Consignes.php';
+require_once $root . '/review-server/lib/Prompts.php';
 require_once $root . '/review-server/lib/TransmittedNumbers.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
@@ -27,9 +27,9 @@ if ($subject === null || $rank === null) {
 }
 $rank = (int) ltrim((string) $rank, 'vV');
 
-$consignes = Consignes::get();
-$promptPath = $consignes->file($subject, $rank, 'prompt');
-$transmittedPath = $consignes->file($subject, $rank, 'transmitted');
+$prompts = Prompts::get();
+$promptPath = $prompts->file($subject, $rank, 'prompt');
+$transmittedPath = $prompts->file($subject, $rank, 'transmitted');
 if (!is_file($promptPath)) {
     fwrite(STDERR, "FAULT la version « $subject v$rank » n'a pas de consigne.\n");
     exit(1);

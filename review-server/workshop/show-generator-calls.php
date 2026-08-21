@@ -20,7 +20,7 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/scripts/Tools.php';
-require_once $root . '/review-server/lib/Consignes.php';
+require_once $root . '/review-server/lib/Prompts.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
 

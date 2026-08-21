@@ -219,43 +219,43 @@ function variantState(Inventory $inventory, array $variant): string
  */
 function measurements(array $representation, array $subject): string
 {
-    $lignes = [];
+    $rows = [];
     $footprint = $subject['footprint'];
     $cover = $subject['cover'] ?? null;
     // ONE MEASUREMENT PER LINE, and the footprint, the cover and the height first: they are the three thresholds an image is judged against. Grouped on one
     // line they read as a sentence and had to be hunted for in the middle of it.
-    $lignes[] = ['Emprise au sol', sprintf('%d × %d case%s', $footprint['columns'], $footprint['rows'], $footprint['columns'] > 1 ? 's' : '')];
-    $lignes[] = ['Couvert', $cover ? sprintf('%d × %d cases', $cover['columns'], $cover['rows']) : 'égal à l\'emprise'];
-    $lignes[] = ['Hauteur déclarée', sprintf('%s case%s', $subject['height'] ?? '—', ($subject['height'] ?? 0) > 1 ? 's' : '')];
+    $rows[] = ['Emprise au sol', sprintf('%d × %d case%s', $footprint['columns'], $footprint['rows'], $footprint['columns'] > 1 ? 's' : '')];
+    $rows[] = ['Couvert', $cover ? sprintf('%d × %d cases', $cover['columns'], $cover['rows']) : 'égal à l\'emprise'];
+    $rows[] = ['Hauteur déclarée', sprintf('%s case%s', $subject['height'] ?? '—', ($subject['height'] ?? 0) > 1 ? 's' : '')];
 
     $measures = $representation['measures'] ?? null;
     if ($measures) {
         if (isset($measures['delivered_px'])) {
-            $lignes[] = ['Livrée', sprintf('%d × %d px', $measures['delivered_px']['width'], $measures['delivered_px']['height'])];
+            $rows[] = ['Livrée', sprintf('%d × %d px', $measures['delivered_px']['width'], $measures['delivered_px']['height'])];
         }
         if (isset($measures['master_size_px'])) {
-            $lignes[] = ['Maître', sprintf('%d × %d px', $measures['master_size_px']['width'], $measures['master_size_px']['height'])];
+            $rows[] = ['Maître', sprintf('%d × %d px', $measures['master_size_px']['width'], $measures['master_size_px']['height'])];
         }
         if (isset($measures['silhouette_px'])) {
             $s = $measures['silhouette_px'];
             $part = $measures['silhouette_share'] ?? null;
-            $lignes[] = ['Silhouette', sprintf('%d × %d px%s', $s['width'], $s['height'],
+            $rows[] = ['Silhouette', sprintf('%d × %d px%s', $s['width'], $s['height'],
                 $part ? sprintf(' · %s %% de la largeur, %s %% de la hauteur', $part['width'], $part['height']) : '')];
         }
         if (isset($measures['contact_px'])) {
-            $lignes[] = ['Contact au sol', sprintf('%d px, de %d à %d', $measures['contact_px']['width'], $measures['contact_px']['left'], $measures['contact_px']['right'])];
+            $rows[] = ['Contact au sol', sprintf('%d px, de %d à %d', $measures['contact_px']['width'], $measures['contact_px']['left'], $measures['contact_px']['right'])];
         }
         if (isset($measures['anchor_px'])) {
-            $lignes[] = ['Point de pose', sprintf('%s, %s px', $measures['anchor_px']['x'], $measures['anchor_px']['y'])];
+            $rows[] = ['Point de pose', sprintf('%s, %s px', $measures['anchor_px']['x'], $measures['anchor_px']['y'])];
         }
         if (isset($measures['height'])) {
-            $lignes[] = [$measures['height']['tenue'] ? 'Hauteur tenue' : 'HAUTEUR HORS FOURCHETTE', $measures['height']['constat']];
+            $rows[] = [$measures['height']['tenue'] ? 'Hauteur tenue' : 'HAUTEUR HORS FOURCHETTE', $measures['height']['constat']];
         }
     }
 
     $markup = '';
-    foreach ($lignes as [$nom, $valeur]) {
-        $markup .= sprintf('<dt>%s</dt><dd>%s</dd>', escape($nom), escape($valeur));
+    foreach ($rows as [$nom, $value]) {
+        $markup .= sprintf('<dt>%s</dt><dd>%s</dd>', escape($nom), escape($value));
     }
 
     return '<dl class="measures">' . $markup . '</dl>';

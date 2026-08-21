@@ -27,7 +27,7 @@ require_once $root . '/review-server/lib/WordDiff.php';
 require_once $root . '/review-server/lib/Inventory.php';
 require_once $root . '/review-server/lib/FootprintGrid.php';
 require_once $root . '/review-server/lib/SpriteMeasures.php';
-require_once $root . '/review-server/lib/Consignes.php';
+require_once $root . '/review-server/lib/Prompts.php';
 require_once $root . '/review-server/lib/TransmittedNumbers.php';
 require_once $root . '/scripts/Tools.php';
 bootBuild();
@@ -59,12 +59,12 @@ function escape(string $text): string
  * neuf ? ». The subject is the work; the date belongs to a version, which records its own.
  *
  * AND THE WHOLE CHAIN LIVES IN ONE FOLDER, ROOT INCLUDED. It used to straddle two, of which one was disposable: a chain whose v1 can vanish leaves every later
- * diff without an origin. The single foyer is declared by `Consignes`, and by it alone — this page is one of its four readers.
+ * diff without an origin. The single foyer is declared by `Prompts`, and by it alone — this page is one of its four readers.
  */
 function consignes(): array
 {
     $found = [];
-    foreach (Consignes::get()->subjects() as $subject) {
+    foreach (Prompts::get()->subjects() as $subject) {
         $found[] = [
             'name' => $subject,
             'code' => $subject,
@@ -91,17 +91,17 @@ function consignes(): array
  */
 function versionsOf(string $subject): array
 {
-    $consignes = Consignes::get();
+    $prompts = Prompts::get();
     $versions = [];
-    foreach ($consignes->ranksOf($subject) as $rank) {
-        $image = $consignes->file($subject, $rank, 'image');
-        // LA CONSIGNE TRANSMISE APPARTIENT À UNE VERSION, comme son image et sa session : c'est le texte que l'agent a envoyé à son propre modèle EN LISANT
-        // CETTE VERSION-LÀ. La chercher au rang 1 pour tout le monde — ce que faisait ce fichier — la montrait pour une version et la cachait pour les autres.
-        $transmitted = $consignes->file($subject, $rank, 'transmitted');
-        $versions[] = ['label' => "v$rank", 'path' => $consignes->file($subject, $rank, 'prompt'),
+    foreach ($prompts->ranksOf($subject) as $rank) {
+        $image = $prompts->file($subject, $rank, 'image');
+        // THE TRANSMITTED PROMPT BELONGS TO ONE VERSION, like its image and its session: it is the text the agent sent to its own model WHILE READING THAT
+        // VERSION. Looking for it at rank 1 for everyone — which this file used to do — showed it for one version and hid it for all the others.
+        $transmitted = $prompts->file($subject, $rank, 'transmitted');
+        $versions[] = ['label' => "v$rank", 'path' => $prompts->file($subject, $rank, 'prompt'),
             'image' => is_file($image) ? $image : null,
             'transmitted' => is_file($transmitted) ? $transmitted : null,
-            'meta' => metaOf($consignes->file($subject, $rank, 'generation'))];
+            'meta' => metaOf($prompts->file($subject, $rank, 'generation'))];
     }
 
     return $versions;
@@ -522,7 +522,7 @@ foreach ($trials as $trial) {
     // the address of an IMAGE, and a pending version has none.
     $views = '';
     $tabs = '';
-    $consignes = Consignes::get();
+    $prompts = Prompts::get();
     $default = defaultVersion($versions);
     $generated = 0;
     foreach ($versions as $version) {
@@ -542,7 +542,7 @@ foreach ($trials as $trial) {
         $body = file_get_contents($shown['path']);
         $earlier = $next === null ? null : file_get_contents($version['path']);
         $filed = $critiques->read($shown['path'], $body, $root);
-        // C'EST LA CONSIGNE TRANSMISE DE LA VERSION QUI PORTE L'IMAGE, puisque c'est elle que l'agent lisait quand il l'a envoyée à son modèle.
+        // THE TRANSMITTED PROMPT IS THAT OF THE VERSION CARRYING THE IMAGE, since that is the one the agent was reading when it sent it to its model.
         $transmitted = $version['transmitted'] === null ? null : file_get_contents($version['transmitted']);
 
         [$ops, $removals] = diffOverText($earlier, $body);
@@ -550,10 +550,10 @@ foreach ($trials as $trial) {
         // same line be read twice.
         $blocks = '';
         $rendered = [];
-        // LA HIÉRARCHIE SE VOIT, ELLE NE SE RECOPIE PAS SUR CHAQUE SECTION (opérateur, 2026-08-17 : « on est censé avoir un titre de section, avoir des sous
-        // sections et certaines sections indiquent un domaine »). Le groupe s'écrivait en fil d'Ariane devant chaque titre — « Comment travailler › Ce que tu
-        // nous rapportes common » —, si bien qu'il se répétait à l'identique quatre fois de suite et qu'on ne voyait plus ce qui contenait quoi. Il s'écrit
-        // maintenant UNE fois, en tête des sections qu'il regroupe, et le niveau devient une étiquette au lieu d'un mot collé au titre.
+        // THE HIERARCHY IS SEEN, NOT RECOPIED ONTO EVERY SECTION (operator, 2026-08-17: « on est censé avoir un titre de section, avoir des sous sections et
+        // certaines sections indiquent un domaine »). The group used to be written as a breadcrumb before each heading — « Comment travailler › Ce que tu nous
+        // rapportes common » — so it repeated identically four times in a row and one could no longer see what contained what. It is now written ONCE, above
+        // the sections it groups, and the level becomes a label instead of a word glued to the heading.
         $group = null;
         foreach (sectionsOf($body) as $part) {
             if ($part['group'] !== $group) {
@@ -565,9 +565,9 @@ foreach ($trials as $trial) {
             $from = $part['offset'];
             $content = substr($body, $from, $part['length']);
             // AUCUN ÉTAT DE SECTION N'EST AFFICHÉ, ET C'EST DÉLIBÉRÉ (opérateur, 2026-08-17 : « ça n'a pas été demandé car ça ne peut pas fonctionner »).
-            // Chercher nos phrases MOT POUR MOT dans la consigne transmise ne peut rien mesurer : l'agent réécrit au lieu de relayer, et deux sections qui
-            // disent elles-mêmes « tu ne la transmets pas » sortaient marquées « Disparue » — une alarme sur un succès. Un indicateur qui se trompe de sens
-            // sur les cas les plus simples n'est pas un indicateur incomplet, c'est du bruit.
+            // Looking for our sentences WORD FOR WORD in the transmitted prompt can measure nothing: the agent rewrites rather than relays, and two sections
+            // that say of themselves « tu ne la transmets pas » came out marked « Disparue » — an alarm raised on a success. An indicator that gets the sense
+            // backwards on the simplest cases is not an incomplete indicator, it is noise. What IS measurable is the numbers, and `TransmittedNumbers` does it.
             $anchored = $critiques->within($filed['critiques'], $from, strlen($content));
             foreach ($anchored as $one) {
                 $rendered[$one['offset']] = true;
@@ -621,8 +621,8 @@ foreach ($trials as $trial) {
             escape($version['label']), $version['image'] === null ? '' : ' <span class="dot" title="Cette version a une image">●</span>');
         // THE PER-EDIT STATE BEARS ON THE TEXT ONE READS, so on the version shown in the column — the next one when it exists. Its corrections are the ones
         // being judged, and what will be reported into the code depends on them.
-        $named = $consignes->partsOf($shown['path']);
-        $edits = $named === null ? ['edits' => [], 'note' => null, 'fault' => null] : $consignes->editsOf($named['subject'], $named['rank']);
+        $named = $prompts->partsOf($shown['path']);
+        $edits = $named === null ? ['edits' => [], 'note' => null, 'fault' => null] : $prompts->editsOf($named['subject'], $named['rank']);
         $views .= sprintf('<div class="version-view%s" data-version="%s"%s><p class="version">%s</p>'
             . '<div class="split"><div class="image">%s%s</div><div class="prompt">%s</div></div>'
             . '<h3 class="transmise">Ce que l\'agent a transmis à son modèle d\'images, pour cette version</h3>%s%s</div>',
@@ -652,7 +652,7 @@ $page = <<<'HTML'
 <p class="legende"><span><del>Texte barré</del> — retiré depuis l'image affichée</span><span><ins>Texte vert</ins> — ajouté depuis
 l'image affichée</span><span><mark class="ancre">Texte souligné</mark> — la phrase qu'une critique met en cause</span><span>● — cette version a une
 image</span></p>
-<p class="lede">Une consigne vit sous var/generations/consignes/, un répertoire par sujet, chaîne entière — racine comprise. Ce sont des essais, jamais
+<p class="lede">Une consigne vit sous var/generations/prompts/, un répertoire par sujet, chaîne entière — racine comprise. Ce sont des essais, jamais
 commités : ce qui doit leur survivre n'est pas leur texte mais ce qu'ils ont appris. Les règles se définissent une seule fois sous
 review-server/workshop/source/, et php review-server/workshop/check-source.php refuse qu'un bloc parle de ce qu'un autre gouverne. Page construite le
 {$built}.</p>

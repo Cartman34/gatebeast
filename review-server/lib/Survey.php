@@ -40,17 +40,17 @@ HTML;
      * LA COPIE PASSE PAR UN CHAMP CACHÉ : l'appel direct au presse-papiers est refusé dans le cadre où vit un artefact, et il échoue SANS RIEN DIRE — le bouton
      * paraît alors cassé. Si même cela échoue, le texte s'affiche tout sélectionné plutôt que d'être perdu.
      *
-     * `$titre` ouvre le texte collé, et `$mots` traduit chaque acte : ce sont les deux seules choses qui changent d'une page à l'autre.
+     * `$title` ouvre le texte collé, et `$mots` traduit chaque acte : ce sont les deux seules choses qui changent d'une page à l'autre.
      *
      * ATTENTION AUX ÉCHAPPEMENTS : CE HEREDOC EST INTERPOLÉ (`<<<JS`, sans quotes), donc PHP y lit les séquences d'échappement. Un `\n` écrit dans une chaîne
      * JavaScript devient un VRAI retour à la ligne au milieu de cette chaîne, le script ne s'analyse plus, et la page perd tout son comportement **sans rien
      * dire** : le bouton reste là et ne fait rien. C'est arrivé le 2026-08-12, sur ce fichier, à la ligne du commentaire. Un saut de ligne destiné au
      * JavaScript s'écrit donc `\\n`.
      */
-    public function script(string $titre, array $mots): string
+    public function script(string $title, array $mots): string
     {
         $words = json_encode($mots, JSON_UNESCAPED_UNICODE);
-        $heading = json_encode($titre, JSON_UNESCAPED_UNICODE);
+        $heading = json_encode($title, JSON_UNESCAPED_UNICODE);
 
         return <<<JS
 <script>

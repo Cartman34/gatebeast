@@ -20,7 +20,7 @@
 
 $root = dirname(__DIR__, 2);
 require_once $root . '/scripts/Tools.php';
-require_once $root . '/review-server/lib/Consignes.php';
+require_once $root . '/review-server/lib/Prompts.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
 
@@ -52,8 +52,8 @@ if ($state !== 'non testée' && ($observation === null || trim($observation) ===
     exit(1);
 }
 
-$consignes = Consignes::get();
-$path = $consignes->file($subject, $rank, 'edits');
+$prompts = Prompts::get();
+$path = $prompts->file($subject, $rank, 'edits');
 if (!is_file($path)) {
     fwrite(STDERR, "FAULT la version « $subject v$rank » n'a pas de journal d'édits.\n");
     exit(1);

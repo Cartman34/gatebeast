@@ -1,7 +1,7 @@
 <?php
 /**
  * USAGE
- *   Every path of the workshop's consignes, computed HERE and nowhere else. `Consignes::get()->home()` is the directory that holds one folder per subject,
+ *   Every path of the workshop's consignes, computed HERE and nowhere else. `Prompts::get()->home()` is the directory that holds one folder per subject,
  *   `->homeOf('BT-001')` that subject's folder, `->file('BT-001', 3, 'image')` the path of one file of one version, and `->beside($promptPath, 'critiques')`
  *   the file that sits next to a version whose path one already holds. `->partsOf($path)` reads a name back into its subject, rank and what.
  *
@@ -23,10 +23,10 @@
  *   tell the generated image from a probe shot. The « what » is English like every file name here.
  */
 
-class Consignes
+class Prompts
 {
     /** Where the workshop keeps its consignes: one directory per subject, and inside it every version with its own files. Relative to the repository root. */
-    public const HOME = 'var/generations/consignes';
+    public const HOME = 'var/generations/prompts';
 
     /**
      * What a version can carry, and the extension each one wears. THE LIST IS CLOSED: a « what » absent from it is refused by name rather than composed anyway,
