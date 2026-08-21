@@ -216,9 +216,16 @@ CE QUI EN DÉCOULE, ET QUI SE VÉRIFIE SUR L'IMAGE :
   l'OUEST du sujet est une DROITE VERTICALE qui longe le bord OUEST de l'image ; le mur le plus à l'EST longe le
   bord EST. Ils sont parallèles entre eux. Aucun ne penche, aucun ne s'écarte vers le bas, aucun ne se resserre
   vers le haut ;
+— CELA VAUT POUR TOUT BÂTIMENT, SANS EXCEPTION ET SANS QU'AUCUNE FICHE AIT À LE REDIRE. Une aile, un corps, un
+  appentis, une tour : chacun a ses murs verticaux et parallèles aux bords. Un bâtiment vu de trois-quarts, ou dont
+  les murs s'évasent, est REFUSÉ quelle que soit sa description ;
+— ET CE QUE LA CAMÉRA DONNE À VOIR D'UN BÂTIMENT : on voit SURTOUT LE DESSUS DE SES TOITURES, qui occupent la plus
+  grande part de son image, et sa façade SUD n'en occupe qu'une bande basse. Ce n'est jamais une façade dessinée de
+  face avec un toit posé dessus ;
 — UN FAÎTAGE QUI COURT NORD-SUD EST UN SEGMENT VERTICAL dans l'image, jamais une diagonale. Un pan de toit qui
   descend vers l'EST ou vers l'OUEST est donc BORDÉ DE DEUX VERTICALES PARALLÈLES, sa rive et son faîtage, et il
-  ne s'évase pas vers le bas. Jamais un parallélogramme qui fuit ;
+  ne s'évase pas vers le bas. Jamais un parallélogramme qui fuit. Cela vaut pour CHAQUE pan de CHAQUE toiture, quel
+  que soit le bâtiment, et sa fiche n'a pas à le répéter ;
 — UNE LONGUEUR DE N CASES OCCUPE LA MÊME MESURE PARTOUT DANS L'IMAGE, au SUD comme au NORD. Le quadrillage
   du monde NE RÉTRÉCIT PAS avec la profondeur : c'est un rapport de UN POUR UN, en tout point ;
 — deux droites parallèles dans le monde restent parallèles dans l'image, et deux longueurs égales sur un même axe y
