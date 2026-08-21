@@ -392,19 +392,25 @@ def prompt_parts(prompt: str) -> list:
 
 
 def transmitted_prompt(log: Path) -> str:
-    """The consigne the agent says it handed to its own image model, lifted out of its event log — or None when it reported none.
+    """Every prompt the agent says it handed to its own image model, lifted out of its event log — or None when it reported none.
+
+    IT TAKES THEM ALL, IN ORDER, AND THAT IS THE WHOLE POINT (`Q24 passes-generateur`, settled by the operator on 2026-08-13: « toutes les passes, dans
+    l'ordre »). The agent works in several PASSES and only one of them draws: on the v6 of BT-001 it sent two — the one that produced the building, and one that
+    repainted the background magenta for the cutout. Keeping only the last handed back the background swap as though it were the drawing instruction, and three
+    days were spent looking for a fault in a text that never described a building.
 
     IT LOOKS ONLY AT WHAT THE AGENT SAID, never at the whole log. The log also carries our own consigne, which contains the markers themselves inside the
     clause that asks for them: scanning the file as one text would find those and hand back our own words as if they were the agent's answer — a trace that
-    looks like evidence and is a mirror. So only `agent_message` items are read, and the LAST one carrying both markers wins, an agent being free to speak
-    several times before it is done.
+    looks like evidence and is a mirror. So only `agent_message` items are read.
+
+    THE SAME BLOCK CAN APPEAR TWICE — the agent's event and its echo — and two identical copies are not two passes. Duplicates are dropped, order preserved.
 
     ABSENCE IS A RESULT, NOT A FAULT. An agent that did not answer as asked has produced an image all the same, and losing that image over a missing trace
     would be absurd. It returns None, and the caller says so out loud rather than writing an empty file that would read as an empty rewriting.
     """
     if not log.is_file():
         return None
-    said = None
+    blocks = []
     for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
         line = line.strip()
         if not line.startswith("{"):
@@ -416,13 +422,32 @@ def transmitted_prompt(log: Path) -> str:
             continue
         message = event.get("msg") or event
         item = message.get("item") or {}
-        if message.get("type") != "item.completed" or item.get("item_type") != "agent_message":
+        # THE KEY NAMING THE ITEM CHANGED UNDER US, AND NOTHING SAID SO. The generator's log used to carry `item_type`; it now carries `type`. Reading only the
+        # old name made this function return None on every generation since — so the chain wrote « l'agent n'a rien rapporté » while the text sat in the log,
+        # and no error was raised, because an absent trace is a legitimate result. Both names are accepted: a log written before the change must stay readable.
+        kind = item.get("item_type") or item.get("type")
+        if message.get("type") != "item.completed" or kind != "agent_message":
             continue
         text = item.get("text") or ""
-        if TRANSMITTED_START in text and TRANSMITTED_END in text:
-            said = text.split(TRANSMITTED_START, 1)[1].rsplit(TRANSMITTED_END, 1)[0].strip("\n")
+        at = 0
+        while TRANSMITTED_START in text[at:]:
+            opens = text.index(TRANSMITTED_START, at) + len(TRANSMITTED_START)
+            if TRANSMITTED_END not in text[opens:]:
+                break
+            closes = text.index(TRANSMITTED_END, opens)
+            block = text[opens:closes].strip("\n")
+            if block not in blocks:
+                blocks.append(block)
+            at = closes + len(TRANSMITTED_END)
 
-    return said
+    if not blocks:
+        return None
+    if len(blocks) == 1:
+        return blocks[0]
+
+    # THE PASSES ARE NUMBERED WHEN THERE ARE SEVERAL, and the marker is the one the workshop already reads. A single pass keeps no header: a lone text under
+    # « PASSE 1 » would suggest a second one was lost.
+    return "\n".join(f"===== PASSE {rank + 1} =====\n{block}\n" for rank, block in enumerate(blocks))
 
 
 def write_prompt_parts(written: Path, prompt: str) -> Path:
