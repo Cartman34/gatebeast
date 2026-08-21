@@ -17,15 +17,10 @@
  *   error, understanding too much, would let a real gap through in silence, which is the one thing a check must never do.
  */
 
-$root = dirname(__DIR__);
+require_once __DIR__ . '/bootstrap.php';
+
+$root = bootCommand($argv);
 $detail = in_array('-v', $argv, true) || in_array('--verbose', $argv, true);
-if (in_array('-h', $argv, true) || in_array('--help', $argv, true)) {
-    $usage = file($root . '/scripts/check-subject-parameters.php', FILE_IGNORE_NEW_LINES);
-    foreach (array_slice($usage, 2, 4) as $line) {
-        echo trim(preg_replace('~^\s*\*\s?~', '', $line)), "\n";
-    }
-    exit(0);
-}
 
 /**
  * THE GRID, IN THE WORDS A SHEET USES. The design document holds the parameters and their reasons; what lives here is only how to RECOGNISE that a sheet fixes

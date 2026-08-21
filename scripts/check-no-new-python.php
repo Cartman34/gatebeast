@@ -28,10 +28,10 @@
  *   `local/` exists precisely so the agent can write and throw away. Refusing those would fire on what the repository explicitly allows.
  */
 
+require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/PythonFreeze.php';
-require_once __DIR__ . '/Tools.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 $detail = in_array('-v', $argv, true) || in_array('--verbose', $argv, true);
 $dryRun = in_array('--dry-run', $argv, true);

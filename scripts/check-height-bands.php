@@ -37,9 +37,9 @@
  *   that way: the day it grows a branch of its own, the model has quietly gained a second home.
  */
 
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 const REFERENTIAL = 'assets/subjects.json';
 

@@ -14,9 +14,9 @@
  */
 
 $root = dirname(__DIR__);
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 $page = $root . '/review-server/suivi-sprites/page.html';
 if (!is_file($page)) {

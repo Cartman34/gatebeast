@@ -14,9 +14,9 @@
  */
 
 $root = dirname(__DIR__);
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 /** Le module qui détient la valeur. C'est le SEUL fichier où un nom de thème a le droit d'être écrit. */
 const THEME_MODULE = 'scripts/asset_theme.py';

@@ -16,9 +16,9 @@
  */
 
 $root = __DIR__ . '/..';
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 $plans = array_slice($argv, 1);
 if ($plans === []) {

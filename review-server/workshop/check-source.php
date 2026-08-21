@@ -7,16 +7,16 @@
  *   Exits 1 on any fault, so it can gate an assembly.
  *
  * INTENTION
- *   LA COHÉRENCE SE TIENT PAR UNE MACHINE, PAS PAR LA VIGILANCE DE CELUI QUI ÉCRIT. La consigne s'est contredite quatre fois de suite sur la même chose — la
- *   projection dite en prose ici, en deux égalités là, en trois unités ailleurs — et chaque agent qui passait comblait ce qu'il croyait manquant en inventant une
- *   quatrième formulation. Aucune relecture n'attrape cela : les trois versions sont individuellement plausibles, et c'est leur coexistence qui est fausse.
+ *   CONSISTENCY IS HELD BY A MACHINE, NEVER BY THE VIGILANCE OF WHOEVER WRITES. The prompt contradicted itself four times running on the same thing — the
+ *   projection stated as prose here, as two equalities there, as three units elsewhere — and every agent who passed filled what he believed missing by inventing
+ *   a fourth wording. No re-reading catches that: each version is plausible on its own, and it is their coexistence that is wrong.
  *
- *   CE QUI EST CONTRÔLÉ, ET C'EST LA RÈGLE « UN PARAMÈTRE SE DIT UNE FOIS, À SON NIVEAU » RENDUE MÉCANIQUE : chaque bloc de source déclare les mots qu'il
- *   GOUVERNE, et il est seul à avoir le droit de les employer. Un autre bloc qui parle d'azimut, de point de fuite ou de 96 pixels est refusé par son nom et par
- *   sa ligne — avant qu'une consigne assemblée ne parte au générateur avec deux versions de la même règle.
+ *   WHAT IS CHECKED, AND IT IS « un paramètre se dit une fois, à son niveau » MADE MECHANICAL: every source block declares the words it GOVERNS, and it alone
+ *   may use them. Another block speaking of yaw, of a vanishing point or of 96 pixels is refused by name and by line — before an assembled prompt reaches the
+ *   generator carrying two versions of one rule.
  *
- *   IL JUGE LA CLAUSE, PAS L'EXPLICATION. Un bloc de source porte les deux : la prose qui explique, destinée à nous, et le bloc « consigne » qui part au
- *   générateur. Deux blocs peuvent expliquer la même chose sans dommage — c'est ce qu'ils PRESCRIVENT qui ne doit jamais se dire deux fois.
+ *   IT JUDGES THE CLAUSE, NOT THE EXPLANATION. A source block holds both: the prose that explains, addressed to us, and the « consigne » block that goes to the
+ *   generator. Two blocks may explain the same thing without harm — it is what they PRESCRIBE that must never be said twice.
  */
 
 $root = dirname(__DIR__, 2);
@@ -60,7 +60,7 @@ foreach ($paths as $path) {
     if (isset($header['niveau']) && !in_array($header['niveau'], LEVELS, true)) {
         $faults[] = "$name — niveau « {$header['niveau']} » inconnu. Les niveaux sont : " . implode(', ', LEVELS) . '.';
     }
-    // LA CLAUSE EST OBLIGATOIRE ET UNIQUE : un bloc de source qui n'en porte pas n'assemble rien, et un bloc qui en porte deux laisse choisir l'assembleur.
+    // THE CLAUSE IS REQUIRED AND UNIQUE: a source block carrying none assembles nothing, and one carrying two leaves the choice to the assembler.
     $clauses = preg_match_all('/^```consigne\n(.*?)^```$/ms', $text, $all);
     if ($clauses !== 1) {
         $faults[] = "$name — $clauses bloc(s) « ```consigne », il en faut exactement un : c'est lui qui part au générateur.";
@@ -69,10 +69,10 @@ foreach ($paths as $path) {
     $blocks[$name] = ['header' => $header, 'clause' => $all[1][0]];
 }
 
-// LE CROISEMENT EST LE CŒUR DU CONTRÔLE : chaque mot gouverné est cherché dans la CLAUSE de tous les autres blocs.
+// THE CROSS-CHECK IS THE HEART OF THIS CONTROL: every governed word is looked for in the CLAUSE of every other block.
 //
-// LA LISTE SE SÉPARE PAR DES POINTS-VIRGULES, ET C'EST NÉCESSAIRE : une valeur gouvernée est souvent un nombre, et le français écrit ses décimales avec une
-// virgule. Séparée par des virgules, « 5,25 » se coupait en « 5 » et « 25 », qui attrapaient ensuite n'importe quel nombre d'une autre clause.
+// THE LIST IS SEPARATED BY SEMICOLONS, AND IT HAS TO BE: a governed value is often a number, and French writes its decimals with a comma. Separated by commas,
+// « 5,25 » was cut into « 5 » and « 25 », which then matched any number in any other clause.
 foreach ($blocks as $name => $block) {
     foreach (array_map('trim', explode(';', $block['header']['gouverne'] ?? '')) as $word) {
         if ($word === '') {
@@ -82,9 +82,9 @@ foreach ($blocks as $name => $block) {
             if ($other === $name) {
                 continue;
             }
-            // LES FRONTIÈRES DE MOT évitent que « 84 » attrape « 840 ». LA CASSE COMPTE POUR UN MOT ÉCRIT TOUT EN CAPITALES, et c'est nécessaire : les points
-            // cardinaux s'écrivent « EST », « OUEST », et cherchés sans la casse ils attrapent le verbe « est » et le mot « ouest » de n'importe quelle prose —
-            // la clause de la lumière a été refusée pour cinq « est exposé au ciel ». Un mot en minuscules, lui, se cherche dans les deux casses.
+            // WORD BOUNDARIES keep « 84 » from matching « 840 ». CASE MATTERS FOR A WORD WRITTEN ALL IN CAPITALS, and it has to: the cardinal points are
+            // written « EST », « OUEST », and searched case-blind they match the French verb « est » and the ordinary word « ouest » in any prose — the light
+            // clause was once refused over five « est exposé au ciel ». A lowercase word, on the other hand, is searched in both cases.
             $sensitive = $word === mb_strtoupper($word) && preg_match('/\p{L}/u', $word);
             if (preg_match('/(?<![\w-])' . preg_quote($word, '/') . '(?![\w-])/u' . ($sensitive ? '' : 'i'), $peer['clause'])) {
                 $faults[] = "$other — sa clause emploie « $word », que « $name » gouverne. Solution — retirer la mention, ou déplacer le mot d'un en-tête à l'autre.";
@@ -93,7 +93,7 @@ foreach ($blocks as $name => $block) {
     }
 }
 
-// DEUX BLOCS NE PEUVENT PAS OCCUPER LA MÊME PLACE dans la consigne assemblée : le second écraserait le premier sans que rien ne le dise.
+// TWO BLOCKS CANNOT OCCUPY THE SAME PLACE in the assembled prompt: the second would overwrite the first with nothing to say so.
 $places = [];
 foreach ($blocks as $name => $block) {
     $place = ($block['header']['groupe'] ?? '?') . ' › ' . ($block['header']['titre'] ?? '?');

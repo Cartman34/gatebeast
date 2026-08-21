@@ -25,11 +25,10 @@
  *   The measuring itself lives in `review-server/lib/SpriteMeasures.php`, shared with the workshop page, which prints the same figures under each image.
  */
 
-$root = dirname(__DIR__);
-require_once $root . '/review-server/lib/SpriteMeasures.php';
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+$root = bootCommand($argv);
+require_once $root . '/review-server/lib/SpriteMeasures.php';
 
 $paths = array_slice($argv, 1);
 if (!$paths) {

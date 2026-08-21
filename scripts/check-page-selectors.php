@@ -19,9 +19,9 @@
  */
 
 $root = dirname(__DIR__);
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 $pages = $argv;
 array_shift($pages);

@@ -27,9 +27,9 @@
  *   In PHP because it is the project's default language for durable tooling, and this needs no library that only Python has.
  */
 
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 /** The consigne sources a subject author writes, and the only ones. The socle is excluded by the rule; the assembler by the intention above. */
 const DESCRIPTIONS = 'assets/descriptions';

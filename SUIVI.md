@@ -136,7 +136,7 @@ complet et ses raisons sont à la description du point. Ce qui est entré : troi
 qu'il interdit — la vue de trois-quarts, l'isométrie —, la face est-ouest vue par la tranche, l'interdit de tourner une partie du sujet, et la suppression du
 rappel final de caméra qui redisait le socle dans d'autres mots.
 
-**TOUS LES CHEMINS DE LA CHAÎNE DE CONSIGNES SE CALCULENT À UN SEUL ENDROIT**, `review-server/lib/Consignes.php` : le foyer `var/generations/consignes/`, le
+**TOUS LES CHEMINS DE LA CHAÎNE DE CONSIGNES SE CALCULENT À UN SEUL ENDROIT**, `review-server/lib/Prompts.php` : le foyer `var/generations/consignes/`, le
 moule `<SUJET>.v<N>.<quoi>.<ext>`, la liste fermée des pièces, le rang de la version en attente. **Quatre lecteurs en tenaient chacun sa copie** et la migration
 sous `var/` n'en avait corrigé qu'un : `apply-source.php` refusait tout sujet comme sans foyer, `extract-transmitted.php` écrivait à côté d'un dossier disparu,
 et `Critiques.php` cherchait dans un répertoire retiré — la page annonçait « aucune critique » sur sept critiques présentes sur le disque. Aucune ne levait quoi
@@ -176,7 +176,7 @@ bien et après on appliquera à l'application. Sinon tu vas faire les modifs à 
 **LA CONSIGNE VIT SOUS `var/generations/consignes/<SUJET>/`, CHAÎNE ENTIÈRE, RACINE COMPRISE — ET RIEN N'Y EST COMMITÉ.** Ce sont des essais, et l'image d'une
 seule version pèse plus que tout le code du dépôt : ce qui doit leur survivre n'est pas leur texte mais ce qu'ils ont appris, et cela se reporte au bloc de
 source et au code. Un fichier se nomme `<SUJET>.v<N>.<quoi>.<ext>` — `prompt`, `image`, `edits`, `generation`, `transmitted`, `critiques`, `parts` — parce qu'un
-nom doit dire de qui il est et ce qu'il est. **`review-server/lib/Consignes.php` est le seul endroit où ce moule et ce foyer se calculent**, et aucun lecteur ne
+nom doit dire de qui il est et ce qu'il est. **`review-server/lib/Prompts.php` est le seul endroit où ce moule et ce foyer se calculent**, et aucun lecteur ne
 recompose un chemin à la main. Les trois incohérences qui restaient sont à `S99 consigne-structuree`.
 
 **LA `v5` EST GÉNÉRÉE, LA `v6` EST EN ATTENTE.** Une version en attente se **modifie** tant qu'elle n'est pas générée ; une version qui porte une image est

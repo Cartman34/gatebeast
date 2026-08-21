@@ -21,9 +21,9 @@
  *   In PHP because it is the project's default language for durable tooling, and this needs no library that only Python has.
  */
 
-require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/bootstrap.php';
 
-Tools::get()->helpIfAsked($argv, __FILE__);
+bootCommand($argv);
 
 const CEILING = 200;
 const FOLD_WIDTH = 150;
