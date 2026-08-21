@@ -299,15 +299,31 @@ def check_text(path, source):
     # must not be: there the heredoc is markup a builder produces, and it interpolates real names the rule applies to.
     heredoc = None
     heredoc_opening = re.compile(r"<<-?\s*[\"']?([A-Za-z_][A-Za-z0-9_]*)[\"']?\s*$")
+    # A SHELL STRING CAN SPAN LINES, AND AN UNCLOSED QUOTE IS NOT A LITERAL TO THIS READER. `libraries="numpy|numpy|les mesures d'image` opens a value that only
+    # closes three lines later: the quoted-literal pattern finds nothing on that line, so the sentence fell through to the name scan and « mesures » was reported
+    # as an identifier. It is data shown to the operator, exactly like a heredoc, and it is followed the same way.
+    shell_string = None
+    # THE DELIMITER IS EXCLUDED, NOT BOTH QUOTES. A first version refused everything containing either quote, so `libraries="… les mesures d'image …"` did not
+    # match: the apostrophe of « d'image » looked like a closing mark. What opens a multi-line value is a quote whose OWN kind does not reappear on the line.
+    shell_opening = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=(?:\"[^\"]*|'[^']*)$")
+    shell_delimiter = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=([\"'])")
     for number, line in enumerate(source.splitlines(), 1):
         if heredoc is not None:
             if line.strip() == heredoc:
                 heredoc = None
             continue
+        if shell_string is not None:
+            if shell_string in line:
+                shell_string = None
+            continue
         if path.suffix == ".sh":
             opening = heredoc_opening.search(line)
             if opening:
                 heredoc = opening.group(1)
+                continue
+            bare = line.strip()
+            if shell_opening.match(bare):
+                shell_string = shell_delimiter.match(bare).group(1)
                 continue
         # A BLOCK COMMENT IS FOLLOWED FROM LINE TO LINE, NEVER RECOGNISED ONE LINE AT A TIME. Its continuation lines carry no marker of their own — a docblock
         # writes ` * `, but an ordinary `/* … */` paragraph just indents — so they were read as code, and any punctuation the French prose happened to contain
