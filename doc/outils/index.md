@@ -25,6 +25,7 @@ un récit de séance.**
 | Mesurer un asset | `check-asset.py` (transparence, emprise, raccord, lumière) |
 | Mesurer une planche | `analyze-plate.py` (mesures + verdict lumière) |
 | Juger la projection d'une sprite | `check-axonometry.py` — trois états, et **il dit quand il ne peut pas conclure** |
+| Vérifier qu'un jeu de pièces raccorde | `check-piece-widths.php` — compare les pièces **entre elles**, écarte les coins et les clôtures, et le dit |
 | Convertir case ↔ pixels, dimensionner | `tile_scale.py` — **seul détenteur** des deux valeurs : case d'écran à 24 px, finesse de livraison dimensionnée sur le zoom maximum |
 | Exporter un livrable | `export-asset.py` — redimensionne, ne rogne rien, mesure l'emprise et le point de pose |
 | Lire ou contrôler le référentiel des sujets | `check-subjects.py` — affiche la valeur résolue du passage, niveau par niveau |

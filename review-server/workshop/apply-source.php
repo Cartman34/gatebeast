@@ -12,6 +12,11 @@
  *   IL REMPLACE UNE SECTION ENTIÈRE, JAMAIS DES MORCEAUX. Une section de la consigne va de son titre au titre suivant ; c'est cette étendue-là que la clause du
  *   bloc remplace, d'un bloc. Substituer phrase à phrase laisserait des restes de l'ancienne rédaction entre les nouvelles, et c'est exactement ainsi que la
  *   consigne s'est mise à dire deux fois la même chose dans deux styles.
+ *
+ *   AND IT INSCRIBES WHAT IT DID IN THE EDITS JOURNAL, without which the journal lies. The version model states that a journal « est reconstructible et se
+ *   rejoue »: that is what guarantees a version did not gain along the way a difference nobody decided. As long as this script wrote without inscribing
+ *   anything, the journal stayed well-formed, replayed without raising a single fault, and produced a DIFFERENT text from the one read on the page — the
+ *   transparent error this repository forbids. Fixed on 2026-08-22 (`W36 edits-incomplets`), and `scripts/dev/trial-apply-source.php` is what holds it.
  */
 
 $root = dirname(__DIR__, 2);
@@ -19,6 +24,38 @@ require_once $root . '/scripts/Tools.php';
 require_once $root . '/review-server/lib/Prompts.php';
 
 Tools::get()->helpIfAsked($argv, __FILE__);
+
+/**
+ * INSCRIBES IN THE EDITS JOURNAL THE REPLACEMENT JUST MADE, in the same shape a hand writes there: an exact `before`/`after` pair, which replays. That is the
+ * only shape the replay knows, and inventing a second one would mean writing a journal nothing reads.
+ *
+ * THE IDENTIFIER TAKES A SUFFIX WHEN IT IS ALREADY USED, because one block can be applied twice to a pending version — the second time over the first. Both
+ * edits then replay in order, the second starting from what the first left. Overwriting the first would lose the starting state.
+ */
+function recordEdit(Prompts $prompts, string $subject, int $rank, int $from, string $block, string $before, string $after): void
+{
+    $path = $prompts->file($subject, $rank, 'edits');
+    $journal = is_file($path)
+        ? json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR)
+        : ['format' => 'gatebeast-prompt-edits', 'version' => 1,
+            'source' => basename($prompts->file($subject, $from, 'prompt')),
+            'target' => basename($prompts->file($subject, $rank, 'prompt')),
+            'nature' => 'contenu',
+            'note' => 'Journal ouvert par apply-source.php : cette version part de la précédente et n\'a pour l\'instant que ce que la source y a posé.'];
+
+    $taken = array_column($journal['edits'] ?? [], 'id');
+    $id = 'source-' . $block;
+    for ($again = 2; in_array($id, $taken, true); $again++) {
+        $id = 'source-' . $block . '-' . $again;
+    }
+
+    $journal['edits'][] = ['id' => $id,
+        'intention' => sprintf('Section posée depuis le bloc de source « %s » par apply-source.php. Le texte ne se corrige pas ici mais dans le bloc, '
+            . 'qui est le seul endroit où cette clause soit écrite une fois.', $block),
+        'test' => 'non testée', 'before' => $before, 'after' => $after];
+
+    file_put_contents($path, json_encode($journal, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+}
 
 $subject = $argv[1] ?? null;
 $wanted = $argv[2] ?? null;
@@ -91,7 +128,11 @@ if ($opens === false) {
     $stops = preg_match('/^#{2,3} /m', $body, $end, PREG_OFFSET_CAPTURE, $behind) ? $end[0][1] : strlen($body);
     $written = substr($body, 0, $stops) . "$heading\n" . $block['clause'] . "\n" . substr($body, $stops);
     file_put_contents($target, $written);
-    printf("%s — section « %s » CRÉÉE derrière « %s » depuis le bloc « %s » (%d caractères).\n",
+    // THE SECTION DID NOT EXIST: the edit is an INSERTION, and its `before` is what stood right after the insertion point — the replay needs an anchor, and an
+    // empty string is not one: it would be found anywhere in the text.
+    $anchor = substr($body, $stops, 200);
+    recordEdit($prompts, $subject, $rank, $generated, $wanted, $anchor, "$heading\n" . $block['clause'] . "\n" . $anchor);
+    printf("%s — section « %s » CRÉÉE derrière « %s » depuis le bloc « %s » (%d caractères), et inscrite au journal d'édits.\n",
         basename($target), $block['titre'], $block['apres'], $wanted, strlen($written));
     exit(0);
 }
@@ -101,4 +142,10 @@ $next = preg_match('/^#{2,3} /m', $body, $found, PREG_OFFSET_CAPTURE, $from) ? $
 $written = substr($body, 0, $from) . $block['clause'] . "\n" . substr($body, $next);
 file_put_contents($target, $written);
 
-printf("%s — section « %s » remplacée par le bloc « %s » (%d caractères).\n", basename($target), $block['titre'], $wanted, strlen($written));
+// THE `before` CARRIES THE HEADING ALONG WITH THE SECTION, not only its body: a body alone could be found elsewhere in the prompt, whereas the heading is there
+// exactly once — that is what makes the edit an unambiguous replacement at replay time.
+recordEdit($prompts, $subject, $rank, $generated, $wanted,
+    "$heading\n" . substr($body, $from, $next - $from), "$heading\n" . $block['clause'] . "\n");
+
+printf("%s — section « %s » remplacée par le bloc « %s » (%d caractères), et inscrite au journal d'édits.\n",
+    basename($target), $block['titre'], $wanted, strlen($written));
