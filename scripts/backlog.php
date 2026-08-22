@@ -9,7 +9,7 @@
  *     add <SERIES> <priority> <label> [ref]    a new point; its long description is read from standard input
  *     set <REF> <field> <value> [waits-on]     change one field: priority, status, label, waiting
  *     describe <REF> [@file|text]              replace the long description: from a file with @path, from the argument, or from standard input
- *     close <REF> [why]                        status "done", with an optional closing sentence
+ *     close <REF> <why> <document>             status "done"; BOTH what was done and which document was brought up to date, or « aucun : <raison> »
  *
  *   php scripts/backlog.php -h|--help          this text
  *
@@ -243,11 +243,26 @@ if ($command === 'close') {
     if (!$point) {
         throw new RuntimeException("FAULT le point « " . ($argv[2] ?? '') . " » n'existe pas.");
     }
+    /**
+     * CLOSING A POINT REQUIRES SAYING WHICH DOCUMENT WAS BROUGHT UP TO DATE, or naming what stands in place of one. The documentation of what exists drifts
+     * silently — the tool map named three deleted scripts for weeks (`W22`) — and the mechanical check only sees a file nobody mentions AT ALL, never a
+     * sentence that has stopped being true. Only whoever just changed the thing knows that, and this is the moment they know it.
+     *
+     * « aucun » IS A VALID ANSWER AND MUST BE ARGUED. A point that changes nothing a reader would look up owes no document; a point that says so without a
+     * reason is a point closing on a shrug. The wording follows `report-edit.php`, which already refuses to report a correction without saying WHERE.
+     */
+    $revised = $argv[4] ?? null;
+    if (!isset($argv[3]) || $revised === null || trim($revised) === '') {
+        fwrite(STDERR, "FAULT fermer un point demande de dire ce qui a été fait ET quel document a été repris.\n"
+            . "  Solution — « php scripts/backlog.php close <REF> \"<ce qui a été fait>\" \"<document repris>\" ».\n"
+            . "  Le document est un chemin sous doc/ — la conception si la CIBLE a bougé, doc/implemented/ si l'EXISTANT a bougé.\n"
+            . "  Si aucun document n'avait à bouger, l'écrire ainsi : « aucun : <la raison> ». Une fermeture sur un haussement d'épaules n'en est pas une.\n");
+        exit(1);
+    }
     $point['status'] = Backlog::STATUS_DONE;
     $point['updated'] = today();
-    if (isset($argv[3])) {
-        $point['description'] .= "\n\n**Fermé le " . today() . '** — ' . $argv[3];
-    }
+    $point['description'] .= "\n\n**Fermé le " . today() . '** — ' . $argv[3]
+        . "\n\n**Documentation reprise** : " . trim($revised);
     $backlog->save($point);
     republish($root);
     printf("%s fermé.\n", $point['ref']);

@@ -333,7 +333,7 @@ function readingLayer(array $units): string
     return implode("\n", $parts);
 }
 
-/** SVG to PNG, through the project's validated converter (doc/outils-exterieurs.md). Its absence is said out loud, never worked around. */
+/** SVG to PNG, through the project's validated converter (doc/implemented/outside-tools.md). Its absence is said out loud, never worked around. */
 function convert(string $svgPath, string $pngPath): void
 {
     exec('command -v rsvg-convert', $found, $status);

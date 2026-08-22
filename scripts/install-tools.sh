@@ -69,7 +69,7 @@ if python3 -m pip install --user --break-system-packages $missing; then
     echo
     echo "Installé. À faire ensuite :"
     echo "  1. « bash scripts/install-tools.sh --check » pour confirmer — il doit dire que tout est là."
-    echo "  2. Constater les versions et les inscrire à doc/outils-exterieurs.md : une version écrite est un constat daté, jamais une garantie."
+    echo "  2. Constater les versions et les inscrire à doc/implemented/outside-tools.md : une version écrite est un constat daté, jamais une garantie."
     echo "  3. « python3 scripts/check-axonometry.py assets/cutout/*/*.png » pour voir combien de sprites il sait juger maintenant."
     exit 0
 fi

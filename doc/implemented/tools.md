@@ -7,8 +7,9 @@ anglais, exécutables depuis la racine du dépôt, et chacun répond à `-h`.
 avait dérivé : elle nommait encore `cut-asset.py`, `run-fence-campaign.py` et `sprite-queue.py`, trois outils retirés du dépôt. **Une carte que les règles disent de consulter est une donnée, pas
 un récit de séance.**
 
-**Ne couvre pas** les outils extérieurs et leurs versions ([outils-exterieurs.md](../outils-exterieurs.md)), ni la façon de se servir d'un outil donné — chacun porte son bloc « Usage » et
-« Intention » en tête, et deux d'entre eux ont leur document ici : [le plan de composition](plan-de-composition.md) et [le référentiel des sujets](referentiel-des-sujets.md).
+**Ne couvre pas** les outils extérieurs et leurs versions ([outside-tools.md](outside-tools.md)), ni la façon de se servir d'un outil donné — chacun porte son
+bloc « Usage » et « Intention » en tête, et deux d'entre eux ont leur document ici : [le plan de composition](composition-plan.md) et [le référentiel des
+sujets](subject-referential.md).
 
 ## Le tableau
 
@@ -33,7 +34,8 @@ un récit de séance.**
 | Commander un exemple d'usage | `generate-usage-sample.py` depuis un plan de composition |
 | Rééchantillonner une image | `resize-image.py` |
 | Construire une page de revue | `build-planches-page.py`, `build-calibration-page.py`, et `review-server/suivi-sprites/build.php` pour le suivi des sprites |
-| Lire ou écrire les points ouverts | `backlog.php` — **la seule commande** qui lit et écrit `review-server/tasks.json` |
+| Lire ou écrire les points ouverts | `backlog.php` — **la seule commande** qui lit et écrit `review-server/tasks.json` ; fermer exige de nommer le document repris |
+| Vérifier que la doc de l'existant couvre le dépôt | `check-implemented-coverage.php` — les familles exemptées se déclarent dans [l'index](index.md), pas dans l'outil |
 | Regarder un SVG que j'ai produit | `rsvg-convert` vers un PNG dans `local/` — un agent ne sait pas lire un SVG, il lit une image matricielle |
 
 Les `generate-planche-*.py` et `generate-humans-calibration-*.py` sont conservés tels quels : un fichier par passage, ils ne se rejouent pas.

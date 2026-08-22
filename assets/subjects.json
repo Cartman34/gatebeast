@@ -2236,7 +2236,7 @@
           "action": "idle",
           "shape": "ns",
           "composition": "posts-1",
-          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Deux versions produites pour la même posture : posts-1-v2 est la dernière produite, donc le variant courant ; posts-1 (sans suffixe) devient sa version antérieure, conservée et non écartée (voir doc/outils/referentiel-des-sujets.md, « une version active par variant »).",
+          "_comment": "Fait partie du lot exigé (lot_v0) : les six formes de base se produisent en composition posts-1, seule composition retenue pour ces pièces. Deux versions produites pour la même posture : posts-1-v2 est la dernière produite, donc le variant courant ; posts-1 (sans suffixe) devient sa version antérieure, conservée et non écartée (voir doc/implemented/subject-referential.md, « une version active par variant »).",
           "representations": [
             {
               "type": "sprite",

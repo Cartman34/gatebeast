@@ -207,7 +207,20 @@ piloter son projet.
 
 - **`doc/conception/` — la cible, et elle fait foi.** Rapatriée ici depuis `conceptions/`, elle suit désormais le versionnage du projet. Chemin de reprise : la méthode
   (`~/projects/conceptions/methode/`), puis `doc/conception/vision.md`, `doc/conception/questions.md`, puis la descente jusqu'au nœud concerné en lisant ses ancêtres.
-- **`doc/` — la documentation du projet.** `doc/conception/` décrit la **cible** et fait foi ; le reste de `doc/` décrira l'existant.
+- **`doc/` — la documentation du projet.** `doc/conception/` décrit la **cible** et fait foi ; `doc/implemented/` décrit l'existant. Les deux se tiennent à jour, et la règle suivante dit par quoi.
+- **DEUX DOCUMENTATIONS, ET TOUTES DEUX SE TIENNENT À JOUR** (opérateur, 2026-08-22 : « tu dois avoir une doc de ce qui est implémentée et une doc cible, tu
+  dois toujours les maintenir à jour »). **[`doc/conception/`](conception/vision.md) dit la CIBLE et fait foi** ; **[`doc/implemented/`](implemented/index.md)
+  dit CE QUI EXISTE aujourd'hui.** Quand les deux se contredisent, ce n'est pas un arbitrage : c'est un écart à combler, dans un sens ou dans l'autre.
+- **CE QUI EMPÊCHE LA DÉRIVE EST UNE MACHINE PUIS UNE DISCIPLINE, et il faut les deux.** `php scripts/check-implemented-coverage.php` refuse un fichier
+  versionné de `scripts/` ou `review-server/` que rien ne nomme sous `doc/implemented/` — mais il ne voit qu'une **absence**, jamais une phrase devenue fausse.
+  C'est pourquoi **`php scripts/backlog.php close` exige de nommer le document repris**, ou d'écrire « aucun : <la raison> ». Seul celui qui vient de changer
+  la chose sait laquelle a cessé d'être vraie, et c'est à ce moment-là qu'il le sait.
+- **LES EXEMPTIONS S'ÉCRIVENT DANS LA DOCUMENTATION, JAMAIS DANS L'OUTIL.** Les familles couvertes en bloc — essais, sondes, lecteurs, passages à usage unique
+  — sont déclarées avec leur motif et leur raison au tableau de [`doc/implemented/index.md`](implemented/index.md), et le contrôle lit ce tableau. Une
+  exemption cachée dans un script est une exemption que personne ne relit.
+- **CE QUE ÇA COÛTE QUAND ON L'OUBLIE** : la carte des outils a nommé trois scripts supprimés pendant des semaines, et rien ne l'a vu — `check-cited-paths.php`
+  vérifie qu'un lien mène quelque part, pas que ce qu'il dit est encore vrai. C'est ce défaut-là, trouvé par l'audit du journal (`W22`), qui a fait écrire ces
+  deux règles.
 - **`SUIVI.md` — où en est le travail** : état courant, points ouverts, défauts constatés, outils. À lire en premier pour reprendre. **`PLAN-ACTION.md` — le découpage en briques vers la 0.1.** Ni l'un
   ni l'autre n'est de la conception : ils décrivent le chemin, jamais la cible.
 - **`scripts/` — l'outillage de production, INTÉGRALEMENT EN ANGLAIS AMÉRICAIN : noms, contenu, commentaires.** C'est figé et inchangeable (opérateur, 2026-08-08). **Un nom technique est anglais et le
@@ -278,13 +291,14 @@ piloter son projet.
 - **ET C'EST UNE MACHINE QUI LE TIENT, PAS LA BONNE VOLONTÉ DES AGENTS** : `php scripts/check-no-new-python.php` refuse tout `.py` versionné absent du relevé `scripts/python-inventory.json`, lui-même
   produit du dépôt et jamais tenu à la main. **Le refiger — `--freeze` — est un geste que l'opérateur autorise**, jamais une commodité qu'on s'accorde pour faire passer son propre ajout : refigé sans
   décision derrière, le relevé ne garde plus rien. Ses essais : `php scripts/dev/trial-no-new-python.php`.
-- **AUCUN OUTIL NE SE RÉINVENTE : ON CHERCHE À [doc/outils/index.md](outils/index.md) D'ABORD.** La carte dit, pour chaque besoin, l'outil à employer, et un
+- **AUCUN OUTIL NE SE RÉINVENTE : ON CHERCHE À [doc/implemented/tools.md](implemented/tools.md) D'ABORD.** La carte dit, pour chaque besoin, l'outil à employer, et un
   agent qui écrit un script sans l'avoir ouverte en écrit un deuxième pour un besoin déjà couvert. **Cette règle n'était écrite nulle part** avant le
   2026-08-21 : elle vivait en tête du tableau, dans le journal des séances, où personne ne la lisait — et le tableau lui-même y avait dérivé, nommant encore
   trois scripts retirés du dépôt. **Un outil retiré ou ajouté se note à la carte le jour même**, sinon elle redérive et une carte fausse coûte plus cher qu'une
   carte absente.
 - **La liste des outils validés de ce dépôt** — Python pour l'outillage, PHP pour l'enveloppe du générateur, Codex comme générateur d'images, `rsvg-convert` pour regarder un SVG produit — est tenue
-  à [doc/outils-exterieurs.md](outils-exterieurs.md), à lire là plutôt qu'à recopier ici. Elle vivait dans `SUIVI.md`, et l'élagage du 2026-08-11 a rendu ce renvoi mort avant qu'on le corrige.
+  à [doc/implemented/outside-tools.md](implemented/outside-tools.md), à lire là plutôt qu'à recopier ici. Elle vivait dans `SUIVI.md`, et l'élagage du 2026-08-11 a rendu ce renvoi mort avant qu'on le
+  corrige.
   **La règle qui dit qu'un outil non validé se demande au lieu de s'essayer** est montée à la méthode commune, avec l'interdit d'aller chercher hors du dépôt.
 - **UNE VALEUR OBSOLÈTE NE S'ÉCRIT JAMAIS DANS DU CODE NEUF — ET EN AVOIR BESOIN, C'EST LE MOMENT DE LA CHANGER PARTOUT.** Règle de l'opérateur, 2026-08-08. Un nom ou une valeur qu'on sait fautif
   n'est toléré que dans **l'existant qu'on ne touche pas** : dès qu'on ajoute ou qu'on modifie du code qui s'en sert, on le corrige **dans tout le dépôt**, données et lecteurs dans le même geste.

@@ -10,7 +10,7 @@
  *
  * INTENTION
  *   A REMARK LEAVES WHEN IT HAS BEEN DEALT WITH, NEVER WHEN IT IS WRITTEN. A verdict and a comment bear on ONE IMAGE, and a retake produces a new representation
- *   which starts with no verdict — that rule is already written in doc/outils/referentiel-des-sujets.md and settles every case where a new image is produced. It
+ *   which starts with no verdict — that rule is already written in doc/implemented/subject-referential.md and settles every case where a new image is produced. It
  *   leaves exactly one case open: the operator VALIDATES the image as it stands, so no new image will ever come, and the remark on it would stay active for ever.
  *   He asked for this on 2026-08-09 : « c'est à toi de faire une proposition pour que tu puisses noter dans le fichier que la remarque a été traitée sans
  *   génération d'image (car image validée) ».

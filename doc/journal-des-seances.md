@@ -390,7 +390,7 @@ donc ce qui a été produit avant elle sera à réexaminer.
 
 **Décisions du 2026-08-04, toutes écrites dans la conception.** On dit **opérateur**, jamais « propriétaire » (terme banni, [glossaire de la méthode](../conceptions/methode/glossaire.md)). Les **types sont fins** — un type regroupe ce qui s'échange sans incohérence : herbe, arbre, bosquet d'arbres, clôture, chemin, et non « végétation ». Le **passage** d'un sujet se déclare **côté par côté**, jamais il ne se déduit d'une forme : tout se traverse par défaut, un type peut renverser cette valeur, et **trois niveaux** — type, sujet, variant — se surchargent en ne portant que ce qu'ils définissent ; fermer deux côtés adjacents ferme ce qui est entre eux ; l'inventaire se revalide à chaque ajout. Le **catalogue est gelé** : un fichier neuf le remplacera, construit autour des **types, sujets, variants et représentations** — la sprite n'étant qu'une représentation parmi d'autres. Le **glossaire** a quitté la conception pour `doc/glossaire.md`, **biome** y est défini, et les **humains** sont réunis à l'inventaire sous `HU-nnn` — il n'y a pas de sujet « personnage-joueur ».
 
-**Nouvel outil — le plan de composition** ([sa fiche](doc/outils/plan-de-composition.md)) : `scripts/build-composition-plan.py` rend un plan à plat depuis un JSON déclaratif qui *est* le plan, avec des contrôles qui bloquent. Le moteur partagé est `scripts/plan_svg.py`. Premier plan produit : `assets/poc/cloture/plan-composition-OB-010-usage.json` — carré fermé, croix centrale, quatre antennes, les quinze formes de tracé exercées.
+**Nouvel outil — le plan de composition** ([sa fiche](doc/implemented/composition-plan.md)) : `scripts/build-composition-plan.py` rend un plan à plat depuis un JSON déclaratif qui *est* le plan, avec des contrôles qui bloquent. Le moteur partagé est `scripts/plan_svg.py`. Premier plan produit : `assets/poc/cloture/plan-composition-OB-010-usage.json` — carré fermé, croix centrale, quatre antennes, les quinze formes de tracé exercées.
 
 **Les deux dettes sont soldées** (2026-08-04) : le **catalogue** est **gelé** — ni lu, ni écrit, ni supprimé — et remplacé par `assets/subjects.json`, le référentiel des sujets ; la **page de suivi des sprites** part désormais du disque, montre toute image existante, et pèse 0,47 Mo au lieu de 10,3.
 
@@ -1964,8 +1964,8 @@ Les cinq premières tiennent la cible de lumière et l'échelle humaine. Détail
 
 ## Les outils
 
-**Rien sur les outils ne s'écrit ici.** La carte « quel outil pour quel besoin » vit à [doc/outils/index.md](outils/index.md) et les outils extérieurs avec
-leurs versions à [doc/outils-exterieurs.md](outils-exterieurs.md). Ce journal en portait des copies : celle de la carte a dérivé sans que rien ne le dise, et
+**Rien sur les outils ne s'écrit ici.** La carte « quel outil pour quel besoin » vit à [doc/implemented/tools.md](implemented/tools.md) et les outils extérieurs avec
+leurs versions à [doc/implemented/outside-tools.md](implemented/outside-tools.md). Ce journal en portait des copies : celle de la carte a dérivé sans que rien ne le dise, et
 nommait encore trois scripts retirés du dépôt. **Une donnée que les règles disent de consulter ne se recopie pas dans un récit de séance** — elle y vieillit,
 et personne ne rouvre deux mille lignes pour la corriger.
 
